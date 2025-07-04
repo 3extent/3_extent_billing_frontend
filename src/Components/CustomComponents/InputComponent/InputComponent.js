@@ -1,15 +1,12 @@
-function InputComponent() {
+function InputComponent({ label, type, placeholder }) {
     return (
-        <div>
-            <div className="text-left">
-                <label>Mobile Number:</label><br />
-                <input className="w-full border px-3 py-2 rounded" type="text" placeholder="Mobile Number" />
-            </div>
-            <div className="text-left">
-                <label>Password:</label><br />
-                <input className="w-full border px-3 py-2 rounded" type="text" placeholder="Password" />
-            </div>
+        <div className="text-left mb-4">
+            <label>{label}</label><br />
+            <input
+                className="w-full border px-3 py-2 rounded"
+                type={type}
+                placeholder={placeholder}
+            />
         </div>
-
     );
 } export default InputComponent;

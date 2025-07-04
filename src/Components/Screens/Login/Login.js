@@ -1,3 +1,4 @@
+import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 
 function Login() {
@@ -11,16 +12,20 @@ function Login() {
                     <div className="text-3xl font-bold">Welcome To 3-EXTENT</div>
                     <div className="font-serif text-xl">Log in Your Account</div>
                     <div className="space-y-4">
-                        <div className="text-left">
-                            <label>Mobile Number:</label><br/>
-                            <input className="w-full border px-3 py-2 rounded" type="text" placeholder="Mobile Number" />
-                        </div>
-                        <div className="text-left">
-                            <label>Password:</label><br/>
-                            <input className="w-full border px-3 py-2 rounded" type="text" placeholder="Password" />
-                        </div>
+                        <InputComponent
+                            label="Mobile Number:"
+                            type="text"
+                            placeholder="Enter your mobile number"
+                        />
+                        <InputComponent
+                            label="Password:"
+                            type="password"
+                            placeholder="Enter your password"
+                        />
                         <div>
-                            <PrimaryButtonComponent/>
+                            <PrimaryButtonComponent
+                                label="Login"
+                            />
                         </div>
                     </div>
                 </div>
