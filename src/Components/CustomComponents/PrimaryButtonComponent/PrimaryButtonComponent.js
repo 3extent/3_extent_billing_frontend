@@ -1,4 +1,4 @@
-function PrimaryButtonComponent({ label}) {
+ export default function PrimaryButtonComponent({ label}) {
     return (
         <div>
             <button className="w-full bg-blue-500 text-white py-2 rounded  text-xl font-bold">{label}</button>
@@ -6,4 +6,4 @@ function PrimaryButtonComponent({ label}) {
 
 
     );
-} export default PrimaryButtonComponent;
+};

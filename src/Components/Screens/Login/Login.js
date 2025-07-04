@@ -1,11 +1,12 @@
+import billingimage from '../../../Assets/billingimage.webp';
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 
-function Login() {
+export default function Login() {
     return (
         <div className="w-[100%] h-screen flex">
             <div className="w-[50%] h-[100%]">
-                <img className="w-full h-full object-cover" src="https://tse2.mm.bing.net/th/id/OIP.H8K2mPdv_jnw0k26f9CATwAAAA?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" />
+                <img className="w-full h-full object-cover" src={billingimage} />
             </div>
             <div className="w-[50%] h-[100%] flex items-center justify-center">
                 <div className="text-center w-[70%] space-y-6">
@@ -19,7 +20,7 @@ function Login() {
                         />
                         <InputComponent
                             label="Password:"
-                            type="password"
+                            type="password" 
                             placeholder="Enter your password"
                         />
                         <div>
@@ -34,4 +35,4 @@ function Login() {
         </div>
 
     );
-} export default Login;
+}

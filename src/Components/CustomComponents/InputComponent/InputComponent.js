@@ -1,4 +1,4 @@
-function InputComponent({ label, type, placeholder }) {
+export default function InputComponent({ label, type, placeholder }) {
     return (
         <div className="text-left mb-4">
             <label>{label}</label><br />
@@ -9,4 +9,4 @@ function InputComponent({ label, type, placeholder }) {
             />
         </div>
     );
-} export default InputComponent;
+} 
