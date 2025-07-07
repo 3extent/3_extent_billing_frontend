@@ -20,7 +20,7 @@ export default function Login() {
                         />
                         <InputComponent
                             label="Password:"
-                            type="password" 
+                            type="password"
                             placeholder="Enter your password"
                         />
                         <div>
@@ -36,3 +36,10 @@ export default function Login() {
 
     );
 }
+
+
+
+
+
+
+
