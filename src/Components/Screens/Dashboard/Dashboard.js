@@ -21,6 +21,7 @@ export default function Dashboard() {
                 ))}
             </div>
             <div className="w-[80%] border-2 border-slate-800 bg-[rgb(175,171,171)]">
+                {}
             </div>
         </div>
     );

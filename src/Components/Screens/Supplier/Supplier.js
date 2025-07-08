@@ -1,12 +1,13 @@
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
+import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
+import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 function Supplier() {
     const headers = [
         "No",
         "Supplier Name",
         "Company Name",
         "Address",
-        "Contact 1",
-        "Contact 2",
+        "Contact No",
         "GST No",
         "Email",
         "State",
@@ -19,31 +20,50 @@ function Supplier() {
             "Supplier Name": "nikita kadam",
             "Company Name": "Apple",
             "Address": "pune",
-            "Contact 1": "1234567890",
-            "Contact 2": "1234568790",
+            "Contact No": "1234567890",
             "GST No": "27ABCDE1234F1Z5",
             "Email": "abc@example.com",
-            "state": "Maharastra",
+            "State": "Maharastra",
             "Balance": "0",
             "Supplier Type": "wholesale",
         },
         {
-            "No": "1",
-            "Supplier Name": "nikita kadam",
+            "No": "2",
+            "Supplier Name": "anamika kute",
             "Company Name": "Apple",
             "Address": "pune",
-            "Contact 1": "1234567890",
-            "Contact 2": "1234568790",
+            "Contact No": "1234567890",
             "GST No": "27ABCDE1234F1Z5",
             "Email": "abc@example.com",
-            "state": "Maharastra",
+            "State": "Maharastra",
             "Balance": "0",
             "Supplier Type": "wholesale",
         }
     ];
-
+    const supplierTypes = ['a', 'b'];
     return (
+
         <div>
+            <div className="text-xl font-serif">List Of Suppiler Information</div>
+            <div className="flex items-center gap-4 ">
+                <InputComponent
+                    type="text"
+                    placeholder="Suppiler Name"
+                />
+                <DropdownCompoent
+                    options={supplierTypes}
+                    placeholder="Select Supplier Type"
+                />
+                <InputComponent
+                    type="text"
+                    placeholder="Contact No"
+                />
+                <InputComponent
+                    type="text"
+                    placeholder="Company Name"
+                />
+
+            </div>
             <CustomTableCompoent
                 headers={headers}
                 rows={rows}
