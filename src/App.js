@@ -10,8 +10,8 @@ function App() {
         <Routes>
           {/* <Route path="/" element={<Login />} /> */}
           {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-          {/* <Route path="/" element={<Supplier/>}/>  */}
-           <Route path="/" element={<CustomTableCompoent/>}/> 
+          <Route path="/" element={<Supplier/>}/> 
+           {/* <Route path="/" element={<CustomTableCompoent/>}/>  */}
 
         </Routes>
       </Router>
