@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import InputComponent from '../../CustomComponents/InputComponent/InputComponent';
 import CustomTableCompoent from '../../CustomComponents/CustomTableCompoent/CustomTableCompoent';
-
 function ListOfProducts() {
     const headers = [
         "Customer Name",
@@ -17,7 +16,6 @@ function ListOfProducts() {
         "Profit",
         "Grade",
     ]
-
     const rows = [
         {
             "Customer Name": "John Doe",
@@ -48,47 +46,33 @@ function ListOfProducts() {
     ];
     return (
         <div>
-            <h2>List Of Products</h2>
-
-            <div className='mb-10 w-[50%] flex gap-4'>
+            <div className='text-xl font-serif'>List Of Products</div>
+            <div className='flex gap-4'>
                 <InputComponent
-                    label="Date:"
                     type="Date"
                     placeholder="Enter your Date"
-                    className="p-2 rounded-md  border-gray-300"
                 />
                 <InputComponent
-                    label="Brand:"
                     type="text"
                     placeholder="Enter your Brand"
-                    className="p-2 rounded-md  border-gray-300"
                 />
                 <InputComponent
-                    label="Model:"
                     type="text"
                     placeholder="Enter your Model"
-                    className="p-2 rounded-md  border-gray-300"
                 />
                 <InputComponent
-                    label="Grade:"
                     type="text"
                     placeholder="Enter your Grade"
-                    className="p-2 rounded-md  border-gray-300"
                 />
 
             </div>
-
             <div>
                 <CustomTableCompoent
                     headers={headers}
                     rows={rows}
                 />
             </div>
-
-
-
         </div>
     );
 }
-
 export default ListOfProducts;
