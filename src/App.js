@@ -13,7 +13,6 @@ function App() {
           {/* <Route path="/" element={<Login />} /> */}
           {/* <Route path="/dashboard" element={<Dashboard />} /> */}
           <Route path='/' element={<ListOfProducts />} />
-          {/* <Route path="/dashboard" element={<Dashboard />} /> */}
           {/* <Route path="/" element={<Supplier/>}/>  */}
            {/* <Route path="/" element={<CustomTableCompoent/>}/>  */}
 
