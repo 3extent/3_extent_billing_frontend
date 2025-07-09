@@ -43,7 +43,7 @@ function Supplier() {
     const supplierTypes = ['a', 'b'];
     return (
 
-        <div>
+        <div className="w-full">
             <div className="text-xl font-serif">List Of Suppiler Information</div>
             <div className="flex items-center gap-4 ">
                 <InputComponent
