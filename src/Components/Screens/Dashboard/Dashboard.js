@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Supplier from "../Supplier/Supplier";
 export default function Dashboard() {
     const [menuItems,setMenuItems ]= useState([
         { icon: "fa fa-calculator", label: "Sells Billing" },
@@ -20,8 +21,8 @@ export default function Dashboard() {
                     </div>
                 ))}
             </div>
-            <div className="w-[80%] border-2 border-slate-800 bg-[rgb(175,171,171)]">
-                {}
+            <div className="w-[80%] bg-[rgb(175,171,171)]">
+                
             </div>
         </div>
     );
