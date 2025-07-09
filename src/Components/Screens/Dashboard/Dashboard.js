@@ -1,6 +1,8 @@
 import { useState } from "react";
 import ListOfProducts from "../Products/ListOfProducts";
 import Supplier from "../Supplier/Supplier";
+// import Brands from "../Brands/Brands";
+// import StockInformation from "../StockInformation/StockInformation";
 export default function Dashboard() {
     const [menuItems, setMenuItems] = useState([
         { icon: "fa fa-calculator", label: "Sells Billing" },
@@ -27,6 +29,8 @@ export default function Dashboard() {
             <div className="w-[80%] border-2  bg-[rgb(175,171,171)]">
                 {selectedMenu === "Products" && <ListOfProducts />}
                 {selectedMenu === "Supplier" && <Supplier />}
+                 {/* {selectedMenu === "Brands" && <Brands />}
+                  {selectedMenu === "Stock In" && <StockInformation/>} */}
 
                 
             </div>

@@ -6,12 +6,15 @@ import ListOfProducts from './Components/Screens/Products/ListOfProducts';
 import Supplier from "./Components/Screens/Supplier/Supplier";
 import CustomTableCompoent from './Components/CustomComponents/CustomTableCompoent/CustomTableCompoent';
 import DropdownCompoent from './Components/CustomComponents/DropdownCompoent/DropdownCompoent';
+// import Brands from './Components/Screens/Brands/Brands';
+// import StockInformation from './Components/Screens/StockInformation/StockInformation';
 function App() {
   return (
     <div>
       <Router>
         <Routes>
           <Route path="/" element={<Login />} />
+             {/* <Route path="/" element={<StockInformation />} /> */}
           <Route path="/dashboard" element={<Dashboard />} />
           {/* <Route path='/' element={<ListOfProducts />} /> */}
           {/* <Route path="/" element={<Supplier/>}/>  */}
