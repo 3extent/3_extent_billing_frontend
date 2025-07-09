@@ -1,8 +1,13 @@
+import { useNavigate } from 'react-router-dom';
 import billingimage from '../../../Assets/billingimage.webp';
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 
 export default function Login() {
+    const navigate = useNavigate();
+    const handleLogin = () => {
+        navigate('/dashboard');
+    };
     return (
         <div className="w-[100%] h-screen flex">
             <div className="w-[50%] h-[100%]">
@@ -26,6 +31,8 @@ export default function Login() {
                         <div>
                             <PrimaryButtonComponent
                                 label="Login"
+                                onClick={handleLogin}
+
                             />
                         </div>
                     </div>

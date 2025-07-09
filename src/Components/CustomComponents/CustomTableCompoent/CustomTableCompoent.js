@@ -7,7 +7,7 @@ export default function CustomTableCompoent({ headers,rows}) {
             <table className="table-auto border border-slate-800 w-full">
                 <tr className="bg-slate-800 text-white text-lg font-semibold">
                     {tableHeaders.map((header, index) => (
-                        <th key={index} className=" px-4 py-2">
+                        <th key={index} className="pl-4 py-2">
                             {header}
                         </th>
                     ))}

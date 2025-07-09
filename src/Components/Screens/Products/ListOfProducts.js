@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import InputComponent from '../../CustomComponents/InputComponent/InputComponent';
 import CustomTableCompoent from '../../CustomComponents/CustomTableCompoent/CustomTableCompoent';
+import DropdownCompoent from '../../CustomComponents/DropdownCompoent/DropdownCompoent';
 function ListOfProducts() {
     const headers = [
         "Customer Name",
@@ -44,21 +45,23 @@ function ListOfProducts() {
             "Grade": "B"
         }
     ];
+    const selectBrands = ['apple', 'xiaomi'];
+    const selectModels = ['apple iphone 14', 'xiaomi redmi note 13'];
     return (
-        <div>
+        <div className='w-full'>
             <div className='text-xl font-serif'>List Of Products</div>
-            <div className='flex gap-4'>
+            <div className='flex items-center gap-4'>
                 <InputComponent
                     type="Date"
                     placeholder="Enter your Date"
                 />
-                <InputComponent
-                    type="text"
-                    placeholder="Enter your Brand"
+                <DropdownCompoent
+                    options={selectBrands}
+                    placeholder="Select Brands"
                 />
-                <InputComponent
-                    type="text"
-                    placeholder="Enter your Model"
+                <DropdownCompoent
+                    options={selectModels}
+                    placeholder="Select Models"
                 />
                 <InputComponent
                     type="text"

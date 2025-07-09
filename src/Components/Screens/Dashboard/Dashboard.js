@@ -1,5 +1,6 @@
 import { useState } from "react";
 import ListOfProducts from "../Products/ListOfProducts";
+import Supplier from "../Supplier/Supplier";
 export default function Dashboard() {
     const [menuItems, setMenuItems] = useState([
         { icon: "fa fa-calculator", label: "Sells Billing" },
@@ -9,12 +10,12 @@ export default function Dashboard() {
         { icon: "fa fa-user-circle-o", label: "Customer" },
         { icon: "fa fa-android", label: "Brands" },
     ])
-    const [selectedMenu, setSelectedMenu] = useState("Products");
+    const [selectedMenu, setSelectedMenu] = useState();
     return (
         <div className="w-[100%] flex">
             <div className="space-y-2 pl-4 pt-4 w-[20%] bg-slate-800 text-white font-semibold text-2xl h-screen">
                 {menuItems.map((item, index) => (
-                    <div key={index} className="flex items-center"
+                    <div key={index} className="flex items-center cursor-pointer"
                         onClick={() => setSelectedMenu(item.label)}>
                         <span className="mr-3">
                             <i className={item.icon} aria-hidden="true"></i>
@@ -25,6 +26,9 @@ export default function Dashboard() {
             </div>
             <div className="w-[80%] border-2  bg-[rgb(175,171,171)]">
                 {selectedMenu === "Products" && <ListOfProducts />}
+                {selectedMenu === "Supplier" && <Supplier />}
+
+                
             </div>
         </div>
     );
