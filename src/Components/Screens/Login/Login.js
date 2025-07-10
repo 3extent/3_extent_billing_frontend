@@ -1,8 +1,13 @@
+import { useNavigate } from 'react-router-dom';
 import billingimage from '../../../Assets/billingimage.webp';
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 
 export default function Login() {
+    const navigate = useNavigate();
+    const handleLogin = () => {
+        navigate('/dashboard');
+    };
     return (
         <div className="w-[100%] h-screen flex">
             <div className="w-[50%] h-[100%]">
@@ -20,12 +25,14 @@ export default function Login() {
                         />
                         <InputComponent
                             label="Password:"
-                            type="password" 
+                            type="password"
                             placeholder="Enter your password"
                         />
                         <div>
                             <PrimaryButtonComponent
                                 label="Login"
+                                onClick={handleLogin}
+
                             />
                         </div>
                     </div>
@@ -36,3 +43,10 @@ export default function Login() {
 
     );
 }
+
+
+
+
+
+
+
