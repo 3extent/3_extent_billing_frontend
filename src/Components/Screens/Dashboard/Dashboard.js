@@ -26,13 +26,15 @@ export default function Dashboard() {
                     </div>
                 ))}
             </div>
-            <div className="w-[80%] border-2  bg-[rgb(175,171,171)]">
+            <div className="w-[80%] border-2  bg-[rgb(175,171,171)] p-5">
                 {selectedMenu === "Products" && <ListOfProducts />}
                 {selectedMenu === "Supplier" && <Supplier />}
                  {/* {selectedMenu === "Brands" && <Brands />}
                   {selectedMenu === "Stock In" && <StockInformation/>} */}
 
                 
+                {/* {selectedMenu === "Customer" && <Customer/>} */}
+                {/* {selectedMenu === "Sells Billing" && <SellsBilling/>} */}
             </div>
         </div>
     );
