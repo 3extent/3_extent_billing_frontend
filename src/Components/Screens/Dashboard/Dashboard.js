@@ -1,8 +1,8 @@
 import { useState } from "react";
 import ListOfProducts from "../Products/ListOfProducts";
 import Supplier from "../Supplier/Supplier";
-// import Customer from "../Customer/Customer";
-// import SellsBilling from "../SellsBilling/SellsBilling";
+import Customer from "../Customer/Customer";
+import SellsBilling from "../SellsBilling/SellsBilling";
 export default function Dashboard() {
     const [menuItems, setMenuItems] = useState([
         { icon: "fa fa-calculator", label: "Sells Billing" },
@@ -12,7 +12,7 @@ export default function Dashboard() {
         { icon: "fa fa-user-circle-o", label: "Customer" },
         { icon: "fa fa-android", label: "Brands" },
     ])
-    const [selectedMenu, setSelectedMenu] = useState();
+    const [selectedMenu, setSelectedMenu] = useState("Sells Billing");
     return (
         <div className="w-[100%] flex">
             <div className="space-y-2 pl-4 pt-4 w-[20%] bg-slate-800 text-white font-semibold text-2xl h-screen">
@@ -29,8 +29,9 @@ export default function Dashboard() {
             <div className="w-[80%] border-2  bg-[rgb(175,171,171)] p-5">
                 {selectedMenu === "Products" && <ListOfProducts />}
                 {selectedMenu === "Supplier" && <Supplier />}
-                {/* {selectedMenu === "Customer" && <Customer/>} */}
-                {/* {selectedMenu === "Sells Billing" && <SellsBilling/>} */}
+                {selectedMenu === "Customer" && <Customer/>}
+                {selectedMenu === "Sells Billing" && <SellsBilling/>}
+                
             </div>
         </div>
     );

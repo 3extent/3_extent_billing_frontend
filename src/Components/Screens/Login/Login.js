@@ -32,7 +32,6 @@ export default function Login() {
                             <PrimaryButtonComponent
                                 label="Login"
                                 onClick={handleLogin}
-
                             />
                         </div>
                     </div>
