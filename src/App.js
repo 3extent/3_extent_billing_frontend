@@ -6,6 +6,8 @@ import ListOfProducts from './Components/Screens/Products/ListOfProducts';
 // import Supplier from "./Components/Screens/Supplier/Supplier";
 import CustomTableCompoent from './Components/CustomComponents/CustomTableCompoent/CustomTableCompoent';
 import DropdownCompoent from './Components/CustomComponents/DropdownCompoent/DropdownCompoent';
+import StockIn from './Components/Screens/Products/StockIn';
+import BulkOfProduct from './Components/Screens/Products/BulkOfProduct';
 // import Customer from './Components/Screens/Customer/Customer';
 // import SellsBilling from './Components/Screens/SellsBilling/SellsBilling';
 function App() {
@@ -13,7 +15,10 @@ function App() {
     <div>
       <Router>
         <Routes>
-          <Route path="/" element={<Login/>} />
+          {/* <Route path="/" element={<Login/>} /> */}
+              {/* <Route path="/" element={<StockIn/>} /> */}
+             
+                 <Route path="/" element={< BulkOfProduct/>} />
           <Route path="/dashboard" element={<Dashboard />} />
           {/* <Route path='/' element={<ListOfProducts />} /> */}
           {/* <Route path="/" element={<Supplier/>}/>  */}
