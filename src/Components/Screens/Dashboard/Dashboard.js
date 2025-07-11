@@ -2,6 +2,7 @@ import { useState } from "react";
 import ListOfProducts from "../Products/ListOfProducts";
 import Supplier from "../Supplier/Supplier";
 import Brands from "../Brands/Brands";
+import Customer from "../Customer/Customer";
 export default function Dashboard() {
     const [menuItems, setMenuItems] = useState([
         { icon: "fa fa-calculator", label: "Sells Billing" },
@@ -29,6 +30,7 @@ export default function Dashboard() {
                 {selectedMenu === "Products" && <ListOfProducts />}
                 {selectedMenu === "Supplier" && <Supplier />}
                 {selectedMenu === "Brands" && <Brands />}
+                {selectedMenu === "Customer" && <Customer/>}
             </div>
         </div>
     );
