@@ -24,19 +24,19 @@ function Supplier() {
             "GST No": "27ABCDE1234F1Z5",
             "Email": "abc@example.com",
             "State": "Maharastra",
-            "Balance": "0",
+            "Balance": "70000",
             "Supplier Type": "wholesale",
         },
         {
             "No": "2",
-            "Supplier Name": "anamika kute",
+            "Supplier Name": "shardul pawar",
             "Company Name": "Apple",
             "Address": "pune",
             "Contact No": "1234567890",
             "GST No": "27ABCDE1234F1Z5",
             "Email": "abc@example.com",
             "State": "Maharastra",
-            "Balance": "0",
+            "Balance": "80000",
             "Supplier Type": "wholesale",
         }
     ];

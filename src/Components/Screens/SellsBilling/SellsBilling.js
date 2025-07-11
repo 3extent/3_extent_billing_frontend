@@ -3,13 +3,13 @@ import InputComponent from "../../CustomComponents/InputComponent/InputComponent
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 const headers = [
     "Sr.No",
+    "Date",
     "IMEI NO",
     "Company Name",
     "Model Name",
     "Rate",
     "Grade",
     "Box",
-    "Date",
     "Contact No",
     "Qty",
     "Total Price"
@@ -17,13 +17,13 @@ const headers = [
 const rows = [
     {
         "Sr.No": "1",
+        "Date": "2025-07-10",
         "IMEI NO": "359876543210123",
         "Company Name": "Apple",
         "Model Name": "iPhone 6",
         "Rate": 500,
         "Grade": "A",
         "Box": "Yes",
-        "Date": "2025-07-10",
         "Contact No": "9876543210",
         "Qty": 1,
         "Total Price": 500
@@ -54,7 +54,7 @@ export default function SellsBilling() {
                     type="Date"
                     placeholder=""
                 />
-                <button className="px-4 py-3 bg-white mt-2 rounded" >Add Product <i class="fa fa-plus-square" aria-hidden="true"></i> </button>
+                <button className="px-4 py-2 mt-2  rounded  border border-gray-300 ">Add Product <i class="fa fa-plus-square ml-3" aria-hidden="true"></i></button>
             </div>
             <div>
                 <CustomTableCompoent
@@ -62,15 +62,18 @@ export default function SellsBilling() {
                     rows={rows}
                 />
             </div>
-            <div className="flex justify-evenly gap-4 mt-5">
+            <div className="flex justify-end gap-4 mt-5">
                 <PrimaryButtonComponent
                     label="Save"
+                    icon="fa fa-cloud-download"
                 />
                 <PrimaryButtonComponent
                     label="Print"
+                    icon="fa fa-print"
                 />
                 <PrimaryButtonComponent
                     label="Cancel"
+                    icon="fa fa-window-close"
                 />
             </div>
         </div>
