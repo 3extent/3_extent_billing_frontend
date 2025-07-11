@@ -1,6 +1,7 @@
 import { useState } from "react";
 import ListOfProducts from "../Products/ListOfProducts";
 import Supplier from "../Supplier/Supplier";
+import Brands from "../Brands/Brands";
 import Customer from "../Customer/Customer";
 export default function Dashboard() {
     const [menuItems, setMenuItems] = useState([
@@ -28,6 +29,7 @@ export default function Dashboard() {
             <div className="w-[80%] border-2  bg-[rgb(175,171,171)] p-5">
                 {selectedMenu === "Products" && <ListOfProducts />}
                 {selectedMenu === "Supplier" && <Supplier />}
+                {selectedMenu === "Brands" && <Brands />}
                 {selectedMenu === "Customer" && <Customer/>}
             </div>
         </div>
