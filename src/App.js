@@ -16,9 +16,9 @@ function App() {
       <Router>
         <Routes>
           {/* <Route path="/" element={<Login/>} /> */}
-              {/* <Route path="/" element={<StockIn/>} /> */}
+              <Route path="/" element={<StockIn/>} />
              
-                 <Route path="/" element={< BulkOfProduct/>} />
+                 {/* <Route path="/" element={< BulkOfProduct/>} /> */}
           <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </Router>

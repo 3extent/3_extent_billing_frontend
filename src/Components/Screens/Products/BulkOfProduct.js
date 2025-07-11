@@ -1,6 +1,8 @@
 
 import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
+import CustomTableCompoent from '../../CustomComponents/CustomTableCompoent/CustomTableCompoent';
+import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
 
 function BulkOfProduct() {
     const [inputValue, setInputValue] = useState('');
@@ -9,7 +11,7 @@ function BulkOfProduct() {
 
     const handleInputChange = (e) => {
         setInputValue(e.target.value);
-    };t 
+    };
 
     const handleFileUpload = (e) => {
         const file = e.target.files[0];
@@ -23,7 +25,7 @@ function BulkOfProduct() {
             const worksheet = workbook.Sheets[sheetName];
             const jsonData = XLSX.utils.sheet_to_json(worksheet);
             setExcelData(jsonData);
-            setShowTable(false); // Hide table on new upload
+            setShowTable(false); // Reset table display
             console.log('Imported Excel Data:', jsonData);
         };
 
@@ -33,66 +35,43 @@ function BulkOfProduct() {
     const handleButtonClick = () => {
         console.log('Input value:', inputValue);
         console.log('Excel data:', excelData);
-        setShowTable(true); // Show table after button click
+        setShowTable(true); // Show table after clicking button
     };
 
-    // Get table headers from excelData keys
-    const headers = excelData.length > 0 ? Object.keys(excelData[0]) : [];
+    // Use different name to avoid clash
+    const tableHeaders = excelData.length > 0 ? Object.keys(excelData[0]) : [];
 
     return (
-        <div className="max-w-xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
-            <h2 className="text-2xl font-bold mb-4 text-center">Bulk Product Import</h2>
+        <div className="w-full">
+            <h2 className="className='text-xl text-center font-serif mb-4 font-bold">Bulk of multiple Product</h2>
+            <div className='flex gap-4 items-center w-full'>
 
-            <input
-                type="text"
-                value={inputValue}
-                onChange={handleInputChange}
-                placeholder="Enter some value"
-                className="w-full px-4 py-2 border rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
+                <input
+                    type="text"
+                    value={inputValue}
+                    onChange={handleInputChange}
+                    placeholder="Enter some value"
+                    className="w-1/3 px-4 py-2 border rounded-md"
+                />
 
-            <input
-                type="file"
-                accept=".xlsx, .xls"
-                onChange={handleFileUpload}
-                className="w-full px-4 py-2 border rounded-md mb-4"
-            />
 
-            <button
-                onClick={handleButtonClick}
-                className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
-            >
-                Process Bulk
-            </button>
+                <input
+                    type="file"
+                    accept=".xlsx, .xls"
+                    onChange={handleFileUpload}
+                    className="w-1/3 px-4 py-2 border rounded-md"
+                />
 
-            {/* Show table only after button click and if excelData exists */}
+                <button
+                    onClick={handleButtonClick}
+                    className="w-1/3 bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
+                >
+                    Process Bulk
+                </button>
+            </div>
             {showTable && excelData.length > 0 && (
-                <div className="mt-6 overflow-x-auto">
-                    <table className="min-w-full border border-gray-300">
-                        <thead className="bg-gray-100">
-                            <tr>
-                                {headers.map((header) => (
-                                    <th
-                                        key={header}
-                                        className="border border-gray-300 px-4 py-2 text-left"
-                                    >
-                                        {header}
-                                    </th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {excelData.map((row, index) => (
-                                <tr key={index} className="hover:bg-gray-50">
-                                    {headers.map((header) => (
-                                        <td key={header} className="border border-gray-300 px-4 py-2">
-                                            {row[header]}
-                                        </td>
-                                    ))}
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                <div className="mt-6">
+                    <CustomTableCompoent headers={tableHeaders} rows={excelData} />
                 </div>
             )}
         </div>
