@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
 import CustomTableCompoent from '../../CustomComponents/CustomTableCompoent/CustomTableCompoent';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
+import InputComponent from '../../CustomComponents/InputComponent/InputComponent';
 
 function BulkOfProduct() {
     const [inputValue, setInputValue] = useState('');
@@ -43,31 +44,21 @@ function BulkOfProduct() {
 
     return (
         <div className="w-full">
-            <h2 className="className='text-xl text-center font-serif mb-4 font-bold">Bulk of multiple Product</h2>
-            <div className='flex gap-4 items-center w-full'>
-
-                <input
-                    type="text"
-                    value={inputValue}
-                    onChange={handleInputChange}
-                    placeholder="Enter some value"
-                    className="w-1/3 px-4 py-2 border rounded-md"
-                />
-
-
-                <input
+            <h2 className="text-2xl text-center font-serif mb-4 font-bold">Bulk of Product</h2>
+            <div className='items-center w-full'>
+                <InputComponent
+                    label="Upload Excel File"
                     type="file"
-                    accept=".xlsx, .xls"
+                    accept=".xlsx, .xls"                                                                            
                     onChange={handleFileUpload}
-                    className="w-1/3 px-4 py-2 border rounded-md"
+                    // inputClassName="w-1/3 px-4 py-2"
+                    inputClassName="w-[30%] p-10"
                 />
-
-                <button
+                <PrimaryButtonComponent
+                    label="Process Bulk"
                     onClick={handleButtonClick}
-                    className="w-1/3 bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
-                >
-                    Process Bulk
-                </button>
+                    className="w-[30%] p-10"
+                />
             </div>
             {showTable && excelData.length > 0 && (
                 <div className="mt-6">
