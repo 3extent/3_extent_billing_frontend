@@ -44,20 +44,21 @@ function BulkOfProduct() {
 
     return (
         <div className="w-full">
-            <h2 className="text-2xl text-center font-serif mb-4 font-bold">Bulk of Product</h2>
-            <div className='items-center w-full'>
+            {/* <h2 className="text-2xl text-center font-serif mb-4 font-bold">Bulk of Product</h2> */}
+            {/* <div className='items-center w-full'> */}
+            <div className='flex  justify-center items-center w-full gap-7'>
                 <InputComponent
                     label="Upload Excel File"
                     type="file"
                     accept=".xlsx, .xls"                                                                            
                     onChange={handleFileUpload}
                     // inputClassName="w-1/3 px-4 py-2"
-                    inputClassName="w-[30%] p-10"
+                    inputClassName="w-[80%] p-10"
                 />
                 <PrimaryButtonComponent
-                    label="Process Bulk"
+                    label="Continue"
                     onClick={handleButtonClick}
-                    className="w-[30%] p-10"
+                    className="w-[100%] p-20"
                 />
             </div>
             {showTable && excelData.length > 0 && (

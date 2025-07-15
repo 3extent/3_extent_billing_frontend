@@ -22,16 +22,19 @@ export default function Login() {
                             label="Mobile Number:"
                             type="text"
                             placeholder="Enter your mobile number"
+                            inputClassName="w-full"
                         />
                         <InputComponent
                             label="Password:"
                             type="password"
                             placeholder="Enter your password"
+                            inputClassName="w-full"
                         />
                         <div>
                             <PrimaryButtonComponent
                                 label="Login"
                                 onClick={handleLogin}
+                                className="w-full"
 
                             />
                         </div>

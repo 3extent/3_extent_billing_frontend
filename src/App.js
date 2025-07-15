@@ -15,8 +15,8 @@ function App() {
     <div>
       <Router>
         <Routes>
-          {/* <Route path="/" element={<Login/>} /> */}
-              <Route path="/" element={<StockIn/>} />
+          <Route path="/" element={<Login/>} />
+              {/* <Route path="/" element={<StockIn/>} /> */}
              
                  {/* <Route path="/" element={< BulkOfProduct/>} /> */}
           <Route path="/dashboard" element={<Dashboard />} />
