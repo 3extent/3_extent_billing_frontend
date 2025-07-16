@@ -15,7 +15,7 @@ export default function Login() {
             </div>
             <div className="w-[50%] h-[100%] flex items-center justify-center">
                 <div className="text-center w-[70%] space-y-6">
-                    <div className="text-3xl font-bold">Welcome To 3-EXTENT</div>
+                    <div className="text-3xl font-bold">Welcome To 3_EXTENT</div>
                     <div className="font-serif text-xl">Log in Your Account</div>
                     <div className="space-y-4">
                         <InputComponent
@@ -32,6 +32,7 @@ export default function Login() {
                             <PrimaryButtonComponent
                                 label="Login"
                                 onClick={handleLogin}
+                                className="w-full"
                             />
                         </div>
                     </div>

@@ -1,3 +1,4 @@
+import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
@@ -10,9 +11,7 @@ const headers = [
     "Rate",
     "Grade",
     "Box",
-    "Contact No",
-    "Qty",
-    "Total Price"
+    "Contact No"
 ];
 const rows = [
     {
@@ -25,15 +24,13 @@ const rows = [
         "Grade": "A",
         "Box": "Yes",
         "Contact No": "9876543210",
-        "Qty": 1,
-        "Total Price": 500
     }
 ];
-export default function SellsBilling() {
+export default function SalesBilling() {
     return (
         <div>
-            <div className='text-xl mb-2 font-serif'>Sales Billing</div>
-            <div className="flex items-center gap-4  ">
+            <div className='text-xl mb-6 font-serif'>Sales Billing</div>
+            <div className="grid grid-cols-5 items-center gap-4">
                 <InputComponent
                     label="IMEI No :"
                     type="text"
@@ -54,7 +51,11 @@ export default function SellsBilling() {
                     type="Date"
                     placeholder=""
                 />
-                <button className="px-4 py-2 mt-2  rounded  border border-gray-300 ">Add Product <i class="fa fa-plus-square ml-3" aria-hidden="true"></i></button>
+                 <PrimaryButtonComponent
+                    label="Save"
+                    className="w-full mt-2"
+                    icon="fa fa-cloud-download"
+                />
             </div>
             <div>
                 <CustomTableCompoent
@@ -66,14 +67,17 @@ export default function SellsBilling() {
                 <PrimaryButtonComponent
                     label="Save"
                     icon="fa fa-cloud-download"
+                    className="w-full"
                 />
                 <PrimaryButtonComponent
                     label="Print"
                     icon="fa fa-print"
+                    className="w-full"
                 />
                 <PrimaryButtonComponent
                     label="Cancel"
                     icon="fa fa-window-close"
+                    className="w-full mr-3"
                 />
             </div>
         </div>

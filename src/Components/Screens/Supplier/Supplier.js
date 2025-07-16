@@ -45,7 +45,7 @@ function Supplier() {
 
         <div className="w-full">
             <div className="text-xl font-serif">List Of Suppiler Information</div>
-            <div className="flex items-center gap-4 ">
+            <div className="grid grid-cols-4 items-center gap-4 ">
                 <InputComponent
                     type="text"
                     placeholder="Suppiler Name"
@@ -62,7 +62,6 @@ function Supplier() {
                     type="text"
                     placeholder="Company Name"
                 />
-
             </div>
             <CustomTableCompoent
                 headers={headers}

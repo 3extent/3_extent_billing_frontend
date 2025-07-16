@@ -15,7 +15,8 @@ export default function Customer() {
         "Account No",
         "IFSC",
         "Rate",
-        "Credit Amount"
+        "Credit Amount",
+        "Purchase Price"
     ];
     const rows = [{
         "No": "1",
@@ -30,7 +31,8 @@ export default function Customer() {
         "Account No": "1234567890",
         "IFSC": "HDFC0001234",
         "Rate": "18%",
-        "Credit Amount": 5000
+        "Credit Amount": 5000,
+        "Purchase Price":3000
     },
     {
         "No": "2",
@@ -45,14 +47,15 @@ export default function Customer() {
         "Account No": "1234567890",
         "IFSC": "HDFC0001234",
         "Rate": "18%",
-        "Credit Amount": 5000
+        "Credit Amount": 5000,
+        "Purchase Price":3000
     }
     ];
     const CostomerTypes = ['a', 'b'];
     return (
         <div className="w-full">
             <div className="text-xl font-serif">List Of Customer Information</div>
-            <div className="flex items-center gap-4 ">
+            <div className="grid grid-cols-3 items-center gap-4 ">
                 <InputComponent
                     type="text"
                     placeholder="Customer Name"
