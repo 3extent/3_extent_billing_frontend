@@ -67,6 +67,7 @@ function Supplier() {
                 headers={headers}
                 rows={rows}
             />
+            
         </div>
     );
 }
