@@ -5,29 +5,23 @@ import CustomTableCompoent from '../../CustomComponents/CustomTableCompoent/Cust
 import DropdownCompoent from '../../CustomComponents/DropdownCompoent/DropdownCompoent';
 function ListOfProducts() {
     const headers = [
-        "Customer Name",
-        "Bill",
         "Date",
         "Company Name",
         "Product Name",
         "IMEI NO",
-        "QTY",
         "Sales",
-        "Purches",
+        "Purchase Price",
         "Profit",
         "Grade",
     ]
     const rows = [
         {
-            "Customer Name": "John Doe",
-            "Bill": "INV001",
             "Date": "2025-07-08",
             "Company Name": "Samsung",
             "Product Name": "Galaxy S21",
             "IMEI NO": "123456789012345",
-            "QTY": 1,
             "Sales": 50000,
-            "Purches": 45000,
+            "Purchase Price": 45000,
             "Profit": 5000,
             "Grade": "A"
         },
@@ -38,9 +32,8 @@ function ListOfProducts() {
             "Company Name": "Apple",
             "Product Name": "iPhone 13",
             "IMEI NO": "987654321098765",
-            "QTY": 1,
             "Sales": 70000,
-            "Purches": 65000,
+            "Purchase Price": 65000,
             "Profit": 5000,
             "Grade": "B"
         }

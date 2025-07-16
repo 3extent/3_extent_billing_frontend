@@ -24,19 +24,19 @@ function Supplier() {
             "GST No": "27ABCDE1234F1Z5",
             "Email": "abc@example.com",
             "State": "Maharastra",
-            "Balance": "0",
+            "Balance": "70000",
             "Supplier Type": "wholesale",
         },
         {
             "No": "2",
-            "Supplier Name": "anamika kute",
+            "Supplier Name": "shardul pawar",
             "Company Name": "Apple",
             "Address": "pune",
             "Contact No": "1234567890",
             "GST No": "27ABCDE1234F1Z5",
             "Email": "abc@example.com",
             "State": "Maharastra",
-            "Balance": "0",
+            "Balance": "80000",
             "Supplier Type": "wholesale",
         }
     ];
@@ -45,7 +45,7 @@ function Supplier() {
 
         <div className="w-full">
             <div className="text-xl font-serif">List Of Suppiler Information</div>
-            <div className="flex items-center gap-4 ">
+            <div className="grid grid-cols-4 items-center gap-4 ">
                 <InputComponent
                     type="text"
                     placeholder="Suppiler Name"
@@ -62,12 +62,12 @@ function Supplier() {
                     type="text"
                     placeholder="Company Name"
                 />
-
             </div>
             <CustomTableCompoent
                 headers={headers}
                 rows={rows}
             />
+            
         </div>
     );
 }
