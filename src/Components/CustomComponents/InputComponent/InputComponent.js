@@ -7,7 +7,6 @@ export default function InputComponent({ label, type, placeholder, onChange, inp
             )}
             <br />
             <input
-                // className="w-full border px-3 py-2 rounded"
                 className={`border px-3 py-2 rounded ${inputClassName}`}
                 type={type}
                 placeholder={placeholder}
