@@ -22,6 +22,9 @@ function App() {
              
                  {/* <Route path="/" element={< BulkOfProduct/>} /> */}
           <Route path="/dashboard" element={<Dashboard />} />
+           
+          
+          
         </Routes>
       </Router>
     </div>
