@@ -41,7 +41,12 @@ export default function SalesBilling() {
     // };
     return (
         <div>
-            <div className='text-xl mb-6 font-serif'>Sales Billing</div>
+             <CustomHeaderComponent
+                            name="Sales Billing"
+                            label="Billing History"
+                            className="w-full mt-2 py-1"
+                            icon="fa fa-plus-circle" />
+            {/* <div className='text-xl mb-6 font-serif'>Sales Billing</div> */}
             <div className="grid grid-cols-5 items-center gap-4">
                 <InputComponent
                     label="IMEI No :"
