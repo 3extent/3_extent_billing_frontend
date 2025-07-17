@@ -4,11 +4,12 @@ import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCo
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import BulkOfProduct from "./BulkOfProduct";
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
-import Barcode from 'react-barcode';
+import CustomBarcodePrintComponent from '../../CustomBarcodePrintComponent/CustomBarcodePrintComponent';
+
 
 function StockIn() {
     const selectType = ['Single Product', 'Multiple Product'];
-    const selectGrade = ['a', 'b', ''];
+    const selectGrade = ['A', 'B', 'C','D','Packpic','OK','SC','Open'];
     const selectBox = ['yes', 'No'];
     const selectSource = ['Amazon', 'NA', 'Messho'];
 
@@ -24,11 +25,6 @@ function StockIn() {
         }
         setSaved(true);
     };
-
-    // Combine for barcode
-    const barcodeValue = `${modelName}${grade}${imei}`;
-
-
     return (
         <div className='w-full p-4'>
             <div className='text-xl font-serif mb-4'>Add Product</div>
@@ -142,17 +138,11 @@ function StockIn() {
                 />
             </div>
             {saved && modelName && grade && imei && (
-                <div className="mt-6 flex justify-center">
-                    <div className="bg-white p-4 border border-gray-300 shadow text-center">
-                        <div className="font-serif mb-2">
-                            {/* <strong>Barcode:</strong> {barcodeValue} */}
-                            <div> {modelName}</div>
-                            <div><strong>Grade:</strong> {grade}</div>
-                            {/* <div><strong>IMEI:</strong> {imei}</div> */}
-                        </div>
-                        <Barcode value={imei} />
-                    </div>
-                </div>
+                <CustomBarcodePrintComponent
+                    modelName={modelName}
+                    grade={grade}
+                    imei={imei}
+                />
             )}
 
         </div>

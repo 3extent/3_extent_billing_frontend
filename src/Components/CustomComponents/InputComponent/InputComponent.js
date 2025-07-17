@@ -1,6 +1,7 @@
 export default function InputComponent({ label, type, placeholder, onChange, inputClassName = "", accept, labelClassName = "", }) {
     return (
-        <div className="text-left mb-4">
+        <div className="text-left">
+            {/* mt-4 */}
             {/* // <div className={`text-left mb-4 ${className}`}> */}
             {label && (
                 <label className={labelClassName}>{label}</label>

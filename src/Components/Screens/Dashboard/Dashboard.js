@@ -43,7 +43,7 @@ export default function Dashboard() {
                 ))}
                 <div className="bottom-10 fixed justify-center cursor-pointer pl-4 transform hover:scale-110"><i class="fa fa-sign-out mr-2" aria-hidden="true"></i> {!isCollapsed && "Logout"}</div>
             </div>
-            <div className="w-[80%] p-5">
+            <div className="w-[80%] p-5  h-screen overflow-y-auto">
                 {selectedMenu === "Products" && <ListOfProducts />}
                 {selectedMenu === "Supplier" && <Supplier />}
                 {selectedMenu === "Customer" && <Customer />}
