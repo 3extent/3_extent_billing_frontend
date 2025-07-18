@@ -44,10 +44,10 @@ export default function SalesBilling() {
              <CustomHeaderComponent
                             name="Sales Billing"
                             label="Billing History"
-                            className="w-full mt-2 py-1"
+                            buttonclassName="py-1 text-sm"
                             icon="fa fa-plus-circle" />
             {/* <div className='text-xl mb-6 font-serif'>Sales Billing</div> */}
-            <div className="grid grid-cols-5 items-center gap-4">
+            <div className="flex items-center gap-4 mt-3">
                 <InputComponent
                     label="IMEI No :"
                     type="text"
@@ -78,7 +78,7 @@ export default function SalesBilling() {
                 />
                 <PrimaryButtonComponent
                     label="Save"
-                    className="w-full mt-2"
+                    buttonclassName="mt-2 w-[200px]"
                     icon="fa fa-cloud-download"
                 />
             </div>

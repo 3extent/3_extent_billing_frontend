@@ -34,7 +34,7 @@ export default function Login() {
                             <PrimaryButtonComponent
                                 label="Login"
                                 onClick={handleLogin}
-                                className="w-full"
+                                buttonclassName="w-full"
                             />
                         </div>
                     </div>
