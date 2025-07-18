@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import BulkOfProduct from "./BulkOfProduct";
@@ -9,7 +9,7 @@ import CustomBarcodePrintComponent from '../../CustomBarcodePrintComponent/Custo
 
 function StockIn() {
     const selectType = ['Single Product', 'Multiple Product'];
-    const selectGrade = ['A', 'B', 'C','D','Packpic','OK','SC','Open'];
+    const selectGrade = ['A', 'B', 'C', 'D', 'Packpic', 'OK', 'SC', 'Open'];
     const selectBox = ['yes', 'No'];
     const selectSource = ['Amazon', 'NA', 'Messho'];
 
@@ -17,13 +17,15 @@ function StockIn() {
     const [modelName, setModelName] = useState('');
     const [grade, setGrade] = useState('');
     const [imei, setImei] = useState('');
-    const [saved, setSaved] = useState(false);
+    // const [saved, setSaved] = useState(false);
+    const barcodeRef = useRef();
     const handleSave = () => {
         if (!modelName || !grade || !imei) {
             alert("Please fill Model Name, Grade and IMEI to generate barcode.");
             return;
         }
-        setSaved(true);
+        // setSaved(true);
+        barcodeRef.current?.handlePrint();
     };
     return (
         <div className='w-full p-4'>
@@ -132,18 +134,26 @@ function StockIn() {
             <div className="mt-4 flex justify-center">
                 <PrimaryButtonComponent
                     label="Save"
-                    icon="fa fa-cloud-download"
-                    className="w-full"
+                    // icon="fa fa-cloud-download"
+                    icon="fa fa-save"
+                    // className="w-full"
+                    className="w-[200px]"
                     onClick={handleSave}
                 />
             </div>
-            {saved && modelName && grade && imei && (
+            {/* {saved && modelName && grade && imei && (
                 <CustomBarcodePrintComponent
                     modelName={modelName}
                     grade={grade}
                     imei={imei}
                 />
-            )}
+            )} */}
+            <CustomBarcodePrintComponent
+                ref={barcodeRef}
+                modelName={modelName}
+                grade={grade}
+                imei={imei}
+            />
 
         </div>
 
