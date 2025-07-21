@@ -2,7 +2,7 @@
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
-export default function Models() {
+export default function Models({ NavigateAddModels }) {
     const headers = [
         "No",
         "Model Name",
@@ -23,15 +23,15 @@ export default function Models() {
         <div>
             <CustomHeaderComponent
                 name="Models"
-                label="Add"
-                className="w-[30%] mt-2 py-1 "
+                label="Add Models"
                 icon="fa fa-plus-circle"
-            />
+                buttonclassName="py-1 text-sm"
+                onClick={NavigateAddModels} />
             <div>
                 <InputComponent
                     type="text"
                     placeholder="Enter Models Name"
-                    inputClassName="w-full"
+                    inputClassName="w-[20%]"
                 />
             </div>
             <CustomTableCompoent
