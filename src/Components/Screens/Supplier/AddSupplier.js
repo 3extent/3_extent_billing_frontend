@@ -1,5 +1,6 @@
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
+import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 
 function AddSupplier({ setSelectedMenu }) {
     const selectSupplierType = ["A", "B", "Regular"];
@@ -76,6 +77,14 @@ function AddSupplier({ setSelectedMenu }) {
                     placeholder="Supplier Type"
                     className="w-[80%]"
                     labelClassName="font-serif font-bold"
+                />
+            </div>
+            <div className="mt-4 flex justify-center">
+                <PrimaryButtonComponent
+                    label="Submit"
+                    icon="fa fa-save"
+                    className="w-[200px]"
+
                 />
             </div>
         </div>
