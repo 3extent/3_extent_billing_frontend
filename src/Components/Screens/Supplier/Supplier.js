@@ -1,46 +1,27 @@
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
-function Supplier() {
-    const headers = [
-        "No",
-        "Supplier Name",
-        "Company Name",
-        "Address",
-        "Contact No",
-        "GST No",
-        "Email",
-        "State",
-        "Balance",
-        "Supplier Type",
-    ];
+import { SUPPLIER_COLUMNS } from "./Constants";
+function Supplier() {   
+    <SUPPLIER_COLUMNS/>
     const rows = [
         {
-            "No": "1",
-            "Supplier Name": "nikita kadam",
-            "Company Name": "Apple",
-            "Address": "pune",
+            "Supplier Name": "Nikita Kadam",
             "Contact No": "1234567890",
             "GST No": "27ABCDE1234F1Z5",
-            "Email": "abc@example.com",
             "State": "Maharastra",
             "Balance": "70000",
             "Supplier Type": "wholesale",
         },
         {
-            "No": "2",
-            "Supplier Name": "shardul pawar",
-            "Company Name": "Apple",
-            "Address": "pune",
+            "Supplier Name": "Shardul Pawar",
             "Contact No": "1234567890",
             "GST No": "27ABCDE1234F1Z5",
-            "Email": "abc@example.com",
             "State": "Maharastra",
             "Balance": "80000",
             "Supplier Type": "wholesale",
         }
     ];
-    const supplierTypes = ['a', 'b'];
     return (
 
         <div className="w-full">
@@ -50,21 +31,13 @@ function Supplier() {
                     type="text"
                     placeholder="Suppiler Name"
                 />
-                <DropdownCompoent
-                    options={supplierTypes}
-                    placeholder="Select Supplier Type"
-                />
                 <InputComponent
                     type="text"
                     placeholder="Contact No"
                 />
-                <InputComponent
-                    type="text"
-                    placeholder="Company Name"
-                />
             </div>
             <CustomTableCompoent
-                headers={headers}
+                headers={SUPPLIER_COLUMNS}
                 rows={rows}
             />
             

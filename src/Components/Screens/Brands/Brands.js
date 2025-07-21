@@ -3,12 +3,9 @@ import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/Cust
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
+import { BRANDS_COLOUMNS } from "./Constants";
 function Brands() {
-    const headers = [
-        "No",
-        "Brand Name",
-        "No. of Models"
-    ];
+    <BRANDS_COLOUMNS/>
     const rows = [
         {
             "No": 1,
@@ -21,8 +18,6 @@ function Brands() {
             "No. of Models": 1,
         }
     ];
-    const selectedBrands = ['apple', 'xiaomi'];
-    const selectNumberOfModels = ['2', '1'];
     return (
         <div className='w-full'>
             <CustomHeaderComponent
@@ -31,20 +26,15 @@ function Brands() {
                 className="w-full mt-2 py-1"
                 icon="fa fa-plus-circle" />
             <div className='flex items-center gap-4'>
-                <InputComponent />
-
-                <DropdownCompoent
-                    options={selectedBrands}
-                    placeholder="Select Brands"
+                <InputComponent
+                type="text"
+                placeholder="Enter Brands Name"
                 />
-                <DropdownCompoent
-                    options={selectNumberOfModels}
-                    placeholder="Enter No Of Models"
-                />
+ 
             </div>
             <div>
                 <CustomTableCompoent
-                    headers={headers}
+                    headers={BRANDS_COLOUMNS}
                     rows={rows}
                 />
             </div>

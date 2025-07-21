@@ -3,18 +3,10 @@ import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
-const headers = [
-    "Sr.No",
-    "Date",
-    "IMEI NO",
-    "Company Name",
-    "Model Name",
-    "Rate",
-    "Grade",
-    "Box",
-    "Contact No"
-];
-const rows = [
+import { SALESBILLING_COLOUMNS } from "./Constants";
+<SALESBILLING_COLOUMNS/>
+export default function SalesBilling() {
+    const [rows,setRows] =useState([
     {
         "Sr.No": "1",
         "Date": "2025-07-10",
@@ -22,12 +14,30 @@ const rows = [
         "Company Name": "Apple",
         "Model Name": "iPhone 6",
         "Rate": 500,
+        "Purchase Price":1000,
+        "Grade": "A",
+        "Box": "Yes",
+        "Contact No": "9876543210",
+    },
+    {
+        "Sr.No": "1",
+        "Date": "2025-07-10",
+        "IMEI NO": "359876543210123",
+        "Company Name": "Apple",
+        "Model Name": "iPhone 6",
+        "Rate": 500,
+        "Purchase Price":1000,
         "Grade": "A",
         "Box": "Yes",
         "Contact No": "9876543210",
     }
-];
-export default function SalesBilling() {
+]);
+ const handleRateChange = (index, newRate) => {
+        const updatedRows = [...rows];
+        updatedRows[index]["Rate"] = Number(newRate); 
+        setRows(updatedRows);
+    };
+    
     // const [imei, setImei] = useState("");
     // const [customerName, setCustomerName] = useState("");
     // const [contactNo, setContactNo] = useState("");
@@ -73,14 +83,15 @@ export default function SalesBilling() {
                 />
                 <PrimaryButtonComponent
                     label="Save"
-                    className="w-full mt-2"
+                    className="mt-2"
                     icon="fa fa-cloud-download"
                 />
             </div>
             <div>
                 <CustomTableCompoent
-                    headers={headers}
+                    headers={SALESBILLING_COLOUMNS}
                     rows={rows}
+                    onRateChange={handleRateChange}
                 />
             </div>
             {/* <div className="mt-5">

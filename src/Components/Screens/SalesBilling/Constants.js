@@ -1,0 +1,1 @@
+export const SALESBILLING_COLOUMNS=["Sr.No","Date","IMEI NO","Contact NO","Company Name","Model Name","Rate","Purchase Price","Grade","Box"]
