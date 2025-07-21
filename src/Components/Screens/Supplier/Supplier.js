@@ -1,7 +1,8 @@
+import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
-function Supplier() {
+function Supplier({ setSelectedMenu }) {
     const headers = [
         "No",
         "Supplier Name",
@@ -44,7 +45,15 @@ function Supplier() {
     return (
 
         <div className="w-full">
-            <div className="text-xl font-serif">List Of Suppiler Information</div>
+            {/* <div className="text-xl font-serif">List Of Suppiler Information</div> */}
+            <CustomHeaderComponent
+                name="List of Supplier Information"
+                icon="fas fa-plus"
+                label="Add Supplier"
+                onClick={() => setSelectedMenu("Add Supplier")}
+
+
+            />
             <div className="grid grid-cols-4 items-center gap-4 ">
                 <InputComponent
                     type="text"
@@ -67,7 +76,7 @@ function Supplier() {
                 headers={headers}
                 rows={rows}
             />
-            
+
         </div>
     );
 }

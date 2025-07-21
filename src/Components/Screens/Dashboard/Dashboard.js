@@ -7,6 +7,7 @@ import Brands from "../Brands/Brands";
 import SalesBilling from "../SalesBilling/SalesBilling";
 import Models from "../Brands/Models";
 import { useState } from "react";
+import AddSupplier from "../Supplier/AddSupplier";
 export default function Dashboard() {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [menuItems, setMenuItems] = useState([
@@ -45,7 +46,9 @@ export default function Dashboard() {
             </div>
             <div className="w-[80%] p-5">
                 {selectedMenu === "Products" && <ListOfProducts />}
-                {selectedMenu === "Supplier" && <Supplier />}
+                {/* {selectedMenu === "Supplier" && <Supplier /> */}
+                {selectedMenu === "Supplier" && <Supplier setSelectedMenu={setSelectedMenu} />}
+                {selectedMenu === "Add Supplier" && <AddSupplier setSelectedMenu={setSelectedMenu} />}
                 {selectedMenu === "Customer" && <Customer />}
                 {selectedMenu === "Stock In" && < StockIn />}
                 {selectedMenu === "Sales Billing" && <SalesBilling />}
