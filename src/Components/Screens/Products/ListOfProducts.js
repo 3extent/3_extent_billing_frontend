@@ -22,7 +22,6 @@ function ListOfProducts() {
             "IMEI NO": "123456789012345",
             "Sales": 50000,
             "Purchase Price": 45000,
-            "Profit": 5000,
             "Grade": "A"
         },
         {
@@ -34,7 +33,6 @@ function ListOfProducts() {
             "IMEI NO": "987654321098765",
             "Sales": 70000,
             "Purchase Price": 65000,
-            "Profit": 5000,
             "Grade": "B"
         }
     ];
@@ -56,10 +54,10 @@ function ListOfProducts() {
                     options={selectModels}
                     placeholder="Select Models"
                 />
-                <InputComponent
+                {/* <InputComponent
                     type="text"
                     placeholder="Enter your Grade"
-                />
+                /> */}
 
             </div>
             <div>
