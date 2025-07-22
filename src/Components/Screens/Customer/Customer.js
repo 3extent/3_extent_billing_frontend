@@ -55,7 +55,7 @@ export default function Customer() {
     return (
         <div className="w-full">
             <div className="text-xl font-serif">List Of Customer Information</div>
-            <div className="grid grid-cols-3 items-center gap-4 ">
+            <div className="flex items-center gap-4 ">
                 <InputComponent
                     type="text"
                     placeholder="Customer Name"

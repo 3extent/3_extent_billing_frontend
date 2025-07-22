@@ -7,6 +7,8 @@ import Brands from "../Brands/Brands";
 import SalesBilling from "../SalesBilling/SalesBilling";
 import Models from "../Brands/Models";
 import { useState } from "react";
+import AddModels from "../Brands/AddModels";
+import AddBrands from "../Brands/AddBrands";
 import { useNavigate } from "react-router-dom";
 export default function Dashboard() {
     const [isCollapsed, setIsCollapsed] = useState(false);
@@ -54,8 +56,10 @@ export default function Dashboard() {
                 {selectedMenu === "Customer" && <Customer />}
                 {selectedMenu === "Stock In" && < StockIn />}
                 {selectedMenu === "Sales Billing" && <SalesBilling />}
-                {selectedMenu === "Brands" && <Brands />}
-                {selectedMenu === "Models" && <Models />}
+                {selectedMenu === "Brands" && <Brands NavigateAddBrands={() => setSelectedMenu("Add Brand")} />}
+                {selectedMenu === "Models" && <Models NavigateAddModels={() => setSelectedMenu("Add Model")} />}
+                {selectedMenu === "Add Brand" && <AddBrands/>}
+                {selectedMenu === "Add Model" && <AddModels />}
             </div>
         </div >
     );
