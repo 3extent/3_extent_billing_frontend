@@ -47,7 +47,7 @@ export default function Dashboard() {
                         {!isCollapsed && <span className="hover:font-bold">{item.label}</span>}
                     </div>
                 ))}
-                <div className="bottom-10 fixed justify-center cursor-pointer pl-4 transform hover:scale-110" onClick={handleNavigateLogin}>
+                <div className="bottom-10 fixed justify-center cursor-pointer pl-4 transform hover:scale-110 hover:font-bold" onClick={handleNavigateLogin}>
                     <i class="fa fa-sign-out mr-2" aria-hidden="true"></i>
                     {!isCollapsed && "Logout"}</div>
             </div>
