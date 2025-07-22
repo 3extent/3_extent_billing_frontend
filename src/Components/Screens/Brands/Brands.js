@@ -1,10 +1,9 @@
-import { useNavigate } from "react-router-dom";
+
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
-import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import { BRANDS_COLOUMNS } from "./Constants";
-function Brands() {
+function Brands({NavigateAddBrands}) {
     <BRANDS_COLOUMNS/>
     const rows = [
         {
@@ -22,13 +21,16 @@ function Brands() {
         <div className='w-full'>
             <CustomHeaderComponent
                 name="Brands"
-                label="Add"
-                className="w-full mt-2 py-1"
-                icon="fa fa-plus-circle" />
+                label="Add Brands"
+                buttonclassName="py-1 text-sm"
+                className="w-[full] mt-2 "
+                icon="fa fa-plus-circle"
+                onClick={NavigateAddBrands} />
             <div className='flex items-center gap-4'>
                 <InputComponent
                 type="text"
-                placeholder="Enter Brands Name"
+                placeholder="Enter Brand Name"
+                inputClassName="w-full"
                 />
  
             </div>

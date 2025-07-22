@@ -7,6 +7,9 @@ import Brands from "../Brands/Brands";
 import SalesBilling from "../SalesBilling/SalesBilling";
 import Models from "../Brands/Models";
 import { useState } from "react";
+import AddModels from "../Brands/AddModels";
+import AddBrands from "../Brands/AddBrands";
+import { useNavigate } from "react-router-dom";
 export default function Dashboard() {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [menuItems, setMenuItems] = useState([
@@ -19,6 +22,10 @@ export default function Dashboard() {
         { icon: "fa fa-th-large", label: "Models" }
     ])
     const [selectedMenu, setSelectedMenu] = useState("Sales Billing");
+    const navigate=useNavigate();
+    const handleNavigateLogin=()=>{
+        navigate("/")
+    }
     return (
         <div className="w-[100%] flex">
             <div className={`space-y-2 px-4 pt-5 ${isCollapsed ? 'w-[80px]' : 'w-[20%]'} bg-slate-800 text-white h-screen transition-all duration-300`}>
@@ -33,15 +40,15 @@ export default function Dashboard() {
                 </div>
                 <button onClick={() => setIsCollapsed(!isCollapsed)}><i class="fa fa-times-circle-o top-0  fixed " aria-hidden="true"></i></button>
                 {menuItems.map((item, index) => (
-                    <div key={index} className="flex items-center cursor-pointer pl-4 py-2 hover:bg-slate-600 rounded transform hover:scale-110"
+                    <div key={index} className="flex items-center cursor-pointer pl-4 py-2  hover:bg-slate-600 rounded transform hover:scale-110 hover:font-blod"
                         onClick={() => setSelectedMenu(item.label)}>
                         <span className="mr-3">
                             <i className={item.icon} aria-hidden="true"></i>
                         </span>
-                        {!isCollapsed && <span>{item.label}</span>}
+                        {!isCollapsed && <span className="hover:font-bold">{item.label}</span>}
                     </div>
                 ))}
-                <div className="bottom-10 fixed justify-center cursor-pointer pl-4 transform hover:scale-110"><i class="fa fa-sign-out mr-2" aria-hidden="true"></i> {!isCollapsed && "Logout"}</div>
+                <div className="bottom-10 fixed justify-center cursor-pointer pl-4 transform hover:scale-110" onClick={handleNavigateLogin}><i class="fa fa-sign-out mr-2" aria-hidden="true"></i> {!isCollapsed && "Logout"}</div>
             </div>
             <div className="w-[80%] p-5">
                 {selectedMenu === "Products" && <ListOfProducts />}
@@ -49,8 +56,10 @@ export default function Dashboard() {
                 {selectedMenu === "Customer" && <Customer />}
                 {selectedMenu === "Stock In" && < StockIn />}
                 {selectedMenu === "Sales Billing" && <SalesBilling />}
-                {selectedMenu === "Brands" && <Brands />}
-                {selectedMenu === "Models" && <Models />}
+                {selectedMenu === "Brands" && <Brands NavigateAddBrands={() => setSelectedMenu("Add Brand")} />}
+                {selectedMenu === "Models" && <Models NavigateAddModels={() => setSelectedMenu("Add Model")} />}
+                {selectedMenu === "Add Brand" && <AddBrands/>}
+                {selectedMenu === "Add Model" && <AddModels />}
             </div>
         </div >
     );
