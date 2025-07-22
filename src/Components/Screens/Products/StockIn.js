@@ -4,7 +4,7 @@ import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCo
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import BulkOfProduct from "./BulkOfProduct";
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
-import CustomBarcodePrintComponent from '../../CustomBarcodePrintComponent/CustomBarcodePrintComponent';
+// import CustomBarcodePrintComponent from '../../CustomBarcodePrintComponent/CustomBarcodePrintComponent';
 
 
 function StockIn() {
@@ -133,12 +133,12 @@ function StockIn() {
                     onClick={handleSave}
                 />
             </div>
-            <CustomBarcodePrintComponent
+            {/* <CustomBarcodePrintComponent
                 ref={barcodeRef}
                 modelName={modelName}
                 grade={grade}
                 imei={imei}
-            />
+            /> */}
 
         </div>
 
