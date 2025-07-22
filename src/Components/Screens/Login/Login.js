@@ -32,7 +32,14 @@ export default function Login() {
                             placeholder="Enter your mobile number"
                             inputClassName="w-full"
                             value={loginFormData.mobileNumber}
-                            onChange={handleInputChange}
+                            // onChange={handleInputChange}
+                            onChange={(e) => {
+                                const input = e.target.value.replace(/\D/g, ''); 
+                                if (input.length <= 10) {
+                                    setLoginFormData({ ...loginFormData, mobileNumber: input });
+                                }
+                            }}
+                            maxLength={10}
                         />
                         <InputComponent
                             label="Password"
