@@ -38,7 +38,7 @@ export default function Dashboard() {
                         </>
                     )}
                 </div>
-                <button  className=""onClick={() => setIsCollapsed(!isCollapsed)}><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
+                <button onClick={() => setIsCollapsed(!isCollapsed)}><i class="fa fa-times-circle-o top-0  fixed " aria-hidden="true"></i></button>
                 {menuItems.map((item, index) => (
                     <div key={index} className="flex items-center cursor-pointer pl-4 py-2  hover:bg-slate-600 rounded transform hover:scale-110 hover:font-blod"
                         onClick={() => setSelectedMenu(item.label)}>

@@ -2,12 +2,8 @@
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
+import { BRANDS_COLOUMNS } from "./Constants";
 function Brands({NavigateAddBrands}) {
-    const headers = [
-        "No",
-        "Brand Name",
-        "No. of Models"
-    ];
     const rows = [
         {
             "No": 1,
@@ -35,10 +31,11 @@ function Brands({NavigateAddBrands}) {
                 placeholder="Enter Brand Name"
                 inputClassName="w-full"
                 />
+ 
             </div>
             <div>
                 <CustomTableCompoent
-                    headers={headers}
+                    headers={BRANDS_COLOUMNS}
                     rows={rows}
                 />
             </div>
