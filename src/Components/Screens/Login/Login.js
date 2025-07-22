@@ -2,9 +2,16 @@ import { useNavigate } from 'react-router-dom';
 import billingimage from '../../../Assets/billingimage.webp';
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
-
+import { useState } from 'react';
 export default function Login() {
     const navigate = useNavigate();
+    const [loginFormData, setLoginFormData] = useState({
+        mobileNumber: "",
+        password: ""
+    });
+    const handleInputChange = (event) => {
+        
+    };
     const handleLogin = () => {
         navigate('/dashboard');
     };
@@ -19,16 +26,22 @@ export default function Login() {
                     <div className="font-serif text-xl">Log in Your Account</div>
                     <div className="space-y-4">
                         <InputComponent
-                            label="Mobile Number:"
-                            type="text"
+                            label="Mobile Number"
+                            type="number"
+                            name="mobileNumber"
                             placeholder="Enter your mobile number"
                             inputClassName="w-full"
+                            value={loginFormData.mobileNumber}
+                            onChange={handleInputChange}
                         />
                         <InputComponent
-                            label="Password:"
+                            label="Password"
                             type="password"
+                            name="password"
                             placeholder="Enter your password"
                             inputClassName="w-full"
+                            value={loginFormData.password}
+                            onChange={handleInputChange}
                         />
                         <div>
                             <PrimaryButtonComponent
@@ -39,10 +52,8 @@ export default function Login() {
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
-
     );
 }
 
