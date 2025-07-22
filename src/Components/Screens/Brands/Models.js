@@ -14,7 +14,7 @@ export default function Models() {
         "No": 2,
         "Model Name": "samsung s25 ultra",
         "Qty": 1
-    },
+    }
     ]
     return (
         <div>
