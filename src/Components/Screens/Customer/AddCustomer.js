@@ -78,14 +78,15 @@ function AddCustomer() {
                     className="w-[80%]"
                     labelClassName="font-serif font-bold"
                 />
-                <div className="mt-4 flex justify-center">
-                    <PrimaryButtonComponent
-                        label="Save"
-                        icon="fa fa-cloud-download"
-                        className="w-full"
 
-                    />
-                </div>
+            </div>
+            <div className="mt-4 flex justify-center">
+                <PrimaryButtonComponent
+                    label="Save"
+                    icon="fa fa-cloud-download"
+                    className="w-[200px]"
+
+                />
             </div>
         </div>
     )

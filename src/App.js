@@ -18,7 +18,7 @@ function App() {
     <div>
       <Router>
         <Routes>
-          <Route path="/" element={<AddCustomer/>} />
+          <Route path="/" element={<Login/>} />
               {/* <Route path="/" element={<StockIn/>} /> */}
              
                  {/* <Route path="/" element={< BulkOfProduct/>} /> */}
