@@ -29,7 +29,6 @@ export default function Dashboard() {
     return (
         <div className="w-full flex">
             <div className={`space-y-2 px-4 pt-5 ${isCollapsed ? 'w-[80px]' : 'w-[20%]'} bg-slate-800 text-white h-screen transition-all duration-300`}>
-                {/* <div className="space-y-2 px-4 pt-5 w-[20%] bg-slate-800 text-white h-screen "> */}
                 <div className="font-semibold text-xl pb-6 pl-4 pr-3">
                     {!isCollapsed && (
                         <>
