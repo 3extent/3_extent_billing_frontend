@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
-import CustomBarcodePrintComponent from '../../CustomBarcodePrintComponent/CustomBarcodePrintComponent';
+import CustomBarcodePrintComponent from '../../CustomComponents/CustomBarcodePrintComponent/CustomBarcodePrintComponent';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
 
 function SingleProductStockIn() {
