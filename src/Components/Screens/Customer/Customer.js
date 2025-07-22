@@ -3,7 +3,6 @@ import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCo
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { CUSTOMER_COLOUMS } from "./Constants";
 export default function Customer() {
-    <CUSTOMER_COLOUMS/>
     const rows = [{
         "Customer Name": "Nikita Kadam",
         "Address": "Pune",

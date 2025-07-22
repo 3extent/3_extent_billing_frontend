@@ -4,7 +4,6 @@ import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/Cust
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { SALESBILLING_COLOUMNS } from "./Constants";
-<SALESBILLING_COLOUMNS/>
 export default function SalesBilling() {
     const [rows,setRows] =useState([
     {

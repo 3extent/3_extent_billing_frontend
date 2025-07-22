@@ -4,7 +4,6 @@ import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/Cust
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { MODELS_COLOUMNS } from "./Constants";
 export default function Models({ NavigateAddModels }) {
-   <MODELS_COLOUMNS/>
     const rows = [{
         "No": 1,
         "Model Name": "Apple iphone 6",

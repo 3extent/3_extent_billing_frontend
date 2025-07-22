@@ -1,9 +1,7 @@
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
-import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { SUPPLIER_COLUMNS } from "./Constants";
 function Supplier() {   
-    <SUPPLIER_COLUMNS/>
     const rows = [
         {
             "Supplier Name": "Nikita Kadam",

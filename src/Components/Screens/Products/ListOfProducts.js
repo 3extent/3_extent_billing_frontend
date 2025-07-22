@@ -5,7 +5,6 @@ import CustomTableCompoent from '../../CustomComponents/CustomTableCompoent/Cust
 import DropdownCompoent from '../../CustomComponents/DropdownCompoent/DropdownCompoent';
 import { PRODUCT_COLOUMNS } from './Constants';
 function ListOfProducts() {
-  <PRODUCT_COLOUMNS/>
     const rows = [
         {
             "Date": "2025-07-08",

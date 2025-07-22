@@ -4,7 +4,6 @@ import InputComponent from "../../CustomComponents/InputComponent/InputComponent
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import { BRANDS_COLOUMNS } from "./Constants";
 function Brands({NavigateAddBrands}) {
-    <BRANDS_COLOUMNS/>
     const rows = [
         {
             "No": 1,
