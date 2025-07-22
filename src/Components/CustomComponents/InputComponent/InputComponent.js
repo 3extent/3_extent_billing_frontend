@@ -1,4 +1,4 @@
-export default function InputComponent({ label, type, placeholder, onChange, inputClassName = "", accept, labelClassName = "", name }) {
+export default function InputComponent({ label, type, placeholder, onChange, inputClassName = "", accept, labelClassName = "", name,value }) {
     return (
         <div className="text-left mb-4">
             {/* // <div className={`text-left mb-4 ${className}`}> */}
@@ -13,6 +13,7 @@ export default function InputComponent({ label, type, placeholder, onChange, inp
                 onChange={onChange}
                 accept={accept}
                 name={name}
+                value={value}
             />
         </div>
     );

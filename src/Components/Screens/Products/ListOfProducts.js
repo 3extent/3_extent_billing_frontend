@@ -27,6 +27,10 @@ function ListOfProducts() {
             "Grade": "B"
         }
     ];
+    const [date, setDate] = useState(() => {
+        const today = new Date();
+        return today.toISOString().split("T")[0]; 
+    });
     const selectBrands = ['apple', 'xiaomi'];
     const selectModels = ['apple iphone 14', 'xiaomi redmi note 13'];
     return (
@@ -35,6 +39,7 @@ function ListOfProducts() {
             <div className='flex items-center gap-4'>
                 <InputComponent
                     type="Date"
+                    value={date}
                     placeholder="Enter your Date"
                 />
                 <DropdownCompoent
