@@ -17,14 +17,12 @@ function StockIn() {
     const [modelName, setModelName] = useState('');
     const [grade, setGrade] = useState('');
     const [imei, setImei] = useState('');
-    // const [saved, setSaved] = useState(false);
     const barcodeRef = useRef();
     const handleSave = () => {
         if (!modelName || !grade || !imei) {
             alert("Please fill Model Name, Grade and IMEI to generate barcode.");
             return;
         }
-        // setSaved(true);
         barcodeRef.current?.handlePrint();
     };
     return (
@@ -40,10 +38,6 @@ function StockIn() {
                         placeholder="Select Type"
                         value={stockType}
                         onChange={(val) => setStockType(val)}
-                        // onChange={(val) => {
-                        //     setStockType(val);
-                        //     setSaved(false); // reset on switch
-                        // }}
                         className="w-full"
                     />
                 </div>
@@ -134,20 +128,11 @@ function StockIn() {
             <div className="mt-4 flex justify-center">
                 <PrimaryButtonComponent
                     label="Save"
-                    // icon="fa fa-cloud-download"
                     icon="fa fa-save"
-                    // className="w-full"
                     className="w-[200px]"
                     onClick={handleSave}
                 />
             </div>
-            {/* {saved && modelName && grade && imei && (
-                <CustomBarcodePrintComponent
-                    modelName={modelName}
-                    grade={grade}
-                    imei={imei}
-                />
-            )} */}
             <CustomBarcodePrintComponent
                 ref={barcodeRef}
                 modelName={modelName}
