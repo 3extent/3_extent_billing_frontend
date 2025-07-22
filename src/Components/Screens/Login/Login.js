@@ -3,8 +3,6 @@ import billingimage from '../../../Assets/billingimage.webp';
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { useState } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 export default function Login() {
     const navigate = useNavigate();
     const [loginFormData, setLoginFormData] = useState({
@@ -12,44 +10,11 @@ export default function Login() {
         password: ""
     });
     const handleInputChange = (event) => {
-        const { name, value } = event.target;
-
-        if (name === "mobileNumber") {
-            const digitsOnly = value.replace(/\D/g, '');
-
-            // Show toast if more than 10 digits tried
-            if (digitsOnly.length > 10) {
-                toast.error("Mobile number cannot exceed 10 digits.");
-                return;
-            }
-
-            setLoginFormData({ ...loginFormData, [name]: digitsOnly });
-        } else {
-            setLoginFormData({ ...loginFormData, [name]: value });
-        }
+        
     };
-
-
     const handleLogin = () => {
-        const { mobileNumber, password } = loginFormData;
-
-        if (!mobileNumber && !password) {
-            toast.error(' Please fill out all the fields.');
-            return;
-        }
-        if (mobileNumber.length !== 10) {
-            toast.error('Mobile number must be exactly 10 digits.');
-            return;
-        }
-        if (!password) {
-            toast.error('please enter valid password.');
-            return;
-        }
-
-        toast.success('Login successful!');
         navigate('/dashboard');
     };
-
     return (
         <div className="w-[100%] h-screen flex">
             <div className="w-[50%] h-[100%]">
@@ -68,7 +33,6 @@ export default function Login() {
                             inputClassName="w-full"
                             value={loginFormData.mobileNumber}
                             onChange={handleInputChange}
-                            maxLength={10}
                         />
                         <InputComponent
                             label="Password"
@@ -88,16 +52,8 @@ export default function Login() {
                         </div>
                     </div>
                 </div>
-
             </div>
-            <ToastContainer
-                position="top-right"
-                autoClose={2000}
-                hideProgressBar={true}
-                closeButton={false}
-            />
         </div>
-
     );
 }
 
