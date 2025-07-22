@@ -36,14 +36,14 @@ export default function Dashboard() {
                         </>
                     )}
                 </div>
-                <button onClick={() => setIsCollapsed(!isCollapsed)}><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
+                <button  className=""onClick={() => setIsCollapsed(!isCollapsed)}><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
                 {menuItems.map((item, index) => (
-                    <div key={index} className="flex items-center cursor-pointer pl-4 py-2 hover:bg-slate-600 rounded transform hover:scale-110"
+                    <div key={index} className="flex items-center cursor-pointer pl-4 py-2  hover:bg-slate-600 rounded transform hover:scale-110 hover:font-blod"
                         onClick={() => setSelectedMenu(item.label)}>
                         <span className="mr-3">
                             <i className={item.icon} aria-hidden="true"></i>
                         </span>
-                        {!isCollapsed && <span>{item.label}</span>}
+                        {!isCollapsed && <span className="hover:font-bold">{item.label}</span>}
                     </div>
                 ))}
                 <div className="bottom-10 fixed justify-center cursor-pointer pl-4 transform hover:scale-110" onClick={handleNavigateLogin}><i class="fa fa-sign-out mr-2" aria-hidden="true"></i> {!isCollapsed && "Logout"}</div>
