@@ -57,8 +57,8 @@ export default function Dashboard() {
                 {selectedMenu === "Customer" && <Customer />}
                 {selectedMenu === "Stock In" && < StockIn />}
                 {selectedMenu === "Sales Billing" && <SalesBilling />}
-                {selectedMenu === "Brands" && <Brands NavigateAddBrands={() => setSelectedMenu("Add Brand")} />}
-                {selectedMenu === "Models" && <Models NavigateAddModels={() => setSelectedMenu("Add Model")} />}
+                {selectedMenu === "Brands" && <Brands navigateAddBrands={() => setSelectedMenu("Add Brand")} />}
+                {selectedMenu === "Models" && <Models navigateAddModels={() => setSelectedMenu("Add Model")} />}
                 {selectedMenu === "Add Brand" && <AddBrands />}
                 {selectedMenu === "Add Model" && <AddModels />}
             </div>

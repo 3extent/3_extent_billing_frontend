@@ -17,6 +17,10 @@ function StockIn() {
     const [grade, setGrade] = useState('');
     const [imei, setImei] = useState('');
     const [saved, setSaved] = useState(false);
+    const [date, setDate] = useState(() => {
+        const today = new Date();
+        return today.toISOString().split("T")[0];
+    });
     const handleSave = () => {
         if (!modelName || !grade || !imei) {
             alert("Please fill Model Name, Grade and IMEI to generate barcode.");
@@ -24,11 +28,7 @@ function StockIn() {
         }
         setSaved(true);
     };
-
-    // Combine for barcode
     const barcodeValue = `${modelName}${grade}${imei}`;
-
-
     return (
         <div className='w-full p-4'>
             <div className='text-xl font-serif mb-4'>Add Product</div>
@@ -42,10 +42,6 @@ function StockIn() {
                         placeholder="Select Type"
                         value={stockType}
                         onChange={(val) => setStockType(val)}
-                        // onChange={(val) => {
-                        //     setStockType(val);
-                        //     setSaved(false); // reset on switch
-                        // }}
                         className="w-full"
                     />
                 </div>
@@ -64,6 +60,8 @@ function StockIn() {
                     <InputComponent
                         label="Date"
                         type="Date"
+                        value={date}
+                        onChange={(e) => setDate(e.target.value)}
                         placeholder="Enter your Date"
                         inputClassName="w-[80%]"
                         labelClassName="font-serif font-bold"

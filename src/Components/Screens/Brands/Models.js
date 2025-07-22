@@ -3,7 +3,7 @@ import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { MODELS_COLOUMNS } from "./Constants";
-export default function Models({ NavigateAddModels }) {
+export default function Models({ navigateAddModels }) {
     const rows = [{
         "No": 1,
         "Model Name": "Apple iphone 6",
@@ -22,7 +22,7 @@ export default function Models({ NavigateAddModels }) {
                 label="Add Models"
                 icon="fa fa-plus-circle"
                 buttonclassName="py-1 text-sm"
-                onClick={NavigateAddModels} />
+                onClick={navigateAddModels} />
             <div>
                 <InputComponent
                     type="text"

@@ -1,7 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 export default function CustomTableCompoent({ headers, rows, onRateChange }) {
     const [tableHeaders, setTableHeaders] = useState(headers)
     const [tableRows, setTableRows] = useState(rows)
+    useEffect(() => {
+        setTableHeaders(headers);
+    }, [headers]);
+
+    useEffect(() => {
+        setTableRows(rows);
+    }, [rows]);
     return (
         <div className="overflow-x-auto">
             <table className="table border border-slate-800 w-full">
