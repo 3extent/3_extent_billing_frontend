@@ -34,7 +34,9 @@ export default function CustomTableCompoent({ headers, rows, onRateChange }) {
                                         className="border border-gray-300 px-2 py-1 w-24"
                                     />
                                 ) : (
-                                    row[header]
+                                    row[header] !== undefined && row[header] !== null && row[header] !== ""
+                                        ? row[header]
+                                        : "-"
                                 )}
                             </td>
                         ))}
