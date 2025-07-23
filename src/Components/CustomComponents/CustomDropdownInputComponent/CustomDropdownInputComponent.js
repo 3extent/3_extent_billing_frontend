@@ -7,7 +7,12 @@ export default function CustomDropdownInputComponent() {
     const handleChange = (e) => {
         const value = e.target.value;
         setInputValue(value);
+        setShowDropdown(true);
     };
+    // const handleSelect = (option) => {
+    //     setInputValue(option);
+    //     setShowDropdown(false);
+    // };
     const handleSelect = (option) => {
         setInputValue(option);
         setShowDropdown(false);
@@ -36,6 +41,7 @@ export default function CustomDropdownInputComponent() {
                         <div
                             key={index}
                             className="px-4 py-2 hover:bg-gray-300 cursor-pointer"
+                            onMouseDown={() => handleSelect(option)}
                         >
                             {option}
                         </div>
