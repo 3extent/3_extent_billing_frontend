@@ -55,7 +55,7 @@ export default function Login() {
                             <PrimaryButtonComponent
                                 label="Login"
                                 onClick={handleLogin}
-                                buttonclassName="w-full"
+                                buttonClassName="w-full py-2 px-5 text-xl font-bold"
                             />
                         </div>
                     </div>

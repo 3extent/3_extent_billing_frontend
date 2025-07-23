@@ -13,7 +13,8 @@ function ListOfProducts() {
             "IMEI NO": "123456789012345",
             "Sales Price": 50000,
             "Purchase Price": 45000,
-            "Grade": "A"
+            "Grade": "A",
+            "Barcode":""
         },
         {
             "Customer Name": "Jane Smith",
@@ -24,7 +25,8 @@ function ListOfProducts() {
             "IMEI NO": "987654321098765",
             "Sales Price": 70000,
             "Purchase Price": 65000,
-            "Grade": "B"
+            "Grade": "B",
+            "Barcode":""
         }
     ];
     const [date, setDate] = useState(() => {
