@@ -9,8 +9,10 @@ export default function Login() {
         mobileNumber: "",
         password: ""
     });
-    const handleInputChange = (event) => {
-        
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setLoginFormData({ ...loginFormData, [name]: value });
+        console.log('loginFormData: ', loginFormData);
     };
     const handleLogin = () => {
         navigate('/dashboard');
@@ -32,9 +34,8 @@ export default function Login() {
                             placeholder="Enter your mobile number"
                             inputClassName="w-full"
                             value={loginFormData.mobileNumber}
-                            // onChange={handleInputChange}
                             onChange={(e) => {
-                                const input = e.target.value.replace(/\D/g, ''); 
+                                const input = e.target.value.replace(/\D/g, '');
                                 if (input.length <= 10) {
                                     setLoginFormData({ ...loginFormData, mobileNumber: input });
                                 }
