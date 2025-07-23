@@ -8,7 +8,7 @@ export default function AddModels() {
             <div className="grid grid-cols-2">
                 <CustomDropdownInputComponent />
                 <InputComponent
-                    label="Model Name :"
+                    label="Model Name"
                     labelClassName="font-bold"
                     type="text"
                     placeholder="Enter Model Name"

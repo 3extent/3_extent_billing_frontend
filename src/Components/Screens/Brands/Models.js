@@ -2,12 +2,8 @@
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
+import { MODELS_COLOUMNS } from "./Constants";
 export default function Models({ NavigateAddModels }) {
-    const headers = [
-        "No",
-        "Model Name",
-        "Qty"
-    ];
     const rows = [{
         "No": 1,
         "Model Name": "Apple iphone 6",
@@ -17,7 +13,7 @@ export default function Models({ NavigateAddModels }) {
         "No": 2,
         "Model Name": "samsung s25 ultra",
         "Qty": 1
-    },
+    }
     ]
     return (
         <div>
@@ -35,7 +31,7 @@ export default function Models({ NavigateAddModels }) {
                 />
             </div>
             <CustomTableCompoent
-                headers={headers}
+                headers={MODELS_COLOUMNS}
                 rows={rows}
             />
         </div>

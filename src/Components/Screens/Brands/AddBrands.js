@@ -6,7 +6,7 @@ export default function AddBrands() {
         <div>
             <div className="text-xl font-serif mb-4">Add Brand</div>
             <InputComponent
-                label="Brand Name :"
+                label="Brand Name"
                 type="text"
                 placeholder="Enter Brand Name"
                 inputClassName="w-[40%]"

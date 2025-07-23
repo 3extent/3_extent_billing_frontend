@@ -19,7 +19,7 @@ export default function CustomDropdownInputComponent() {
         );
     return (
         <div className="w-[80%] relative">
-            <label className="font-bold ">Brand Name:</label>
+            <label className="font-bold ">Brand Name</label>
             <input
                 type="text"
                 value={inputValue}
@@ -36,7 +36,6 @@ export default function CustomDropdownInputComponent() {
                         <div
                             key={index}
                             className="px-4 py-2 hover:bg-gray-300 cursor-pointer"
-                            onMouseDown={() => handleSelect(option)} // use mouseDown to prevent blur before selection
                         >
                             {option}
                         </div>

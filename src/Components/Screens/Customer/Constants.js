@@ -1,0 +1,1 @@
+export const CUSTOMER_COLOUMS=["Customer Name","Contact No","Customer Type","Address","State","GST No"]
