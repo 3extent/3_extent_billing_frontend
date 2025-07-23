@@ -45,11 +45,6 @@ function ListOfProducts() {
                     options={selectModels}
                     placeholder="Select Models"
                 />
-                {/* <InputComponent
-                    type="text"
-                    placeholder="Enter your Grade"
-                /> */}
-
             </div>
             <div>
                 <CustomTableCompoent
