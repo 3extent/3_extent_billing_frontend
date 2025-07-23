@@ -21,10 +21,9 @@ function Supplier() {
         }
     ];
     return (
-
         <div className="w-full">
             <div className="text-xl font-serif">List Of Suppiler Information</div>
-            <div className="grid grid-cols-4 items-center gap-4 ">
+            <div className="flex items-center gap-4">
                 <InputComponent
                     type="text"
                     placeholder="Suppiler Name"
@@ -37,8 +36,7 @@ function Supplier() {
             <CustomTableCompoent
                 headers={SUPPLIER_COLUMNS}
                 rows={rows}
-            />
-            
+            />   
         </div>
     );
 }
