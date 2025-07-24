@@ -43,16 +43,13 @@ function Supplier({ setSelectedMenu }) {
     ];
     const supplierTypes = ['a', 'b'];
     return (
-
         <div className="w-full">
-            {/* <div className="text-xl font-serif">List Of Suppiler Information</div> */}
             <CustomHeaderComponent
                 name="List of Supplier Information"
-                icon="fas fa-plus"
+                icon="fa fa-plus-circle"
                 label="Add Supplier"
                 onClick={() => setSelectedMenu("Add Supplier")}
-
-
+               
             />
             <div className="grid grid-cols-4 items-center gap-4 ">
                 <InputComponent

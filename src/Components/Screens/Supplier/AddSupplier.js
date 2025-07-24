@@ -2,7 +2,7 @@ import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCo
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 
-function AddSupplier({ setSelectedMenu }) {
+function AddSupplier() {
     const selectSupplierType = ["A", "B", "Regular"];
     return (
         <div className="w-full">

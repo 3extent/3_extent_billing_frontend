@@ -46,7 +46,7 @@ export default function Dashboard() {
             <div className="w-[80%] p-5">
                 {selectedMenu === "Products" && <ListOfProducts />}
                 {selectedMenu === "Supplier" && <Supplier setSelectedMenu={setSelectedMenu} />}
-                {selectedMenu === "Add Supplier" && <AddSupplier setSelectedMenu={setSelectedMenu} />}
+                {selectedMenu === "Add Supplier" && <AddSupplier/>}
                 {selectedMenu === "Customer" && <Customer />}
                 {selectedMenu === "Stock In" && < StockIn />}
                 {selectedMenu === "Sales Billing" && <SalesBilling />}
