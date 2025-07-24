@@ -9,10 +9,6 @@ export default function CustomDropdownInputComponent() {
         setInputValue(value);
         setShowDropdown(true);
     };
-    // const handleSelect = (option) => {
-    //     setInputValue(option);
-    //     setShowDropdown(false);
-    // };
     const handleSelect = (option) => {
         setInputValue(option);
         setShowDropdown(false);
