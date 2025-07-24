@@ -3,7 +3,6 @@ import InputComponent from "../../CustomComponents/InputComponent/InputComponent
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import CustomBarcodePrintComponent from '../../CustomComponents/CustomBarcodePrintComponent/CustomBarcodePrintComponent';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
-import { createRoot } from 'react-dom/client';
 
 function SingleProductStockIn() {
     const selectGrade = ['A', 'B', 'C', 'D', 'Packpic', 'OK', 'SC', 'Open'];
@@ -12,30 +11,17 @@ function SingleProductStockIn() {
     const [modelName, setModelName] = useState('');
     const [grade, setGrade] = useState('');
     const [imei, setImei] = useState('');
+    const [showBarcode, setShowBarcode] = useState(false)
     const handleSave = () => {
         if (!modelName || !grade || !imei) {
             alert("Please fill Model Name, Grade and IMEI to generate barcode.");
             return;
         }
-        const printWindow = window.open("", "_blank", "width=600,height=400");
-        printWindow.document.body.innerHTML = '<div id="print-root"></div>';
-        const container = printWindow.document.getElementById("print-root");
-        const root = createRoot(container);
-
-        root.render(
-            <CustomBarcodePrintComponent
-                modelName={modelName}
-                grade={grade}
-                imei={imei}
-            />
-        );
-
-        printWindow.focus();
-
+        setShowBarcode(true)
         setTimeout(() => {
-            printWindow.print();
+            window.print();
         }, 500);
-    };
+    }
     return (
         <div className="grid grid-cols-2 gap-x-5 gap-y-2">
             <InputComponent
@@ -123,6 +109,13 @@ function SingleProductStockIn() {
                     onClick={handleSave}
                 />
             </div>
+            {showBarcode && (
+                <CustomBarcodePrintComponent
+                    modelName={modelName}
+                    grade={grade}
+                    imei={imei}
+                />
+            )}
         </div>
     );
 }
