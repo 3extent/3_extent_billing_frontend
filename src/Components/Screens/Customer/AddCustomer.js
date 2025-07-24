@@ -30,9 +30,9 @@ function AddCustomer() {
                     labelClassName="font-serif font-bold"
                 />
                 <InputComponent
-                    label="Contact No 1"
+                    label="Contact No "
                     type="text"
-                    placeholder="Contact No 1"
+                    placeholder="Contact No "
                     inputClassName="w-[80%]"
                     labelClassName="font-serif font-bold"
                 />
