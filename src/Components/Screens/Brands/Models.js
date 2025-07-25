@@ -20,8 +20,8 @@ export default function Models({ NavigateAddModels }) {
      useEffect(() => {
             makeRequest({
                 method: 'GET',
-                url: 'https://3-extent-billing-backend.vercel.app/api/users',
-                data: rows,
+                url: 'https://3-extent-billing-backend.vercel.app/api/models',
+                data: {},
                 callback: (response) => {
                     console.log('response: ', response);
                     if (response.status === 200) {

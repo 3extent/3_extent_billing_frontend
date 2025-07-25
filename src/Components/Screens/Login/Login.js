@@ -17,29 +17,20 @@ export default function Login() {
     };
     const handleLogin = () => {
         makeRequest({
-            method: 'GET',
-            url: 'https://3-extent-billing-backend.vercel.app/api/users',
+            method: 'POST',
+            url: 'https://3-extent-billing-backend.vercel.app/api/users/login',
             data: loginFormData,
             callback: (response) => {
                 console.log('response: ', response);
                 if (response.status === 200) {
-                    // const allUsers = response.data;
                     console.log('response.data: ', response.data);
-                    // const matchedUser = allUsers.find(user =>
-                    //     user.mobile_number === loginFormData.mobile_number &&
-                    //     user.password === loginFormData.password
-                    // );
-                    // if (matchedUser) {
-                        console.log("Success");
-                        // localStorage.setItem('userData', JSON.stringify(matchedUser));
-                        // console.log('matchedUser: ', matchedUser);
-                        navigate('/dashboard');
-                    } else {
-                        console.log("Error");
-                    }
+                    console.log("Success");
+                    navigate('/dashboard');
+                } else {
+                    console.log("Error");
                 }
-            // }
-         })
+            }
+        })
     };
     return (
         <div className="w-[100%] h-screen flex">

@@ -1,9 +1,10 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import InputComponent from '../../CustomComponents/InputComponent/InputComponent';
 import CustomTableCompoent from '../../CustomComponents/CustomTableCompoent/CustomTableCompoent';
 import DropdownCompoent from '../../CustomComponents/DropdownCompoent/DropdownCompoent';
 import { PRODUCT_COLOUMNS } from './Constants';
+import { makeRequest } from '../../../Util/AxiosUtils';
 function ListOfProducts() {
     const rows = [
         {
@@ -27,6 +28,22 @@ function ListOfProducts() {
             "Grade": "B"
         }
     ];
+    useEffect(() => {
+        makeRequest({
+            method: 'GET',
+            url: 'https://3-extent-billing-backend.vercel.app/api/products',
+            data: rows,
+            callback: (response) => {
+                console.log('response: ', response);
+                if (response.status === 200) {
+                    console.log('response.data: ', response.data);
+                    console.log("Success");
+                } else {
+                    console.log("Error");
+                }
+            }
+        })
+    }, []);
     const selectBrands = ['apple', 'xiaomi'];
     const selectModels = ['apple iphone 14', 'xiaomi redmi note 13'];
     return (

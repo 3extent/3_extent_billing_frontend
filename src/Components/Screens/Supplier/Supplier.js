@@ -22,11 +22,11 @@ function Supplier() {
             "Supplier Type": "wholesale",
         }
     ];
-     useEffect(() => {
+    useEffect(() => {
         makeRequest({
             method: 'GET',
-            url: 'https://3-extent-billing-backend.vercel.app/api/users',
-            data: rows,
+            url: 'https://3-extent-billing-backend.vercel.app/api/users?role=SUPPLIER',
+            data: {},
             callback: (response) => {
                 console.log('response: ', response);
                 if (response.status === 200) {
