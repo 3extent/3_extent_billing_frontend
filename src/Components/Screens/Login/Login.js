@@ -3,34 +3,43 @@ import billingimage from '../../../Assets/billingimage.webp';
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { useState } from 'react';
-import { makeRequest } from '../../../Util/AxiosUtil';
+import { makeRequest } from '../../../Util/AxiosUtils';
 export default function Login() {
     const navigate = useNavigate();
-    // const [userData, setUserData] = useState(null);
     const [loginFormData, setLoginFormData] = useState({
-        mobileNumber: "",
+        mobile_number: "",
         password: ""
     });
-    const handleInputChange = (event) => {
-        
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setLoginFormData({ ...loginFormData, [name]: value });
+        console.log('loginFormData: ', loginFormData);
     };
     const handleLogin = () => {
-          makeRequest({
+        makeRequest({
             method: 'GET',
-            url:'https://3-extent-billing-backend.vercel.app/api/users' ,
+            url: 'https://3-extent-billing-backend.vercel.app/api/users',
             data: loginFormData,
-            callback:(response)=>{
+            callback: (response) => {
                 console.log('response: ', response);
-                if(response.status===200){
-                    //  setUserData(response.data);
-                    // localStorage.setItem('userData', JSON.stringify(response.data));
-                    console.log("Success");
-                    navigate('/dashboard');
-                }else{
-                    console.log("Error");
+                if (response.status === 200) {
+                    const allUsers = response.data;
+                    console.log('response.data: ', response.data);
+                    const matchedUser = allUsers.find(user =>
+                        user.mobile_number === loginFormData.mobile_number &&
+                        user.password === loginFormData.password
+                    );
+                    if (matchedUser) {
+                        console.log("Success");
+                        localStorage.setItem('userData', JSON.stringify(matchedUser));
+                        console.log('matchedUser: ', matchedUser);
+                        navigate('/dashboard');
+                    } else {
+                        console.log("Error");
+                    }
                 }
             }
-        });
+        })
     };
     return (
         <div className="w-[100%] h-screen flex">
@@ -45,10 +54,10 @@ export default function Login() {
                         <InputComponent
                             label="Mobile Number"
                             type="number"
-                            name="mobileNumber"
+                            name="mobile_number"
                             placeholder="Enter your mobile number"
                             inputClassName="w-full"
-                            value={loginFormData.mobileNumber}
+                            value={loginFormData.mobile_number}
                             onChange={handleInputChange}
                         />
                         <InputComponent
