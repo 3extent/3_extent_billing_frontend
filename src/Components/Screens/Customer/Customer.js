@@ -2,7 +2,7 @@ import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
-export default function Customer({ navigateAddCustomer }) {
+export default function Customer({ setSelectedMenu }) {
     const headers = [
         "No",
         "Customer Name",
@@ -55,12 +55,11 @@ export default function Customer({ navigateAddCustomer }) {
     const CustomerTypes = ['a', 'b'];
     return (
         <div className="w-full">
-            {/* <div className="text-xl font-serif">List Of Customer Information</div> */}
             <CustomHeaderComponent
                 name="List Of Customer Information"
                 label="Add Customer"
                 icon="fa fa-plus-circle"
-                onClick={navigateAddCustomer}
+                onClick={() => setSelectedMenu("Add Customer")}
             />
             <div className="grid grid-cols-3 items-center gap-4 ">
                 <InputComponent

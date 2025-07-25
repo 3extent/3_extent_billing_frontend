@@ -21,11 +21,9 @@ export default function Dashboard() {
         { icon: "fa fa-th-large", label: "Models" }
     ])
     const [selectedMenu, setSelectedMenu] = useState("Sales Billing");
-    const navigate=useNavigate();
     return (
         <div className="w-[100%] flex">
             <div className={`space-y-2 px-4 pt-5 ${isCollapsed ? 'w-[80px]' : 'w-[20%]'} bg-slate-800 text-white h-screen transition-all duration-300`}>
-                {/* <div className="space-y-2 px-4 pt-5 w-[20%] bg-slate-800 text-white h-screen "> */}
                 <div className="font-semibold text-xl pb-6 pl-4 pr-3">
                     {!isCollapsed && (
                         <>
@@ -49,7 +47,7 @@ export default function Dashboard() {
             <div className="w-[80%] p-5">
                 {selectedMenu === "Products" && <ListOfProducts />}
                 {selectedMenu === "Supplier" && <Supplier />}
-                {selectedMenu === "Customer" && <Customer navigateAddCustomer={() => setSelectedMenu("Add Customer")} />}
+                {selectedMenu === "Customer" && <Customer setSelectedMenu={setSelectedMenu} />}
                 {selectedMenu === "Add Customer" && <AddCustomer />}
                 {selectedMenu === "Stock In" && < StockIn />}
                 {selectedMenu === "Sales Billing" && <SalesBilling />}
