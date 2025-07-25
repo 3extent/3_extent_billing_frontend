@@ -1,8 +1,10 @@
 
+import { useEffect } from "react";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { MODELS_COLOUMNS } from "./Constants";
+import { makeRequest } from "../../../Util/AxiosUtils";
 export default function Models({ NavigateAddModels }) {
     const rows = [{
         "No": 1,
