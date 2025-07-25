@@ -1,7 +1,9 @@
+import { useEffect } from "react";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { CUSTOMER_COLOUMS } from "./Constants";
+import { makeRequest } from "../../../Util/AxiosUtils";
 export default function Customer() {
     const rows = [{
         "Customer Name": "Nikita Kadam",
@@ -20,6 +22,22 @@ export default function Customer() {
         "Customer Type": "Regular",
     }
     ];
+     useEffect(() => {
+            makeRequest({
+                method: 'GET',
+                url: 'https://3-extent-billing-backend.vercel.app/api/users',
+                data: rows,
+                callback: (response) => {
+                    console.log('response: ', response);
+                    if (response.status === 200) {
+                        console.log('response.data: ', response.data);
+                        console.log("Success");
+                    } else {
+                        console.log("Error");
+                    }
+                }
+            })
+        }, []);
     const CostomerTypes = ['a', 'b'];
     return (
         <div className="w-full">
