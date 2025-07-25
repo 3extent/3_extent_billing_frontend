@@ -1,7 +1,9 @@
+import { useEffect } from "react";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { SUPPLIER_COLUMNS } from "./Constants";
-function Supplier() {   
+import { makeRequest } from "../../../Util/AxiosUtils";
+function Supplier() {
     const rows = [
         {
             "Supplier Name": "Nikita Kadam",
@@ -20,8 +22,23 @@ function Supplier() {
             "Supplier Type": "wholesale",
         }
     ];
+     useEffect(() => {
+        makeRequest({
+            method: 'GET',
+            url: 'https://3-extent-billing-backend.vercel.app/api/users',
+            data: rows,
+            callback: (response) => {
+                console.log('response: ', response);
+                if (response.status === 200) {
+                    console.log('response.data: ', response.data);
+                    console.log("Success");
+                } else {
+                    console.log("Error");
+                }
+            }
+        })
+    }, []);
     return (
-
         <div className="w-full">
             <div className="text-xl font-serif">List Of Suppiler Information</div>
             <div className="grid grid-cols-4 items-center gap-4 ">
@@ -38,7 +55,7 @@ function Supplier() {
                 headers={SUPPLIER_COLUMNS}
                 rows={rows}
             />
-            
+
         </div>
     );
 }

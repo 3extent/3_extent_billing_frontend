@@ -23,23 +23,23 @@ export default function Login() {
             callback: (response) => {
                 console.log('response: ', response);
                 if (response.status === 200) {
-                    const allUsers = response.data;
+                    // const allUsers = response.data;
                     console.log('response.data: ', response.data);
-                    const matchedUser = allUsers.find(user =>
-                        user.mobile_number === loginFormData.mobile_number &&
-                        user.password === loginFormData.password
-                    );
-                    if (matchedUser) {
+                    // const matchedUser = allUsers.find(user =>
+                    //     user.mobile_number === loginFormData.mobile_number &&
+                    //     user.password === loginFormData.password
+                    // );
+                    // if (matchedUser) {
                         console.log("Success");
-                        localStorage.setItem('userData', JSON.stringify(matchedUser));
-                        console.log('matchedUser: ', matchedUser);
+                        // localStorage.setItem('userData', JSON.stringify(matchedUser));
+                        // console.log('matchedUser: ', matchedUser);
                         navigate('/dashboard');
                     } else {
                         console.log("Error");
                     }
                 }
-            }
-        })
+            // }
+         })
     };
     return (
         <div className="w-[100%] h-screen flex">
