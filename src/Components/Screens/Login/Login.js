@@ -3,8 +3,10 @@ import billingimage from '../../../Assets/billingimage.webp';
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { useState } from 'react';
+import { makeRequest } from '../../../Util/AxiosUtil';
 export default function Login() {
     const navigate = useNavigate();
+    // const [userData, setUserData] = useState(null);
     const [loginFormData, setLoginFormData] = useState({
         mobileNumber: "",
         password: ""
@@ -13,7 +15,22 @@ export default function Login() {
         
     };
     const handleLogin = () => {
-        navigate('/dashboard');
+          makeRequest({
+            method: 'GET',
+            url:'https://3-extent-billing-backend.vercel.app/api/users' ,
+            data: loginFormData,
+            callback:(response)=>{
+                console.log('response: ', response);
+                if(response.status===200){
+                    //  setUserData(response.data);
+                    // localStorage.setItem('userData', JSON.stringify(response.data));
+                    console.log("Success");
+                    navigate('/dashboard');
+                }else{
+                    console.log("Error");
+                }
+            }
+        });
     };
     return (
         <div className="w-[100%] h-screen flex">

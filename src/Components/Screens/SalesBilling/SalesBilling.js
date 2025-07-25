@@ -50,12 +50,12 @@ export default function SalesBilling() {
     // };
     return (
         <div>
-             <CustomHeaderComponent
-                            name="Sales Billing"
-                            label="Billing History"
-                            buttonclassName="py-1 text-sm"
-                            icon="fa fa-plus-circle" />
-            {/* <div className='text-xl mb-6 font-serif'>Sales Billing</div> */}
+            <CustomHeaderComponent
+                name="Sales Billing"
+                label="Billing History"
+                icon="fa fa-history" 
+                buttonClassName="py-1 px-3 text-sm font-bold"
+                />
             <div className="flex items-center gap-4 mt-3">
                 <InputComponent
                     label="IMEI No :"

@@ -58,7 +58,7 @@ function BulkOfProduct() {
                 <PrimaryButtonComponent
                     label="Continue"
                     onClick={handleButtonClick}
-                    className="w-[100%] p-20"
+                    buttonClassName="text-xl font-bold py-2 px-5 w-[20%]"
                 />
             </div>
             {showTable && excelData.length > 0 && (

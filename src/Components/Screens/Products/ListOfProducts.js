@@ -47,7 +47,7 @@ function ListOfProducts() {
                 />
                 <InputComponent
                     type="text"
-                    placeholder="Enter your Grade"
+                    placeholder="Enter IMEI NO"
                 />
 
             </div>
