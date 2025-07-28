@@ -32,7 +32,7 @@ function ListOfProducts() {
         makeRequest({
             method: 'GET',
             url: 'https://3-extent-billing-backend.vercel.app/api/products',
-            data: rows,
+            data:{},
             callback: (response) => {
                 console.log('response: ', response);
                 if (response.status === 200) {
