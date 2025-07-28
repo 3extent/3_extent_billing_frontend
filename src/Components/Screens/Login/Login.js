@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import billingimage from '../../../Assets/billingimage.webp';
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { makeRequest } from '../../../Util/AxiosUtils';
 export default function Login() {
     const navigate = useNavigate();
@@ -10,6 +10,12 @@ export default function Login() {
         mobile_number: "",
         password: ""
     });
+    useEffect(() => {
+        const isAuthenticated = localStorage.getItem('isAuthenticated');
+        if (isAuthenticated === 'true') {
+            navigate('/dashboard');
+        }
+    }, [navigate]);
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setLoginFormData({ ...loginFormData, [name]: value });
@@ -24,10 +30,11 @@ export default function Login() {
                 console.log('response: ', response);
                 if (response.status === 200) {
                     console.log('response.data: ', response.data);
+                     localStorage.setItem('isAuthenticated', 'true');
                     console.log("Success");
                     navigate('/dashboard');
                 } else {
-                    console.log("Error");
+                    console.log("login failed");
                 }
             }
         })
