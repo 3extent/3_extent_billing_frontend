@@ -1,27 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { CUSTOMER_COLOUMS } from "./Constants";
 import { makeRequest } from "../../../Util/AxiosUtils";
 export default function Customer() {
-    const rows = [{
-        "Customer Name": "Nikita Kadam",
-        "Address": "Pune",
-        "Contact No": "1234567765",
-        "GST No": "27AAAPL1234C1ZV",
-        "State": "Maharashtra",
-        "Customer Type": "Regular",
-    },
-    {
-        "Customer Name": "Nikita Kadam",
-        "Address": "Pune",
-        "Contact No": "1234567765",
-        "GST No": "27AAAPL1234C1ZV",
-        "State": "Maharashtra",
-        "Customer Type": "Regular",
-    }
-    ];
+    const [rows,setRows]=useState([]);
      useEffect(() => {
             makeRequest({
                 method: 'GET',
@@ -30,8 +14,15 @@ export default function Customer() {
                 callback: (response) => {
                     console.log('response: ', response);
                     if (response.status === 200) {
-                        console.log('response.data: ', response.data);
-                        console.log("Success");
+                        const customerFormttedRows=response.data.map((customer)=>({
+                            "Customer Name":customer.name,
+                            "Contact No":customer.contact_number,
+                            "Customer Type":customer.type,
+                            "Address":customer.address,
+                            "state":customer.state,
+                            "GST No":customer.gst_number,
+                        }))
+                        setRows(customerFormttedRows);
                     } else {
                         console.log("Error");
                     }

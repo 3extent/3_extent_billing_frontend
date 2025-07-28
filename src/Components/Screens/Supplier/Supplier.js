@@ -1,27 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { SUPPLIER_COLUMNS } from "./Constants";
 import { makeRequest } from "../../../Util/AxiosUtils";
 function Supplier() {
-    const rows = [
-        {
-            "Supplier Name": "Nikita Kadam",
-            "Contact No": "1234567890",
-            "GST No": "27ABCDE1234F1Z5",
-            "State": "Maharastra",
-            "Balance": "70000",
-            "Supplier Type": "wholesale",
-        },
-        {
-            "Supplier Name": "Shardul Pawar",
-            "Contact No": "1234567890",
-            "GST No": "27ABCDE1234F1Z5",
-            "State": "Maharastra",
-            "Balance": "80000",
-            "Supplier Type": "wholesale",
-        }
-    ];
+    const [rows,setRows] =useState([]);
     useEffect(() => {
         makeRequest({
             method: 'GET',
@@ -30,8 +13,15 @@ function Supplier() {
             callback: (response) => {
                 console.log('response: ', response);
                 if (response.status === 200) {
-                    console.log('response.data: ', response.data);
-                    console.log("Success");
+                   const supplierFormattedRows = response.data.map((supplier) => ({
+                    "Supplier Name": supplier.name,
+                    "Contact No": supplier.contact_number,
+                    "GST No": supplier.gst_number,
+                    "State": supplier.state,            
+                    "Balance": supplier.balance,          
+                    "Supplier Type": supplier.type
+                }));
+                setRows(supplierFormattedRows);
                 } else {
                     console.log("Error");
                 }

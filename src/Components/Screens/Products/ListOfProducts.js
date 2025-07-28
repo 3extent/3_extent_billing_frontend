@@ -6,28 +6,7 @@ import DropdownCompoent from '../../CustomComponents/DropdownCompoent/DropdownCo
 import { PRODUCT_COLOUMNS } from './Constants';
 import { makeRequest } from '../../../Util/AxiosUtils';
 function ListOfProducts() {
-    const rows = [
-        {
-            "Date": "2025-07-08",
-            "Company Name": "Samsung",
-            "Product Name": "Galaxy S21",
-            "IMEI NO": "123456789012345",
-            "Sales Price": 50000,
-            "Purchase Price": 45000,
-            "Grade": "A"
-        },
-        {
-            "Customer Name": "Jane Smith",
-            "Bill": "INV002",
-            "Date": "2025-07-07",
-            "Company Name": "Apple",
-            "Product Name": "iPhone 13",
-            "IMEI NO": "987654321098765",
-            "Sales Price": 70000,
-            "Purchase Price": 65000,
-            "Grade": "B"
-        }
-    ];
+    const [rows,setRows]=useState([]);
     useEffect(() => {
         makeRequest({
             method: 'GET',
@@ -36,8 +15,17 @@ function ListOfProducts() {
             callback: (response) => {
                 console.log('response: ', response);
                 if (response.status === 200) {
-                    console.log('response.data: ', response.data);
-                    console.log("Success");
+                    const productFormattedRows=response.data.map((product)=>({
+                        "date":product.date,
+                        "IMEI NO":product.imei_number,
+                        "Company Name":product.brand,
+                        "Product Name":product.model,
+                        "Sales Price":product.sales_price,
+                        "Purchase Price":product.purchase_price,
+                        "Grade":product.grade,
+                        "Barcode":product.barcode
+                    }))
+                    setRows(productFormattedRows);
                 } else {
                     console.log("Error");
                 }

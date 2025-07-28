@@ -1,22 +1,12 @@
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { MODELS_COLOUMNS } from "./Constants";
 import { makeRequest } from "../../../Util/AxiosUtils";
 export default function Models({ NavigateAddModels }) {
-    const rows = [{
-        "No": 1,
-        "Model Name": "Apple iphone 6",
-        "Qty": 2
-    },
-    {
-        "No": 2,
-        "Model Name": "samsung s25 ultra",
-        "Qty": 1
-    }
-    ]
+    const [rows,setRows] =useState([]);
      useEffect(() => {
             makeRequest({
                 method: 'GET',
@@ -25,8 +15,12 @@ export default function Models({ NavigateAddModels }) {
                 callback: (response) => {
                     console.log('response: ', response);
                     if (response.status === 200) {
-                        console.log('response.data: ', response.data);
-                        console.log("Success");
+                        const modelFormattedaRows=response.data.map((model,index)=>({
+                            "No":index+1,
+                            "Model Name":model.name,
+                            "Qty":model.qty
+                        }))
+                        setRows(modelFormattedaRows);
                     } else {
                         console.log("Error");
                     }
