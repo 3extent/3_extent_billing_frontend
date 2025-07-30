@@ -2,18 +2,21 @@ import { useNavigate } from 'react-router-dom';
 import billingimage from '../../../Assets/billingimage.webp';
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
-import { useState } from 'react';
-export default function Login() {
+import { useEffect, useState } from 'react';
+export default function Login({ onLogin }) {
     const navigate = useNavigate();
     const [loginFormData, setLoginFormData] = useState({
         mobileNumber: "",
         password: ""
     });
     const handleInputChange = (event) => {
-        
+        const { name, value } = event.target;
+        setLoginFormData({ ...loginFormData, [name]: value });
     };
     const handleLogin = () => {
-        navigate('/dashboard');
+        localStorage.setItem("isLoggedIn", "true");
+        onLogin(); 
+        navigate('/salesbilling'); 
     };
     return (
         <div className="w-[100%] h-screen flex">
