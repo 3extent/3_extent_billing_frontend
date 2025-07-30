@@ -22,7 +22,7 @@ function App() {
               {/* <Route path="/" element={<StockIn/>} /> */}
              
                  {/* <Route path="/" element={< BulkOfProduct/>} /> */}
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} /> 
         </Routes>
       </Router>
     </div>
