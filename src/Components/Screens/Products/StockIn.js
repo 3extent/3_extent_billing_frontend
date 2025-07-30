@@ -7,7 +7,8 @@ import BulkOfProduct from "./BulkOfProduct";
 function StockIn() {
     const selectType = ['Single Product', 'Multiple Product'];
     const [stockType, setStockType] = useState('Single Product');
-
+    
+    
     return (
         <div className='w-full p-4'>
             <div className='text-xl font-serif mb-4'>Add Product</div>

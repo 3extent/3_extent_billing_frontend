@@ -3,7 +3,7 @@ import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/Cust
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import { BRANDS_COLOUMNS } from "./Constants";
-function Brands({NavigateAddBrands}) {
+function Brands({ navigateAddBrands }) {
     const rows = [
         {
             "No": 1,
@@ -21,17 +21,18 @@ function Brands({NavigateAddBrands}) {
             <CustomHeaderComponent
                 name="Brands"
                 label="Add Brands"
-                buttonclassName="py-1 text-sm"
-                className="w-[full] mt-2 "
                 icon="fa fa-plus-circle"
-                onClick={NavigateAddBrands} />
+                onClick={navigateAddBrands}
+                buttonClassName="py-1 px-3 text-sm font-bold"
+            />
+
             <div className='flex items-center gap-4'>
                 <InputComponent
-                type="text"
-                placeholder="Enter Brand Name"
-                inputClassName="w-full"
+                    type="text"
+                    placeholder="Enter Brand Name"
+                    inputClassName="w-full"
                 />
- 
+
             </div>
             <div>
                 <CustomTableCompoent

@@ -13,7 +13,8 @@ function ListOfProducts() {
             "IMEI NO": "123456789012345",
             "Sales Price": 50000,
             "Purchase Price": 45000,
-            "Grade": "A"
+            "Grade": "A",
+            "Barcode":""
         },
         {
             "Customer Name": "Jane Smith",
@@ -24,9 +25,14 @@ function ListOfProducts() {
             "IMEI NO": "987654321098765",
             "Sales Price": 70000,
             "Purchase Price": 65000,
-            "Grade": "B"
+            "Grade": "B",
+            "Barcode":""
         }
     ];
+    const [date, setDate] = useState(() => {
+        const today = new Date();
+        return today.toISOString().split("T")[0]; 
+    });
     const selectBrands = ['apple', 'xiaomi'];
     const selectModels = ['apple iphone 14', 'xiaomi redmi note 13'];
     return (
@@ -35,6 +41,7 @@ function ListOfProducts() {
             <div className='flex items-center gap-4'>
                 <InputComponent
                     type="Date"
+                    value={date}
                     placeholder="Enter your Date"
                 />
                 <DropdownCompoent

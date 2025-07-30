@@ -24,12 +24,12 @@ export default function Dashboard() {
         { icon: "fa fa-th-large", label: "Models" }
     ])
     const [selectedMenu, setSelectedMenu] = useState("Sales Billing");
-    const navigate=useNavigate();
-    const handleNavigateLogin=()=>{
+    const navigate = useNavigate();
+    const handleNavigateLogin = () => {
         navigate("/")
     }
     return (
-        <div className="w-[100%] flex">
+        <div className="w-full flex">
             <div className={`space-y-2 px-4 pt-5 ${isCollapsed ? 'w-[80px]' : 'w-[20%]'} bg-slate-800 text-white h-screen transition-all duration-300`}>
                 <div className="font-semibold text-xl pb-6 pl-4 pr-3">
                     {!isCollapsed && (
@@ -49,7 +49,9 @@ export default function Dashboard() {
                         {!isCollapsed && <span className="hover:font-bold">{item.label}</span>}
                     </div>
                 ))}
-                <div className="bottom-10 fixed justify-center cursor-pointer pl-4 transform hover:scale-110" onClick={handleNavigateLogin}><i class="fa fa-sign-out mr-2" aria-hidden="true"></i> {!isCollapsed && "Logout"}</div>
+                <div className="bottom-10 fixed justify-center cursor-pointer pl-4 transform hover:scale-110 hover:font-bold" onClick={handleNavigateLogin}>
+                    <i class="fa fa-sign-out mr-2" aria-hidden="true"></i>
+                    {!isCollapsed && "Logout"}</div>
             </div>
             <div className="w-[80%] p-5  h-screen overflow-y-auto">
                 {selectedMenu === "Products" && <ListOfProducts />}
@@ -59,9 +61,9 @@ export default function Dashboard() {
                 {selectedMenu === "Add Customer" && <AddCustomer />}
                 {selectedMenu === "Stock In" && < StockIn />}
                 {selectedMenu === "Sales Billing" && <SalesBilling />}
-                {selectedMenu === "Brands" && <Brands NavigateAddBrands={() => setSelectedMenu("Add Brand")} />}
-                {selectedMenu === "Models" && <Models NavigateAddModels={() => setSelectedMenu("Add Model")} />}
-                {selectedMenu === "Add Brand" && <AddBrands/>}
+                {selectedMenu === "Brands" && <Brands navigateAddBrands={() => setSelectedMenu("Add Brand")} />}
+                {selectedMenu === "Models" && <Models navigateAddModels={() => setSelectedMenu("Add Model")} />}
+                {selectedMenu === "Add Brand" && <AddBrands />}
                 {selectedMenu === "Add Model" && <AddModels />}
             </div>
         </div >
