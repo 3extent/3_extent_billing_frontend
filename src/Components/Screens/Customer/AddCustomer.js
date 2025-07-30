@@ -1,9 +1,9 @@
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
+import { CUSTOMER_TYPE_OPTIONS } from "./Constants";
 
 function AddCustomer() {
-    const selectcustomertype = ["Regular", "A", "B"]
     return (
         <div>
             <div className='text-xl font-serif mb-4'>Add Customer</div>
@@ -73,7 +73,7 @@ function AddCustomer() {
                 />
                 <DropdownCompoent
                     label="Customer Type"
-                    options={selectcustomertype}
+                    options={CUSTOMER_TYPE_OPTIONS}
                     placeholder="Select customer type"
                     className="w-[80%]"
                     labelClassName="font-serif font-bold"
@@ -84,7 +84,9 @@ function AddCustomer() {
                 <PrimaryButtonComponent
                     label="Save"
                     icon="fa fa-cloud-download"
-                    className="w-[200px]"
+                    // className="w-[200px]"
+                    buttonClassName="mt-2 py-1 px-5 text-xl font-bold"
+
 
                 />
             </div>

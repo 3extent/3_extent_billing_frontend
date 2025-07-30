@@ -1,9 +1,9 @@
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
+import { SUPPLIER_TYPE_OPTIONS } from "./Constants";
 
 function AddSupplier() {
-    const selectSupplierType = ["A", "B", "Regular"];
     return (
         <div className="w-full">
             <div className='text-xl font-serif mb-4'>Add Supplier</div>
@@ -73,7 +73,7 @@ function AddSupplier() {
                 />
                 <DropdownCompoent
                     label="Supplier Type"
-                    options={selectSupplierType}
+                    options={SUPPLIER_TYPE_OPTIONS}
                     placeholder="Supplier Type"
                     className="w-[80%]"
                     labelClassName="font-serif font-bold"
@@ -83,7 +83,8 @@ function AddSupplier() {
                 <PrimaryButtonComponent
                     label="Submit"
                     icon="fa fa-save"
-                    className="w-[200px]"
+                    buttonClassName="mt-2 py-1 px-5 text-xl font-bold"
+
 
                 />
             </div>

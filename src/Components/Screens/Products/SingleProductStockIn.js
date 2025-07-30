@@ -3,11 +3,9 @@ import InputComponent from "../../CustomComponents/InputComponent/InputComponent
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import CustomBarcodePrintComponent from '../../CustomComponents/CustomBarcodePrintComponent/CustomBarcodePrintComponent';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
+import { BOX_OPTIONS, GRADE_OPTIONS, SOURCE_OPTIONS } from './Constants';
 
 function SingleProductStockIn() {
-    const selectGrade = ['A', 'B', 'C', 'D', 'Packpic', 'OK', 'SC', 'Open'];
-    const selectBox = ['yes', 'No'];
-    const selectSource = ['Amazon', 'NA', 'Messho'];
     const [modelName, setModelName] = useState('');
     const [grade, setGrade] = useState('');
     const [imei, setImei] = useState('');
@@ -42,7 +40,7 @@ function SingleProductStockIn() {
             />
             <DropdownCompoent
                 label="Grade"
-                options={selectGrade}
+                options={GRADE_OPTIONS}
                 placeholder="Select Grade"
                 value={grade}
                 onChange={(val) => setGrade(val)}
@@ -88,14 +86,14 @@ function SingleProductStockIn() {
             />
             <DropdownCompoent
                 label="Source"
-                options={selectSource}
+                options={SOURCE_OPTIONS}
                 placeholder="Select Source"
                 className="w-[80%]"
                 labelClassName="font-serif font-bold"
             />
             <DropdownCompoent
                 label="BOX"
-                options={selectBox}
+                options={BOX_OPTIONS}
                 placeholder="Select Box"
                 className="w-[80%]"
                 labelClassName="font-serif font-bold"
@@ -105,8 +103,9 @@ function SingleProductStockIn() {
                 <PrimaryButtonComponent
                     label="Save"
                     icon="fa fa-save"
-                    className="w-[200px]"
                     onClick={handleSave}
+                    buttonClassName="mt-2 py-1 px-5 text-xl font-bold"
+
                 />
             </div>
             {showBarcode && (
