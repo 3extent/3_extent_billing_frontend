@@ -1,6 +1,6 @@
 import PrimaryButtonComponent from "../PrimaryButtonComponent/PrimaryButtonComponent";
 
-export default function CustomHeaderComponent({ name, icon, label, onClick }) {
+export default function CustomHeaderComponent({ name, icon, label, onClick, buttonclassName = "" }) {
     return (
         <div className="flex justify-between items-center">
             <div className="text-xl font-serif">{name}</div>
@@ -8,6 +8,7 @@ export default function CustomHeaderComponent({ name, icon, label, onClick }) {
                 icon={icon}
                 label={label}
                 onClick={onClick}
+                buttonclassName={buttonclassName}
             />
         </div>
     );

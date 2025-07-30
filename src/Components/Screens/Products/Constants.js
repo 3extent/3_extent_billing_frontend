@@ -1,0 +1,1 @@
+export const PRODUCT_COLOUMNS=["Date","Company Name","Product Name","IMEI NO","Sales Price","Purchase Price","Grade"]
