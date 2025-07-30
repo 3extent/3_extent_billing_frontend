@@ -12,13 +12,14 @@ import BulkOfProduct from './Components/Screens/Products/BulkOfProduct';
 // import Customer from './Components/Screens/Customer/Customer';
 // import SellsBilling from './Components/Screens/SellsBilling/SellsBilling';
 import Customer from './Components/Screens/Customer/Customer';
+import DashboardSidebar from './Components/Screens/DashboardSidebar/DashboardSidebar';
 function App() {
   return (
     <div>
       <Router>
         <Routes>
           <Route path="/" element={<Login/>} />
-              {/* <Route path="/" element={<StockIn/>} /> */}
+              {/* <Route path="/" element={<DashboardSidebar/>} /> */}
              
                  {/* <Route path="/" element={< BulkOfProduct/>} /> */}
           <Route path="/dashboard" element={<Dashboard />} /> 
