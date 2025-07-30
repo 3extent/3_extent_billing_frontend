@@ -3,7 +3,7 @@ import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/Cust
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { CUSTOMER_COLOUMS } from "./Constants";
-export default function Customer() {
+export default function Customer({ setSelectedMenu }) {
     const rows = [{
         "Customer Name": "Nikita Kadam",
         "Address": "Pune",

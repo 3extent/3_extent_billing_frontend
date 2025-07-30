@@ -7,6 +7,7 @@ import Brands from "../Brands/Brands";
 import SalesBilling from "../SalesBilling/SalesBilling";
 import Models from "../Brands/Models";
 import { useState } from "react";
+import AddSupplier from "../Supplier/AddSupplier";
 import AddCustomer from "../Customer/AddCustomer";
 import AddModels from "../Brands/AddModels";
 import AddBrands from "../Brands/AddBrands";
@@ -52,7 +53,8 @@ export default function Dashboard() {
             </div>
             <div className="w-[80%] p-5">
                 {selectedMenu === "Products" && <ListOfProducts />}
-                {selectedMenu === "Supplier" && <Supplier />}
+                {selectedMenu === "Supplier" && <Supplier setSelectedMenu={setSelectedMenu} />}
+                {selectedMenu === "Add Supplier" && <AddSupplier/>}
                 {selectedMenu === "Customer" && <Customer setSelectedMenu={setSelectedMenu} />}
                 {selectedMenu === "Add Customer" && <AddCustomer />}
                 {selectedMenu === "Stock In" && < StockIn />}

@@ -1,14 +1,15 @@
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import BulkOfProduct from "./BulkOfProduct";
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
-import Barcode from 'react-barcode';
+// import CustomBarcodePrintComponent from '../../CustomBarcodePrintComponent/CustomBarcodePrintComponent';
+
 
 function StockIn() {
     const selectType = ['Single Product', 'Multiple Product'];
-    const selectGrade = ['a', 'b', ''];
+    const selectGrade = ['A', 'B', 'C', 'D', 'Packpic', 'OK', 'SC', 'Open'];
     const selectBox = ['yes', 'No'];
     const selectSource = ['Amazon', 'NA', 'Messho'];
 
@@ -16,19 +17,14 @@ function StockIn() {
     const [modelName, setModelName] = useState('');
     const [grade, setGrade] = useState('');
     const [imei, setImei] = useState('');
-    const [saved, setSaved] = useState(false);
+    const barcodeRef = useRef();
     const handleSave = () => {
         if (!modelName || !grade || !imei) {
             alert("Please fill Model Name, Grade and IMEI to generate barcode.");
             return;
         }
-        setSaved(true);
+        barcodeRef.current?.handlePrint();
     };
-
-    // Combine for barcode
-    const barcodeValue = `${modelName}${grade}${imei}`;
-
-
     return (
         <div className='w-full p-4'>
             <div className='text-xl font-serif mb-4'>Add Product</div>
@@ -42,10 +38,6 @@ function StockIn() {
                         placeholder="Select Type"
                         value={stockType}
                         onChange={(val) => setStockType(val)}
-                        // onChange={(val) => {
-                        //     setStockType(val);
-                        //     setSaved(false); // reset on switch
-                        // }}
                         className="w-full"
                     />
                 </div>
@@ -136,24 +128,17 @@ function StockIn() {
             <div className="mt-4 flex justify-center">
                 <PrimaryButtonComponent
                     label="Save"
-                    icon="fa fa-cloud-download"
-                    className="w-full"
+                    icon="fa fa-save"
+                    className="w-[200px]"
                     onClick={handleSave}
                 />
             </div>
-            {saved && modelName && grade && imei && (
-                <div className="mt-6 flex justify-center">
-                    <div className="bg-white p-4 border border-gray-300 shadow text-center">
-                        <div className="font-serif mb-2">
-                            {/* <strong>Barcode:</strong> {barcodeValue} */}
-                            <div> {modelName}</div>
-                            <div><strong>Grade:</strong> {grade}</div>
-                            {/* <div><strong>IMEI:</strong> {imei}</div> */}
-                        </div>
-                        <Barcode value={imei} />
-                    </div>
-                </div>
-            )}
+            {/* <CustomBarcodePrintComponent
+                ref={barcodeRef}
+                modelName={modelName}
+                grade={grade}
+                imei={imei}
+            /> */}
 
         </div>
 
