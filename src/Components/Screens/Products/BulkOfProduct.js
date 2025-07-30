@@ -21,7 +21,6 @@ function BulkOfProduct() {
         reader.onload = (evt) => {
             const data = evt.target.result;
             const workbook = XLSX.read(data, { type: 'binary' });
-
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
             const jsonData = XLSX.utils.sheet_to_json(worksheet);
@@ -46,7 +45,7 @@ function BulkOfProduct() {
                 <InputComponent
                     label="Upload Excel File"
                     type="file"
-                    accept=".xlsx, .xls"                                                                            
+                    accept=".xlsx, .xls"
                     onChange={handleFileUpload}
                     inputClassName="w-[80%] p-10"
                 />
