@@ -84,7 +84,6 @@ function AddCustomer() {
                 <PrimaryButtonComponent
                     label="Save"
                     icon="fa fa-cloud-download"
-                    // className="w-[200px]"
                     buttonClassName="mt-2 py-1 px-5 text-xl font-bold"
 
 
