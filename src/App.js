@@ -11,6 +11,7 @@ import BulkOfProduct from './Components/Screens/Products/BulkOfProduct';
 // import Customer from './Components/Screens/Customer/Customer';
 // import SellsBilling from './Components/Screens/SellsBilling/SellsBilling';
 import Customer from './Components/Screens/Customer/Customer';
+import AddCustomer from './Components/Screens/Customer/AddCustomer';
 function App() {
   return (
     <div>

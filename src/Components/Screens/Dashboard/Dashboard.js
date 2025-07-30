@@ -7,6 +7,8 @@ import Brands from "../Brands/Brands";
 import SalesBilling from "../SalesBilling/SalesBilling";
 import Models from "../Brands/Models";
 import { useState } from "react";
+import AddSupplier from "../Supplier/AddSupplier";
+import AddCustomer from "../Customer/AddCustomer";
 import AddModels from "../Brands/AddModels";
 import AddBrands from "../Brands/AddBrands";
 import { useNavigate } from "react-router-dom";
@@ -51,10 +53,12 @@ export default function Dashboard() {
                     <i class="fa fa-sign-out mr-2" aria-hidden="true"></i>
                     {!isCollapsed && "Logout"}</div>
             </div>
-            <div className="flex-grow p-5 transition-all duration-300">
+            <div className="w-[80%] p-5  h-screen overflow-y-auto">
                 {selectedMenu === "Products" && <ListOfProducts />}
-                {selectedMenu === "Supplier" && <Supplier />}
-                {selectedMenu === "Customer" && <Customer />}
+                {selectedMenu === "Supplier" && <Supplier setSelectedMenu={setSelectedMenu} />}
+                {selectedMenu === "Add Supplier" && <AddSupplier/>}
+                {selectedMenu === "Customer" && <Customer setSelectedMenu={setSelectedMenu} />}
+                {selectedMenu === "Add Customer" && <AddCustomer />}
                 {selectedMenu === "Stock In" && < StockIn />}
                 {selectedMenu === "Sales Billing" && <SalesBilling />}
                 {selectedMenu === "Brands" && <Brands navigateAddBrands={() => setSelectedMenu("Add Brand")} />}
