@@ -5,8 +5,13 @@ import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/
 import { BRANDS_COLOUMNS } from "./Constants";
 import { useEffect, useState } from "react";
 import { makeRequest } from "../../../Util/AxiosUtils";
-function Brands({ NavigateAddBrands }) {
+import { useNavigate } from "react-router-dom";
+function Brands() {
     const [rows, setRows] = useState([]);
+    const navigate = useNavigate();
+    const navigateAddBrands = () => {
+        navigate("/addbrands")
+    }
     useEffect(() => {
         makeRequest({
             method: 'GET',
@@ -31,15 +36,15 @@ function Brands({ NavigateAddBrands }) {
             <CustomHeaderComponent
                 name="Brands"
                 label="Add Brands"
-                buttonclassName="py-1 text-sm"
-                className="w-[full] mt-2 "
                 icon="fa fa-plus-circle"
-                onClick={NavigateAddBrands} />
+                onClick={navigateAddBrands}
+                buttonClassName="py-1 px-3 text-sm font-bold" />
+
             <div className='flex items-center gap-4'>
                 <InputComponent
                     type="text"
                     placeholder="Enter Brand Name"
-                    inputClassName="w-full"
+                    inputClassName="w-[full] mb-5"
                 />
 
             </div>

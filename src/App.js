@@ -1,30 +1,55 @@
-import Login from './Components/Screens/Login/Login';
+import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Dashboard from "./Components/Screens/Dashboard/Dashboard";
-import CustomHeaderComponent from './Components/CustomComponents/CustomHeaderComponent/CustomHeaderComponent';
-
+import Login from './Components/Screens/Login/Login';
 import ListOfProducts from './Components/Screens/Products/ListOfProducts';
 import Supplier from "./Components/Screens/Supplier/Supplier";
-import CustomTableCompoent from './Components/CustomComponents/CustomTableCompoent/CustomTableCompoent';
-import DropdownCompoent from './Components/CustomComponents/DropdownCompoent/DropdownCompoent';
 import StockIn from './Components/Screens/Products/StockIn';
-import BulkOfProduct from './Components/Screens/Products/BulkOfProduct';
-// import Customer from './Components/Screens/Customer/Customer';
-// import SellsBilling from './Components/Screens/SellsBilling/SellsBilling';
 import Customer from './Components/Screens/Customer/Customer';
+import DashboardSidebar from './Components/Screens/DashboardSidebar/DashboardSidebar';
+import Brands from './Components/Screens/Brands/Brands';
+import Models from './Components/Screens/Brands/Models';
+import SalesBilling from './Components/Screens/SalesBilling/SalesBilling';
+import AddBrands from './Components/Screens/Brands/AddBrands';
+import AddModels from './Components/Screens/Brands/AddModels';
+import AddSupplier from './Components/Screens/Supplier/AddSupplier';
+import AddCustomer from './Components/Screens/Customer/AddCustomer';
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  useEffect(() => {
+    const loginStatus = localStorage.getItem("isLoggedIn") === "true";
+    setIsLoggedIn(loginStatus);
+  }, []);
   return (
-    <div>
-      <Router>
+    <Router>
+      {isLoggedIn ? (
+        <div className="flex">
+          <div className="w-[20%]">
+            <DashboardSidebar onLogout={() => setIsLoggedIn(false)} />
+          </div>
+          <div className="w-[80%] p-4">
+            <Routes>
+              <Route path="/" element={<SalesBilling />} />
+              <Route path="/salesbilling" element={<SalesBilling />} />
+              <Route path="/products" element={<ListOfProducts />} />
+              <Route path="/supplier" element={<Supplier />} />
+              <Route path="/customer" element={<Customer />} />
+              <Route path="/brands" element={<Brands />} />
+              <Route path="/models" element={<Models />} />
+              <Route path="/stockin" element={<StockIn />} />
+              <Route path="/addbrands" element={<AddBrands />} />
+              <Route path="/addmodels" element={<AddModels />} />
+              <Route path="/addcustomer" element={<AddCustomer />} />
+              <Route path="/addsupplier" element={<AddSupplier />} />
+
+            </Routes>
+          </div>
+        </div>
+      ) : (
         <Routes>
-          <Route path="/" element={<Login/>} />
-              {/* <Route path="/" element={<StockIn/>} /> */}
-             
-                 {/* <Route path="/" element={< BulkOfProduct/>} /> */}
-          <Route path="/dashboard" element={<Dashboard />} /> 
+          <Route path="*" element={<Login onLogin={() => setIsLoggedIn(true)} />} />
         </Routes>
-      </Router>
-    </div>
+      )}
+    </Router>
   );
 }
 export default App;

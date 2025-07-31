@@ -3,8 +3,14 @@ import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/Cust
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { SUPPLIER_COLUMNS } from "./Constants";
 import { makeRequest } from "../../../Util/AxiosUtils";
+import { useNavigate } from "react-router-dom";
+import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 function Supplier() {
-    const [rows,setRows] =useState([]);
+    const [rows, setRows] = useState([]);
+    const navigate = useNavigate();
+    const navigateAddSupplier = () => {
+        navigate("/addsupplier")
+    }
     useEffect(() => {
         makeRequest({
             method: 'GET',
@@ -13,15 +19,15 @@ function Supplier() {
             callback: (response) => {
                 console.log('response: ', response);
                 if (response.status === 200) {
-                   const supplierFormattedRows = response.data.map((supplier) => ({
-                    "Supplier Name": supplier.name,
-                    "Contact No": supplier.contact_number,
-                    "GST No": supplier.gst_number,
-                    "State": supplier.state,            
-                    "Balance": supplier.balance,          
-                    "Supplier Type": supplier.type
-                }));
-                setRows(supplierFormattedRows);
+                    const supplierFormattedRows = response.data.map((supplier) => ({
+                        "Supplier Name": supplier.name,
+                        "Contact No": supplier.contact_number,
+                        "GST No": supplier.gst_number,
+                        "State": supplier.state,
+                        "Balance": supplier.balance,
+                        "Supplier Type": supplier.type
+                    }));
+                    setRows(supplierFormattedRows);
                 } else {
                     console.log("Error");
                 }
@@ -30,8 +36,15 @@ function Supplier() {
     }, []);
     return (
         <div className="w-full">
-            <div className="text-xl font-serif">List Of Suppiler Information</div>
-            <div className="grid grid-cols-4 items-center gap-4 ">
+            <CustomHeaderComponent
+                name="List of Supplier Information"
+                icon="fa fa-plus-circle"
+                label="Add Supplier"
+                onClick={navigateAddSupplier}
+                buttonClassName="py-1 px-3 text-sm font-bold"
+
+            />
+            <div className="flex items-center gap-4 mb-5">
                 <InputComponent
                     type="text"
                     placeholder="Suppiler Name"

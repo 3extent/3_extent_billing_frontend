@@ -2,25 +2,24 @@ import { useNavigate } from 'react-router-dom';
 import billingimage from '../../../Assets/billingimage.webp';
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { makeRequest } from '../../../Util/AxiosUtils';
-export default function Login() {
+export default function Login({ onLogin }) {
     const navigate = useNavigate();
     const [loginFormData, setLoginFormData] = useState({
         mobile_number: "",
         password: ""
     });
-    useEffect(() => {
-        const isAuthenticated = localStorage.getItem('isAuthenticated');
-        if (isAuthenticated === 'true') {
-            navigate('/dashboard');
-        }
-    }, [navigate]);
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
+    const handleInputChange = (event) => {
+        const { name, value } = event.target;
         setLoginFormData({ ...loginFormData, [name]: value });
-        console.log('loginFormData: ', loginFormData);
     };
+    // const handleLogin = () => {
+    //     localStorage.setItem("isLoggedIn", "true");
+    //     onLogin(); 
+    //     navigate('/salesbilling'); 
+    // };
+
     const handleLogin = () => {
         makeRequest({
             method: 'POST',
@@ -30,9 +29,10 @@ export default function Login() {
                 console.log('response: ', response);
                 if (response.status === 200) {
                     console.log('response.data: ', response.data);
-                     localStorage.setItem('isAuthenticated', 'true');
+                    onLogin();
+                    localStorage.setItem('isAuthenticated', 'true');
                     console.log("Success");
-                    navigate('/dashboard');
+                    navigate('/salesbilling');
                 } else {
                     console.log("login failed");
                 }
@@ -56,7 +56,13 @@ export default function Login() {
                             placeholder="Enter your mobile number"
                             inputClassName="w-full"
                             value={loginFormData.mobile_number}
-                            onChange={handleInputChange}
+                            onChange={(e) => {
+                                const input = e.target.value.replace(/\D/g, '');
+                                if (input.length <= 10) {
+                                    setLoginFormData({ ...loginFormData, mobile_number: input });
+                                }
+                            }}
+                            maxLength={10}
                         />
                         <InputComponent
                             label="Password"
@@ -70,8 +76,10 @@ export default function Login() {
                         <div>
                             <PrimaryButtonComponent
                                 label="Login"
+                                icon="fa fa-arrow-right"
+                                iconPosition="right"
                                 onClick={handleLogin}
-                                buttonclassName="w-full"
+                                buttonClassName="w-full py-2 px-5 text-xl font-bold"
                             />
                         </div>
                     </div>
