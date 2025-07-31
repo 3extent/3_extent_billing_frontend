@@ -2,7 +2,7 @@ import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
-import { CUSTOMER_COLOUMS, CUSTOMER_OPTIONS } from "./Constants";
+import { CUSTOMER_COLOUMS, CUSTOMER_TYPE_OPTIONS } from "./Constants";
 export default function Customer({ setSelectedMenu }) {
     const rows = [{
         "Customer Name": "Nikita Kadam",
@@ -40,7 +40,7 @@ export default function Customer({ setSelectedMenu }) {
                     placeholder="Contact No"
                 />
                 <DropdownCompoent
-                    options={CUSTOMER_OPTIONS}
+                    options={CUSTOMER_TYPE_OPTIONS}
                     placeholder="Select Customer Type"
                 />
             </div>
