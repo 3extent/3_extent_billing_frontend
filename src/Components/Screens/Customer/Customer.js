@@ -1,9 +1,14 @@
+import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { CUSTOMER_COLOUMS, CUSTOMER_TYPE_OPTIONS } from "./Constants";
-export default function Customer({ setSelectedMenu }) {
+export default function Customer() {
+    const navigate=useNavigate();
+    const navigateAddCustomer=()=>{
+        navigate("/addcustomer")
+    }
     const rows = [{
         "Customer Name": "Nikita Kadam",
         "Address": "Pune",
@@ -27,7 +32,7 @@ export default function Customer({ setSelectedMenu }) {
                 name="List Of Customer Information"
                 label="Add Customer"
                 icon="fa fa-plus-circle"
-                onClick={() => setSelectedMenu("Add Customer")}
+                onClick={navigateAddCustomer}
                 buttonClassName="py-1 px-3 text-sm font-bold"
             />
             <div className="grid grid-cols-3 items-center gap-4 ">

@@ -11,6 +11,8 @@ import Models from './Components/Screens/Brands/Models';
 import SalesBilling from './Components/Screens/SalesBilling/SalesBilling';
 import AddBrands from './Components/Screens/Brands/AddBrands';
 import AddModels from './Components/Screens/Brands/AddModels';
+import AddSupplier from './Components/Screens/Supplier/AddSupplier';
+import AddCustomer from './Components/Screens/Customer/AddCustomer';
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   useEffect(() => {
@@ -36,6 +38,9 @@ function App() {
               <Route path="/stockin" element={<StockIn />} />
               <Route path="/addbrands" element={<AddBrands />} />
               <Route path="/addmodels" element={<AddModels />} />
+              <Route path="/addcustomer" element={<AddCustomer />} />
+              <Route path="/addsupplier" element={<AddSupplier />} />
+
             </Routes>
           </div>
         </div>

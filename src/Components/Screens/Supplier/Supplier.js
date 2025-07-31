@@ -1,8 +1,13 @@
+import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { SUPPLIER_COLUMNS } from "./Constants";
-function Supplier({ setSelectedMenu }) {
+function Supplier() {
+    const navigate=useNavigate();
+    const navigateAddSupplier=()=>{
+        navigate("/addsupplier")
+    }
     const rows = [
         {
             "Supplier Name": "Nikita Kadam",
@@ -27,7 +32,7 @@ function Supplier({ setSelectedMenu }) {
                 name="List of Supplier Information"
                 icon="fa fa-plus-circle"
                 label="Add Supplier"
-                onClick={() => setSelectedMenu("Add Supplier")}
+                onClick={navigateAddSupplier}
                 buttonClassName="py-1 px-3 text-sm font-bold"
 
             />
