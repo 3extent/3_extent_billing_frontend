@@ -34,7 +34,7 @@ function Brands() {
                 <InputComponent
                     type="text"
                     placeholder="Enter Brand Name"
-                    inputClassName="w-full"
+                    inputClassName="w-[full] mb-5"
                 />
 
             </div>

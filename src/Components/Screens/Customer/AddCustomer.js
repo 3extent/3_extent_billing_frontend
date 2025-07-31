@@ -83,7 +83,7 @@ function AddCustomer() {
             <div className="mt-4 flex justify-center">
                 <PrimaryButtonComponent
                     label="Save"
-                    icon="fa fa-cloud-download"
+                    icon="fa fa-save"
                     buttonClassName="mt-2 py-1 px-5 text-xl font-bold"
 
 

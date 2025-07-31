@@ -36,10 +36,10 @@ function Supplier() {
                 buttonClassName="py-1 px-3 text-sm font-bold"
 
             />
-            <div className="grid grid-cols-4 items-center gap-4 ">
+            <div className="flex items-center gap-4 mb-5">
                 <InputComponent
                     type="text"
-                    placeholder="Suppiler Name"
+                    placeholder="Suppiler Name" 
                 />
                 <InputComponent
                     type="text"

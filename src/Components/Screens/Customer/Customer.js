@@ -35,14 +35,16 @@ export default function Customer() {
                 onClick={navigateAddCustomer}
                 buttonClassName="py-1 px-3 text-sm font-bold"
             />
-            <div className="grid grid-cols-3 items-center gap-4 ">
+            <div className="flex items-center gap-4 ">
                 <InputComponent
                     type="text"
                     placeholder="Customer Name"
+                    inputClassName="mb-5"
                 />
                 <InputComponent
                     type="text"
                     placeholder="Contact No"
+                    inputClassName="mb-5"
                 />
                 <DropdownCompoent
                     options={CUSTOMER_TYPE_OPTIONS}

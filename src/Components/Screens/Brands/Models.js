@@ -33,7 +33,7 @@ export default function Models() {
                 <InputComponent
                     type="text"
                     placeholder="Enter Models Name"
-                    inputClassName="w-[20%]"
+                    inputClassName="w-[20%] mb-5"
                 />
             </div>
             <CustomTableCompoent
