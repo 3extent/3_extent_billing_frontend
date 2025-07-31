@@ -91,7 +91,7 @@ export default function SalesBilling() {
                 />
                 <PrimaryButtonComponent
                     label="Save"
-                    buttonClassName="mt-2 py-1 px-5 text-xl font-bold"
+                    buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
                     icon="fa fa-cloud-download"
                 />
             </div>

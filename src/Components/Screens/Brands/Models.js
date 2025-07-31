@@ -1,9 +1,14 @@
 
+import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { MODELS_COLOUMNS } from "./Constants";
-export default function Models({ navigateAddModels }) {
+export default function Models() {
+    const navigate=useNavigate();
+    const navigateAddModels=()=>{
+        navigate("/addmodels")
+    }
     const rows = [{
         "No": 1,
         "Model Name": "Apple iphone 6",
@@ -21,14 +26,14 @@ export default function Models({ navigateAddModels }) {
                 name="Models"
                 label="Add Models"
                 icon="fa fa-plus-circle"
-                onClick={navigateAddModels}
-                buttonClassName="py-1 px-3 text-sm font-bold"
-            />
+                buttonclassName="py-1 text-sm"
+                onClick={navigateAddModels} 
+                buttonClassName="py-1 px-3 text-sm font-bold"/>
             <div>
                 <InputComponent
                     type="text"
                     placeholder="Enter Models Name"
-                    inputClassName="w-[20%]"
+                    inputClassName="w-[20%] mb-5"
                 />
             </div>
             <CustomTableCompoent

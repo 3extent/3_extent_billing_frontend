@@ -14,7 +14,7 @@ export default function AddBrands() {
             />
             <PrimaryButtonComponent
                 label="Submit"
-                icon="fa fa-plus-circle"
+                icon="fa fa-bookmark-o"
                 buttonClassName="mt-2 py-1 px-5 text-xl font-bold"
             />
         </div>

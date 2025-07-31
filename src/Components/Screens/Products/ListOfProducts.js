@@ -40,7 +40,8 @@ function ListOfProducts() {
                 <InputComponent
                     type="Date"
                     value={date}
-                    placeholder="Enter your Date"
+                    onChange={(e) => setDate(e.target.value)}
+                    inputClassName="mb-5"
                 />
                 <DropdownCompoent
                     options={BRAND_OPTIONS}

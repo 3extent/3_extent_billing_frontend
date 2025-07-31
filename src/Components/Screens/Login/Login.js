@@ -3,19 +3,20 @@ import billingimage from '../../../Assets/billingimage.webp';
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { useState } from 'react';
-export default function Login() {
+export default function Login({ onLogin }) {
     const navigate = useNavigate();
     const [loginFormData, setLoginFormData] = useState({
         mobileNumber: "",
         password: ""
     });
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
+    const handleInputChange = (event) => {
+        const { name, value } = event.target;
         setLoginFormData({ ...loginFormData, [name]: value });
-        console.log('loginFormData: ', loginFormData);
     };
     const handleLogin = () => {
-        navigate('/dashboard');
+        localStorage.setItem("isLoggedIn", "true");
+        onLogin(); 
+        navigate('/salesbilling'); 
     };
     return (
         <div className="w-[100%] h-screen flex">
