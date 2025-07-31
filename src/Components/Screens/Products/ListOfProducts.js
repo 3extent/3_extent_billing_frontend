@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import InputComponent from '../../CustomComponents/InputComponent/InputComponent';
 import CustomTableCompoent from '../../CustomComponents/CustomTableCompoent/CustomTableCompoent';
 import DropdownCompoent from '../../CustomComponents/DropdownCompoent/DropdownCompoent';
-import { PRODUCT_COLOUMNS } from './Constants';
+import { BRAND_OPTIONS, MODEL_OPTIONS, PRODUCT_COLOUMNS } from './Constants';
 function ListOfProducts() {
     const rows = [
         {
@@ -14,7 +14,7 @@ function ListOfProducts() {
             "Sales Price": 50000,
             "Purchase Price": 45000,
             "Grade": "A",
-            "Barcode":""
+            "Barcode": ""
         },
         {
             "Customer Name": "Jane Smith",
@@ -26,15 +26,13 @@ function ListOfProducts() {
             "Sales Price": 70000,
             "Purchase Price": 65000,
             "Grade": "B",
-            "Barcode":""
+            "Barcode": ""
         }
     ];
     const [date, setDate] = useState(() => {
         const today = new Date();
-        return today.toISOString().split("T")[0]; 
+        return today.toISOString().split("T")[0];
     });
-    const selectBrands = ['apple', 'xiaomi'];
-    const selectModels = ['apple iphone 14', 'xiaomi redmi note 13'];
     return (
         <div className='w-full'>
             <div className='text-xl font-serif'>List Of Products</div>
@@ -45,11 +43,11 @@ function ListOfProducts() {
                     placeholder="Enter your Date"
                 />
                 <DropdownCompoent
-                    options={selectBrands}
+                    options={BRAND_OPTIONS}
                     placeholder="Select Brands"
                 />
                 <DropdownCompoent
-                    options={selectModels}
+                    options={MODEL_OPTIONS}
                     placeholder="Select Models"
                 />
             </div>

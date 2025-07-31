@@ -2,7 +2,7 @@ import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
-import { CUSTOMER_COLOUMS } from "./Constants";
+import { CUSTOMER_COLOUMS, CUSTOMER_TYPE_OPTIONS } from "./Constants";
 export default function Customer({ setSelectedMenu }) {
     const rows = [{
         "Customer Name": "Nikita Kadam",
@@ -21,7 +21,6 @@ export default function Customer({ setSelectedMenu }) {
         "Customer Type": "Regular",
     }
     ];
-    const CustomerTypes = ['a', 'b'];
     return (
         <div className="w-full">
             <CustomHeaderComponent
@@ -29,6 +28,7 @@ export default function Customer({ setSelectedMenu }) {
                 label="Add Customer"
                 icon="fa fa-plus-circle"
                 onClick={() => setSelectedMenu("Add Customer")}
+                buttonClassName="py-1 px-3 text-sm font-bold"
             />
             <div className="grid grid-cols-3 items-center gap-4 ">
                 <InputComponent
@@ -40,7 +40,7 @@ export default function Customer({ setSelectedMenu }) {
                     placeholder="Contact No"
                 />
                 <DropdownCompoent
-                    options={CustomerTypes}
+                    options={CUSTOMER_TYPE_OPTIONS}
                     placeholder="Select Customer Type"
                 />
             </div>

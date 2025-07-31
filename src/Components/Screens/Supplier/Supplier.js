@@ -2,7 +2,7 @@ import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { SUPPLIER_COLUMNS } from "./Constants";
-function Supplier({ setSelectedMenu }) {   
+function Supplier({ setSelectedMenu }) {
     const rows = [
         {
             "Supplier Name": "Nikita Kadam",
@@ -28,7 +28,8 @@ function Supplier({ setSelectedMenu }) {
                 icon="fa fa-plus-circle"
                 label="Add Supplier"
                 onClick={() => setSelectedMenu("Add Supplier")}
-               
+                buttonClassName="py-1 px-3 text-sm font-bold"
+
             />
             <div className="grid grid-cols-4 items-center gap-4 ">
                 <InputComponent

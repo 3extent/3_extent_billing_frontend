@@ -3,12 +3,12 @@ import React, { useState } from 'react';
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import SingleProductStockIn from './SingleProductStockIn';
 import BulkOfProduct from "./BulkOfProduct";
+import { STOCK_TYPE_OPTIONS } from './Constants';
 
 function StockIn() {
-    const selectType = ['Single Product', 'Multiple Product'];
     const [stockType, setStockType] = useState('Single Product');
-    
-    
+
+
     return (
         <div className='w-full p-4'>
             <div className='text-xl font-serif mb-4'>Add Product</div>
@@ -18,7 +18,7 @@ function StockIn() {
                         Type of Stock in
                     </label>
                     <DropdownCompoent
-                        options={selectType}
+                        options={STOCK_TYPE_OPTIONS}
                         placeholder="Select Type"
                         value={stockType}
                         onChange={(val) => setStockType(val)}
