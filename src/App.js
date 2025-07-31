@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from './Components/Screens/Login/Login';
 import ListOfProducts from './Components/Screens/Products/ListOfProducts';
 import Supplier from "./Components/Screens/Supplier/Supplier";
