@@ -27,7 +27,8 @@ export default function Models() {
                 label="Add Models"
                 icon="fa fa-plus-circle"
                 buttonclassName="py-1 text-sm"
-                onClick={navigateAddModels} />
+                onClick={navigateAddModels} 
+                buttonClassName="py-1 px-3 text-sm font-bold"/>
             <div>
                 <InputComponent
                     type="text"
