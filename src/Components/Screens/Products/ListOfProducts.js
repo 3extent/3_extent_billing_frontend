@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import InputComponent from '../../CustomComponents/InputComponent/InputComponent';
 import CustomTableCompoent from '../../CustomComponents/CustomTableCompoent/CustomTableCompoent';
 import DropdownCompoent from '../../CustomComponents/DropdownCompoent/DropdownCompoent';
-import { PRODUCT_COLOUMNS } from './Constants';
+import { BRAND_OPTIONS, MODEL_OPTIONS, PRODUCT_COLOUMNS } from './Constants';
 function ListOfProducts() {
     const rows = [
         {
@@ -13,7 +13,8 @@ function ListOfProducts() {
             "IMEI NO": "123456789012345",
             "Sales Price": 50000,
             "Purchase Price": 45000,
-            "Grade": "A"
+            "Grade": "A",
+            "Barcode": ""
         },
         {
             "Customer Name": "Jane Smith",
@@ -24,32 +25,31 @@ function ListOfProducts() {
             "IMEI NO": "987654321098765",
             "Sales Price": 70000,
             "Purchase Price": 65000,
-            "Grade": "B"
+            "Grade": "B",
+            "Barcode": ""
         }
     ];
-    const selectBrands = ['apple', 'xiaomi'];
-    const selectModels = ['apple iphone 14', 'xiaomi redmi note 13'];
+    const [date, setDate] = useState(() => {
+        const today = new Date();
+        return today.toISOString().split("T")[0];
+    });
     return (
         <div className='w-full'>
             <div className='text-xl font-serif'>List Of Products</div>
             <div className='flex items-center gap-4'>
                 <InputComponent
                     type="Date"
+                    value={date}
                     placeholder="Enter your Date"
                 />
                 <DropdownCompoent
-                    options={selectBrands}
+                    options={BRAND_OPTIONS}
                     placeholder="Select Brands"
                 />
                 <DropdownCompoent
-                    options={selectModels}
+                    options={MODEL_OPTIONS}
                     placeholder="Select Models"
                 />
-                <InputComponent
-                    type="text"
-                    placeholder="Enter your Grade"
-                />
-
             </div>
             <div>
                 <CustomTableCompoent

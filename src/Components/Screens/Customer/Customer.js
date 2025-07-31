@@ -1,8 +1,9 @@
+import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
-import { CUSTOMER_COLOUMS } from "./Constants";
-export default function Customer() {
+import { CUSTOMER_COLOUMS, CUSTOMER_TYPE_OPTIONS } from "./Constants";
+export default function Customer({ setSelectedMenu }) {
     const rows = [{
         "Customer Name": "Nikita Kadam",
         "Address": "Pune",
@@ -20,11 +21,16 @@ export default function Customer() {
         "Customer Type": "Regular",
     }
     ];
-    const CostomerTypes = ['a', 'b'];
     return (
         <div className="w-full">
-            <div className="text-xl font-serif">List Of Customer Information</div>
-            <div className="flex items-center gap-4 ">
+            <CustomHeaderComponent
+                name="List Of Customer Information"
+                label="Add Customer"
+                icon="fa fa-plus-circle"
+                onClick={() => setSelectedMenu("Add Customer")}
+                buttonClassName="py-1 px-3 text-sm font-bold"
+            />
+            <div className="grid grid-cols-3 items-center gap-4 ">
                 <InputComponent
                     type="text"
                     placeholder="Customer Name"
@@ -34,7 +40,7 @@ export default function Customer() {
                     placeholder="Contact No"
                 />
                 <DropdownCompoent
-                    options={CostomerTypes}
+                    options={CUSTOMER_TYPE_OPTIONS}
                     placeholder="Select Customer Type"
                 />
             </div>

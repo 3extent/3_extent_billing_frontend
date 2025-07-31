@@ -17,8 +17,8 @@ export default function AddModels() {
             </div>
             <PrimaryButtonComponent
                 label="Submit"
-                className="w-[20%] mt-2"
                 icon="fa fa-plus-circle"
+                buttonClassName="mt-2 py-1 px-5 text-xl font-bold"
             />
         </div>
     );

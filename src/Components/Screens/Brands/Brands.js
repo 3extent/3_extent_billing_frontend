@@ -5,8 +5,8 @@ import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/
 import { BRANDS_COLOUMNS } from "./Constants";
 import { useNavigate } from "react-router-dom";
 function Brands() {
-    const navigate=useNavigate();
-    const navigateAddBrands=()=>{
+    const navigate = useNavigate();
+    const navigateAddBrands = () => {
         navigate("/addbrands")
     }
     const rows = [
@@ -26,17 +26,15 @@ function Brands() {
             <CustomHeaderComponent
                 name="Brands"
                 label="Add Brands"
-                buttonclassName="py-1 text-sm"
-                className="w-[full] mt-2 "
                 icon="fa fa-plus-circle"
                 onClick={navigateAddBrands} />
             <div className='flex items-center gap-4'>
                 <InputComponent
-                type="text"
-                placeholder="Enter Brand Name"
-                inputClassName="w-full"
+                    type="text"
+                    placeholder="Enter Brand Name"
+                    inputClassName="w-full"
                 />
- 
+
             </div>
             <div>
                 <CustomTableCompoent
