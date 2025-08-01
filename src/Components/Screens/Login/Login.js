@@ -4,7 +4,7 @@ import InputComponent from "../../CustomComponents/InputComponent/InputComponent
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { useEffect, useState } from 'react';
 import { apiCall } from '../../../Util/AxiosUtils';
-export default function Login({ onLogin }) {
+export default function Login() {
     const navigate = useNavigate();
     const [loginFormData, setLoginFormData] = useState({
         mobile_number: "",
@@ -20,10 +20,9 @@ export default function Login({ onLogin }) {
     const getLoginCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
-            console.log('response.data: ', response.data);
-            onLogin();
             localStorage.setItem('isAuthenticated', 'true');
             console.log("Success");
+            // localStorage.setItem('user', JSON.stringify(response.data.user));
             navigate('/salesbilling');
         } else {
             console.log("login failed");
