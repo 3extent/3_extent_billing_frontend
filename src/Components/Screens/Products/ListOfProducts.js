@@ -4,7 +4,7 @@ import InputComponent from '../../CustomComponents/InputComponent/InputComponent
 import CustomTableCompoent from '../../CustomComponents/CustomTableCompoent/CustomTableCompoent';
 import DropdownCompoent from '../../CustomComponents/DropdownCompoent/DropdownCompoent';
 import { BRAND_OPTIONS, MODEL_OPTIONS, PRODUCT_COLOUMNS } from './Constants';
-import { makeRequest } from '../../../Util/AxiosUtils';
+import { apiCall } from '../../../Util/AxiosUtils';
 function ListOfProducts() {
     const [rows, setRows] = useState([]);
     const [date, setDate] = useState(() => {
@@ -12,30 +12,34 @@ function ListOfProducts() {
         return today.toISOString().split("T")[0];
     });
     useEffect(() => {
-        makeRequest({
+        getProductsAllData();
+    }, []);
+    const getProductsCallBack = (response) => {
+        console.log('response: ', response);
+        if (response.status === 200) {
+            const productFormattedRows = response.data.map((product) => ({
+                "date": product.date,
+                "IMEI NO": product.imei_number,
+                "Company Name": product.brand,
+                "Product Name": product.model,
+                "Sales Price": product.sales_price,
+                "Purchase Price": product.purchase_price,
+                "Grade": product.grade,
+                "Barcode": product.barcode
+            }))
+            setRows(productFormattedRows);
+        } else {
+            console.log("Error");
+        }
+    }
+    const getProductsAllData = () => {
+        apiCall({
             method: 'GET',
             url: 'https://3-extent-billing-backend.vercel.app/api/products',
             data: {},
-            callback: (response) => {
-                console.log('response: ', response);
-                if (response.status === 200) {
-                    const productFormattedRows = response.data.map((product) => ({
-                        "date": product.date,
-                        "IMEI NO": product.imei_number,
-                        "Company Name": product.brand,
-                        "Product Name": product.model,
-                        "Sales Price": product.sales_price,
-                        "Purchase Price": product.purchase_price,
-                        "Grade": product.grade,
-                        "Barcode": product.barcode
-                    }))
-                    setRows(productFormattedRows);
-                } else {
-                    console.log("Error");
-                }
-            }
+            callback: getProductsCallBack,
         })
-    }, []);
+    }
     return (
         <div className='w-full'>
             <div className='text-xl font-serif'>List Of Products</div>

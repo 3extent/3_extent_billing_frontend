@@ -4,7 +4,7 @@ import InputComponent from "../../CustomComponents/InputComponent/InputComponent
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import { BRANDS_COLOUMNS } from "./Constants";
 import { useEffect, useState } from "react";
-import { makeRequest } from "../../../Util/AxiosUtils";
+import { apiCall } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 function Brands() {
     const [rows, setRows] = useState([]);
@@ -13,7 +13,7 @@ function Brands() {
         navigate("/addbrands")
     }
     useEffect(() => {
-        makeRequest({
+        apiCall({
             method: 'GET',
             url: 'https://3-extent-billing-backend.vercel.app/api/brands',
             data: {},

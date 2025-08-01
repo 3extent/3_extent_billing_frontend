@@ -4,7 +4,7 @@ import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { MODELS_COLOUMNS } from "./Constants";
-import { makeRequest } from "../../../Util/AxiosUtils";
+import { apiCall } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 export default function Models() {
     const navigate = useNavigate();
@@ -13,25 +13,29 @@ export default function Models() {
     }
     const [rows, setRows] = useState([]);
     useEffect(() => {
-        makeRequest({
+        getModelsAllData();
+    }, []);
+    const getModelsCallBack = (response) => {
+        console.log('response: ', response);
+        if (response.status === 200) {
+            const modelFormattedaRows = response.data.map((model, index) => ({
+                "No": index + 1,
+                "Model Name": model.name,
+                "Qty": model.qty
+            }))
+            setRows(modelFormattedaRows);
+        } else {
+            console.log("Error");
+        }
+    }
+    const getModelsAllData = () => {
+        apiCall({
             method: 'GET',
             url: 'https://3-extent-billing-backend.vercel.app/api/models',
             data: {},
-            callback: (response) => {
-                console.log('response: ', response);
-                if (response.status === 200) {
-                    const modelFormattedaRows = response.data.map((model, index) => ({
-                        "No": index + 1,
-                        "Model Name": model.name,
-                        "Qty": model.qty
-                    }))
-                    setRows(modelFormattedaRows);
-                } else {
-                    console.log("Error");
-                }
-            }
+            callback: getModelsCallBack,
         })
-    }, []);
+    }
     return (
         <div>
             <CustomHeaderComponent

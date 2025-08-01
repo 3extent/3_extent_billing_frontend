@@ -3,7 +3,7 @@ import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/Cust
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { CUSTOMER_COLOUMS, CUSTOMER_TYPE_OPTIONS } from "./Constants";
-import { makeRequest } from "../../../Util/AxiosUtils";
+import { apiCall, makeRequest } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 export default function Customer() {
@@ -13,7 +13,7 @@ export default function Customer() {
     }
     const [rows, setRows] = useState([]);
     useEffect(() => {
-        makeRequest({
+        apiCall({
             method: 'GET',
             url: 'https://3-extent-billing-backend.vercel.app/api/users?role=CUSTOMER',
             data: {},

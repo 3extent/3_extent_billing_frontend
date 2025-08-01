@@ -3,7 +3,7 @@ import billingimage from '../../../Assets/billingimage.webp';
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { useState } from 'react';
-import { makeRequest } from '../../../Util/AxiosUtils';
+import { apiCall} from '../../../Util/AxiosUtils';
 export default function Login({ onLogin }) {
     const navigate = useNavigate();
     const [loginFormData, setLoginFormData] = useState({
@@ -21,7 +21,7 @@ export default function Login({ onLogin }) {
     // };
 
     const handleLogin = () => {
-        makeRequest({
+        apiCall({
             method: 'POST',
             url: 'https://3-extent-billing-backend.vercel.app/api/users/login',
             data: loginFormData,
