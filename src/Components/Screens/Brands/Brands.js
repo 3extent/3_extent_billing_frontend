@@ -6,6 +6,7 @@ import { BRANDS_COLOUMNS } from "./Constants";
 import { useEffect, useState } from "react";
 import { apiCall } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
+import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 function Brands() {
     const [rows, setRows] = useState([]);
     const navigate = useNavigate();
@@ -49,6 +50,14 @@ function Brands() {
                     type="text"
                     placeholder="Enter Brand Name"
                     inputClassName="w-[full] mb-5"
+                />
+                <PrimaryButtonComponent
+                    label="Search"
+                    buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
+                />
+                <PrimaryButtonComponent
+                    label="Reset"
+                    buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
                 />
 
             </div>

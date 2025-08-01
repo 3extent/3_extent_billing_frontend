@@ -5,6 +5,7 @@ import { SUPPLIER_COLUMNS } from "./Constants";
 import { apiCall } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
+import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 function Supplier() {
     const [rows, setRows] = useState([]);
     const navigate = useNavigate();
@@ -56,6 +57,14 @@ function Supplier() {
                 <InputComponent
                     type="text"
                     placeholder="Contact No"
+                />
+                <PrimaryButtonComponent
+                    label="Search"
+                    buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
+                />
+                <PrimaryButtonComponent
+                    label="Reset"
+                    buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
                 />
             </div>
             <CustomTableCompoent

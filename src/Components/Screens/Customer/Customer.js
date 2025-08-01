@@ -6,6 +6,7 @@ import { CUSTOMER_COLOUMS, CUSTOMER_TYPE_OPTIONS } from "./Constants";
 import { apiCall } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
+import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 export default function Customer() {
     const navigate = useNavigate();
     const navigateAddCustomer = () => {
@@ -62,6 +63,14 @@ export default function Customer() {
                 <DropdownCompoent
                     options={CUSTOMER_TYPE_OPTIONS}
                     placeholder="Select Customer Type"
+                />
+                <PrimaryButtonComponent
+                    label="Search"
+                    buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
+                />
+                <PrimaryButtonComponent
+                    label="Reset"
+                    buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
                 />
             </div>
             <div>
