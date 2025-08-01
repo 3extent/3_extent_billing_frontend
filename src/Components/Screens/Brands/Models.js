@@ -4,7 +4,7 @@ import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { MODELS_COLOUMNS } from "./Constants";
-import { makeRequest } from "../../../Util/AxiosUtils";
+import { apiCall, makeRequest } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 export default function Models() {
     const navigate = useNavigate();
@@ -13,7 +13,7 @@ export default function Models() {
     }
     const [rows, setRows] = useState([]);
     useEffect(() => {
-        makeRequest({
+        apiCall({
             method: 'GET',
             url: 'https://3-extent-billing-backend.vercel.app/api/models',
             data: {},

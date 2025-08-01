@@ -4,7 +4,7 @@ import InputComponent from '../../CustomComponents/InputComponent/InputComponent
 import CustomTableCompoent from '../../CustomComponents/CustomTableCompoent/CustomTableCompoent';
 import DropdownCompoent from '../../CustomComponents/DropdownCompoent/DropdownCompoent';
 import { BRAND_OPTIONS, MODEL_OPTIONS, PRODUCT_COLOUMNS } from './Constants';
-import { makeRequest } from '../../../Util/AxiosUtils';
+import { apiCall, makeRequest } from '../../../Util/AxiosUtils';
 function ListOfProducts() {
     const [rows, setRows] = useState([]);
     const [date, setDate] = useState(() => {
@@ -12,7 +12,7 @@ function ListOfProducts() {
         return today.toISOString().split("T")[0];
     });
     useEffect(() => {
-        makeRequest({
+        apiCall({
             method: 'GET',
             url: 'https://3-extent-billing-backend.vercel.app/api/products',
             data: {},
