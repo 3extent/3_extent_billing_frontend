@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { SUPPLIER_COLUMNS } from "./Constants";
-import { apiCall} from "../../../Util/AxiosUtils";
+import { apiCall } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 function Supplier() {
@@ -12,28 +12,32 @@ function Supplier() {
         navigate("/addsupplier")
     }
     useEffect(() => {
+        getSupplierAllData();
+    }, []);
+    const getSupplierCallBack = (response) => {
+        console.log('response: ', response);
+        if (response.status === 200) {
+            const supplierFormattedRows = response.data.map((supplier) => ({
+                "Supplier Name": supplier.name,
+                "Contact No": supplier.contact_number,
+                "GST No": supplier.gst_number,
+                "State": supplier.state,
+                "Balance": supplier.balance,
+                "Supplier Type": supplier.type
+            }));
+            setRows(supplierFormattedRows);
+        } else {
+            console.log("Error");
+        }
+    }
+    const getSupplierAllData = () => {
         apiCall({
             method: 'GET',
             url: 'https://3-extent-billing-backend.vercel.app/api/users?role=SUPPLIER',
             data: {},
-            callback: (response) => {
-                console.log('response: ', response);
-                if (response.status === 200) {
-                    const supplierFormattedRows = response.data.map((supplier) => ({
-                        "Supplier Name": supplier.name,
-                        "Contact No": supplier.contact_number,
-                        "GST No": supplier.gst_number,
-                        "State": supplier.state,
-                        "Balance": supplier.balance,
-                        "Supplier Type": supplier.type
-                    }));
-                    setRows(supplierFormattedRows);
-                } else {
-                    console.log("Error");
-                }
-            }
+            callback: getSupplierCallBack,
         })
-    }, []);
+    }
     return (
         <div className="w-full">
             <CustomHeaderComponent

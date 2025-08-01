@@ -13,24 +13,28 @@ function Brands() {
         navigate("/addbrands")
     }
     useEffect(() => {
+        getBrandsAllData();
+    }, []);
+    const getBrandsCallBack = (response) => {
+        console.log('response: ', response);
+        if (response.status === 200) {
+            const brandsFormattedRows = response.data.map((brand, index) => ({
+                "No": index + 1,
+                "Brand Name": brand.name
+            }));
+            setRows(brandsFormattedRows);
+        } else {
+            console.log("Error");
+        }
+    }
+    const getBrandsAllData = () => {
         apiCall({
             method: 'GET',
             url: 'https://3-extent-billing-backend.vercel.app/api/brands',
             data: {},
-            callback: (response) => {
-                console.log('response: ', response);
-                if (response.status === 200) {
-                    const brandsFormattedRows = response.data.map((brand, index) => ({
-                        "No": index + 1,
-                        "Brand Name": brand.name
-                    }));
-                    setRows(brandsFormattedRows);
-                } else {
-                    console.log("Error");
-                }
-            }
+            callback: getBrandsCallBack,
         })
-    }, []);
+    };
     return (
         <div className='w-full'>
             <CustomHeaderComponent

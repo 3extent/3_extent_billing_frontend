@@ -3,7 +3,7 @@ import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/Cust
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { CUSTOMER_COLOUMS, CUSTOMER_TYPE_OPTIONS } from "./Constants";
-import { apiCall, makeRequest } from "../../../Util/AxiosUtils";
+import { apiCall } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 export default function Customer() {
@@ -13,28 +13,32 @@ export default function Customer() {
     }
     const [rows, setRows] = useState([]);
     useEffect(() => {
+        getCustomerAllData();
+    }, []);
+    const getCustomerCallBack = (response) => {
+        console.log('response: ', response);
+        if (response.status === 200) {
+            const customerFormttedRows = response.data.map((customer) => ({
+                "Customer Name": customer.name,
+                "Contact No": customer.contact_number,
+                "Customer Type": customer.type,
+                "Address": customer.address,
+                "state": customer.state,
+                "GST No": customer.gst_number,
+            }))
+            setRows(customerFormttedRows);
+        } else {
+            console.log("Error");
+        }
+    }
+    const getCustomerAllData = () => {
         apiCall({
             method: 'GET',
             url: 'https://3-extent-billing-backend.vercel.app/api/users?role=CUSTOMER',
             data: {},
-            callback: (response) => {
-                console.log('response: ', response);
-                if (response.status === 200) {
-                    const customerFormttedRows = response.data.map((customer) => ({
-                        "Customer Name": customer.name,
-                        "Contact No": customer.contact_number,
-                        "Customer Type": customer.type,
-                        "Address": customer.address,
-                        "state": customer.state,
-                        "GST No": customer.gst_number,
-                    }))
-                    setRows(customerFormttedRows);
-                } else {
-                    console.log("Error");
-                }
-            }
+            callback: getCustomerCallBack,
         })
-    }, []);
+    }
     return (
         <div className="w-full">
             <CustomHeaderComponent

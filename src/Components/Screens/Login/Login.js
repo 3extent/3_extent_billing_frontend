@@ -2,41 +2,39 @@ import { useNavigate } from 'react-router-dom';
 import billingimage from '../../../Assets/billingimage.webp';
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
-import { useState } from 'react';
-import { apiCall} from '../../../Util/AxiosUtils';
+import { useEffect, useState } from 'react';
+import { apiCall } from '../../../Util/AxiosUtils';
 export default function Login({ onLogin }) {
     const navigate = useNavigate();
     const [loginFormData, setLoginFormData] = useState({
         mobile_number: "",
         password: ""
     });
+    useEffect(() => {
+        handleLogin();
+    }, []);
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setLoginFormData({ ...loginFormData, [name]: value });
     };
-    // const handleLogin = () => {
-    //     localStorage.setItem("isLoggedIn", "true");
-    //     onLogin(); 
-    //     navigate('/salesbilling'); 
-    // };
-
+    const getLoginCallBack = (response) => {
+        console.log('response: ', response);
+        if (response.status === 200) {
+            console.log('response.data: ', response.data);
+            onLogin();
+            localStorage.setItem('isAuthenticated', 'true');
+            console.log("Success");
+            navigate('/salesbilling');
+        } else {
+            console.log("login failed");
+        }
+    }
     const handleLogin = () => {
         apiCall({
             method: 'POST',
             url: 'https://3-extent-billing-backend.vercel.app/api/users/login',
             data: loginFormData,
-            callback: (response) => {
-                console.log('response: ', response);
-                if (response.status === 200) {
-                    console.log('response.data: ', response.data);
-                    onLogin();
-                    localStorage.setItem('isAuthenticated', 'true');
-                    console.log("Success");
-                    navigate('/salesbilling');
-                } else {
-                    console.log("login failed");
-                }
-            }
+            callback: getLoginCallBack,
         })
     };
     return (
