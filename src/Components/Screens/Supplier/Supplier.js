@@ -9,6 +9,7 @@ import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponen
 function Supplier() {
     const [rows, setRows] = useState([]);
     const navigate = useNavigate();
+    // const [filter, setfilter]=useState([])
     const navigateAddSupplier = () => {
         navigate("/addsupplier")
     }
@@ -53,10 +54,13 @@ function Supplier() {
                 <InputComponent
                     type="text"
                     placeholder="Suppiler Name"
+                    // value={supplierName}
+                    //  onChange={(e) => setSupplierName(e.target.value)}
                 />
                 <InputComponent
                     type="text"
                     placeholder="Contact No"
+                    // onChange={(e) => setContactNo(e.target.value)}
                 />
                 <PrimaryButtonComponent
                     label="Search"
