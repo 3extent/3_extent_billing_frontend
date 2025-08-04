@@ -52,14 +52,6 @@ export default function Models() {
                     placeholder="Enter Models Name"
                     inputClassName="w-[full] mb-5"
                 />
-                <PrimaryButtonComponent
-                    label="Search"
-                    buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
-                />
-                <PrimaryButtonComponent
-                    label="Reset"
-                    buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
-                />
             </div>
             <CustomTableCompoent
                 headers={MODELS_COLOUMNS}
