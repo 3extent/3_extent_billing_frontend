@@ -5,6 +5,7 @@ import { SUPPLIER_COLUMNS } from "./Constants";
 import { apiCall } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
+import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 function Supplier() {
     const [rows, setRows] = useState([]);
     const navigate = useNavigate();

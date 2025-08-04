@@ -6,6 +6,7 @@ import InputComponent from "../../CustomComponents/InputComponent/InputComponent
 import { MODELS_COLOUMNS } from "./Constants";
 import { apiCall } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
+import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 export default function Models() {
     const navigate = useNavigate();
     const navigateAddModels = () => {
@@ -45,11 +46,11 @@ export default function Models() {
                 buttonclassName="py-1 text-sm"
                 onClick={navigateAddModels}
                 buttonClassName="py-1 px-3 text-sm font-bold" />
-            <div>
+            <div className="flex items-center gap-4">
                 <InputComponent
                     type="text"
                     placeholder="Enter Models Name"
-                    inputClassName="w-[20%] mb-5"
+                    inputClassName="w-[full] mb-5"
                 />
             </div>
             <CustomTableCompoent
