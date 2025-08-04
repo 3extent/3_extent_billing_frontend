@@ -58,6 +58,14 @@ function Supplier() {
                     type="text"
                     placeholder="Contact No"
                 />
+                <PrimaryButtonComponent
+                    label="Search"
+                    buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
+                />
+                <PrimaryButtonComponent
+                    label="Reset"
+                    buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
+                />
             </div>
             <CustomTableCompoent
                 headers={SUPPLIER_COLUMNS}
