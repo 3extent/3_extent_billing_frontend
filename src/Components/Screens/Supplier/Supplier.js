@@ -9,7 +9,8 @@ import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponen
 function Supplier() {
     const [rows, setRows] = useState([]);
     const navigate = useNavigate();
-    // const [filter, setfilter]=useState([])
+    const [supplierName, setSupplierName] = useState();
+    const [contactNo, setContactNo] = useState();
     const navigateAddSupplier = () => {
         navigate("/addsupplier")
     }
@@ -33,12 +34,26 @@ function Supplier() {
         }
     }
     const getSupplierAllData = () => {
+        let url = "https://3-extent-billing-backend.vercel.app/api/users?role=SUPPLIER"
+        if(supplierName){
+            url+=`&name=${supplierName}`
+        }else if(contactNo){
+            url+=`&contact_number=${contactNo}`
+        }
         apiCall({
             method: 'GET',
-            url: 'https://3-extent-billing-backend.vercel.app/api/users?role=SUPPLIER',
+            url: url,
             data: {},
             callback: getSupplierCallBack,
         })
+    }
+    const handleSearchFilter = () => {
+        getSupplierAllData();
+    }
+    const handleResetFilter = () => {
+        setSupplierName('');
+        setContactNo('');
+        getSupplierAllData();
     }
     return (
         <div className="w-full">
@@ -54,28 +69,30 @@ function Supplier() {
                 <InputComponent
                     type="text"
                     placeholder="Suppiler Name"
-                    // value={supplierName}
-                    //  onChange={(e) => setSupplierName(e.target.value)}
+                    value={supplierName}
+                    onChange={(e) => setSupplierName(e.target.value)}
                 />
                 <InputComponent
                     type="text"
                     placeholder="Contact No"
-                    // onChange={(e) => setContactNo(e.target.value)}
+                    value={contactNo}
+                    onChange={(e) => setContactNo(e.target.value)}
                 />
                 <PrimaryButtonComponent
                     label="Search"
                     buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
+                    onClick={handleSearchFilter}
                 />
                 <PrimaryButtonComponent
                     label="Reset"
                     buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
+                    onClick={handleResetFilter}
                 />
             </div>
             <CustomTableCompoent
                 headers={SUPPLIER_COLUMNS}
                 rows={rows}
             />
-
         </div>
     );
 }
