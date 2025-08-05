@@ -36,6 +36,8 @@ function Brands() {
             callback: getBrandsCallBack,
         })
     };
+
+
     return (
         <div className='w-full'>
             <CustomHeaderComponent
@@ -50,6 +52,14 @@ function Brands() {
                     type="text"
                     placeholder="Enter Brand Name"
                     inputClassName="w-[full] mb-5"
+                />
+                <PrimaryButtonComponent
+                    label="Search"
+                    buttonClassName="mt-1 py-1 px-5 text-xl font-bold"
+                />
+                <PrimaryButtonComponent
+                    label="Reset"
+                    buttonClassName="mt-1 py-1 px-5 text-xl font-bold"
                 />
             </div>
             <div>
