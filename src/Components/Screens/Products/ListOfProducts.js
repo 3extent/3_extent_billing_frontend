@@ -8,6 +8,8 @@ import { apiCall } from '../../../Util/AxiosUtils';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
 function ListOfProducts() {
     const [rows, setRows] = useState([]);
+    const [imeiNumber,setImEINumber]=useState();
+    const [grade,setGrade]=useState();
     const [date, setDate] = useState(() => {
         const today = new Date();
         return today.toISOString().split("T")[0];
@@ -34,12 +36,31 @@ function ListOfProducts() {
         }
     }
     const getProductsAllData = () => {
+        let url='https://3-extent-billing-backend.vercel.app/api/products';
+        if(imeiNumber){
+            url +=`?imei_number${imeiNumber}`
+        }
+        // else if(grade){
+        //     url +=`&grade${grade}`
+        // }
+        // else if(date){
+        //     url +=`&date${date}`
+        // }
         apiCall({
             method: 'GET',
-            url: 'https://3-extent-billing-backend.vercel.app/api/products',
+            url:url, 
             data: {},
             callback: getProductsCallBack,
         })
+    }
+    const handleSearchFilter=()=>{
+        getProductsAllData();
+    }
+    const handleResetFilter=()=>{
+        // date();
+        // grade();
+        imeiNumber();
+        getProductsAllData();
     }
     return (
         <div className='w-full'>
@@ -49,10 +70,12 @@ function ListOfProducts() {
                     <PrimaryButtonComponent
                         label="Search"
                         buttonClassName=" py-1 px-5 text-xl font-bold"
+                        onClick={handleSearchFilter}
                     />
                     <PrimaryButtonComponent
                         label="Reset"
                         buttonClassName="ml-5 py-1 px-5 text-xl font-bold"
+                        onClick={handleResetFilter}
                     />
                 </div>
             </div>
@@ -75,11 +98,15 @@ function ListOfProducts() {
                     type="text"
                     placeholder="Enter IMEI NO"
                     inputClassName="mb-5"
+                    value={imeiNumber}
+                    onChange={(e)=>setImEINumber(e.target.value)}
                 />
                 <InputComponent
                     type="text"
                     placeholder="Enter Grade"
                     inputClassName="mb-5"
+                    value={grade}
+                    onChange={(e)=>setGrade(e.target.value)}
                 />
             </div>
             <div>
