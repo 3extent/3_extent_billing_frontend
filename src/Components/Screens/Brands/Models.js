@@ -8,11 +8,12 @@ import { apiCall } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 export default function Models() {
+    const [rows, setRows] = useState([]);
+    const [modelName, setModelName] = useState();
     const navigate = useNavigate();
     const navigateAddModels = () => {
         navigate("/addmodels")
     }
-    const [rows, setRows] = useState([]);
     useEffect(() => {
         getModelsAllData();
     }, []);
@@ -30,12 +31,23 @@ export default function Models() {
         }
     }
     const getModelsAllData = () => {
+        let url = 'https://3-extent-billing-backend.vercel.app/api/models';
+        if (modelName) {
+            url += `?name${modelName}`
+        }
         apiCall({
             method: 'GET',
-            url: 'https://3-extent-billing-backend.vercel.app/api/models',
+            url: url,
             data: {},
             callback: getModelsCallBack,
         })
+    }
+    const handleSearchFilter = () => {
+        getModelsAllData();
+    }
+    const handleResetFilter = () => {
+        setModelName();
+        getModelsAllData();
     }
     return (
         <div>
@@ -51,14 +63,18 @@ export default function Models() {
                     type="text"
                     placeholder="Enter Models Name"
                     inputClassName="w-[full] mb-5"
+                    value={modelName}
+                    onChange={(e) => setModelName(e.target.value)}
                 />
                 <PrimaryButtonComponent
                     label="Search"
                     buttonClassName="mt-1 py-1 px-5 text-xl font-bold"
+                    onClick={handleSearchFilter}
                 />
                 <PrimaryButtonComponent
                     label="Reset"
                     buttonClassName="mt-1 py-1 px-5 text-xl font-bold"
+                    onClick={handleResetFilter}
                 />
             </div>
             <CustomTableCompoent
