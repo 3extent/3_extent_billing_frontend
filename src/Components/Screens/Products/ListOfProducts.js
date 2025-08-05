@@ -43,7 +43,19 @@ function ListOfProducts() {
     }
     return (
         <div className='w-full'>
-            <div className='text-xl font-serif'>List Of Products</div>
+            <div className='flex justify-between items-center'>
+                <div className='text-xl font-serif'>List Of Products</div>
+                <div className='flex'>
+                    <PrimaryButtonComponent
+                        label="Search"
+                        buttonClassName=" py-1 px-5 text-xl font-bold"
+                    />
+                    <PrimaryButtonComponent
+                        label="Reset"
+                        buttonClassName="ml-5 py-1 px-5 text-xl font-bold"
+                    />
+                </div>
+            </div>
             <div className='flex items-center gap-4'>
                 <InputComponent
                     type="Date"
@@ -62,6 +74,11 @@ function ListOfProducts() {
                 <InputComponent
                     type="text"
                     placeholder="Enter IMEI NO"
+                    inputClassName="mb-5"
+                />
+                <InputComponent
+                    type="text"
+                    placeholder="Enter Grade"
                     inputClassName="mb-5"
                 />
             </div>
