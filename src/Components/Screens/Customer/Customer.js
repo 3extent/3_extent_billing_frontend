@@ -64,6 +64,14 @@ export default function Customer() {
                     options={CUSTOMER_TYPE_OPTIONS}
                     placeholder="Select Customer Type"
                 />
+                <PrimaryButtonComponent
+                    label="Search"
+                    buttonClassName=" py-1 px-5 text-xl font-bold"
+                />
+                <PrimaryButtonComponent
+                    label="Reset"
+                    buttonClassName=" py-1 px-5 text-xl font-bold"
+                />
             </div>
             <div>
                 <CustomTableCompoent
