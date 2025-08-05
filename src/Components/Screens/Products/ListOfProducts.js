@@ -8,8 +8,8 @@ import { apiCall } from '../../../Util/AxiosUtils';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
 function ListOfProducts() {
     const [rows, setRows] = useState([]);
-    const [imeiNumber,setImEINumber]=useState();
-    const [grade,setGrade]=useState();
+    const [imeiNumber, setImEINumber] = useState();
+    const [grade, setGrade] = useState();
     const [date, setDate] = useState(() => {
         const today = new Date();
         return today.toISOString().split("T")[0];
@@ -36,29 +36,29 @@ function ListOfProducts() {
         }
     }
     const getProductsAllData = () => {
-        let url='https://3-extent-billing-backend.vercel.app/api/products';
-        if(imeiNumber){
-            url +=`?imei_number${imeiNumber}`
+        let url = 'https://3-extent-billing-backend.vercel.app/api/products';
+        if (imeiNumber) {
+            url += `?imei_number${imeiNumber}`
         }
-        // else if(grade){
-        //     url +=`&grade${grade}`
-        // }
+        else if (grade) {
+            url += `&grade${grade}`
+        }
         // else if(date){
         //     url +=`&date${date}`
         // }
         apiCall({
             method: 'GET',
-            url:url, 
+            url: url,
             data: {},
             callback: getProductsCallBack,
         })
     }
-    const handleSearchFilter=()=>{
+    const handleSearchFilter = () => {
         getProductsAllData();
     }
-    const handleResetFilter=()=>{
+    const handleResetFilter = () => {
         // date();
-        // grade();
+        grade();
         imeiNumber();
         getProductsAllData();
     }
@@ -99,14 +99,14 @@ function ListOfProducts() {
                     placeholder="Enter IMEI NO"
                     inputClassName="mb-5"
                     value={imeiNumber}
-                    onChange={(e)=>setImEINumber(e.target.value)}
+                    onChange={(e) => setImEINumber(e.target.value)}
                 />
                 <InputComponent
                     type="text"
                     placeholder="Enter Grade"
                     inputClassName="mb-5"
                     value={grade}
-                    onChange={(e)=>setGrade(e.target.value)}
+                    onChange={(e) => setGrade(e.target.value)}
                 />
             </div>
             <div>
