@@ -55,9 +55,9 @@ export default function Customer() {
         getCustomerAllData();
     }
     const handleResetFilter=()=>{
-        setContactNumber();
-        setCustomerName();
-        setCustomerType();
+        setContactNumber('');
+        setCustomerName('');
+        setCustomerType('');
         getCustomerAllData();
     }
     return (

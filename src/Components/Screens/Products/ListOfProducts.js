@@ -7,13 +7,18 @@ import { BRAND_OPTIONS, MODEL_OPTIONS, PRODUCT_COLOUMNS } from './Constants';
 import { apiCall } from '../../../Util/AxiosUtils';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
 function ListOfProducts() {
+    const getTodayDate = () => new Date().toISOString().split("T")[0];
     const [rows, setRows] = useState([]);
-    const [imeiNumber, setImEINumber] = useState();
+    const [imeiNumber, setIMEINumber] = useState();
     const [grade, setGrade] = useState();
-    const [date, setDate] = useState(() => {
-        const today = new Date();
-        return today.toISOString().split("T")[0];
-    });
+    const [modelName, setModelName] = useState();
+    const [brandType, setBrandType] = useState();
+    // const [date, setDate] = useState(() => {
+    //     const today = new Date();
+    //     return today.toISOString().split("T")[0];
+    // });
+    const [date, setDate] = useState(getTodayDate);
+
     useEffect(() => {
         getProductsAllData();
     }, []);
@@ -38,14 +43,20 @@ function ListOfProducts() {
     const getProductsAllData = () => {
         let url = 'https://3-extent-billing-backend.vercel.app/api/products';
         if (imeiNumber) {
-            url += `?imei_number${imeiNumber}`
+            url += `&imei_number=${imeiNumber}`
         }
         else if (grade) {
-            url += `&grade${grade}`
+            url += `&grade=${grade}`
         }
-        // else if(date){
-        //     url +=`&date${date}`
-        // }
+        else if (date) {
+            const timestamp = new Date(date).getTime();
+            url += `&createdAt=${timestamp}`
+        }
+        else if (modelName) {
+            url += `&name=${modelName}`
+        } else if (brandType) {
+            url += `&type=${brandType}`
+        }
         apiCall({
             method: 'GET',
             url: url,
@@ -57,9 +68,11 @@ function ListOfProducts() {
         getProductsAllData();
     }
     const handleResetFilter = () => {
-        // date();
-        grade();
-        imeiNumber();
+        setDate(getTodayDate());
+        setModelName('');
+        setGrade('');
+        setIMEINumber('');
+        setBrandType('');
         getProductsAllData();
     }
     return (
@@ -89,17 +102,22 @@ function ListOfProducts() {
                 <DropdownCompoent
                     options={BRAND_OPTIONS}
                     placeholder="Select Brands"
+                    value={brandType}
+                    onChange={(value) => setBrandType(value)}
                 />
-                <DropdownCompoent
-                    options={MODEL_OPTIONS}
-                    placeholder="Select Models"
+                <InputComponent
+                    type="text"
+                    placeholder="Enter models Name"
+                    inputClassName="mb-5"
+                    value={modelName}
+                    onChange={(e) => setModelName(e.target.value)}
                 />
                 <InputComponent
                     type="text"
                     placeholder="Enter IMEI NO"
                     inputClassName="mb-5"
                     value={imeiNumber}
-                    onChange={(e) => setImEINumber(e.target.value)}
+                    onChange={(e) => setIMEINumber(e.target.value)}
                 />
                 <InputComponent
                     type="text"

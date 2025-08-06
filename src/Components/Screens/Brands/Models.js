@@ -7,9 +7,11 @@ import { MODELS_COLOUMNS } from "./Constants";
 import { apiCall } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
+import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
 export default function Models() {
     const [rows, setRows] = useState([]);
     const [modelName, setModelName] = useState();
+    const [brandName, setBrandName] = useState();
     const navigate = useNavigate();
     const navigateAddModels = () => {
         navigate("/addmodels")
@@ -31,10 +33,10 @@ export default function Models() {
         }
     }
     const getModelsAllData = () => {
-        let url = 'https://3-extent-billing-backend.vercel.app/api/models';
+        let url = "https://3-extent-billing-backend.vercel.app/api/models";
         if (modelName) {
-            url += `?name${modelName}`
-        }
+            url += `?modelName=${modelName}`
+        } 
         apiCall({
             method: 'GET',
             url: url,
@@ -46,7 +48,7 @@ export default function Models() {
         getModelsAllData();
     }
     const handleResetFilter = () => {
-        setModelName();
+        setModelName('');
         getModelsAllData();
     }
     return (
@@ -59,6 +61,7 @@ export default function Models() {
                 onClick={navigateAddModels}
                 buttonClassName="py-1 px-3 text-sm font-bold" />
             <div className="flex items-center gap-4">
+                
                 <InputComponent
                     type="text"
                     placeholder="Enter Models Name"
