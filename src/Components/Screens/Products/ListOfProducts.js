@@ -23,8 +23,8 @@ function ListOfProducts() {
             const productFormattedRows = response.data.map((product) => ({
                 "date": product.date,
                 "IMEI NO": product.imei_number,
-                "Company Name": product.brand,
-                "Product Name": product.model,
+                "Product Name": typeof product.model === 'object' ? product.model.name : product.model,
+                "Brand Name": typeof product.brand === 'object' ? product.model.brand : product.model.brand.name,
                 "Sales Price": product.sales_price,
                 "Purchase Price": product.purchase_price,
                 "Grade": product.grade,
