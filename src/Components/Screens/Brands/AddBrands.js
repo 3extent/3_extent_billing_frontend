@@ -7,9 +7,6 @@ export default function AddBrands() {
     const [brandData, setBrandData] = useState({
         name: ""
     });
-    useEffect(() => {
-        addBrand();
-    }, []);
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setBrandData({ ...brandData, [name]: value });
@@ -18,6 +15,7 @@ export default function AddBrands() {
     const addBrandCallback = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
+            console.log('response: ', response);
             setBrandData({ name: "" });
         } else {
             console.log("Error while adding brand");
@@ -27,7 +25,7 @@ export default function AddBrands() {
     const addBrand = () => {
         apiCall({
             method: "POST",
-            url: 'https://3-extent-billing-backend.vercel.app/api/users',
+            url: "https://3-extent-billing-backend.vercel.app/api/brands/brand",
             data: brandData,
             callback: addBrandCallback,
         });

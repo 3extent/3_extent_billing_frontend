@@ -8,9 +8,6 @@ export default function AddModels() {
         brand_id: "",
         name: "",
     });
-    useEffect(() => {
-        addModel();
-    }, []);
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setModelData({ ...modelData, [name]: value });
@@ -24,7 +21,7 @@ export default function AddModels() {
                 name: "",
             });
         } else {
-            console.log("Error while adding model");
+            console.log("error");
         }
     };
 
@@ -41,7 +38,7 @@ export default function AddModels() {
             <div className="text-xl font-serif mb-4">Add Model</div>
             <div className="grid grid-cols-2">
                 <CustomDropdownInputComponent
-                    label="Select Brand"
+                    label="Brand Name"
                     name="brand_id"
                     placeholder="Select Brand"
                     className="w-[80%]"

@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-export default function CustomDropdownInputComponent() {
+export default function CustomDropdownInputComponent({label}) {
     const [inputValue, setInputValue] = useState('');
     const [showDropdown, setShowDropdown] = useState(false);
     const options = ['Apple', 'MI', 'Oppo'];
@@ -20,7 +20,7 @@ export default function CustomDropdownInputComponent() {
         );
     return (
         <div className="w-[80%] relative">
-            <label className="font-bold ">Brand Name</label>
+            <label className="font-bold ">{label}</label>
             <input
                 type="text"
                 value={inputValue}

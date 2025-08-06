@@ -20,9 +20,6 @@ function AddSupplier() {
         type: "",
         role: "SUPPLIER",
     });
-    useEffect(() => {
-        addSupplier();
-    }, []);
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setSupplierData({ ...supplierData, [name]: value });
