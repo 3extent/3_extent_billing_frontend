@@ -3,26 +3,23 @@ import InputComponent from "../../CustomComponents/InputComponent/InputComponent
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import CustomBarcodePrintComponent from '../../CustomComponents/CustomBarcodePrintComponent/CustomBarcodePrintComponent';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
-import { BOX_OPTIONS, GRADE_OPTIONS, SOURCE_OPTIONS } from './Constants';
+import { ACCESSORIES_OPTIONS, GRADE_OPTIONS, SUPPLIER_OPTIONS } from './Constants';
 import { apiCall } from '../../../Util/AxiosUtils';
 
 function SingleProductStockIn() {
-    const [modelName, setModelName] = useState('');
-    const [grade, setGrade] = useState('');
-    const [imei, setImei] = useState('');
-    const [showBarcode, setShowBarcode] = useState(false)
     const [productData, setProductData] = useState({
-        modelName: '',
-        date: '',
+        model: '',
+        imei_number: '',
+        sales_price: '',
+        purchase_price: '',
         grade: '',
-        buyingPrice: '',
-        rate: '',
-        imei: '',
-        engineerName: '',
+        engineer_name: '',
+        accessories: '',
+        supplier: '',
         qcRemark: '',
-        source: '',
-        box: '',
+        createdAt: '',
     });
+    const [showBarcode, setShowBarcode] = useState(false)
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setProductData({ ...productData, [name]: value });
@@ -31,117 +28,105 @@ function SingleProductStockIn() {
         console.log('response:', response);
         if (response.status === 200) {
             setProductData({
-                modelName: '',
-                date: '',
+                model: '',
+                createdAt: '',
                 grade: '',
-                buyingPrice: '',
-                rate: '',
-                imei: '',
-                engineerName: '',
+                purchase_price: '',
+                sales_price: '',
+                imei_number: '',
+                engineer_name: '',
                 qcRemark: '',
-                source: '',
-                box: '',
+                supplier: '',
+                accessories: '',
             });
         } else {
             console.log("error")
         }
     };
-    const saveProductStockIn = () => {
-        const payload = {
-            products: [productData]
-        };
-
+    const addProductStockIn = () => {
         apiCall({
             method: "POST",
             url: "https://3-extent-billing-backend.vercel.app/api/products",
-            data: payload,
+            data: { products: [productData] },
             callback: stockInCallback
         });
-    };
-    const handleSave = () => {
-        if (!modelName || !grade || !imei) {
-            alert("Please fill Model Name, Grade and IMEI to generate barcode.");
-            return;
-        }
-        setShowBarcode(true)
+        setShowBarcode(true);
         setTimeout(() => {
             window.print();
         }, 500);
-    }
+    };
+
     return (
         <div className="grid grid-cols-2 gap-x-5 gap-y-2">
             <InputComponent
                 label="Model Name"
                 type="text"
-                name="modelName"
+                name="model"
                 placeholder="Model Name"
-                value={productData.modelName}
+                value={productData.model}
                 onChange={handleInputChange}
-                // onChange={(e) => setModelName(e.target.value)}
                 inputClassName="w-[80%]"
                 labelClassName="font-serif font-bold"
             />
             <InputComponent
                 label="Date"
-                type="Date"
-                name="date"
+                type="date"
+                name="createdAt"
                 placeholder="Enter your Date"
+                value={productData.createdAt}
+                onChange={handleInputChange}
                 inputClassName="w-[80%]"
                 labelClassName="font-serif font-bold"
-                value={productData.date}
-                onChange={handleInputChange}
             />
             <DropdownCompoent
                 label="Grade"
+                name="grade"
                 options={GRADE_OPTIONS}
                 placeholder="Select Grade"
+                value={productData.grade}
+                onChange={handleInputChange}
                 className="w-[80%]"
                 labelClassName="font-serif font-bold"
-                value={productData.grade}
-                onChange={(val) => setGrade(val)}
-            // onChange={(val) => handleDropdownChange("grade", val)}
             />
             <InputComponent
-                label="Buying Price"
-                type="text"
-                name="buyingPrice"
+                label="Purchase Price"
+                type="number"
+                name="purchase_price"
                 placeholder="Buying Purchase Price"
+                value={productData.purchase_price}
+                onChange={handleInputChange}
                 inputClassName="w-[80%]"
                 labelClassName="font-serif font-bold"
-                value={productData.buyingPrice}
-                onChange={handleInputChange}
             />
             <InputComponent
-                label="Rate"
-                type="text"
-                name="rate"
+                label="Sales Price"
+                type="number"
+                name="sales_price"
                 placeholder="Rate Selling Price"
+                value={productData.sales_price}
+                onChange={handleInputChange}
                 inputClassName="w-[80%]"
                 labelClassName="font-serif font-bold"
-                value={productData.rate}
-                onChange={handleInputChange}
             />
             <InputComponent
                 label="IMEI"
-                type="text"
-                name="imei"
+                type="number"
+                name="imei_number"
                 placeholder="IMEI"
-                // value={imei}
-                // onChange={(e) => setImei(e.target.value)}
+                value={productData.imei_number}
+                onChange={handleInputChange}
                 inputClassName="w-[80%]"
                 labelClassName="font-serif font-bold"
-                value={productData.imei}
-                onChange={handleInputChange}
             />
             <InputComponent
                 label="Engineer Name"
                 type="text"
-                name="engineerName"
+                name="engineer_name"
                 placeholder="Engineer Name"
+                value={productData.engineer_name}
+                onChange={handleInputChange}
                 inputClassName="w-[80%]"
                 labelClassName="font-serif font-bold"
-                value={productData.engineerName}
-                onChange={handleInputChange}
             />
             <InputComponent
                 label="QC Remark"
@@ -154,41 +139,40 @@ function SingleProductStockIn() {
                 onChange={handleInputChange}
             />
             <DropdownCompoent
-                label="Source"
-                options={SOURCE_OPTIONS}
-                placeholder="Select Source"
+                label="Supplier"
+                name="supplier"
+                options={SUPPLIER_OPTIONS}
+                placeholder="Select Supplier"
+                value={productData.supplier}
+                onChange={handleInputChange}
                 className="w-[80%]"
                 labelClassName="font-serif font-bold"
-                value={productData.source}
-                // onChange={(val) => handleDropdownChange("source", val)}
-                onChange={handleInputChange}
             />
             <DropdownCompoent
-                label="BOX"
-                options={BOX_OPTIONS}
+                label="Accessories"
+                name="accessories"
+                options={ACCESSORIES_OPTIONS}
                 placeholder="Select Box"
+                value={productData.accessories}
+                onChange={handleInputChange}
                 className="w-[80%]"
                 labelClassName="font-serif font-bold"
-                value={productData.box}
-                // onChange={(val) => handleDropdownChange("box", val)}
-                onChange={handleInputChange}
             />
 
             <div className="col-span-2 mt-4 flex justify-center">
                 <PrimaryButtonComponent
                     label="Save"
                     icon="fa fa-save"
-                    // onClick={handleSave}
                     buttonClassName="mt-2 py-1 px-5 text-xl font-bold"
-                    onClick={saveProductStockIn}
+                    onClick={addProductStockIn}
 
                 />
             </div>
             {showBarcode && (
                 <CustomBarcodePrintComponent
-                    modelName={modelName}
-                    grade={grade}
-                    imei={imei}
+                    model={productData.model}
+                    grade={productData.grade}
+                    imei={productData.imei_number}
                 />
             )}
         </div>

@@ -25,7 +25,7 @@ export default function AddBrands() {
     const addBrand = () => {
         apiCall({
             method: "POST",
-            url: "https://3-extent-billing-backend.vercel.app/api/brands/brand",
+            url: "https://3-extent-billing-backend.vercel.app/api/brands",
             data: brandData,
             callback: addBrandCallback,
         });
