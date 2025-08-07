@@ -1,14 +1,14 @@
-import { useNavigate } from "react-router-dom";
+
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
-import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
+import { BRANDS_COLOUMNS } from "./Constants";
+import { useNavigate } from "react-router-dom";
 function Brands() {
-    const headers = [
-        "No",
-        "Brand Name",
-        "No. of Models"
-    ];
+    const navigate = useNavigate();
+    const navigateAddBrands = () => {
+        navigate("/addbrands")
+    }
     const rows = [
         {
             "No": 1,
@@ -21,30 +21,26 @@ function Brands() {
             "No. of Models": 1,
         }
     ];
-    const selectedBrands = ['apple', 'xiaomi'];
-    const selectNumberOfModels = ['2', '1'];
     return (
         <div className='w-full'>
             <CustomHeaderComponent
                 name="Brands"
-                label="Add"
-                className="w-full mt-2 py-1"
-                icon="fa fa-plus-circle" />
-            <div className='flex items-center gap-4'>
-                <InputComponent />
+                label="Add Brands"
+                icon="fa fa-plus-circle"
+                onClick={navigateAddBrands}
+                buttonClassName="py-1 px-3 text-sm font-bold" />
 
-                <DropdownCompoent
-                    options={selectedBrands}
-                    placeholder="Select Brands"
+            <div className='flex items-center gap-4'>
+                <InputComponent
+                    type="text"
+                    placeholder="Enter Brand Name"
+                    inputClassName="w-[full] mb-5"
                 />
-                <DropdownCompoent
-                    options={selectNumberOfModels}
-                    placeholder="Enter No Of Models"
-                />
+
             </div>
             <div>
                 <CustomTableCompoent
-                    headers={headers}
+                    headers={BRANDS_COLOUMNS}
                     rows={rows}
                 />
             </div>

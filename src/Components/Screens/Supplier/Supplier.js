@@ -1,73 +1,56 @@
+import { useNavigate } from "react-router-dom";
+import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
-import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
+import { SUPPLIER_COLUMNS } from "./Constants";
 function Supplier() {
-    const headers = [
-        "No",
-        "Supplier Name",
-        "Company Name",
-        "Address",
-        "Contact No",
-        "GST No",
-        "Email",
-        "State",
-        "Balance",
-        "Supplier Type",
-    ];
+    const navigate=useNavigate();
+    const navigateAddSupplier=()=>{
+        navigate("/addsupplier")
+    }
     const rows = [
         {
-            "No": "1",
-            "Supplier Name": "nikita kadam",
-            "Company Name": "Apple",
-            "Address": "pune",
+            "Supplier Name": "Nikita Kadam",
             "Contact No": "1234567890",
             "GST No": "27ABCDE1234F1Z5",
-            "Email": "abc@example.com",
             "State": "Maharastra",
             "Balance": "70000",
             "Supplier Type": "wholesale",
         },
         {
-            "No": "2",
-            "Supplier Name": "shardul pawar",
-            "Company Name": "Apple",
-            "Address": "pune",
+            "Supplier Name": "Shardul Pawar",
             "Contact No": "1234567890",
             "GST No": "27ABCDE1234F1Z5",
-            "Email": "abc@example.com",
             "State": "Maharastra",
             "Balance": "80000",
             "Supplier Type": "wholesale",
         }
     ];
-    const supplierTypes = ['a', 'b'];
     return (
-
         <div className="w-full">
-            <div className="text-xl font-serif">List Of Suppiler Information</div>
-            <div className="grid grid-cols-4 items-center gap-4 ">
+            <CustomHeaderComponent
+                name="List of Supplier Information"
+                icon="fa fa-plus-circle"
+                label="Add Supplier"
+                onClick={navigateAddSupplier}
+                buttonClassName="py-1 px-3 text-sm font-bold"
+
+            />
+            <div className="flex items-center gap-4 mb-5">
                 <InputComponent
                     type="text"
-                    placeholder="Suppiler Name"
-                />
-                <DropdownCompoent
-                    options={supplierTypes}
-                    placeholder="Select Supplier Type"
+                    placeholder="Suppiler Name" 
                 />
                 <InputComponent
                     type="text"
                     placeholder="Contact No"
                 />
-                <InputComponent
-                    type="text"
-                    placeholder="Company Name"
-                />
             </div>
             <CustomTableCompoent
-                headers={headers}
+                headers={SUPPLIER_COLUMNS}
                 rows={rows}
             />
-            
+
         </div>
     );
 }

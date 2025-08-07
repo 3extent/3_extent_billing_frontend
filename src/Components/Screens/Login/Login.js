@@ -2,11 +2,21 @@ import { useNavigate } from 'react-router-dom';
 import billingimage from '../../../Assets/billingimage.webp';
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
-
-export default function Login() {
+import { useState } from 'react';
+export default function Login({ onLogin }) {
     const navigate = useNavigate();
+    const [loginFormData, setLoginFormData] = useState({
+        mobileNumber: "",
+        password: ""
+    });
+    const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        setLoginFormData({ ...loginFormData, [name]: value });
+    };
     const handleLogin = () => {
-        navigate('/dashboard');
+        localStorage.setItem("isLoggedIn", "true");
+        onLogin(); 
+        navigate('/salesbilling'); 
     };
     return (
         <div className="w-[100%] h-screen flex">
@@ -19,30 +29,42 @@ export default function Login() {
                     <div className="font-serif text-xl">Log in Your Account</div>
                     <div className="space-y-4">
                         <InputComponent
-                            label="Mobile Number:"
-                            type="text"
+                            label="Mobile Number"
+                            type="number"
+                            name="mobileNumber"
                             placeholder="Enter your mobile number"
                             inputClassName="w-full"
+                            value={loginFormData.mobileNumber}
+                            onChange={(e) => {
+                                const input = e.target.value.replace(/\D/g, '');
+                                if (input.length <= 10) {
+                                    setLoginFormData({ ...loginFormData, mobileNumber: input });
+                                }
+                            }}
+                            maxLength={10}
                         />
                         <InputComponent
-                            label="Password:"
+                            label="Password"
                             type="password"
+                            name="password"
                             placeholder="Enter your password"
                             inputClassName="w-full"
+                            value={loginFormData.password}
+                            onChange={handleInputChange}
                         />
                         <div>
                             <PrimaryButtonComponent
                                 label="Login"
+                                icon="fa fa-arrow-right"
+                                iconPosition="right"
                                 onClick={handleLogin}
-                                className="w-full"
+                                buttonClassName="w-full py-2 px-5 text-xl font-bold"
                             />
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
-
     );
 }
 
