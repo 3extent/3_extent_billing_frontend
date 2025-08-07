@@ -12,12 +12,14 @@ export default function Models() {
     const [rows, setRows] = useState([]);
     const [modelName, setModelName] = useState();
     const [brandName, setBrandName] = useState();
+    const [brandOptions, setBrandOptions] = useState([]);
     const navigate = useNavigate();
     const navigateAddModels = () => {
         navigate("/addmodels")
     }
     useEffect(() => {
         getModelsAllData();
+        getBrandsAllData();
     }, []);
     const getModelsCallBack = (response) => {
         console.log('response: ', response);
@@ -33,10 +35,14 @@ export default function Models() {
         }
     }
     const getModelsAllData = () => {
-        let url = "https://3-extent-billing-backend.vercel.app/api/models";
+        let url = "https://3-extent-billing-backend.vercel.app/api/models?";
         if (modelName) {
-            url += `?modelName=${modelName}`
-        } 
+            url += `&modelName=${modelName}`
+        }
+        if(brandName){
+            console.log('brandName: ', brandName);
+            url +=`&brandName=${brandName}`
+        }
         apiCall({
             method: 'GET',
             url: url,
@@ -44,10 +50,30 @@ export default function Models() {
             callback: getModelsCallBack,
         })
     }
+    const getBrandsAllData = () => {
+        let url = "https://3-extent-billing-backend.vercel.app/api/brands";
+        apiCall({
+            method: 'GET',
+            url: url,
+            data: {},
+            callback: getBrandsCallBack,
+        })
+    };
+    const getBrandsCallBack = (response) => {
+        console.log('response: ', response);
+        if (response.status === 200) {
+            const brands = response.data.map(brand=>brand.name);
+            setBrandOptions(brands);
+            console.log('brands: ', brands);
+        } else {
+            console.log("Error");
+        }
+    }
     const handleSearchFilter = () => {
         getModelsAllData();
     }
     const handleResetFilter = () => {
+        setBrandName('');
         setModelName('');
         getModelsAllData();
     }
@@ -61,7 +87,13 @@ export default function Models() {
                 onClick={navigateAddModels}
                 buttonClassName="py-1 px-3 text-sm font-bold" />
             <div className="flex items-center gap-4">
-                
+                <CustomDropdownInputComponent
+                    dropdownClassName="w-full mt-1"
+                    placeholder="Enter a brand"
+                    value={brandName}
+                    onChange={(value) => setBrandName(value)}
+                    options={brandOptions}
+                />
                 <InputComponent
                     type="text"
                     placeholder="Enter Models Name"

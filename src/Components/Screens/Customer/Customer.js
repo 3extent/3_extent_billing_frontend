@@ -78,7 +78,7 @@ export default function Customer() {
                     onChange={(e)=>setCustomerName(e.target.value)}
                 />
                 <InputComponent
-                    type="text"
+                    type="number"
                     placeholder="Contact No"
                     inputClassName="mb-5"
                     value={contactNo}

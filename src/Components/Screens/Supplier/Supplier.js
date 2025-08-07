@@ -73,7 +73,7 @@ function Supplier() {
                     onChange={(e) => setSupplierName(e.target.value)}
                 />
                 <InputComponent
-                    type="text"
+                    type="number"
                     placeholder="Contact No"
                     value={contactNo}
                     onChange={(e) => setContactNo(e.target.value)}

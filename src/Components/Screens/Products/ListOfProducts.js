@@ -13,6 +13,7 @@ function ListOfProducts() {
     const [grade, setGrade] = useState();
     const [modelName, setModelName] = useState();
     const [brandType, setBrandType] = useState();
+    const [brandOptions, setBrandOptions] = useState([]);
     // const [date, setDate] = useState(() => {
     //     const today = new Date();
     //     return today.toISOString().split("T")[0];
@@ -21,6 +22,7 @@ function ListOfProducts() {
 
     useEffect(() => {
         getProductsAllData();
+        getBrandsAllData(); 
     }, []);
     const getProductsCallBack = (response) => {
         console.log('response: ', response);
@@ -41,11 +43,11 @@ function ListOfProducts() {
         }
     }
     const getProductsAllData = () => {
-        let url = 'https://3-extent-billing-backend.vercel.app/api/products';
+        let url = 'https://3-extent-billing-backend.vercel.app/api/products?';
         if (imeiNumber) {
             url += `&imei_number=${imeiNumber}`
         }
-        else if (grade) {
+         if (grade) {
             url += `&grade=${grade}`
         }
         // else if (date) {
@@ -53,8 +55,9 @@ function ListOfProducts() {
         //     url += `&createdAt=${timestamp}`
         // }
         else if (modelName) {
-            url += `&name=${modelName}`
-        } else if (brandType) {
+            url += `&modelName=${modelName}`
+        } 
+        else if (brandType) {
             url += `&type=${brandType}`
         }
         apiCall({
@@ -64,11 +67,31 @@ function ListOfProducts() {
             callback: getProductsCallBack,
         })
     }
+     const getBrandsAllData = () => {
+            let url = "https://3-extent-billing-backend.vercel.app/api/brands";
+            apiCall({
+                method: 'GET',
+                url: url,
+                data: {},
+                callback: getBrandsCallBack,
+            })
+        };
+        const getBrandsCallBack = (response) => {
+            console.log('response: ', response);
+            if (response.status === 200) {
+                const brands = response.data.map(brand=>brand.name);
+                setBrandOptions(brands);
+                console.log('brands: ', brands);
+            } else {
+                console.log("Error");
+            }
+        }
+
     const handleSearchFilter = () => {
         getProductsAllData();
     }
     const handleResetFilter = () => {
-        // setDate(getTodayDate());
+        //  setDate(getTodayDate());
         setModelName('');
         setGrade('');
         setIMEINumber('');
@@ -86,20 +109,20 @@ function ListOfProducts() {
                     inputClassName="mb-5"
                 />
                 <DropdownCompoent
-                    options={BRAND_OPTIONS}
+                    options={brandOptions}
                     placeholder="Select Brands"
                     value={brandType}
                     onChange={(value) => setBrandType(value)}
                 />
                 <InputComponent
                     type="text"
-                    placeholder="Enter models Name"
+                    placeholder="Enter Models Name"
                     inputClassName="mb-5"
                     value={modelName}
                     onChange={(e) => setModelName(e.target.value)}
                 />
                 <InputComponent
-                    type="text"
+                    type="number"
                     placeholder="Enter IMEI NO"
                     inputClassName="mb-5"
                     value={imeiNumber}
