@@ -26,7 +26,7 @@ function ListOfProducts() {
         console.log('response: ', response);
         if (response.status === 200) {
             const productFormattedRows = response.data.map((product) => ({
-                "date": product.date,
+                "date": new Date(product.date).getTime(),
                 "IMEI NO": product.imei_number,
                 "Product Name": typeof product.model === 'object' ? product.model.name : product.model,
                 "Brand Name": typeof product.brand === 'object' ? product.model.brand : product.model.brand.name,
@@ -48,10 +48,10 @@ function ListOfProducts() {
         else if (grade) {
             url += `&grade=${grade}`
         }
-        else if (date) {
-            const timestamp = new Date(date).getTime();
-            url += `&createdAt=${timestamp}`
-        }
+        // else if (date) {
+        //     const timestamp = new Date(date).getTime();
+        //     url += `&createdAt=${timestamp}`
+        // }
         else if (modelName) {
             url += `&name=${modelName}`
         } else if (brandType) {
@@ -68,7 +68,7 @@ function ListOfProducts() {
         getProductsAllData();
     }
     const handleResetFilter = () => {
-        setDate(getTodayDate());
+        // setDate(getTodayDate());
         setModelName('');
         setGrade('');
         setIMEINumber('');
@@ -77,21 +77,7 @@ function ListOfProducts() {
     }
     return (
         <div className='w-full'>
-            <div className='flex justify-between items-center'>
-                <div className='text-xl font-serif'>List Of Products</div>
-                <div className='flex'>
-                    <PrimaryButtonComponent
-                        label="Search"
-                        buttonClassName=" py-1 px-5 text-xl font-bold"
-                        onClick={handleSearchFilter}
-                    />
-                    <PrimaryButtonComponent
-                        label="Reset"
-                        buttonClassName="ml-5 py-1 px-5 text-xl font-bold"
-                        onClick={handleResetFilter}
-                    />
-                </div>
-            </div>
+            <div className='text-xl font-serif'>List Of Products</div>
             <div className='flex items-center gap-4'>
                 <InputComponent
                     type="Date"
@@ -125,6 +111,18 @@ function ListOfProducts() {
                     inputClassName="mb-5"
                     value={grade}
                     onChange={(e) => setGrade(e.target.value)}
+                />
+            </div>
+            <div className='flex justify-end mb-2'>
+                <PrimaryButtonComponent
+                    label="Search"
+                    buttonClassName=" py-1 px-5 text-xl font-bold"
+                    onClick={handleSearchFilter}
+                />
+                <PrimaryButtonComponent
+                    label="Reset"
+                    buttonClassName="ml-5 py-1 px-5 text-xl font-bold"
+                    onClick={handleResetFilter}
                 />
             </div>
             <div>
