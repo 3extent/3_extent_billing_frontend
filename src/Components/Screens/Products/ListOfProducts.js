@@ -3,27 +3,18 @@ import React, { useState } from 'react';
 import InputComponent from '../../CustomComponents/InputComponent/InputComponent';
 import CustomTableCompoent from '../../CustomComponents/CustomTableCompoent/CustomTableCompoent';
 import DropdownCompoent from '../../CustomComponents/DropdownCompoent/DropdownCompoent';
+import { BRAND_OPTIONS, MODEL_OPTIONS, PRODUCT_COLOUMNS } from './Constants';
 function ListOfProducts() {
-    const headers = [
-        "Date",
-        "Company Name",
-        "Product Name",
-        "IMEI NO",
-        "Sales",
-        "Purchase Price",
-        "Profit",
-        "Grade",
-    ]
     const rows = [
         {
             "Date": "2025-07-08",
             "Company Name": "Samsung",
             "Product Name": "Galaxy S21",
             "IMEI NO": "123456789012345",
-            "Sales": 50000,
+            "Sales Price": 50000,
             "Purchase Price": 45000,
-            "Profit": 5000,
-            "Grade": "A"
+            "Grade": "A",
+            "Barcode": ""
         },
         {
             "Customer Name": "Jane Smith",
@@ -32,39 +23,38 @@ function ListOfProducts() {
             "Company Name": "Apple",
             "Product Name": "iPhone 13",
             "IMEI NO": "987654321098765",
-            "Sales": 70000,
+            "Sales Price": 70000,
             "Purchase Price": 65000,
-            "Profit": 5000,
-            "Grade": "B"
+            "Grade": "B",
+            "Barcode": ""
         }
     ];
-    const selectBrands = ['apple', 'xiaomi'];
-    const selectModels = ['apple iphone 14', 'xiaomi redmi note 13'];
+    const [date, setDate] = useState(() => {
+        const today = new Date();
+        return today.toISOString().split("T")[0];
+    });
     return (
         <div className='w-full'>
             <div className='text-xl font-serif'>List Of Products</div>
             <div className='flex items-center gap-4'>
                 <InputComponent
                     type="Date"
-                    placeholder="Enter your Date"
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
+                    inputClassName="mb-5"
                 />
                 <DropdownCompoent
-                    options={selectBrands}
+                    options={BRAND_OPTIONS}
                     placeholder="Select Brands"
                 />
                 <DropdownCompoent
-                    options={selectModels}
+                    options={MODEL_OPTIONS}
                     placeholder="Select Models"
                 />
-                <InputComponent
-                    type="text"
-                    placeholder="Enter your Grade"
-                />
-
             </div>
             <div>
                 <CustomTableCompoent
-                    headers={headers}
+                    headers={PRODUCT_COLOUMNS}
                     rows={rows}
                 />
             </div>

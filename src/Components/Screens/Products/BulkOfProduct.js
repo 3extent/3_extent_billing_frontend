@@ -21,12 +21,11 @@ function BulkOfProduct() {
         reader.onload = (evt) => {
             const data = evt.target.result;
             const workbook = XLSX.read(data, { type: 'binary' });
-
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
             const jsonData = XLSX.utils.sheet_to_json(worksheet);
             setExcelData(jsonData);
-            setShowTable(false); // Reset table display
+            setShowTable(false);
             console.log('Imported Excel Data:', jsonData);
         };
 
@@ -36,29 +35,24 @@ function BulkOfProduct() {
     const handleButtonClick = () => {
         console.log('Input value:', inputValue);
         console.log('Excel data:', excelData);
-        setShowTable(true); // Show table after clicking button
+        setShowTable(true);
     };
-
-    // Use different name to avoid clash
     const tableHeaders = excelData.length > 0 ? Object.keys(excelData[0]) : [];
 
     return (
         <div className="w-full">
-            {/* <h2 className="text-2xl text-center font-serif mb-4 font-bold">Bulk of Product</h2> */}
-            {/* <div className='items-center w-full'> */}
             <div className='flex  justify-center items-center w-full gap-7'>
                 <InputComponent
                     label="Upload Excel File"
                     type="file"
-                    accept=".xlsx, .xls"                                                                            
+                    accept=".xlsx, .xls"
                     onChange={handleFileUpload}
-                    // inputClassName="w-1/3 px-4 py-2"
                     inputClassName="w-[80%] p-10"
                 />
                 <PrimaryButtonComponent
                     label="Continue"
                     onClick={handleButtonClick}
-                    className="w-[100%] p-20"
+                    buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
                 />
             </div>
             {showTable && excelData.length > 0 && (

@@ -3,110 +3,149 @@ import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
-const headers = [
-    "Sr.No",
-    "Date",
-    "IMEI NO",
-    "Company Name",
-    "Model Name",
-    "Rate",
-    "Grade",
-    "Box",
-    "Contact No"
-];
-const rows = [
-    {
-        "Sr.No": "1",
-        "Date": "2025-07-10",
-        "IMEI NO": "359876543210123",
-        "Company Name": "Apple",
-        "Model Name": "iPhone 6",
-        "Rate": 500,
-        "Grade": "A",
-        "Box": "Yes",
-        "Contact No": "9876543210",
-    }
-];
+import { SALESBILLING_COLOUMNS } from "./Constants";
 export default function SalesBilling() {
-    // const [imei, setImei] = useState("");
-    // const [customerName, setCustomerName] = useState("");
-    // const [contactNo, setContactNo] = useState("");
-    // const [date, setDate] = useState("");
-    // const [filteredRow, setFilteredRow] = useState(null);
-    // const handleImeiChange = (value) => {
-    //     setImei(value);
-
-    //     const matchedRow = rows.find(row => row["IMEI NO"] === value);
-    //     setFilteredRow(matchedRow || null);
-    // };
+    const [rows, setRows] = useState([
+        {
+            "Sr.No": "1",
+            "Date": "2025-07-10",
+            "IMEI NO": "359876543210123",
+            "Company Name": "Apple",
+            "Model Name": "iPhone 6",
+            "Rate": 500,
+            "Purchase Price": 1000,
+            "Grade": "A",
+            "Box": "Yes",
+            "Contact No": "9876543210",
+        },
+        {
+            "Sr.No": "1",
+            "Date": "2025-07-10",
+            "IMEI NO": "359876543210123",
+            "Company Name": "Apple",
+            "Model Name": "iPhone 6",
+            "Rate": 500,
+            "Purchase Price": 1000,
+            "Grade": "A",
+            "Box": "Yes",
+            "Contact No": "9876543210",
+        }
+    ]);
+    const [hiddenColumns, setHiddenColumns] = useState([
+        "Purchase Price",
+        "Sale Price"
+    ]);
+    const [dynamicHeaders, setDynamicHeaders] = useState(() => {
+        return SALESBILLING_COLOUMNS.filter(
+            (col) => !["Purchase Price"].includes(col)
+        );
+    });
+    const [showDropdown, setShowDropdown] = useState(false);
+    const toggleColumn = (columnName) => {
+        if (dynamicHeaders.includes(columnName)) {
+            setDynamicHeaders(dynamicHeaders.filter(col => col !== columnName));
+            setHiddenColumns([...hiddenColumns, columnName]);
+        } else {
+            setDynamicHeaders([...dynamicHeaders, columnName]);
+            setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
+        }
+    };
+    const [date, setDate] = useState(() => {
+        const today = new Date();
+        return today.toISOString().split("T")[0];
+    });
+    const handleRateChange = (index, newRate) => {
+        const updatedRows = [...rows];
+        updatedRows[index]["Rate"] = Number(newRate);
+        setRows(updatedRows);
+    };
     return (
         <div>
-            <div className='text-xl mb-6 font-serif'>Sales Billing</div>
-            <div className="grid grid-cols-5 items-center gap-4">
+            <CustomHeaderComponent
+                name="Sales Billing"
+                label="Billing History"
+                icon="fa fa-plus-circle" 
+                buttonClassName="py-1 px-3 text-sm font-bold"
+                />
+            <div className="flex items-center gap-4 mt-3">
                 <InputComponent
                     label="IMEI No :"
                     type="text"
                     placeholder="Scan IMEI No"
-                    // value={imei}
-                    // onChange={(e) => handleImeiChange(e.target.value)}
                 />
                 <InputComponent
                     label="Customer Name :"
                     type="text"
                     placeholder="Enter Customer Name"
-                    // value={customerName}
-                    // onChange={(e) => setCustomerName(e.target.value)}
                 />
                 <InputComponent
                     label="Contact No:"
                     type="text"
                     placeholder="contact No"
-                    // value={contactNo}
-                    // onChange={(e) => setContactNo(e.target.value)}
                 />
                 <InputComponent
                     label="Date :"
                     type="Date"
-                    // placeholder=""
-                    // value={date}
-                    // onChange={(e) => setDate(e.target.value)}
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
                 />
                 <PrimaryButtonComponent
                     label="Save"
-                    className="w-full mt-2"
+                    buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
                     icon="fa fa-cloud-download"
                 />
             </div>
+            <div className="relative mt-4 mb-2">
+                <button
+                    onClick={() => setShowDropdown(!showDropdown)}
+                    className="px-3 py-1 border rounded hover:bg-gray-200"
+                    title="Show columns"
+                >
+                    <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
+                </button>
+                {showDropdown && (
+                    <div className="absolute bg-white border shadow-md mt-1 rounded w-48 z-10 max-h-48 overflow-auto">
+                        {["Purchase Price"].map((col) => (
+                            <label
+                                key={col}
+                                className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                            >
+                                <input
+                                    type="checkbox"
+                                    checked={dynamicHeaders.includes(col)}
+                                    onChange={() => toggleColumn(col)}
+                                    className="mr-2"
+                                    onFocus={() => setShowDropdown(true)}
+                                    onBlur={() => setTimeout(() => setShowDropdown(false), 300)}
+                                />
+                                {col}
+                            </label>
+                        ))}
+                    </div>
+                )}
+            </div>
             <div>
                 <CustomTableCompoent
-                    headers={headers}
+                    headers={dynamicHeaders}
                     rows={rows}
+                    onRateChange={handleRateChange}
                 />
             </div>
-            {/* <div className="mt-5">
-                <CustomTableCompoent
-                    headers={headers}
-                    rows={filteredRow ? [filteredRow] : []}
-                />
-                {!filteredRow && imei && (
-                    <p className="text-red-500 mt-2">No record found for this IMEI.</p>
-                )}
-            </div> */}
             <div className="flex justify-end gap-4 mt-5">
                 <PrimaryButtonComponent
                     label="Save"
                     icon="fa fa-cloud-download"
-                    className="w-full"
+                    buttonClassName="py-1 px-5 text-xl font-bold"
                 />
                 <PrimaryButtonComponent
                     label="Print"
                     icon="fa fa-print"
-                    className="w-full"
+                    buttonClassName="py-1 px-5 text-xl font-bold"
                 />
                 <PrimaryButtonComponent
                     label="Cancel"
                     icon="fa fa-window-close"
-                    className="w-full mr-3"
+                    buttonClassName="py-1 px-5 text-xl font-bold"
                 />
             </div>
         </div>
