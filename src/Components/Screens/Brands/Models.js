@@ -11,7 +11,7 @@ import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownI
 export default function Models() {
     const [rows, setRows] = useState([]);
     const [modelName, setModelName] = useState();
-    const [brandName, setBrandName] = useState();
+    const [brandName, setBrandName] = useState("");
     const [brandOptions, setBrandOptions] = useState([]);
     const navigate = useNavigate();
     const navigateAddModels = () => {
@@ -34,14 +34,16 @@ export default function Models() {
             console.log("Error");
         }
     }
+    console.log('brandName: ', brandName);
     const getModelsAllData = () => {
         let url = "https://3-extent-billing-backend.vercel.app/api/models?";
         if (modelName) {
             url += `&modelName=${modelName}`
         }
-        if(brandName){
+        if (brandName) {
             console.log('brandName: ', brandName);
-            url +=`&brandName=${brandName}`
+            url += `&brandName=${brandName}`
+            console.log('brandName: ', brandName);
         }
         apiCall({
             method: 'GET',
@@ -62,8 +64,11 @@ export default function Models() {
     const getBrandsCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
-            const brands = response.data.map(brand=>brand.name);
+            const brands = response.data.map(brand => brand.name);
             setBrandOptions(brands);
+            if (!brandName) {
+                setBrandName("");
+            }
             console.log('brands: ', brands);
         } else {
             console.log("Error");

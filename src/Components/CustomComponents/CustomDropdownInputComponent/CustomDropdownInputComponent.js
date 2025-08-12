@@ -1,16 +1,21 @@
 
-import { useState } from 'react';
-export default function CustomDropdownInputComponent({name,dropdownClassName="",placeholder="",options=[]}) {
+import { useEffect, useState } from 'react';
+export default function CustomDropdownInputComponent({ name, dropdownClassName = "", placeholder = "", options = [], value = "", onChange = () => { }, }) {
     const [inputValue, setInputValue] = useState('');
     const [showDropdown, setShowDropdown] = useState(false);
+    useEffect(() => {
+        setInputValue(value || '');
+    }, [value]);
     const handleChange = (e) => {
         const value = e.target.value;
         setInputValue(value);
         setShowDropdown(true);
+        onChange(value);
     };
     const handleSelect = (option) => {
         setInputValue(option);
-        setShowDropdown(false);
+        onChange(option);
+        setShowDropdown(false);   
     };
     const filteredOptions = inputValue.trim() === ''
         ? options
@@ -24,12 +29,11 @@ export default function CustomDropdownInputComponent({name,dropdownClassName="",
                 type="text"
                 value={inputValue}
                 onChange={handleChange}
-                onFocus={() => setShowDropdown(true)}  
+                onFocus={() => setShowDropdown(true)}
                 onBlur={() => setTimeout(() => setShowDropdown(false), 100)}
                 placeholder={placeholder}
                 className={`px-3 py-2 border border-gray-300 rounded-md ${dropdownClassName} `}
             />
-
             {showDropdown && (
                 <div className={`absolute z-10 mt-1 bg-white border border-gray-300 rounded-md max-h-40 overflow-y-auto ${dropdownClassName}`}>
                     {filteredOptions.map((option, index) => (
