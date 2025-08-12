@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import InputComponent from '../../CustomComponents/InputComponent/InputComponent';
 import CustomTableCompoent from '../../CustomComponents/CustomTableCompoent/CustomTableCompoent';
 import DropdownCompoent from '../../CustomComponents/DropdownCompoent/DropdownCompoent';
-import { BRAND_OPTIONS, MODEL_OPTIONS, PRODUCT_COLOUMNS } from './Constants';
+import { PRODUCT_COLOUMNS } from './Constants';
 import { apiCall } from '../../../Util/AxiosUtils';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
 function ListOfProducts() {
@@ -12,17 +12,16 @@ function ListOfProducts() {
     const [imeiNumber, setIMEINumber] = useState();
     const [grade, setGrade] = useState();
     const [modelName, setModelName] = useState();
-    const [brandType, setBrandType] = useState();
+    const [brandName, setBrandName] = useState('');
     const [brandOptions, setBrandOptions] = useState([]);
     // const [date, setDate] = useState(() => {
     //     const today = new Date();
     //     return today.toISOString().split("T")[0];
     // });
     const [date, setDate] = useState(getTodayDate);
-
     useEffect(() => {
         getProductsAllData();
-        getBrandsAllData(); 
+        getBrandsAllData();
     }, []);
     const getProductsCallBack = (response) => {
         console.log('response: ', response);
@@ -47,18 +46,18 @@ function ListOfProducts() {
         if (imeiNumber) {
             url += `&imei_number=${imeiNumber}`
         }
-         if (grade) {
+        if (grade) {
             url += `&grade=${grade}`
         }
         // else if (date) {
         //     const timestamp = new Date(date).getTime();
         //     url += `&createdAt=${timestamp}`
         // }
-        else if (modelName) {
+        if (modelName) {
             url += `&modelName=${modelName}`
-        } 
-        else if (brandType) {
-            url += `&type=${brandType}`
+        }
+        if (brandName) {
+            url += `&brandName=${brandName}`
         }
         apiCall({
             method: 'GET',
@@ -67,26 +66,24 @@ function ListOfProducts() {
             callback: getProductsCallBack,
         })
     }
-     const getBrandsAllData = () => {
-            let url = "https://3-extent-billing-backend.vercel.app/api/brands";
-            apiCall({
-                method: 'GET',
-                url: url,
-                data: {},
-                callback: getBrandsCallBack,
-            })
-        };
-        const getBrandsCallBack = (response) => {
-            console.log('response: ', response);
-            if (response.status === 200) {
-                const brands = response.data.map(brand=>brand.name);
-                setBrandOptions(brands);
-                console.log('brands: ', brands);
-            } else {
-                console.log("Error");
-            }
+    const getBrandsAllData = () => {
+        let url = "https://3-extent-billing-backend.vercel.app/api/brands";
+        apiCall({
+            method: 'GET',
+            url: url,
+            data: {},
+            callback: getBrandsCallBack,
+        })
+    };
+    const getBrandsCallBack = (response) => {
+        console.log('response: ', response);
+        if (response.status === 200) {
+            const brands = response.data.map(brand => brand.name);
+            setBrandOptions(brands);
+        } else {
+            console.log("Error");
         }
-
+    }
     const handleSearchFilter = () => {
         getProductsAllData();
     }
@@ -95,7 +92,7 @@ function ListOfProducts() {
         setModelName('');
         setGrade('');
         setIMEINumber('');
-        setBrandType('');
+        setBrandName('');
         getProductsAllData();
     }
     return (
@@ -109,10 +106,10 @@ function ListOfProducts() {
                     inputClassName="mb-5"
                 />
                 <DropdownCompoent
-                    options={brandOptions}
                     placeholder="Select Brands"
-                    value={brandType}
-                    onChange={(value) => setBrandType(value)}
+                    value={brandName}
+                    onChange={(value) => setBrandName(value)}
+                    options={brandOptions}
                 />
                 <InputComponent
                     type="text"

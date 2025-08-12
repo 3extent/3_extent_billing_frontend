@@ -34,16 +34,13 @@ export default function Models() {
             console.log("Error");
         }
     }
-    console.log('brandName: ', brandName);
     const getModelsAllData = () => {
         let url = "https://3-extent-billing-backend.vercel.app/api/models?";
         if (modelName) {
             url += `&modelName=${modelName}`
         }
         if (brandName) {
-            console.log('brandName: ', brandName);
             url += `&brandName=${brandName}`
-            console.log('brandName: ', brandName);
         }
         apiCall({
             method: 'GET',
