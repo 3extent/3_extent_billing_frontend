@@ -1,35 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { SALESBILLING_COLOUMNS } from "./Constants";
+import { apiCall } from "../../../Util/AxiosUtils";
 export default function SalesBilling() {
     const [rows, setRows] = useState([
-        {
-            "Sr.No": "1",
-            "Date": "2025-07-10",
-            "IMEI NO": "359876543210123",
-            "Company Name": "Apple",
-            "Model Name": "iPhone 6",
-            "Rate": 500,
-            "Purchase Price": 1000,
-            "Grade": "A",
-            "Box": "Yes",
-            "Contact No": "9876543210",
-        },
-        {
-            "Sr.No": "1",
-            "Date": "2025-07-10",
-            "IMEI NO": "359876543210123",
-            "Company Name": "Apple",
-            "Model Name": "iPhone 6",
-            "Rate": 500,
-            "Purchase Price": 1000,
-            "Grade": "A",
-            "Box": "Yes",
-            "Contact No": "9876543210",
-        }
     ]);
     const [hiddenColumns, setHiddenColumns] = useState([
         "Purchase Price",
@@ -41,6 +18,10 @@ export default function SalesBilling() {
         );
     });
     const [showDropdown, setShowDropdown] = useState(false);
+    const [imeiFilter, setImeiFilter] = useState("");
+    const filteredRows = imeiFilter
+        ? rows.filter(row => row["IMEI NO"].includes(imeiFilter))
+        : [];
     const toggleColumn = (columnName) => {
         if (dynamicHeaders.includes(columnName)) {
             setDynamicHeaders(dynamicHeaders.filter(col => col !== columnName));
@@ -59,6 +40,37 @@ export default function SalesBilling() {
         updatedRows[index]["Rate"] = Number(newRate);
         setRows(updatedRows);
     };
+    useEffect(() => {
+        // getsalesbillingAllData();
+    }, []);
+    const getsalesbillingCallBack = (response) => {
+        console.log('response: ', response);
+        if (response.status === 200) {
+            const productFormattedRows = response.data.map((product, index) => ({
+                "Sr.No": index + 1,
+                "date": product.date,
+                "IMEI NO": product.imei_number,
+                "Company Name": typeof product.brand === 'object' ? product.brand.name : product.brand,
+                "Model Name": typeof product.model === 'object' ? product.model.name : product.model,
+                "Rate": product.sales_price,
+                "Purchase Price": product.purchase_price,
+                "Grade": product.grade,
+                "Box": product.box
+
+            }))
+            setRows(productFormattedRows);
+        } else {
+            console.log("Error");
+        }
+    }
+    const getsalesbillingAllData = () => {
+        apiCall({
+            method: 'GET',
+            url: 'https://3-extent-billing-backend.vercel.app/api/products',
+            data: {},
+            callback: getsalesbillingCallBack,
+        })
+    }
     return (
         <div>
             <CustomHeaderComponent
@@ -72,6 +84,14 @@ export default function SalesBilling() {
                     label="IMEI No :"
                     type="text"
                     placeholder="Scan IMEI No"
+                    value={imeiFilter}
+                    onChange={(e) => {
+                        const value = e.target.value;
+                        setImeiFilter(value);
+                        if (value.length > 10) {
+                            getsalesbillingAllData(value);
+                        }
+                    }}
                 />
                 <InputComponent
                     label="Customer Name :"
@@ -127,7 +147,7 @@ export default function SalesBilling() {
             <div>
                 <CustomTableCompoent
                     headers={dynamicHeaders}
-                    rows={rows}
+                    rows={filteredRows}
                     onRateChange={handleRateChange}
                 />
             </div>
