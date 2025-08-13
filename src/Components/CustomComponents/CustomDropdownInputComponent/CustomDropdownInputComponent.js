@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react';
-export default function CustomDropdownInputComponent({ name, dropdownClassName = "", placeholder = "", options = [], value = "", onChange = () => { }, }) {
+export default function CustomDropdownInputComponent({ name, dropdownClassName = "", labelClassName = "", placeholder = "", options = [], value = "", onChange = () => { }, }) {
     const [inputValue, setInputValue] = useState('');
     const [showDropdown, setShowDropdown] = useState(false);
     useEffect(() => {
@@ -15,7 +15,7 @@ export default function CustomDropdownInputComponent({ name, dropdownClassName =
     const handleSelect = (option) => {
         setInputValue(option);
         onChange(option);
-        setShowDropdown(false);   
+        setShowDropdown(false);
     };
     const filteredOptions = inputValue.trim() === ''
         ? options
@@ -24,7 +24,7 @@ export default function CustomDropdownInputComponent({ name, dropdownClassName =
         );
     return (
         <div className=" relative">
-            <div><label className="font-bold ">{name}</label></div>
+            <div><label className={`font-bold ${labelClassName} `}>{name}</label></div>
             <input
                 type="text"
                 value={inputValue}
