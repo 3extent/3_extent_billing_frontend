@@ -6,7 +6,6 @@ import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponen
 import { BOX_OPTIONS, GRADE_OPTIONS, SOURCE_OPTIONS } from './Constants';
 import CustomDropdownInputComponent from '../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent';
 import { apiCall } from '../../../Util/AxiosUtils';
-
 function SingleProductStockIn() {
     const [modelName, setModelName] = useState('');
     const [grade, setGrade] = useState('');
@@ -40,6 +39,7 @@ function SingleProductStockIn() {
         if (response.status === 200) {
             const models = response.data.map(model => model.name);
             setModelOptions(models);
+            console.log('models: ', models);
             if (!modelName) {
                 setModelName("");
             }
@@ -49,15 +49,6 @@ function SingleProductStockIn() {
     }
     return (
         <div className="grid grid-cols-2 gap-x-5 gap-y-2">
-            {/* <InputComponent
-                label="Model Name"
-                type="text"
-                placeholder="Model Name"
-                value={modelName}
-                onChange={(e) => setModelName(e.target.value)}
-                inputClassName="w-[80%]"
-                labelClassName="font-serif font-bold"
-            /> */}
             <CustomDropdownInputComponent
                 name="Model Name"
                 dropdownClassName="w-[80%]"
