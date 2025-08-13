@@ -21,7 +21,8 @@ export default function SalesBilling() {
     const [imeiFilter, setImeiFilter] = useState("");
     const filteredRows = imeiFilter
         ? rows.filter(row => row["IMEI NO"].includes(imeiFilter))
-        : [];
+        : rows;
+
     const toggleColumn = (columnName) => {
         if (dynamicHeaders.includes(columnName)) {
             setDynamicHeaders(dynamicHeaders.filter(col => col !== columnName));
@@ -43,6 +44,30 @@ export default function SalesBilling() {
     useEffect(() => {
         // getsalesbillingAllData();
     }, []);
+
+    const handleImeiNumberChange = (e) => {
+        const value = e.target.value;
+        setImeiFilter(value);
+        if (value.length > 10) {
+            getsalesbillingAllData(value);
+        }
+    }
+    const handleAddRow = () => {
+        const newRow = {
+            "Sr.No": rows.length + 1,
+            "date": date,
+            "IMEI NO": imeiFilter,
+            "Company Name": "",
+            "Model Name": "",
+            "Rate": 0,
+            "Purchase Price": "",
+            "Grade": "",
+            "Box": ""
+        };
+        // setRows([newRow]);
+        setRows([...rows, newRow]);
+        setImeiFilter("");
+    };
     const getsalesbillingCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
@@ -85,13 +110,7 @@ export default function SalesBilling() {
                     type="text"
                     placeholder="Scan IMEI No"
                     value={imeiFilter}
-                    onChange={(e) => {
-                        const value = e.target.value;
-                        setImeiFilter(value);
-                        if (value.length > 10) {
-                            getsalesbillingAllData(value);
-                        }
-                    }}
+                    onChange={handleImeiNumberChange}
                 />
                 <InputComponent
                     label="Customer Name :"
@@ -110,9 +129,10 @@ export default function SalesBilling() {
                     onChange={(e) => setDate(e.target.value)}
                 />
                 <PrimaryButtonComponent
-                    label="Save"
+                    label="Add"
                     buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
-                    icon="fa fa-cloud-download"
+                    icon="fa fa-plus-circle"
+                    onClick={handleAddRow}
                 />
             </div>
             <div className="relative mt-4 mb-2">
@@ -144,30 +164,35 @@ export default function SalesBilling() {
                     </div>
                 )}
             </div>
-            <div>
-                <CustomTableCompoent
-                    headers={dynamicHeaders}
-                    rows={filteredRows}
-                    onRateChange={handleRateChange}
-                />
-            </div>
-            <div className="flex justify-end gap-4 mt-5">
-                <PrimaryButtonComponent
-                    label="Save"
-                    icon="fa fa-cloud-download"
-                    buttonClassName="py-1 px-5 text-xl font-bold"
-                />
-                <PrimaryButtonComponent
-                    label="Print"
-                    icon="fa fa-print"
-                    buttonClassName="py-1 px-5 text-xl font-bold"
-                />
-                <PrimaryButtonComponent
-                    label="Cancel"
-                    icon="fa fa-window-close"
-                    buttonClassName="py-1 px-5 text-xl font-bold"
-                />
-            </div>
+            {filteredRows.length > 0 && (
+                <>
+                    <div>
+                        <CustomTableCompoent
+                            headers={dynamicHeaders}
+                            rows={filteredRows}
+                            onRateChange={handleRateChange}
+                        />
+                    </div>
+                    <div className="flex justify-end gap-4 mt-5">
+                        <PrimaryButtonComponent
+                            label="Save"
+                            icon="fa fa-cloud-download"
+                            buttonClassName="py-1 px-5 text-xl font-bold"
+                        />
+                        <PrimaryButtonComponent
+                            label="Print"
+                            icon="fa fa-print"
+                            buttonClassName="py-1 px-5 text-xl font-bold"
+                        />
+                        <PrimaryButtonComponent
+                            label="Cancel"
+                            icon="fa fa-window-close"
+                            buttonClassName="py-1 px-5 text-xl font-bold"
+                        />
+                    </div>
+                </>
+            )}
         </div>
+
     );
 }
