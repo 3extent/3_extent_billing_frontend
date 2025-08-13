@@ -7,18 +7,18 @@ import { PRODUCT_COLOUMNS } from './Constants';
 import { apiCall } from '../../../Util/AxiosUtils';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
 function ListOfProducts() {
-    const getTodayDate = () => new Date().toISOString().split("T")[0];
+    // const getTodayDate = () => new Date().toISOString().split("T")[0];
     const [rows, setRows] = useState([]);
     const [imeiNumber, setIMEINumber] = useState();
     const [grade, setGrade] = useState();
     const [modelName, setModelName] = useState();
     const [brandName, setBrandName] = useState('');
     const [brandOptions, setBrandOptions] = useState([]);
-    // const [date, setDate] = useState(() => {
-    //     const today = new Date();
-    //     return today.toISOString().split("T")[0];
-    // });
-    const [date, setDate] = useState(getTodayDate);
+    const [date, setDate] = useState(() => {
+        const today = new Date();
+        return today.toISOString().split("T")[0];
+    });
+    // const [date, setDate] = useState(getTodayDate);
     useEffect(() => {
         getProductsAllData();
         getBrandsAllData();

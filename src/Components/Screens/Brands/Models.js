@@ -87,7 +87,8 @@ export default function Models() {
                 icon="fa fa-plus-circle"
                 buttonclassName="py-1 text-sm"
                 onClick={navigateAddModels}
-                buttonClassName="py-1 px-3 text-sm font-bold" />
+                buttonClassName="py-1 px-3 text-sm font-bold"
+            />
             <div className="flex items-center gap-4">
                 <CustomDropdownInputComponent
                     dropdownClassName="w-full mt-1"

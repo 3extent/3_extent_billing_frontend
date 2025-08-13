@@ -55,8 +55,8 @@ function Brands() {
                 label="Add Brands"
                 icon="fa fa-plus-circle"
                 onClick={navigateAddBrands}
-                buttonClassName="py-1 px-3 text-sm font-bold" />
-
+                buttonClassName="py-1 px-3 text-sm font-bold"
+            />
             <div className='flex items-center gap-4'>
                 <InputComponent
                     type="text"

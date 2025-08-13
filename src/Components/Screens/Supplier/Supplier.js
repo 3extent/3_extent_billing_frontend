@@ -35,10 +35,10 @@ function Supplier() {
     }
     const getSupplierAllData = () => {
         let url = "https://3-extent-billing-backend.vercel.app/api/users?role=SUPPLIER"
-        if(supplierName){
-            url+=`&name=${supplierName}`
-        }else if(contactNo){
-            url+=`&contact_number=${contactNo}`
+        if (supplierName) {
+            url += `&name=${supplierName}`
+        } if (contactNo) {
+            url += `&contact_number=${contactNo}`
         }
         apiCall({
             method: 'GET',
