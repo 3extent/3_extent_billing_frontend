@@ -81,57 +81,76 @@ function SingleProductStockIn() {
 
     const printBarcode = (barcodeList) => {
         console.log('barcodeList: ', barcodeList);
-        const printWindow = window.open('', '', 'width=600,height=800');
-
-
+        const printWindow = window.open("", "", "width=600,height=800");
         if (!printWindow) {
-            alert('Popup blocked! Please allow popups for this site.');
+            alert("Popup blocked! Please allow popups.");
             return;
         }
 
-        const barcodeHTML = `<div style="page-break-after: always; text-align: left; margin-top: 100px;font-style:bold;width:50%">
-                            <div style="margin-top: 10px; font-size: 18px;">Model : ${barcodeList[0].modelName}</div>
-                            <div style="margin-top: 10px; font-size: 18px;">Grade : ${barcodeList[0].grade}</div>
-                            <svg id="barcode"></svg>
-                           </div>`
-           
-
-        printWindow.document.write(`
-      <html>
-        <head>
-          <title>Print Barcode</title>
-          <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-          <style>
+        const html = `
+    <html>
+      <head>
+        <title>Print Barcode</title>
+        <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+        <style>
+          @page {
+            size: auto;
+            margin: 20mm;
+          }
+          @media print {
             body {
-              font-family: Arial, sans-serif;
               margin: 0;
-              padding: 20px;
+              padding: 0;
+            }
+            .barcode-page {
+              page-break-inside: avoid;
               text-align: center;
             }
-          </style>
-        </head>
-        <body>
-          ${barcodeHTML}
-          <script>
-            window.onload = function() {
-              JsBarcode("#barcode", "${barcodeList[0].imei}", {
-                format: "CODE128",
-                width: 2,
-                height: 100,
-                displayValue: true
-              });
+          }
+          body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+          }
+          .details {
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: bold;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="barcode-page">
+          <div class="details">Model: ${barcodeList[0].modelName} | Grade: ${barcodeList[0].grade}</div>
+          <img id="barcode-img" alt="Barcode" />
+        </div>
+        <script>
+          (function() {
+            // Generate barcode into an <img> tag with Data URL
+            var img = document.getElementById('barcode-img');
+            JsBarcode(img, "${barcodeList[0].imei}", {
+              format: "CODE128",
+              width: 2,
+              height: 80,
+              displayValue: true
+            });
+            // Delay print slightly to ensure rendering
+            setTimeout(function() {
               window.print();
-              window.onafterprint = function() {
-                window.close();
-              };
-            }
-          </script>
-        </body>
-      </html>
-    `);
+            }, 300);
+            window.onafterprint = function () {
+              window.close();
+            };
+          })();
+        </script>
+      </body>
+    </html>
+  `;
 
+        printWindow.document.write(html);
         printWindow.document.close();
     };
+
 
     return (
         <div className="grid grid-cols-2 gap-x-5 gap-y-2">
