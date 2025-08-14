@@ -125,7 +125,6 @@ function SingleProductStockIn() {
                 className="w-[80%]"
                 labelClassName="font-serif font-bold"
             />
-
             <div className="col-span-2 mt-4 flex justify-center">
                 <PrimaryButtonComponent
                     label="Save"
@@ -145,5 +144,4 @@ function SingleProductStockIn() {
         </div>
     );
 }
-
 export default SingleProductStockIn;
