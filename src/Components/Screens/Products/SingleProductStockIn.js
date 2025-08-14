@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
 import { ACCESSORIES_OPTIONS, GRADE_OPTIONS, SUPPLIER_OPTIONS } from './Constants';
 import CustomDropdownInputComponent from '../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent';
 import { apiCall } from '../../../Util/AxiosUtils';
+import Barcode from 'react-barcode';
 function SingleProductStockIn() {
+    const printRef = useRef();
     const [modelOptions, setModelOptions] = useState([]);
     const [modelName, setModelName] = useState("");
     const [productData, setProductData] = useState({
@@ -80,75 +82,34 @@ function SingleProductStockIn() {
     }
 
     const printBarcode = (barcodeList) => {
-        console.log('barcodeList: ', barcodeList);
-        const printWindow = window.open("", "", "width=600,height=800");
-        if (!printWindow) {
-            alert("Popup blocked! Please allow popups.");
-            return;
-        }
+        const html = printRef.current.innerHTML;
 
-        const html = `
-    <html>
-      <head>
-        <title>Print Barcode</title>
-        <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-        <style>
-          @page {
-            size: auto;
-            margin: 20mm;
-          }
-          @media print {
-            body {
-              margin: 0;
-              padding: 0;
-            }
-            .barcode-page {
-              page-break-inside: avoid;
-              text-align: center;
-            }
-          }
-          body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 20px;
-          }
-          .details {
-            margin-bottom: 20px;
-            font-size: 18px;
-            font-weight: bold;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="barcode-page">
-          <div class="details">Model: ${barcodeList[0].modelName} | Grade: ${barcodeList[0].grade}</div>
-          <img id="barcode-img" alt="Barcode" />
-        </div>
-        <script>
-          (function() {
-            // Generate barcode into an <img> tag with Data URL
-            var img = document.getElementById('barcode-img');
-            JsBarcode(img, "${barcodeList[0].imei}", {
-              format: "CODE128",
-              width: 2,
-              height: 80,
-              displayValue: true
-            });
-            // Delay print slightly to ensure rendering
-            setTimeout(function() {
-              window.print();
-            }, 300);
-            window.onafterprint = function () {
-              window.close();
-            };
-          })();
-        </script>
-      </body>
-    </html>
-  `;
+    //     const styles = `
+    //   <style>
+    //     /* Add your CSS or import your app's styles */
+    //     @media print {
+    //       body { font-family: Arial, sans-serif; }
+    //     }
+    //   </style>
+    // `;
 
-        printWindow.document.write(html);
+        const printWindow = window.open('', '_blank', 'width=600,height=400');
+        printWindow.document.open();
+        printWindow.document.write(`
+      <html>
+        <head>
+          <title>Print Barcode</title>
+        </head>
+        <body onload="window.focus(); window.print();">
+          ${html}
+        </body>
+      </html>
+    `);
+
         printWindow.document.close();
+
+        // Optional: close automatically after print dialog is closed (supported in some browsers)
+        printWindow.onafterprint = () => printWindow.close();
     };
 
 
@@ -261,6 +222,10 @@ function SingleProductStockIn() {
                     onClick={addProductStockIn}
 
                 />
+            </div>
+
+            <div ref={printRef} style={{ display: 'none' }}>
+                <Barcode value="123456789012" />
             </div>
         </div>
     );
