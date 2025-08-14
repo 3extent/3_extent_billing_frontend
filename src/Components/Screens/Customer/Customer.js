@@ -1,31 +1,65 @@
-import { useNavigate } from "react-router-dom";
-import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
+import { useEffect, useState } from "react";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { CUSTOMER_COLOUMS, CUSTOMER_TYPE_OPTIONS } from "./Constants";
+import { apiCall } from "../../../Util/AxiosUtils";
+import { useNavigate } from "react-router-dom";
+import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
+import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 export default function Customer() {
-    const navigate=useNavigate();
-    const navigateAddCustomer=()=>{
+    const navigate = useNavigate();
+    const [customerName, setCustomerName] = useState();
+    const [contactNo, setContactNumber] = useState();
+    const [customerType, setCustomerType] = useState();
+    const navigateAddCustomer = () => {
         navigate("/addcustomer")
     }
-    const rows = [{
-        "Customer Name": "Nikita Kadam",
-        "Address": "Pune",
-        "Contact No": "1234567765",
-        "GST No": "27AAAPL1234C1ZV",
-        "State": "Maharashtra",
-        "Customer Type": "Regular",
-    },
-    {
-        "Customer Name": "Nikita Kadam",
-        "Address": "Pune",
-        "Contact No": "1234567765",
-        "GST No": "27AAAPL1234C1ZV",
-        "State": "Maharashtra",
-        "Customer Type": "Regular",
+    const [rows, setRows] = useState([]);
+    useEffect(() => {
+        getCustomerAllData();
+    }, []);
+    const getCustomerCallBack = (response) => {
+        console.log('response: ', response);
+        if (response.status === 200) {
+            const customerFormttedRows = response.data.map((customer) => ({
+                "Customer Name": customer.name,
+                "Contact No": customer.contact_number,
+                "Customer Type": customer.type,
+                "Address": customer.address,
+                "state": customer.state,
+                "GST No": customer.gst_number,
+            }))
+            setRows(customerFormttedRows);
+        } else {
+            console.log("Error");
+        }
     }
-    ];
+    const getCustomerAllData = () => {
+        let url = 'https://3-extent-billing-backend.vercel.app/api/users?role=CUSTOMER';
+        if (customerName) {
+            url += `&name=${customerName}`
+        } if (contactNo) {
+            url += `&contact_number=${contactNo}`
+        } if (customerType) {
+            url += `&type=${customerType}`
+        }
+        apiCall({
+            method: 'GET',
+            url: url,
+            data: {},
+            callback: getCustomerCallBack,
+        })
+    }
+    const handleSearchFilter = () => {
+        getCustomerAllData();
+    }
+    const handleResetFilter = () => {
+        setContactNumber('');
+        setCustomerName('');
+        setCustomerType('');
+        getCustomerAllData();
+    }
     return (
         <div className="w-full">
             <CustomHeaderComponent
@@ -40,15 +74,31 @@ export default function Customer() {
                     type="text"
                     placeholder="Customer Name"
                     inputClassName="mb-5"
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
                 />
                 <InputComponent
-                    type="text"
+                    type="number"
                     placeholder="Contact No"
                     inputClassName="mb-5"
+                    value={contactNo}
+                    onChange={(e) => setContactNumber(e.target.value)}
                 />
                 <DropdownCompoent
                     options={CUSTOMER_TYPE_OPTIONS}
                     placeholder="Select Customer Type"
+                    value={customerType}
+                    onChange={(value) => setCustomerType(value)}
+                />
+                <PrimaryButtonComponent
+                    label="Search"
+                    buttonClassName=" py-1 px-5 text-xl font-bold"
+                    onClick={handleSearchFilter}
+                />
+                <PrimaryButtonComponent
+                    label="Reset"
+                    buttonClassName=" py-1 px-5 text-xl font-bold"
+                    onClick={handleResetFilter}
                 />
             </div>
             <div>
