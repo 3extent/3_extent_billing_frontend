@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import CustomBarcodePrintComponent from '../../CustomComponents/CustomBarcodePrintComponent/CustomBarcodePrintComponent';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
 import { ACCESSORIES_OPTIONS, GRADE_OPTIONS, SUPPLIER_OPTIONS } from './Constants';
+import CustomDropdownInputComponent from '../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent';
 import { apiCall } from '../../../Util/AxiosUtils';
-
 function SingleProductStockIn() {
+    const [modelOptions, setModelOptions] = useState([]);
+    const[modelName,setModelName]=useState("");
     const [productData, setProductData] = useState({
         model: '',
         imei_number: '',
@@ -43,6 +45,31 @@ function SingleProductStockIn() {
             console.log("error")
         }
     };
+    useEffect(() => {
+        getModelsAllData();
+    }, []);
+    const getModelsAllData = () => {
+        let url = "https://3-extent-billing-backend.vercel.app/api/models";
+        apiCall({
+            method: 'GET',
+            url: url,
+            data: {},
+            callback: getModelsCallBack,
+        })
+    }
+    const getModelsCallBack = (response) => {
+        console.log('response: ', response);
+        if (response.status === 200) {
+            const models = response.data.map(model => model.name);
+            setModelOptions(models);
+            console.log('models: ', models);
+            if (!modelName) {
+                setModelName("");
+            }
+        } else {
+            console.log("Error");
+        }
+    }
     const addProductStockIn = () => {
         apiCall({
             method: "POST",
@@ -54,18 +81,17 @@ function SingleProductStockIn() {
         setTimeout(() => {
             window.print();
         }, 500);
-    };
+    }
 
     return (
         <div className="grid grid-cols-2 gap-x-5 gap-y-2">
-            <InputComponent
-                label="Model Name"
-                type="text"
-                name="model"
-                placeholder="Model Name"
-                value={productData.model}
-                onChange={handleInputChange}
-                inputClassName="w-[80%]"
+            <CustomDropdownInputComponent
+                name="Model Name"
+                dropdownClassName="w-[80%]"
+                placeholder="Enter Model Name"
+                value={modelName}
+                onChange={(value) => setModelName(value)}
+                options={modelOptions}
                 labelClassName="font-serif font-bold"
             />
             <InputComponent
@@ -158,7 +184,6 @@ function SingleProductStockIn() {
                 className="w-[80%]"
                 labelClassName="font-serif font-bold"
             />
-
             <div className="col-span-2 mt-4 flex justify-center">
                 <PrimaryButtonComponent
                     label="Save"
@@ -178,5 +203,4 @@ function SingleProductStockIn() {
         </div>
     );
 }
-
 export default SingleProductStockIn;
