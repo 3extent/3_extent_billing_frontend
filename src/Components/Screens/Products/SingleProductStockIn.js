@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import CustomBarcodePrintComponent from '../../CustomComponents/CustomBarcodePrintComponent/CustomBarcodePrintComponent';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
 import { BOX_OPTIONS, GRADE_OPTIONS, SOURCE_OPTIONS } from './Constants';
-
+import CustomDropdownInputComponent from '../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent';
+import { apiCall } from '../../../Util/AxiosUtils';
 function SingleProductStockIn() {
     const [modelName, setModelName] = useState('');
     const [grade, setGrade] = useState('');
     const [imei, setImei] = useState('');
     const [showBarcode, setShowBarcode] = useState(false)
+    const [modelOptions, setModelOptions] = useState([]);
     const handleSave = () => {
         if (!modelName || !grade || !imei) {
             alert("Please fill Model Name, Grade and IMEI to generate barcode.");
@@ -20,15 +22,40 @@ function SingleProductStockIn() {
             window.print();
         }, 500);
     }
+    useEffect(() => {
+        getModelsAllData();
+    }, []);
+    const getModelsAllData = () => {
+        let url = "https://3-extent-billing-backend.vercel.app/api/models";
+        apiCall({
+            method: 'GET',
+            url: url,
+            data: {},
+            callback: getModelsCallBack,
+        })
+    }
+    const getModelsCallBack = (response) => {
+        console.log('response: ', response);
+        if (response.status === 200) {
+            const models = response.data.map(model => model.name);
+            setModelOptions(models);
+            console.log('models: ', models);
+            if (!modelName) {
+                setModelName("");
+            }
+        } else {
+            console.log("Error");
+        }
+    }
     return (
         <div className="grid grid-cols-2 gap-x-5 gap-y-2">
-            <InputComponent
-                label="Model Name"
-                type="text"
-                placeholder="Model Name"
+            <CustomDropdownInputComponent
+                name="Model Name"
+                dropdownClassName="w-[80%]"
+                placeholder="Enter Model Name"
                 value={modelName}
-                onChange={(e) => setModelName(e.target.value)}
-                inputClassName="w-[80%]"
+                onChange={(value) => setModelName(value)}
+                options={modelOptions}
                 labelClassName="font-serif font-bold"
             />
             <InputComponent
@@ -98,7 +125,6 @@ function SingleProductStockIn() {
                 className="w-[80%]"
                 labelClassName="font-serif font-bold"
             />
-
             <div className="col-span-2 mt-4 flex justify-center">
                 <PrimaryButtonComponent
                     label="Save"
@@ -118,5 +144,4 @@ function SingleProductStockIn() {
         </div>
     );
 }
-
 export default SingleProductStockIn;
