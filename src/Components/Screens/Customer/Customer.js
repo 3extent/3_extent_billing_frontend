@@ -9,6 +9,9 @@ import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 export default function Customer() {
     const navigate = useNavigate();
+    const [customerName, setCustomerName] = useState();
+    const [contactNo, setContactNumber] = useState();
+    const [customerType, setCustomerType] = useState();
     const navigateAddCustomer = () => {
         navigate("/addcustomer")
     }
@@ -33,12 +36,29 @@ export default function Customer() {
         }
     }
     const getCustomerAllData = () => {
+        let url = 'https://3-extent-billing-backend.vercel.app/api/users?role=CUSTOMER';
+        if (customerName) {
+            url += `&name=${customerName}`
+        } if (contactNo) {
+            url += `&contact_number=${contactNo}`
+        } if (customerType) {
+            url += `&type=${customerType}`
+        }
         apiCall({
             method: 'GET',
-            url: 'https://3-extent-billing-backend.vercel.app/api/users?role=CUSTOMER',
+            url: url,
             data: {},
             callback: getCustomerCallBack,
         })
+    }
+    const handleSearchFilter = () => {
+        getCustomerAllData();
+    }
+    const handleResetFilter = () => {
+        setContactNumber('');
+        setCustomerName('');
+        setCustomerType('');
+        getCustomerAllData();
     }
     return (
         <div className="w-full">
@@ -54,15 +74,31 @@ export default function Customer() {
                     type="text"
                     placeholder="Customer Name"
                     inputClassName="mb-5"
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
                 />
                 <InputComponent
-                    type="text"
+                    type="number"
                     placeholder="Contact No"
                     inputClassName="mb-5"
+                    value={contactNo}
+                    onChange={(e) => setContactNumber(e.target.value)}
                 />
                 <DropdownCompoent
                     options={CUSTOMER_TYPE_OPTIONS}
                     placeholder="Select Customer Type"
+                    value={customerType}
+                    onChange={(value) => setCustomerType(value)}
+                />
+                <PrimaryButtonComponent
+                    label="Search"
+                    buttonClassName=" py-1 px-5 text-xl font-bold"
+                    onClick={handleSearchFilter}
+                />
+                <PrimaryButtonComponent
+                    label="Reset"
+                    buttonClassName=" py-1 px-5 text-xl font-bold"
+                    onClick={handleResetFilter}
                 />
             </div>
             <div>
