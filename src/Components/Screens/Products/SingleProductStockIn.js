@@ -90,8 +90,8 @@ function SingleProductStockIn() {
         }
 
         const barcodeHTML = `<div style="page-break-after: always; text-align: left; margin-top: 100px;font-style:bold;width:50%">
-                            <div style="margin-top: 10px; font-size: 18px;text-align: left;">Model : ${barcodeList[0].modelName}</div>
-                            <div style="margin-top: 10px; font-size: 18px;text-align: left;">Grade : ${barcodeList[0].grade}</div>
+                            <div style="margin-top: 10px; font-size: 18px;">Model : ${barcodeList[0].modelName}</div>
+                            <div style="margin-top: 10px; font-size: 18px;">Grade : ${barcodeList[0].grade}</div>
                             <svg id="barcode"></svg>
                            </div>`
            
@@ -116,8 +116,8 @@ function SingleProductStockIn() {
             window.onload = function() {
               JsBarcode("#barcode", "${barcodeList[0].imei}", {
                 format: "CODE128",
-                width: 3,
-                height: 50,
+                width: 2,
+                height: 100,
                 displayValue: true
               });
               window.print();
