@@ -8,7 +8,7 @@ import CustomDropdownInputComponent from '../../CustomComponents/CustomDropdownI
 import { apiCall } from '../../../Util/AxiosUtils';
 function SingleProductStockIn() {
     const [modelOptions, setModelOptions] = useState([]);
-    const[modelName,setModelName]=useState("");
+    const [modelName, setModelName] = useState("");
     const [productData, setProductData] = useState({
         model: '',
         imei_number: '',
@@ -21,30 +21,29 @@ function SingleProductStockIn() {
         qcRemark: '',
         createdAt: '',
     });
-    const [showBarcode, setShowBarcode] = useState(false)
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setProductData({ ...productData, [name]: value });
     };
-    const stockInCallback = (response) => {
-        console.log('response:', response);
-        if (response.status === 200) {
-            setProductData({
-                model: '',
-                createdAt: '',
-                grade: '',
-                purchase_price: '',
-                sales_price: '',
-                imei_number: '',
-                engineer_name: '',
-                qcRemark: '',
-                supplier: '',
-                accessories: '',
-            });
-        } else {
-            console.log("error")
-        }
-    };
+    // const stockInCallback = (response) => {
+    //     printBarcode({ modelName: productData.model, grade: productData.grade, imei: productData.imei_number })
+    //     if (response.status === 200) {
+    //         setProductData({
+    //             model: '',
+    //             createdAt: '',
+    //             grade: '',
+    //             purchase_price: '',
+    //             sales_price: '',
+    //             imei_number: '',
+    //             engineer_name: '',
+    //             qcRemark: '',
+    //             supplier: '',
+    //             accessories: '',
+    //         });
+    //     } else {
+    //         console.log("error")
+    //     }
+    // };
     useEffect(() => {
         getModelsAllData();
     }, []);
@@ -71,17 +70,72 @@ function SingleProductStockIn() {
         }
     }
     const addProductStockIn = () => {
-        apiCall({
-            method: "POST",
-            url: "https://3-extent-billing-backend.vercel.app/api/products",
-            data: { products: [productData] },
-            callback: stockInCallback
-        });
-        setShowBarcode(true);
-        setTimeout(() => {
-            window.print();
-        }, 500);
+        printBarcode([{ modelName: modelName, grade: productData.grade, imei: productData.imei_number }])
+        
+        // apiCall({
+        //     method: "POST",
+        //     url: "https://3-extent-billing-backend.vercel.app/api/products",
+        //     data: { products: [productData] },
+        //     callback: stockInCallback
+        // });
     }
+
+    const printBarcode = (barcodeList) => {
+        console.log('barcodeList: ', barcodeList);
+        const printWindow = window.open('', '', 'width=600,height=800');
+
+        
+        if (!printWindow) {
+            alert('Popup blocked! Please allow popups for this site.');
+            return;
+        }
+
+        const barcodeHTML = barcodeList
+            .map(
+                (code) => `<div style="page-break-after: always; text-align: left; margin-top: 100px;font-style:bold;width:50%">
+                            <div style="margin-top: 10px; font-size: 18px;text-align: left;">Model : ${code.modelName}</div>
+                            <div style="margin-top: 10px; font-size: 18px;text-align: left;">Grade : ${code.grade}</div>
+                            <svg id="barcode"></svg>
+                           </div>`
+            )
+            .join('');
+
+        printWindow.document.write(`
+      <html>
+        <head>
+          <title>Print Barcode</title>
+          <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              margin: 0;
+              padding: 20px;
+              text-align: center;
+            }
+          </style>
+        </head>
+        <body>
+          ${barcodeHTML}
+          <script>
+            window.onload = function() {
+              JsBarcode("#barcode", "${barcodeList[0].imei}", {
+                format: "CODE128",
+                width: 3,
+                height: 50,
+                displayValue: true
+              });
+              window.print();
+              window.onafterprint = function() {
+                window.close();
+              };
+            }
+          </script>
+        </body>
+      </html>
+    `);
+
+        printWindow.document.close();
+    };
 
     return (
         <div className="grid grid-cols-2 gap-x-5 gap-y-2">
@@ -193,13 +247,6 @@ function SingleProductStockIn() {
 
                 />
             </div>
-            {showBarcode && (
-                <CustomBarcodePrintComponent
-                    model={productData.model}
-                    grade={productData.grade}
-                    imei={productData.imei_number}
-                />
-            )}
         </div>
     );
 }
