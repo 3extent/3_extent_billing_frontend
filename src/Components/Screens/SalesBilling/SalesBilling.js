@@ -64,9 +64,9 @@ export default function SalesBilling() {
             <CustomHeaderComponent
                 name="Sales Billing"
                 label="Billing History"
-                icon="fa fa-plus-circle" 
+                icon="fa fa-history"
                 buttonClassName="py-1 px-3 text-sm font-bold"
-                />
+            />
             <div className="flex items-center gap-4 mt-3">
                 <InputComponent
                     label="IMEI No :"

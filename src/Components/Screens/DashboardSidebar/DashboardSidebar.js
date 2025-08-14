@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-export default function DashboardSidebar({ onLogout }) {
+export default function DashboardSidebar() {
     const [menuItems, setMenuItems] = useState([
         { icon: "fa fa-calculator", label: "Sales Billing", path: "/salesbilling" },
         { icon: "fa fa-plus-circle", label: "Stock In", path: "/stockin" },
@@ -12,9 +12,9 @@ export default function DashboardSidebar({ onLogout }) {
     ])
     const navigate = useNavigate();
     const handleLogout = () => {
-        localStorage.removeItem("isLoggedIn");
-        onLogout();
-        navigate("/login");
+        localStorage.removeItem("isAuthenticated");
+        localStorage.removeItem("user");
+        navigate("/");
     };
     const handleMenuClick = (path) => {
         navigate(path);
