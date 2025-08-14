@@ -1,31 +1,60 @@
-import { useNavigate } from "react-router-dom";
-import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
+import { useEffect, useState } from "react";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { SUPPLIER_COLUMNS } from "./Constants";
+import { apiCall } from "../../../Util/AxiosUtils";
+import { useNavigate } from "react-router-dom";
+import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
+import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 function Supplier() {
-    const navigate=useNavigate();
-    const navigateAddSupplier=()=>{
+    const [rows, setRows] = useState([]);
+    const navigate = useNavigate();
+    const [supplierName, setSupplierName] = useState();
+    const [contactNo, setContactNo] = useState();
+    const navigateAddSupplier = () => {
         navigate("/addsupplier")
     }
-    const rows = [
-        {
-            "Supplier Name": "Nikita Kadam",
-            "Contact No": "1234567890",
-            "GST No": "27ABCDE1234F1Z5",
-            "State": "Maharastra",
-            "Balance": "70000",
-            "Supplier Type": "wholesale",
-        },
-        {
-            "Supplier Name": "Shardul Pawar",
-            "Contact No": "1234567890",
-            "GST No": "27ABCDE1234F1Z5",
-            "State": "Maharastra",
-            "Balance": "80000",
-            "Supplier Type": "wholesale",
+    useEffect(() => {
+        getSupplierAllData();
+    }, []);
+    const getSupplierCallBack = (response) => {
+        console.log('response: ', response);
+        if (response.status === 200) {
+            const supplierFormattedRows = response.data.map((supplier) => ({
+                "Supplier Name": supplier.name,
+                "Contact No": supplier.contact_number,
+                "GST No": supplier.gst_number,
+                "State": supplier.state,
+                "Balance": supplier.balance,
+                "Supplier Type": supplier.type
+            }));
+            setRows(supplierFormattedRows);
+        } else {
+            console.log("Error");
         }
-    ];
+    }
+    const getSupplierAllData = () => {
+        let url = "https://3-extent-billing-backend.vercel.app/api/users?role=SUPPLIER"
+        if (supplierName) {
+            url += `&name=${supplierName}`
+        } if (contactNo) {
+            url += `&contact_number=${contactNo}`
+        }
+        apiCall({
+            method: 'GET',
+            url: url,
+            data: {},
+            callback: getSupplierCallBack,
+        })
+    }
+    const handleSearchFilter = () => {
+        getSupplierAllData();
+    }
+    const handleResetFilter = () => {
+        setSupplierName('');
+        setContactNo('');
+        getSupplierAllData();
+    }
     return (
         <div className="w-full">
             <CustomHeaderComponent
@@ -39,18 +68,31 @@ function Supplier() {
             <div className="flex items-center gap-4 mb-5">
                 <InputComponent
                     type="text"
-                    placeholder="Suppiler Name" 
+                    placeholder="Suppiler Name"
+                    value={supplierName}
+                    onChange={(e) => setSupplierName(e.target.value)}
                 />
                 <InputComponent
-                    type="text"
+                    type="number"
                     placeholder="Contact No"
+                    value={contactNo}
+                    onChange={(e) => setContactNo(e.target.value)}
+                />
+                <PrimaryButtonComponent
+                    label="Search"
+                    buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
+                    onClick={handleSearchFilter}
+                />
+                <PrimaryButtonComponent
+                    label="Reset"
+                    buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
+                    onClick={handleResetFilter}
                 />
             </div>
             <CustomTableCompoent
                 headers={SUPPLIER_COLUMNS}
                 rows={rows}
             />
-
         </div>
     );
 }

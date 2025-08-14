@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from './Components/Screens/Login/Login';
 import ListOfProducts from './Components/Screens/Products/ListOfProducts';
@@ -14,41 +14,45 @@ import AddModels from './Components/Screens/Brands/AddModels';
 import AddSupplier from './Components/Screens/Supplier/AddSupplier';
 import AddCustomer from './Components/Screens/Customer/AddCustomer';
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const [loginStatus, setLoginStatus] = useState(false);
   useEffect(() => {
-    const loginStatus = localStorage.getItem("isLoggedIn") === "true";
-    setIsLoggedIn(loginStatus);
-  }, []);
+    console.log(`localStorage.getItem("isAuthenticated")`, localStorage.getItem("isAuthenticated"));
+    setLoginStatus(localStorage.getItem("isAuthenticated"))
+  }, [localStorage.getItem("isAuthenticated")])
+
+  console.log('loginStatus: ', loginStatus);
+  console.log('window.location.pathname === ' / ': ', window.location.pathname);
   return (
     <Router>
-      {isLoggedIn ? (
-        <div className="flex">
-          <div className="w-[20%]">
-            <DashboardSidebar onLogout={() => setIsLoggedIn(false)} />
-          </div>
-          <div className="w-[80%] p-4">
-            <Routes>
-              <Route path="/" element={<SalesBilling />} />
-              <Route path="/salesbilling" element={<SalesBilling />} />
-              <Route path="/products" element={<ListOfProducts />} />
-              <Route path="/supplier" element={<Supplier />} />
-              <Route path="/customer" element={<Customer />} />
-              <Route path="/brands" element={<Brands />} />
-              <Route path="/models" element={<Models />} />
-              <Route path="/stockin" element={<StockIn />} />
-              <Route path="/addbrands" element={<AddBrands />} />
-              <Route path="/addmodels" element={<AddModels />} />
-              <Route path="/addcustomer" element={<AddCustomer />} />
-              <Route path="/addsupplier" element={<AddSupplier />} />
-
-            </Routes>
-          </div>
+      <div className="flex">
+        {window.location.pathname === '/'
+          ? <div></div>
+          : <div className="w-[20%]">
+            <DashboardSidebar />
+          </div>}
+        <div className={ "w-[80%] p-4"}>
+          <Routes>
+            {/* {loginStatus */}
+            {/* ?  */}
+            <Route path="/salesbilling" element={<SalesBilling />} />
+            {/* :  */}
+            <Route path="/" element={<Login />} />
+            {/* } */}
+            <Route path="/products" element={<ListOfProducts />} />
+            <Route path="/supplier" element={<Supplier />} />
+            <Route path="/customer" element={<Customer />} />
+            <Route path="/brands" element={<Brands />} />
+            <Route path="/models" element={<Models />} />
+            <Route path="/stockin" element={<StockIn />} />
+            <Route path="/addbrands" element={<AddBrands />} />
+            <Route path="/addmodels" element={<AddModels />} />
+            <Route path="/addcustomer" element={<AddCustomer />} />
+            <Route path="/addsupplier" element={<AddSupplier />} />
+          </Routes>
         </div>
-      ) : (
-        <Routes>
-          <Route path="*" element={<Login onLogin={() => setIsLoggedIn(true)} />} />
-        </Routes>
-      )}
+      </div>
+
     </Router>
   );
 }
