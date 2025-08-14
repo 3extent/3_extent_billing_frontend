@@ -89,15 +89,15 @@ function SingleProductStockIn() {
             return;
         }
 
-        const barcodeHTML = barcodeList
-            .map(
-                (code) => `<div style="page-break-after: always; text-align: left; margin-top: 100px;font-style:bold;width:50%">
-                            <div style="margin-top: 10px; font-size: 18px;text-align: left;">Model : ${code.modelName}</div>
-                            <div style="margin-top: 10px; font-size: 18px;text-align: left;">Grade : ${code.grade}</div>
-                            <svg id="barcode"></svg>
-                           </div>`
-            )
-            .join('');
+        // const barcodeHTML = barcodeList
+        //     .map(
+        //         (code) => `<div style="page-break-after: always; text-align: left; margin-top: 100px;font-style:bold;width:50%">
+        //                     <div style="margin-top: 10px; font-size: 18px;text-align: left;">Model : ${code.modelName}</div>
+        //                     <div style="margin-top: 10px; font-size: 18px;text-align: left;">Grade : ${code.grade}</div>
+        //                     <svg id="barcode"></svg>
+        //                    </div>`
+        //     )
+        //     .join('');
 
         printWindow.document.write(`
       <html>
@@ -114,7 +114,7 @@ function SingleProductStockIn() {
           </style>
         </head>
         <body>
-          ${barcodeHTML}
+          ${Hello}
           <script>
             window.onload = function() {
               JsBarcode("#barcode", "${barcodeList[0].imei}", {
