@@ -1,5 +1,5 @@
 
-export default function DropdownCompoent({ options = [], placeholder = "Select an option", label = "", value="", onChange = () => { }, className = "", labelClassName = "" }) {
+export default function DropdownCompoent({ options = [], placeholder = "Select an option", label = "", value="", onChange = () => { }, className = "", labelClassName = "",name }) {
     return (
         <div>
             {label && (
@@ -9,8 +9,9 @@ export default function DropdownCompoent({ options = [], placeholder = "Select a
             )}
             <select
                 className={` border px-3 py-2 rounded ${className}`}
+                name={name}
                 value={value}
-                onChange={(e) => onChange(e.target.value)}
+                onChange={(e) => onChange({ target: { name, value: e.target.value } })}
             >
                 <option value="">{placeholder}</option>
                 {options.map((opt, index) => (
