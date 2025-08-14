@@ -117,7 +117,7 @@ function SingleProductStockIn() {
           Hello
           <script>
             window.onload = function() {
-              JsBarcode("#barcode", "${barcodeList[0].imei}", {
+              JsBarcode("#barcode", "12345678909876", {
                 format: "CODE128",
                 width: 3,
                 height: 50,
