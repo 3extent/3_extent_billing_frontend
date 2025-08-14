@@ -31,7 +31,7 @@ function App() {
           : <div className="w-[20%]">
             <DashboardSidebar />
           </div>}
-        <div className={window.location.pathname === '/' ? "" : "w-[80%] p-4"}>
+        <div className={ "w-[80%] p-4"}>
           <Routes>
             {/* {loginStatus */}
             {/* ?  */}
