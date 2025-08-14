@@ -70,7 +70,7 @@ function SingleProductStockIn() {
     }
     const addProductStockIn = () => {
         printBarcode([{ modelName: modelName, grade: productData.grade, imei: productData.imei_number }])
-        
+
         // apiCall({
         //     method: "POST",
         //     url: "https://3-extent-billing-backend.vercel.app/api/products",
@@ -83,21 +83,18 @@ function SingleProductStockIn() {
         console.log('barcodeList: ', barcodeList);
         const printWindow = window.open('', '', 'width=600,height=800');
 
-        
+
         if (!printWindow) {
             alert('Popup blocked! Please allow popups for this site.');
             return;
         }
 
-        // const barcodeHTML = barcodeList
-        //     .map(
-        //         (code) => `<div style="page-break-after: always; text-align: left; margin-top: 100px;font-style:bold;width:50%">
-        //                     <div style="margin-top: 10px; font-size: 18px;text-align: left;">Model : ${code.modelName}</div>
-        //                     <div style="margin-top: 10px; font-size: 18px;text-align: left;">Grade : ${code.grade}</div>
-        //                     <svg id="barcode"></svg>
-        //                    </div>`
-        //     )
-        //     .join('');
+        const barcodeHTML = `<div style="page-break-after: always; text-align: left; margin-top: 100px;font-style:bold;width:50%">
+                            <div style="margin-top: 10px; font-size: 18px;text-align: left;">Model : ${barcodeList[0].modelName}</div>
+                            <div style="margin-top: 10px; font-size: 18px;text-align: left;">Grade : ${barcodeList[0].grade}</div>
+                            <svg id="barcode"></svg>
+                           </div>`
+           
 
         printWindow.document.write(`
       <html>
@@ -114,10 +111,10 @@ function SingleProductStockIn() {
           </style>
         </head>
         <body>
-          Hello
+          ${barcodeHTML}
           <script>
             window.onload = function() {
-              JsBarcode("#barcode", "12345678909876", {
+              JsBarcode("#barcode", "${barcodeList[0].imei}", {
                 format: "CODE128",
                 width: 3,
                 height: 50,
