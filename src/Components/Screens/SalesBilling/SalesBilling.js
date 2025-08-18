@@ -5,6 +5,7 @@ import InputComponent from "../../CustomComponents/InputComponent/InputComponent
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { SALESBILLING_COLOUMNS } from "./Constants";
 import { apiCall } from "../../../Util/AxiosUtils";
+import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
 export default function SalesBilling() {
     const [rows, setRows] = useState([
     ]);
@@ -18,11 +19,6 @@ export default function SalesBilling() {
         );
     });
     const [showDropdown, setShowDropdown] = useState(false);
-    const [imeiFilter, setImeiFilter] = useState("");
-    const filteredRows = imeiFilter
-        ? rows.filter(row => row["IMEI NO"].includes(imeiFilter))
-        : rows;
-
     const toggleColumn = (columnName) => {
         if (dynamicHeaders.includes(columnName)) {
             setDynamicHeaders(dynamicHeaders.filter(col => col !== columnName));
@@ -36,37 +32,34 @@ export default function SalesBilling() {
         const today = new Date();
         return today.toISOString().split("T")[0];
     });
+    const [imeiOptions, setImeiOptions] = useState([]);
+    const [selectedImei, setSelectedImei] = useState("");
     const handleRateChange = (index, newRate) => {
         const updatedRows = [...rows];
         updatedRows[index]["Rate"] = Number(newRate);
         setRows(updatedRows);
     };
-    useEffect(() => {
-        // getsalesbillingAllData();
-    }, []);
-
-    const handleImeiNumberChange = (e) => {
-        const value = e.target.value;
-        setImeiFilter(value);
-        if (value.length > 10) {
-            getsalesbillingAllData(value);
+  useEffect(() => {
+      getAllImeis();
+    getsalesbillingAllData ();
+     setSelectedImei("");
+  }, [selectedImei]);
+ const getAllImeis = () => {
+        const url = "https://3-extent-billing-backend.vercel.app/api/products";
+        apiCall({
+            method: "GET",
+            url: url,
+            data: {},
+            callback: getImeisCallback,
+        });
+    };
+const getImeisCallback = (response) => {
+        if (response.status === 200) {
+            const imeis = response.data.map(item => item.imei_number); 
+            setImeiOptions(imeis);
+        } else {
+            console.error("IMEI numbers fetching error");
         }
-    }
-    const handleAddRow = () => {
-        const newRow = {
-            "Sr.No": rows.length + 1,
-            "date": date,
-            "IMEI NO": imeiFilter,
-            "Company Name": "",
-            "Model Name": "",
-            "Rate": 0,
-            "Purchase Price": "",
-            "Grade": "",
-            "Box": ""
-        };
-        // setRows([newRow]);
-        setRows([...rows, newRow]);
-        setImeiFilter("");
     };
     const getsalesbillingCallBack = (response) => {
         console.log('response: ', response);
@@ -89,9 +82,13 @@ export default function SalesBilling() {
         }
     }
     const getsalesbillingAllData = () => {
+         let url = 'https://3-extent-billing-backend.vercel.app/api/products?';
+        if (selectedImei) {
+            url += `&imei_number=${selectedImei}`
+        }
         apiCall({
             method: 'GET',
-            url: 'https://3-extent-billing-backend.vercel.app/api/products',
+            url:url,
             data: {},
             callback: getsalesbillingCallBack,
         })
@@ -105,12 +102,13 @@ export default function SalesBilling() {
                 buttonClassName="py-1 px-3 text-sm font-bold"
             />
             <div className="flex items-center gap-4 mt-3">
-                <InputComponent
+                 <CustomDropdownInputComponent
                     label="IMEI No :"
-                    type="text"
-                    placeholder="Scan IMEI No"
-                    value={imeiFilter}
-                    onChange={handleImeiNumberChange}
+                    dropdownClassName="w-full"
+                    placeholder="Select IMEI No"
+                    value={selectedImei}
+                    onChange={(value) => setSelectedImei(value)}
+                    options={imeiOptions}
                 />
                 <InputComponent
                     label="Customer Name :"
@@ -127,12 +125,6 @@ export default function SalesBilling() {
                     type="Date"
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
-                />
-                <PrimaryButtonComponent
-                    label="Add"
-                    buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
-                    icon="fa fa-plus-circle"
-                    onClick={handleAddRow}
                 />
             </div>
             <div className="relative mt-4 mb-2">
@@ -164,12 +156,10 @@ export default function SalesBilling() {
                     </div>
                 )}
             </div>
-            {filteredRows.length > 0 && (
-                <>
                     <div>
                         <CustomTableCompoent
                             headers={dynamicHeaders}
-                            rows={filteredRows}
+                            rows={rows}
                             onRateChange={handleRateChange}
                         />
                     </div>
@@ -190,8 +180,8 @@ export default function SalesBilling() {
                             buttonClassName="py-1 px-5 text-xl font-bold"
                         />
                     </div>
-                </>
-            )}
+            
+        
         </div>
 
     );

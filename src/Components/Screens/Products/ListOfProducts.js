@@ -91,7 +91,7 @@ function ListOfProducts() {
         //  setDate(getTodayDate());
         setModelName('');
         setGrade('');
-        setIMEINumber('');
+        setIMEINumber(''); 
         setBrandName('');
         getProductsAllData();
     }
