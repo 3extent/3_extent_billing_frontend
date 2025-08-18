@@ -1,5 +1,5 @@
 
-export default function DropdownCompoent({ options = [], placeholder = "Select an option", label = "", value="", onChange = () => { }, className = "", labelClassName = "",name }) {
+export default function DropdownCompoent({ options = [], placeholder = "Select an option", label = "", value = "", onChange = () => { }, className = "", labelClassName = "", name }) {
     return (
         <div>
             {label && (

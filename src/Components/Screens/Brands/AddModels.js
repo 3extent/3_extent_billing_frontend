@@ -93,8 +93,8 @@ export default function AddModels() {
                     name="Brand Name"
                     placeholder="Enter a brand"
                     dropdownClassName="w-[90%]"
-                    options={brandOptions} />
-
+                    options={brandOptions}
+                />
                 <InputComponent
                     label="Model Name"
                     name="name"
@@ -105,7 +105,6 @@ export default function AddModels() {
                     value={modelData.name}
                     onChange={handleInputChange}
                 />
-
             </div>
             <div className="grid grid-cols-2 mt-3">
                 <InputComponent
@@ -142,7 +141,6 @@ export default function AddModels() {
                     <ul className="">
                         <div className="grid grid-cols-2  md:grid-cols-11">
                             {possibleCombinations.map((combo, index) => (
-
                                 <li key={index} className="flex list-none">
                                     <input
                                         type="checkbox"

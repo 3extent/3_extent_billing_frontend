@@ -8,42 +8,42 @@ import CustomDropdownInputComponent from '../../CustomComponents/CustomDropdownI
 import { apiCall } from '../../../Util/AxiosUtils';
 function SingleProductStockIn() {
     const [modelOptions, setModelOptions] = useState([]);
-    const [modelName, setModelName] = useState("");
     const [productData, setProductData] = useState({
-        model: '',
+        model_name: '',
         imei_number: '',
         sales_price: '',
         purchase_price: '',
         grade: '',
         engineer_name: '',
         accessories: '',
-        supplier: '',
-        qcRemark: '',
-        createdAt: '',
+        supplier_name: '',
+        qc_remark: ''
     });
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setProductData({ ...productData, [name]: value });
     };
-    // const stockInCallback = (response) => {
-    //     printBarcode({ modelName: productData.model, grade: productData.grade, imei: productData.imei_number })
-    //     if (response.status === 200) {
-    //         setProductData({
-    //             model: '',
-    //             createdAt: '',
-    //             grade: '',
-    //             purchase_price: '',
-    //             sales_price: '',
-    //             imei_number: '',
-    //             engineer_name: '',
-    //             qcRemark: '',
-    //             supplier: '',
-    //             accessories: '',
-    //         });
-    //     } else {
-    //         console.log("error")
-    //     }
-    // };
+    const handleModelProductData = (value) => {
+        setProductData(productData => ({ ...productData, model_name: value }));
+    };
+    const stockInCallback = (response) => {
+        // printBarcode({ modelName: productData.model, grade: productData.grade, imei: productData.imei_number })
+        if (response.status === 200) {
+            setProductData({
+                model_name: '',
+                grade: '',
+                purchase_price: '',
+                sales_price: '',
+                imei_number: '',
+                engineer_name: '',
+                qc_remark: '',
+                supplier_name: '',
+                accessories: '',
+            });
+        } else {
+            console.log("error")
+        }
+    };
     useEffect(() => {
         getModelsAllData();
     }, []);
@@ -62,34 +62,28 @@ function SingleProductStockIn() {
             const models = response.data.map(model => model.name);
             setModelOptions(models);
             console.log('models: ', models);
-            if (!modelName) {
-                setModelName("");
-            }
         } else {
             console.log("Error");
         }
     }
     const addProductStockIn = () => {
-        printBarcode([{ modelName: modelName, grade: productData.grade, imei: productData.imei_number }])
-        
-        // apiCall({
-        //     method: "POST",
-        //     url: "https://3-extent-billing-backend.vercel.app/api/products",
-        //     data: { products: [productData] },
-        //     callback: stockInCallback
-        // });
-    }
+        // printBarcode([{ model_name: productData.model_name, grade: productData.grade, imei: productData.imei_number }])
+        console.log('productData: ', productData);
+        apiCall({
+            method: "POST",
+            url: "https://3-extent-billing-backend.vercel.app/api/products",
+            data: productData,
 
+            callback: stockInCallback,
+        });
+    }
     const printBarcode = (barcodeList) => {
         console.log('barcodeList: ', barcodeList);
         const printWindow = window.open('', '', 'width=600,height=800');
-
-        
         if (!printWindow) {
             alert('Popup blocked! Please allow popups for this site.');
             return;
         }
-
         const barcodeHTML = barcodeList
             .map(
                 (code) => `<div style="page-break-after: always; text-align: left; margin-top: 100px;font-style:bold;width:50%">
@@ -99,7 +93,6 @@ function SingleProductStockIn() {
                            </div>`
             )
             .join('');
-
         printWindow.document.write(`
       <html>
         <head>
@@ -136,26 +129,15 @@ function SingleProductStockIn() {
 
         printWindow.document.close();
     };
-
     return (
         <div className="grid grid-cols-2 gap-x-5 gap-y-2">
             <CustomDropdownInputComponent
                 name="Model Name"
                 dropdownClassName="w-[80%]"
                 placeholder="Enter Model Name"
-                value={modelName}
-                onChange={(value) => setModelName(value)}
+                value={productData.model_name}
+                onChange={handleModelProductData}
                 options={modelOptions}
-                labelClassName="font-serif font-bold"
-            />
-            <InputComponent
-                label="Date"
-                type="date"
-                name="createdAt"
-                placeholder="Enter your Date"
-                value={productData.createdAt}
-                onChange={handleInputChange}
-                inputClassName="w-[80%]"
                 labelClassName="font-serif font-bold"
             />
             <DropdownCompoent
@@ -211,19 +193,19 @@ function SingleProductStockIn() {
             <InputComponent
                 label="QC Remark"
                 type="text"
-                name="qcRemark"
+                name="qc_remark"
                 placeholder="QC Remark"
                 inputClassName="w-[80%]"
                 labelClassName="font-serif font-bold"
-                value={productData.qcRemark}
+                value={productData.qc_remark}
                 onChange={handleInputChange}
             />
             <DropdownCompoent
                 label="Supplier"
-                name="supplier"
+                name="supplier_name"
                 options={SUPPLIER_OPTIONS}
                 placeholder="Select Supplier"
-                value={productData.supplier}
+                value={productData.supplier_name}
                 onChange={handleInputChange}
                 className="w-[80%]"
                 labelClassName="font-serif font-bold"
@@ -244,7 +226,6 @@ function SingleProductStockIn() {
                     icon="fa fa-save"
                     buttonClassName="mt-2 py-1 px-5 text-xl font-bold"
                     onClick={addProductStockIn}
-
                 />
             </div>
         </div>
