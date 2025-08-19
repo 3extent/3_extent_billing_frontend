@@ -27,7 +27,7 @@ function ListOfProducts() {
         console.log('response: ', response);
         if (response.status === 200) {
             const productFormattedRows = response.data.map((product) => ({
-                "date": new Date(product.date).getTime(),
+                "Date":product.createdAt,
                 "IMEI NO": product.imei_number,
                 "Product Name": typeof product.model === 'object' ? product.model.name : product.model,
                 "Brand Name": typeof product.brand === 'object' ? product.model.brand : product.model.brand.name,
