@@ -9,7 +9,6 @@ import { apiCall } from '../../../Util/AxiosUtils';
 function SingleProductStockIn() {
     const [modelOptions, setModelOptions] = useState([]);
     const [productData, setProductData] = useState({
-        createdAt: '',
         model_name: '',
         imei_number: '',
         sales_price: '',
@@ -31,7 +30,6 @@ function SingleProductStockIn() {
         // printBarcode({ modelName: productData.model, grade: productData.grade, imei: productData.imei_number })
         if (response.status === 200) {
             setProductData({
-                createdAt: '',
                 model_name: '',
                 grade: '',
                 purchase_price: '',
