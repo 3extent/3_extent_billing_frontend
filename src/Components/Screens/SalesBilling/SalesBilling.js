@@ -42,7 +42,6 @@ export default function SalesBilling() {
   useEffect(() => {
       getAllImeis();
     getsalesbillingAllData ();
-     setSelectedImei("");
   }, [selectedImei]);
  const getAllImeis = () => {
         const url = "https://3-extent-billing-backend.vercel.app/api/products";
@@ -104,11 +103,12 @@ const getImeisCallback = (response) => {
             <div className="flex items-center gap-4 mt-3">
                  <CustomDropdownInputComponent
                     label="IMEI No :"
-                    dropdownClassName="w-full"
+                    dropdownClassName="w-full mt-7"
                     placeholder="Select IMEI No"
                     value={selectedImei}
                     onChange={(value) => setSelectedImei(value)}
                     options={imeiOptions}
+                    
                 />
                 <InputComponent
                     label="Customer Name :"
