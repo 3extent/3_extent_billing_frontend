@@ -65,6 +65,7 @@ export default function AddModels() {
                     placeholder="Enter a brand"
                     dropdownClassName="w-[90%]"
                     options={brandOptions} />
+                
 
                 <InputComponent
                     label="Model Name"

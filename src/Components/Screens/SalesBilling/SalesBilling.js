@@ -34,16 +34,56 @@ export default function SalesBilling() {
     });
     const [imeiOptions, setImeiOptions] = useState([]);
     const [selectedImei, setSelectedImei] = useState("");
+    const [contactNoOptions, setContactNoOptions] = useState([]);
+const [selectedContactNo, setSelectedContactNo] = useState("");
+ const [customers, setCustomers] = useState([]);
+  const [customerName, setCustomerName] = useState("");
+
+
     const handleRateChange = (index, newRate) => {
         const updatedRows = [...rows];
         updatedRows[index]["Rate"] = Number(newRate);
         setRows(updatedRows);
     };
-  useEffect(() => {
-      getAllImeis();
-    getsalesbillingAllData ();
-  }, [selectedImei]);
- const getAllImeis = () => {
+useEffect(() => {
+    getAllImeis();
+    getCustomerAllData();
+    if (selectedImei) {
+        getsalesbillingAllData();
+    } else {
+        setRows([]); 
+    }
+}, [selectedImei]);
+
+  const getCustomerAllData  = () => {
+    const url = 'https://3-extent-billing-backend.vercel.app/api/users?role=CUSTOMER';
+
+    apiCall({
+        method: 'GET',
+        url: url,
+        data: {},
+        callback: getCustomersCallback,
+    });
+};
+const getCustomersCallback = (response) => {
+    if (response.status === 200) {
+        setCustomers(response.data);
+        const contactNos = response.data.map(customer => customer.contact_number);
+        setContactNoOptions(contactNos);
+    } else {
+        console.error("Customer contact numbers fetching error");
+    }
+};
+const handleContactNoChange = (value) => {
+  setSelectedContactNo(value);
+  if (!value) {
+    setCustomerName("");
+    return;
+  }
+  const customer = customers.find(customer => customer.contact_number === value);
+  setCustomerName(customer ? customer.name : "");
+};
+const getAllImeis = () => {
         const url = "https://3-extent-billing-backend.vercel.app/api/products";
         apiCall({
             method: "GET",
@@ -110,18 +150,21 @@ const getImeisCallback = (response) => {
                     options={imeiOptions}
                     
                 />
+                  <CustomDropdownInputComponent
+          dropdownClassName="w-full mt-6"
+          placeholder="Select Contact No"
+          value={selectedContactNo}
+          onChange={handleContactNoChange} 
+          options={contactNoOptions}
+        />
+                    <InputComponent
+          type="text"
+          placeholder="Enter Customer Name"
+          value={customerName}   
+          onChange={(e) => setCustomerName(e.target.value)}
+        />
+   
                 <InputComponent
-                    label="Customer Name :"
-                    type="text"
-                    placeholder="Enter Customer Name"
-                />
-                <InputComponent
-                    label="Contact No:"
-                    type="text"
-                    placeholder="contact No"
-                />
-                <InputComponent
-                    label="Date :"
                     type="Date"
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
