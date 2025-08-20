@@ -12,7 +12,7 @@ const SingleProductStockIn = () => {
         format: 'CODE128',
         lineColor: '#000',
         width: 2,
-        height: 50,
+        height: 40,
         displayValue: true,
       });
     }
@@ -21,14 +21,43 @@ const SingleProductStockIn = () => {
   const handlePrint = () => {
     const printContents = printAreaRef.current.innerHTML;
     const win = window.open('', '', 'height=600,width=800');
-    win.document.write('<html><head><title>Print Barcode</title>');
-    win.document.write('<style>body{font-family:sans-serif;text-align:center;}</style>');
-    win.document.write('</head><body>');
-    win.document.write(printContents);
-    win.document.write('</body></html>');
+    win.document.write(`
+    <html>
+      <head>
+        <title>Print Barcode</title>
+        <style>
+          @media print {
+            body {
+              margin: 0;
+              padding: 0;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              height: 100vh;
+            }
+            svg {
+              max-width: 100%;
+              height: auto;
+              page-break-inside: avoid;
+            }
+          }
+          body {
+            font-family: sans-serif;
+            text-align: center;
+            padding: 20px;
+          }
+        </style>
+      </head>
+      <body>
+        ${printContents}
+      </body>
+    </html>
+  `);
     win.document.close();
+    win.focus();
     win.print();
   };
+
 
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial' }}>
