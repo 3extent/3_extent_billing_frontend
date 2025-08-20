@@ -23,35 +23,45 @@ const SingleProductStockIn = () => {
     const win = window.open('', '', 'height=600,width=800');
     win.document.write(`
     <html>
-      <head>
-        <title>Print Barcode</title>
-        <style>
-          @media print {
-            body {
-              margin: 0;
-              padding: 0;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              height: 100vh;
-            }
-            svg {
-              max-width: 100%;
-              height: auto;
-              page-break-inside: avoid;
-            }
-          }
-          body {
-            font-family: sans-serif;
-            text-align: center;
-            padding: 20px;
-          }
-        </style>
-      </head>
-      <body>
-        ${printContents}
-      </body>
-    </html>
+
+<head>
+  <title>Print Barcode</title>
+  <style>
+    @media print {
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+      }
+
+      #barcode-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        page-break-inside: avoid;
+        page-break-before: avoid;
+        page-break-after: avoid;
+      }
+
+      svg {
+        max-width: 90%;
+        height: auto;
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  ${printContents}
+</body>
+
+</html>
   `);
     win.document.close();
     win.focus();
