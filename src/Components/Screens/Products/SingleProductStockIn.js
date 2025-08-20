@@ -11,9 +11,11 @@ const SingleProductStockIn = () => {
       JsBarcode(barcodeRef.current, imei, {
         format: 'CODE128',
         lineColor: '#000',
-        width: 2,
-        height: 40,
-        displayValue: true,
+        width: 2,           // Narrower bars for compact layout
+        height: 60,         // Shorter height to fit within page bounds
+        displayValue: true, // Shows the IMEI below the barcode
+        fontSize: 14,       // Adjust font size for readability
+        margin: 10,         // Adds padding around the barcode
       });
     }
   }, [imei]);
