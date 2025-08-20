@@ -1,14 +1,63 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
+import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
+import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
+import { ACCESSORIES_OPTIONS, GRADE_OPTIONS, SUPPLIER_OPTIONS } from './Constants';
+import CustomDropdownInputComponent from '../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent';
+import { apiCall } from '../../../Util/AxiosUtils';
+import Barcode from 'react-barcode';
 import JsBarcode from 'jsbarcode';
 
-const SingleProductStockIn = () => {
-  const [imei, setImei] = useState('123456789012345'); // Default IMEI
+
+function SingleProductStockIn() {
   const barcodeRef = useRef();
   const printAreaRef = useRef();
+  const [modelOptions, setModelOptions] = useState([]);
+  const [modelName, setModelName] = useState("");
+  const [productData, setProductData] = useState({
+    model: '',
+    imei_number: '',
+    sales_price: '',
+    purchase_price: '',
+    grade: '',
+    engineer_name: '',
+    accessories: '',
+    supplier: '',
+    qcRemark: '',
+    createdAt: '',
+  });
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setProductData({ ...productData, [name]: value });
+  };
+  // const stockInCallback = (response) => {
+  //     printBarcode({ modelName: productData.model, grade: productData.grade, imei: productData.imei_number })
+  //     if (response.status === 200) {
+  //         setProductData({
+  //             model: '',
+  //             createdAt: '',
+  //             grade: '',
+  //             purchase_price: '',
+  //             sales_price: '',
+  //             imei_number: '',
+  //             engineer_name: '',
+  //             qcRemark: '',
+  //             supplier: '',
+  //             accessories: '',
+  //         });
+  //     } else {
+  //         console.log("error")
+  //     }
+  // };
+
 
   useEffect(() => {
-    if (imei && barcodeRef.current) {
-      JsBarcode(barcodeRef.current, imei, {
+    getModelsAllData();
+  }, []);
+
+  useEffect(() => {
+    if (productData.imei_number && barcodeRef.current) {
+      JsBarcode(barcodeRef.current, productData.imei_number, {
         format: 'CODE128',
         lineColor: '#000',
         width: 2,           // Narrower bars for compact layout
@@ -18,10 +67,41 @@ const SingleProductStockIn = () => {
         margin: 10,         // Adds padding around the barcode
       });
     }
-  }, [imei]);
+  }, [productData.imei_number]);
 
-  const handlePrint = () => {
-    const printContents = printAreaRef.current.innerHTML;
+  const getModelsAllData = () => {
+    let url = "https://3-extent-billing-backend.vercel.app/api/models";
+    apiCall({
+      method: 'GET',
+      url: url,
+      data: {},
+      callback: getModelsCallBack,
+    })
+  }
+  const getModelsCallBack = (response) => {
+    console.log('response: ', response);
+    if (response.status === 200) {
+      const models = response.data.map(model => model.name);
+      setModelOptions(models);
+      console.log('models: ', models);
+      if (!modelName) {
+        setModelName("");
+      }
+    } else {
+      console.log("Error");
+    }
+  }
+  const addProductStockIn = () => {
+    handlePrint({ modelName: modelName, grade: productData.grade, imei_number: productData.imei_number })
+    // apiCall({
+    //     method: "POST",
+    //     url: "https://3-extent-billing-backend.vercel.app/api/products",
+    //     data: { products: [productData] },
+    //     callback: stockInCallback
+    // });
+  }
+
+  const handlePrint = (product) => {
     const win = window.open('', '', 'height=800,width=600');
     win.document.write(`
     <html>
@@ -29,7 +109,7 @@ const SingleProductStockIn = () => {
         <title>Print Barcode</title>
         <style>
           @page {
-            size: A4 landscape;
+            size: A4 portrait;
             margin: 0;
           }
           html, body {
@@ -41,54 +121,160 @@ const SingleProductStockIn = () => {
             justify-content: center;
             align-items: center;
           }
+          h3{
+          margin : 0;
+          padding : 0;
+          }
+          #barcode-wrapper {
+            height: 100vh;
+            width: 100vw;
+          }
           svg {
-            width: 100%;
+            width: 60%;
             height: auto;
-            transform: rotate(90deg);
           }
         </style>
       </head>
       <body>
-        ${printContents}
+        <div id="barcode-wrapper">
+        <h3>Model Name : ${product.modelName}</h3>
+        <h3>Grade : ${product.grade}</h3>
+          <svg id="barcode"></svg>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+        <script>
+          JsBarcode("#barcode", "${product.imei_number}", {
+            format: 'CODE128',
+            lineColor: '#000',
+            width: 2,
+            height: 100,
+            displayValue: true,
+            fontSize: 14,
+            margin: 10
+          });
+          window.onload = function() {
+            window.print();
+          };
+        </script>
       </body>
     </html>
   `);
     win.document.close();
     win.focus();
-    win.print();
   };
 
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial' }}>
-      <h2>IMEI Barcode Generator</h2>
-      <input
-        type="text"
-        value={imei}
-        onChange={(e) => setImei(e.target.value)}
-        placeholder="Enter IMEI"
-        style={{ padding: '8px', fontSize: '16px', marginBottom: '20px', width: '300px' }}
+    <div className="grid grid-cols-2 gap-x-5 gap-y-2">
+      <CustomDropdownInputComponent
+        name="Model Name"
+        dropdownClassName="w-[80%]"
+        placeholder="Enter Model Name"
+        value={modelName}
+        onChange={(value) => setModelName(value)}
+        options={modelOptions}
+        labelClassName="font-serif font-bold"
       />
-      <div ref={printAreaRef}>
-        <svg ref={barcodeRef}></svg>
+      <InputComponent
+        label="Date"
+        type="date"
+        name="createdAt"
+        placeholder="Enter your Date"
+        value={productData.createdAt}
+        onChange={handleInputChange}
+        inputClassName="w-[80%]"
+        labelClassName="font-serif font-bold"
+      />
+      <DropdownCompoent
+        label="Grade"
+        name="grade"
+        options={GRADE_OPTIONS}
+        placeholder="Select Grade"
+        value={productData.grade}
+        onChange={handleInputChange}
+        className="w-[80%]"
+        labelClassName="font-serif font-bold"
+      />
+      <InputComponent
+        label="Purchase Price"
+        type="number"
+        name="purchase_price"
+        placeholder="Buying Purchase Price"
+        value={productData.purchase_price}
+        onChange={handleInputChange}
+        inputClassName="w-[80%]"
+        labelClassName="font-serif font-bold"
+      />
+      <InputComponent
+        label="Sales Price"
+        type="number"
+        name="sales_price"
+        placeholder="Rate Selling Price"
+        value={productData.sales_price}
+        onChange={handleInputChange}
+        inputClassName="w-[80%]"
+        labelClassName="font-serif font-bold"
+      />
+      <InputComponent
+        label="IMEI"
+        type="number"
+        name="imei_number"
+        placeholder="IMEI"
+        value={productData.imei_number}
+        onChange={handleInputChange}
+        inputClassName="w-[80%]"
+        labelClassName="font-serif font-bold"
+      />
+      <InputComponent
+        label="Engineer Name"
+        type="text"
+        name="engineer_name"
+        placeholder="Engineer Name"
+        value={productData.engineer_name}
+        onChange={handleInputChange}
+        inputClassName="w-[80%]"
+        labelClassName="font-serif font-bold"
+      />
+      <InputComponent
+        label="QC Remark"
+        type="text"
+        name="qcRemark"
+        placeholder="QC Remark"
+        inputClassName="w-[80%]"
+        labelClassName="font-serif font-bold"
+        value={productData.qcRemark}
+        onChange={handleInputChange}
+      />
+      <DropdownCompoent
+        label="Supplier"
+        name="supplier"
+        options={SUPPLIER_OPTIONS}
+        placeholder="Select Supplier"
+        value={productData.supplier}
+        onChange={handleInputChange}
+        className="w-[80%]"
+        labelClassName="font-serif font-bold"
+      />
+      <DropdownCompoent
+        label="Accessories"
+        name="accessories"
+        options={ACCESSORIES_OPTIONS}
+        placeholder="Select Box"
+        value={productData.accessories}
+        onChange={handleInputChange}
+        className="w-[80%]"
+        labelClassName="font-serif font-bold"
+      />
+      <div className="col-span-2 mt-4 flex justify-center">
+        <PrimaryButtonComponent
+          label="Save"
+          icon="fa fa-save"
+          buttonClassName="mt-2 py-1 px-5 text-xl font-bold"
+          onClick={addProductStockIn}
+
+        />
       </div>
-      <button
-        onClick={handlePrint}
-        style={{
-          marginTop: '20px',
-          padding: '10px 20px',
-          fontSize: '16px',
-          backgroundColor: '#007bff',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer',
-        }}
-      >
-        Print Barcode
-      </button>
     </div>
   );
-};
-
+}
 export default SingleProductStockIn;
