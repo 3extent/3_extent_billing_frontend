@@ -5,7 +5,6 @@ import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponen
 import { ACCESSORIES_OPTIONS, GRADE_OPTIONS, SUPPLIER_OPTIONS } from './Constants';
 import CustomDropdownInputComponent from '../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent';
 import { apiCall } from '../../../Util/AxiosUtils';
-import Barcode from 'react-barcode';
 import JsBarcode from 'jsbarcode';
 
 
@@ -151,7 +150,7 @@ function SingleProductStockIn() {
             width: 2,
             height: 50,
             displayValue: true,
-            font-size: 115px;
+            fontSize: 50px;
           });
           window.onload = function() {
             window.print();
