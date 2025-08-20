@@ -124,12 +124,12 @@ function SingleProductStockIn() {
             width: 100%;
             text-align: center;
             font-family: sans-serif;
-            
           }
           h1 {
             margin: 0px 20px;
-            font-size: 150px;
+            font-size: 115px;
             text-align: left;
+            font-weight: bolder;
           }
           svg {
             width: 100%;
@@ -149,7 +149,7 @@ function SingleProductStockIn() {
             format: 'CODE128',
             lineColor: '#000',
             width: 2,
-            height: 60,
+            height: 50,
             displayValue: true,
             fontSize: 14
           });
