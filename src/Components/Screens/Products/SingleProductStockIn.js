@@ -128,7 +128,7 @@ function SingleProductStockIn() {
           }
           h1 {
             margin: 0px 20px;
-            font-size: 48px;
+            font-size: 100px;
             text-align: left;
           }
           svg {
