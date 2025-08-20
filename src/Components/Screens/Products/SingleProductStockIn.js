@@ -42,8 +42,9 @@ const SingleProductStockIn = () => {
             align-items: center;
           }
           svg {
-            width: 60%;
+            width: 100%;
             height: auto;
+            transform: rotate(90deg);
           }
         </style>
       </head>
