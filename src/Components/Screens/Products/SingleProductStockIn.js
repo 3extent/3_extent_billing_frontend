@@ -109,7 +109,7 @@ function SingleProductStockIn() {
         <title>Print Barcode</title>
         <style>
           @page {
-            size: A4 landscape;
+            size: A4 portrait;
             margin: 0;
           }
           html, body {
@@ -120,28 +120,27 @@ function SingleProductStockIn() {
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-direction: column;
           }
-          h3{
-          margin : 0;
-          padding : 0;
+          h3 {
+            margin: 0;
+            padding: 4px;
+            font-family: sans-serif;
           }
           #barcode-wrapper {
-            height: 100vh;
-            width: 100vw;
-            margin: 10px;
-            margin-top: 30px;
+            page-break-inside: avoid;
           }
           svg {
             width: 100%;
             height: auto;
-            transform: rotate(90deg);
+            text-align: center;
           }
         </style>
       </head>
       <body>
         <div id="barcode-wrapper">
-        <h3>Model Name : ${product.modelName}</h3>
-        <h3>Grade : ${product.grade}</h3>
+          <h3>Model Name: ${product.modelName}</h3>
+          <h3>Grade: ${product.grade}</h3>
           <svg id="barcode"></svg>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
@@ -150,7 +149,7 @@ function SingleProductStockIn() {
             format: 'CODE128',
             lineColor: '#000',
             width: 2,
-            height: 50,
+            height: 75,
             displayValue: true,
             fontSize: 14
           });
