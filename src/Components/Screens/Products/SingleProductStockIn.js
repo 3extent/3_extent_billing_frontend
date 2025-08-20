@@ -138,8 +138,8 @@ function SingleProductStockIn() {
       </head>
       <body>
         <div id="barcode-wrapper">
-          <h1>Model Name: ${product.modelName}</h1>
-          <h1>Grade: ${product.grade}</h1>
+          <h1>${product.modelName}</h1>
+          <h1>${product.grade}</h1>
           <svg id="barcode"></svg>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
