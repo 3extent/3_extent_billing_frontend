@@ -102,7 +102,7 @@ function SingleProductStockIn() {
   }
 
   const handlePrint = (product) => {
-    const win = window.open('', '', 'height=800,width=600');
+    const win = window.open('', '', 'height=400,width=400');
     win.document.write(`
     <html>
       <head>
@@ -127,10 +127,8 @@ function SingleProductStockIn() {
             font-family: sans-serif;
           }
           #barcode-wrapper {
-            page-break-inside: avoid;
-             height: 100vh;
+            height: 100vh;
             width: 100vw;
-            margin: 10px;
             margin-top: 30px;
           }
           svg {
