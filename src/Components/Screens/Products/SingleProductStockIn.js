@@ -128,6 +128,10 @@ function SingleProductStockIn() {
           }
           #barcode-wrapper {
             page-break-inside: avoid;
+             height: 100vh;
+            width: 100vw;
+            margin: 10px;
+            margin-top: 30px;
           }
           svg {
             width: 100%;
