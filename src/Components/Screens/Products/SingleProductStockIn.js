@@ -1,63 +1,61 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import JsBarcode from 'jsbarcode';
 
 const SingleProductStockIn = () => {
-  const [barcodeValue, setBarcodeValue] = useState('123456789012');
-  const canvasRef = useRef(null);
+  const [imei, setImei] = useState('123456789012345'); // Default IMEI
+  const barcodeRef = useRef();
+  const printAreaRef = useRef();
 
-  // Generate barcode on canvas
   useEffect(() => {
-    if (canvasRef.current) {
-      JsBarcode(canvasRef.current, barcodeValue, {
+    if (imei && barcodeRef.current) {
+      JsBarcode(barcodeRef.current, imei, {
         format: 'CODE128',
         lineColor: '#000',
         width: 2,
-        height: 100,
+        height: 50,
         displayValue: true,
       });
     }
-  }, [barcodeValue]);
+  }, [imei]);
 
-  // Print barcode using new window
   const handlePrint = () => {
-    const dataUrl = canvasRef.current.toDataURL(); // Get image from canvas
-    const printWindow = window.open('', '_blank');
-
-    printWindow.document.write(`
-      <html>
-        <head>
-          <title>Print Barcode</title>
-          <style>
-            body { margin: 0; text-align: center; }
-            img { width: auto; height: 100px; margin-top: 50px; }
-          </style>
-        </head>
-        <body>
-          <img src="${dataUrl}" onload="window.print(); window.close();" />
-        </body>
-      </html>
-    `);
-
-    printWindow.document.close();
+    const printContents = printAreaRef.current.innerHTML;
+    const win = window.open('', '', 'height=600,width=800');
+    win.document.write('<html><head><title>Print Barcode</title>');
+    win.document.write('<style>body{font-family:sans-serif;text-align:center;}</style>');
+    win.document.write('</head><body>');
+    win.document.write(printContents);
+    win.document.write('</body></html>');
+    win.document.close();
+    win.print();
   };
 
   return (
-    <div style={{ padding: 20 }}>
-      <h2>Barcode Generator & Printer</h2>
-
+    <div style={{ padding: '20px', fontFamily: 'Arial' }}>
+      <h2>IMEI Barcode Generator</h2>
       <input
         type="text"
-        value={barcodeValue}
-        onChange={(e) => setBarcodeValue(e.target.value)}
-        placeholder="Enter barcode value"
-        style={{ padding: 10, fontSize: 16, marginBottom: 20 }}
+        value={imei}
+        onChange={(e) => setImei(e.target.value)}
+        placeholder="Enter IMEI"
+        style={{ padding: '8px', fontSize: '16px', marginBottom: '20px', width: '300px' }}
       />
-
-      <div style={{ margin: '20px 0' }}>
-        <canvas ref={canvasRef}></canvas>
+      <div ref={printAreaRef}>
+        <svg ref={barcodeRef}></svg>
       </div>
-
-      <button onClick={handlePrint} style={{ padding: '10px 20px', fontSize: 16 }}>
+      <button
+        onClick={handlePrint}
+        style={{
+          marginTop: '20px',
+          padding: '10px 20px',
+          fontSize: '16px',
+          backgroundColor: '#007bff',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
+        }}
+      >
         Print Barcode
       </button>
     </div>
