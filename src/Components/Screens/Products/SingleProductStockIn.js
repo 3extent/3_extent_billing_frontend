@@ -120,11 +120,10 @@ function SingleProductStockIn() {
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
           }
           h3 {
             margin: 0;
-            padding: 4px;
+            padding: 0;
             font-family: sans-serif;
           }
           #barcode-wrapper {
