@@ -102,14 +102,14 @@ function SingleProductStockIn() {
   }
 
   const handlePrint = (product) => {
-    const win = window.open('', '', 'height=400,width=400');
+    const win = window.open('', '', 'height=800,width=600');
     win.document.write(`
     <html>
       <head>
         <title>Print Barcode</title>
         <style>
           @page {
-            size: A4 landscape;
+            size: A4 portrait;
             margin: 0;
           }
           html, body {
@@ -117,24 +117,22 @@ function SingleProductStockIn() {
             padding: 0;
             height: 100%;
             width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-          }
-          h3 {
-            margin: 0;
-            padding: 0;
-            font-family: sans-serif;
           }
           #barcode-wrapper {
-            height: 100vh;
-            width: 100vw;
-            margin-top: 30px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            font-family: sans-serif;
+          }
+          h3 {
+            margin: 4px 0;
+            padding: 0;
           }
           svg {
-            width: 100%;
+            width: 80%;
             height: auto;
-            text-align: center;
           }
         </style>
       </head>
