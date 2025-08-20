@@ -128,6 +128,8 @@ function SingleProductStockIn() {
           #barcode-wrapper {
             height: 100vh;
             width: 100vw;
+            margin: 10px;
+            margin-top: 30px;
           }
           svg {
             width: 100%;
@@ -150,8 +152,7 @@ function SingleProductStockIn() {
             width: 2,
             height: 100,
             displayValue: true,
-            fontSize: 14,
-            margin: 10
+            fontSize: 14
           });
           window.onload = function() {
             window.print();
