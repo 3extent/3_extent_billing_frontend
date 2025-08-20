@@ -151,8 +151,7 @@ function SingleProductStockIn() {
             width: 2,
             height: 50,
             displayValue: true,
-            fontSize: 50,
-            marginLeft: 0
+            fontSize: 50
           });
           window.onload = function() {
             window.print();
