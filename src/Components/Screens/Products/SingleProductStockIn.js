@@ -120,9 +120,8 @@ function SingleProductStockIn() {
           }
           #barcode-wrapper {
             position: absolute;
-            top: 50%;
+            top: 45%;
             left: 50%;
-            height:100vh;
             width: 100vw;
             transform: translate(-50%, -50%);
             text-align: center;
