@@ -122,6 +122,7 @@ function SingleProductStockIn() {
             position: absolute;
             top: 50%;
             left: 50%;
+            height:100vh;
             width: 100vw;
             transform: translate(-50%, -50%);
             text-align: center;
