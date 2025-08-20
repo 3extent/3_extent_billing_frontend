@@ -12,7 +12,7 @@ const SingleProductStockIn = () => {
         format: 'CODE128',
         lineColor: '#000',
         width: 2,           // Narrower bars for compact layout
-        height: 60,         // Shorter height to fit within page bounds
+        height: 100,         // Shorter height to fit within page bounds
         displayValue: true, // Shows the IMEI below the barcode
         fontSize: 14,       // Adjust font size for readability
         margin: 10,         // Adds padding around the barcode
@@ -43,7 +43,7 @@ const SingleProductStockIn = () => {
             overflow: hidden;
           }
           svg {
-            width: 80%;
+            width: 100%;
             height: auto;
             page-break-inside: avoid;
           }
