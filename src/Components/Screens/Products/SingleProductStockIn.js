@@ -22,14 +22,14 @@ const SingleProductStockIn = () => {
 
   const handlePrint = () => {
     const printContents = printAreaRef.current.innerHTML;
-    const win = window.open('', '', 'height=600,width=800');
+    const win = window.open('', '', 'height=800,width=600');
     win.document.write(`
     <html>
       <head>
         <title>Print Barcode</title>
         <style>
           @page {
-            size: A4;
+            size: A4 portrait;
             margin: 0;
           }
           html, body {
@@ -40,12 +40,10 @@ const SingleProductStockIn = () => {
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
           }
           svg {
-            width: 100%;
+            width: 60%;
             height: auto;
-            page-break-inside: avoid;
           }
         </style>
       </head>
