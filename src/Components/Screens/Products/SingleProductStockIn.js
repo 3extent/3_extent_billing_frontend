@@ -124,6 +124,7 @@ function SingleProductStockIn() {
             width: 100%;
             text-align: center;
             font-family: sans-serif;
+            fontSize: 18;
           }
           h1 {
             margin: 0;
