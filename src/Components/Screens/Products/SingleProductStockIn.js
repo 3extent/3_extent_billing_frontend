@@ -109,7 +109,7 @@ function SingleProductStockIn() {
         <title>Print Barcode</title>
         <style>
           @page {
-            size: A4 portrait;
+            size: A4 landscape;
             margin: 0;
           }
           html, body {
@@ -130,8 +130,9 @@ function SingleProductStockIn() {
             width: 100vw;
           }
           svg {
-            width: 60%;
+            width: 100%;
             height: auto;
+            transform: rotate(90deg);
           }
         </style>
       </head>
