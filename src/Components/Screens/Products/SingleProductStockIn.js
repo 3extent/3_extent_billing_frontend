@@ -122,17 +122,17 @@ function SingleProductStockIn() {
             position: absolute;
             top: 45%;
             left: 50%;
-            width: 100vw;
+            height: 100vh;
             transform: translate(-50%, -50%);
             text-align: center;
             font-family: sans-serif;
           }
           h3 {
-            margin: 4px 0;
+            margin: 0;
             padding: 0;
           }
           svg {
-            width: 80%;
+            width: 100%;
             height: auto;
           }
         </style>
