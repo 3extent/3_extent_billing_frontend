@@ -63,7 +63,7 @@ function SingleProductStockIn() {
         width: 2,           // Narrower bars for compact layout
         height: 100,         // Shorter height to fit within page bounds
         displayValue: true, // Shows the IMEI below the barcode
-        fontSize: 14,       // Adjust font size for readability
+        fontSize: 20,       // Adjust font size for readability
         margin: 10,         // Adds padding around the barcode
       });
     }
@@ -121,6 +121,7 @@ function SingleProductStockIn() {
           #barcode-wrapper {
             position: absolute;
             top: 5%;
+            left:5%;
             width: 100%;
             text-align: center;
             font-family: sans-serif;
