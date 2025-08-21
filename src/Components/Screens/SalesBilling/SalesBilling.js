@@ -72,22 +72,26 @@ export default function SalesBilling() {
                     label="IMEI No :"
                     type="text"
                     placeholder="Scan IMEI No"
+                    inputClassName="w-[190px]"
                 />
                 <InputComponent
                     label="Customer Name :"
                     type="text"
                     placeholder="Enter Customer Name"
+                    inputClassName="w-[190px]"
                 />
                 <InputComponent
                     label="Contact No:"
                     type="text"
                     placeholder="contact No"
+                    inputClassName="w-[190px]"
                 />
                 <InputComponent
                     label="Date :"
                     type="Date"
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
+                    inputClassName="w-[190px]"
                 />
                 <PrimaryButtonComponent
                     label="Save"
