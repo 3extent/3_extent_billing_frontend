@@ -3,7 +3,10 @@ import { useEffect, useState } from "react";
 import { apiCall } from "../../../Util/AxiosUtils";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 export default function AddBrands() {
+    const navigate = useNavigate();
     const [brandData, setBrandData] = useState({
         name: ""
     });
@@ -17,12 +20,29 @@ export default function AddBrands() {
         if (response.status === 200) {
             console.log('response: ', response);
             setBrandData({ name: "" });
+            toast.success("Brand name succesful", {
+                position: "top-right",
+                hideProgressBar: true,
+                theme: "light",
+                closeButton: false
+            });
+            navigate("/brands")
+
         } else {
             console.log("Error while adding brand");
         }
     };
 
     const addBrand = () => {
+        if (brandData.name.trim() === "") {
+            toast.error("Please Enter Brand name", {
+                position: "top-right",
+                hideProgressBar: true,
+                theme: "light",
+                closeButton: false,
+            });
+            return;
+        }
         apiCall({
             method: "POST",
             url: "https://3-extent-billing-backend.vercel.app/api/brands",

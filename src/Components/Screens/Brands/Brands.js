@@ -20,8 +20,8 @@ function Brands() {
     const getBrandsCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
-            const brandsFormattedRows = response.data.map((brand, index) => ({
-                "No": brand.id,
+            const brandsFormattedRows = response.data.map((brand) => ({
+                "No": brand.brand_id,
                 "Brand Name": brand.name
             }));
             setRows(brandsFormattedRows);
