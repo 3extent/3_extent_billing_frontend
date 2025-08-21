@@ -9,19 +9,8 @@ function BulkOfProduct() {
     const [inputValue, setInputValue] = useState('');
     const [excelData, setExcelData] = useState([]);
     const [showTable, setShowTable] = useState(false);
-    const [productData, setProductData] = useState({
-        model_name: '',
-        imei_number: '',
-        sales_price: '',
-        purchase_price: '',
-        grade: '',
-        engineer_name: '',
-        accessories: '',
-        supplier_name: '',
-        qc_remark: ''
-    });
     const handleAddProductData = () => {
-        const BulkOfProductformatteddata = excelData.map((row) => ({
+        const bulkOfProductformatteddata = excelData.map((row) => ({
             model_name: row["Model Name"],
             imei: row["IMEI"],
             sales_price: row["Sales Price"],
@@ -30,30 +19,18 @@ function BulkOfProduct() {
             engineer_name: row["Engineer Name"],
             accessories: row["Accessories"],
             supplier_name: row["Supplier_name"],
-            qc_remark: row["QC_Remark"] ,
+            qc_remark: row["QC_Remark"],
         }));
-        setExcelData(BulkOfProductformatteddata)
-        console.log('BulkOfProductformatteddata: ', BulkOfProductformatteddata);
+        setExcelData(bulkOfProductformatteddata)
         apiCall({
             method: "POST",
             url: "https://3-extent-billing-backend.vercel.app/api/products",
-            data: BulkOfProductformatteddata,
+            data: bulkOfProductformatteddata,
             callback: stockInCallback,
         });
     }
     const stockInCallback = (response) => {
         if (response.status === 200) {
-            setProductData({
-                model_name: '',
-                grade: '',
-                purchase_price: '',
-                sales_price: '',
-                imei_number: '',
-                engineer_name: '',
-                qc_remark: '',
-                supplier_name: '',
-                accessories: '',
-            });
         } else {
             console.log("error")
         }
