@@ -4,11 +4,60 @@ import * as XLSX from 'xlsx';
 import CustomTableCompoent from '../../CustomComponents/CustomTableCompoent/CustomTableCompoent';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
 import InputComponent from '../../CustomComponents/InputComponent/InputComponent';
-
+import { apiCall } from '../../../Util/AxiosUtils';
 function BulkOfProduct() {
     const [inputValue, setInputValue] = useState('');
     const [excelData, setExcelData] = useState([]);
     const [showTable, setShowTable] = useState(false);
+    const [productData, setProductData] = useState({
+        model_name: '',
+        imei_number: '',
+        sales_price: '',
+        purchase_price: '',
+        grade: '',
+        engineer_name: '',
+        accessories: '',
+        supplier_name: '',
+        qc_remark: ''
+    });
+    const handleAddProductData = () => {
+        const BulkOfProductformatteddata = excelData.map((row) => ({
+            model_name: row["Model Name"],
+            imei: row["IMEI"],
+            sales_price: row["Sales Price"],
+            purchase_price: row["Purchase Price"],
+            grade: row["Grade"],
+            engineer_name: row["Engineer Name"],
+            accessories: row["Accessories"],
+            supplier_name: row["Supplier_name"],
+            qc_remark: row["QC_Remark"] ,
+        }));
+        setExcelData(BulkOfProductformatteddata)
+        console.log('BulkOfProductformatteddata: ', BulkOfProductformatteddata);
+        apiCall({
+            method: "POST",
+            url: "https://3-extent-billing-backend.vercel.app/api/products",
+            data: BulkOfProductformatteddata,
+            callback: stockInCallback,
+        });
+    }
+    const stockInCallback = (response) => {
+        if (response.status === 200) {
+            setProductData({
+                model_name: '',
+                grade: '',
+                purchase_price: '',
+                sales_price: '',
+                imei_number: '',
+                engineer_name: '',
+                qc_remark: '',
+                supplier_name: '',
+                accessories: '',
+            });
+        } else {
+            console.log("error")
+        }
+    };
     const handleFileUpload = (e) => {
         const file = e.target.files[0];
         const reader = new FileReader();
@@ -24,7 +73,6 @@ function BulkOfProduct() {
         };
         reader.readAsBinaryString(file);
     };
-
     const handleButtonClick = () => {
         console.log('Input value:', inputValue);
         console.log('Excel data:', excelData);
@@ -57,6 +105,7 @@ function BulkOfProduct() {
                     label="Save"
                     icon="fa fa-save"
                     buttonClassName="mt-2 py-2 px-5 text-xl font-bold"
+                    onClick={handleAddProductData}
                 />
             </div>
         </div>
