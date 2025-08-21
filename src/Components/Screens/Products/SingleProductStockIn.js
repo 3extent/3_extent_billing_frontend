@@ -114,7 +114,7 @@ function SingleProductStockIn() {
           }
           html, body {
             margin: 0;
-            padding: 10px;
+            padding: 0px 10px;
             height: 100vh;
             width: 100vw;
           }
@@ -127,7 +127,13 @@ function SingleProductStockIn() {
           }
           h1 {
             margin: 0;
-            font-size: 90px;
+            font-size: 100px;
+            text-align: center;
+            font-weight: bolder;
+          }
+          h2 {
+            margin: 0;
+            font-size: 80px;
             text-align: left;
             font-weight: bolder;
           }
@@ -140,8 +146,8 @@ function SingleProductStockIn() {
       <body>
         <div id="barcode-wrapper">
           <h1>3_EXTENT</h1>
-          <h1>${product.modelName}</h1>
-          <h1>Grade : ${product.grade}</h1>
+          <h2>${product.modelName}</h2>
+          <h2>Grade : ${product.grade}</h2>
           <svg id="barcode"></svg>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
