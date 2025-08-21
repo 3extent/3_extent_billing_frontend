@@ -120,7 +120,7 @@ function SingleProductStockIn() {
           }
           #barcode-wrapper {
             position: absolute;
-            top: 10%;
+            top: 5%;
             width: 100%;
             text-align: center;
             font-family: sans-serif;
@@ -152,7 +152,7 @@ function SingleProductStockIn() {
             width: 2,
             height: 50,
             displayValue: true,
-            fontSize: 20
+            fontSize: 25
           });
           window.onload = function() {
             window.print();
