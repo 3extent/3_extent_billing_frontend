@@ -121,7 +121,7 @@ function SingleProductStockIn() {
           #barcode-wrapper {
             position: absolute;
             top: 10%;
-            left:-20%;
+            left:-5%;
             width: 100%;
             text-align: center;
             font-family: sans-serif;
