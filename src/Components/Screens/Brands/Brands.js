@@ -21,7 +21,7 @@ function Brands() {
         console.log('response: ', response);
         if (response.status === 200) {
             const brandsFormattedRows = response.data.map((brand, index) => ({
-                "No": index + 1,
+                "No": brand.id,
                 "Brand Name": brand.name
             }));
             setRows(brandsFormattedRows);
