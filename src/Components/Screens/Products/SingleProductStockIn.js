@@ -120,7 +120,7 @@ function SingleProductStockIn() {
           }
           #barcode-wrapper {
             position: absolute;
-            top: 20%;
+            top: 5%;
             width: 100%;
             text-align: center;
             font-family: sans-serif;
@@ -139,6 +139,7 @@ function SingleProductStockIn() {
       </head>
       <body>
         <div id="barcode-wrapper">
+          <h1>3_EXTENT</h1>
           <h1>${product.modelName}</h1>
           <h1>Grade : ${product.grade}</h1>
           <svg id="barcode"></svg>
