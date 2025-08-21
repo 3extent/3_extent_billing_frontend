@@ -151,9 +151,9 @@ function SingleProductStockIn() {
             format: 'CODE128',
             lineColor: '#000',
             width: 2,
-            height: 50,
+            height: 60,
             displayValue: true,
-            fontSize: 50
+            fontSize: 20
           });
           window.onload = function() {
             window.print();
