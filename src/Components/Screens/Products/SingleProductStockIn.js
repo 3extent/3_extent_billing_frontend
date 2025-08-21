@@ -114,7 +114,7 @@ function SingleProductStockIn() {
           }
           html, body {
             margin: 0;
-            padding: 0;
+            padding: 10px;
             height: 100vh;
             width: 100vw;
           }
@@ -126,8 +126,8 @@ function SingleProductStockIn() {
             font-family: sans-serif;
           }
           h1 {
-            margin: 0px 20px;
-            font-size: 100px;
+            margin: 0;
+            font-size: 90px;
             text-align: left;
             font-weight: bolder;
           }
