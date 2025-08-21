@@ -14,6 +14,10 @@ export default function AddModels() {
         RAM: "",
         storage: ""
     });
+     const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        setModelData({ ...modelData, [name]: value });
+    };
     const handleShowCombinations = async () => {
         const ramOptions = modelData.RAM.split(",");
         const storageOptions = modelData.storage.split(",");
@@ -29,10 +33,6 @@ export default function AddModels() {
             setPossibleCombinations([]);
         }
         setShowData(true);
-    };
-    const handleInputChange = (event) => {
-        const { name, value } = event.target;
-        setModelData({ ...modelData, [name]: value });
     };
     const handleCheckboxChange = (event) => {
         const value = event.target.value;
@@ -51,6 +51,9 @@ export default function AddModels() {
                 RAM: "",
                 storage: ""
             });
+              setSelectedCombinations([]);
+            setPossibleCombinations([]);
+            setShowData(false);
         } else {
             console.log("error");
         }
@@ -59,7 +62,11 @@ export default function AddModels() {
         apiCall({
             method: "POST",
             url: "https://3-extent-billing-backend.vercel.app/api/models",
-            data: {},
+             data: {
+                brand_id: modelData.brand_id,
+                name: modelData.name,
+                combinations: selectedCombinations
+            },
             callback: addModelCallback,
         });
     };
@@ -147,6 +154,7 @@ export default function AddModels() {
                                         id={`combo-${index}`}
                                         value={combo}
                                         onChange={handleCheckboxChange}
+                                        // checked={selectedCombinations.includes(combo)}
                                     />
                                     <label htmlFor={`combo-${index}`} className="ml-2">{combo}</label>
                                 </li>
