@@ -7,7 +7,7 @@ import { apiCall } from '../../../Util/AxiosUtils';
 export default function Login() {
     const navigate = useNavigate();
     const [loginFormData, setLoginFormData] = useState({
-        mobile_number: "",
+        contact_number: "",
         password: ""
     });
     useEffect(() => {
@@ -49,14 +49,14 @@ export default function Login() {
                         <InputComponent
                             label="Mobile Number"
                             type="number"
-                            name="mobile_number"
+                            name="contact_number"
                             placeholder="Enter your mobile number"
                             inputClassName="w-full"
-                            value={loginFormData.mobile_number}
+                            value={loginFormData.contact_number}
                             onChange={(e) => {
                                 const input = e.target.value.replace(/\D/g, '');
                                 if (input.length <= 10) {
-                                    setLoginFormData({ ...loginFormData, mobile_number: input });
+                                    setLoginFormData({ ...loginFormData, contact_number: input });
                                 }
                             }}
                             maxLength={10}
