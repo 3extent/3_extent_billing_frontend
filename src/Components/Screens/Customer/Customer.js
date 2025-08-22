@@ -69,18 +69,18 @@ export default function Customer() {
                 onClick={navigateAddCustomer}
                 buttonClassName="py-1 px-3 text-sm font-bold"
             />
-            <div className="flex items-center gap-4 ">
+            <div className="flex items-center gap-4 mb-5">
                 <InputComponent
                     type="text"
                     placeholder="Customer Name"
-                    inputClassName="mb-5"
+                    inputClassName="w-[190px]"
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                 />
                 <InputComponent
                     type="number"
                     placeholder="Contact No"
-                    inputClassName="mb-5"
+                    inputClassName="w-[190px]"
                     value={contactNo}
                     onChange={(e) => setContactNumber(e.target.value)}
                 />
@@ -89,15 +89,16 @@ export default function Customer() {
                     placeholder="Select Customer Type"
                     value={customerType}
                     onChange={(value) => setCustomerType(value)}
+                    className="w-[200px] mt-6"
                 />
                 <PrimaryButtonComponent
                     label="Search"
-                    buttonClassName=" py-1 px-5 text-xl font-bold"
+                    buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
                     onClick={handleSearchFilter}
                 />
                 <PrimaryButtonComponent
                     label="Reset"
-                    buttonClassName=" py-1 px-5 text-xl font-bold"
+                    buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
                     onClick={handleResetFilter}
                 />
             </div>

@@ -18,12 +18,12 @@ export default function CustomDropdownInputComponent({ name, dropdownClassName =
         setShowDropdown(false);
     };
     const filteredOptions = inputValue.trim() === ''
-        ? options.filter(option => typeof option === 'string')
-        : options
-            .filter(option => typeof option === 'string')
-            .filter(option =>
-                option.toLowerCase().includes(inputValue.toLowerCase())
-            );
+    ? options
+    : options.filter(option =>
+        typeof option === 'string' &&
+        option.toLowerCase().includes(inputValue.toLowerCase())
+    );
+
     return (
         <div className=" relative">
             <div><label className={`font-bold ${labelClassName} `}>{name}</label></div>

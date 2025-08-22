@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import InputComponent from '../../CustomComponents/InputComponent/InputComponent';
 import CustomTableCompoent from '../../CustomComponents/CustomTableCompoent/CustomTableCompoent';
 import DropdownCompoent from '../../CustomComponents/DropdownCompoent/DropdownCompoent';
-import { PRODUCT_COLOUMNS } from './Constants';
+import { PRODUCT_COLOUMNS, STATUS_OPTIONS } from './Constants';
 import { apiCall } from '../../../Util/AxiosUtils';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
 function ListOfProducts() {
@@ -13,6 +13,7 @@ function ListOfProducts() {
     const [grade, setGrade] = useState();
     const [modelName, setModelName] = useState();
     const [brandName, setBrandName] = useState('');
+    const [status, setStatus]=useState();
     const [brandOptions, setBrandOptions] = useState([]);
     const [date, setDate] = useState(() => {
         const today = new Date();
@@ -103,37 +104,45 @@ function ListOfProducts() {
                     type="Date"
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
-                    inputClassName="mb-5"
+                    inputClassName="w-[190px] mb-2"
                 />
                 <DropdownCompoent
                     placeholder="Select Brands"
                     value={brandName}
                     onChange={(value) => setBrandName(value)}
                     options={brandOptions}
+                     className="mt-3 w-[190px]"
                 />
                 <InputComponent
                     type="text"
                     placeholder="Enter Models Name"
-                    inputClassName="mb-5"
+                    inputClassName="mb-2 w-[190px]"
                     value={modelName}
                     onChange={(e) => setModelName(e.target.value)}
                 />
                 <InputComponent
                     type="number"
                     placeholder="Enter IMEI NO"
-                    inputClassName="mb-5"
+                    inputClassName="mb-2 w-[190px]"
                     value={imeiNumber}
                     onChange={(e) => setIMEINumber(e.target.value)}
                 />
                 <InputComponent
                     type="text"
                     placeholder="Enter Grade"
-                    inputClassName="mb-5"
+                    inputClassName="mb-2 w-[190px]"
                     value={grade}
                     onChange={(e) => setGrade(e.target.value)}
                 />
             </div>
-            <div className='flex justify-end mb-2'>
+            <div className='flex items-center gap-4 mb-5'>
+                <DropdownCompoent
+                    placeholder="Select status"
+                    value={status}
+                    onChange={(value) => setStatus(value)}
+                    options={STATUS_OPTIONS}
+                    className="w-[190px]"
+                />
                 <PrimaryButtonComponent
                     label="Search"
                     buttonClassName=" py-1 px-5 text-xl font-bold"
@@ -141,7 +150,7 @@ function ListOfProducts() {
                 />
                 <PrimaryButtonComponent
                     label="Reset"
-                    buttonClassName="ml-5 py-1 px-5 text-xl font-bold"
+                    buttonClassName="py-1 px-5 text-xl font-bold"
                     onClick={handleResetFilter}
                 />
             </div>
