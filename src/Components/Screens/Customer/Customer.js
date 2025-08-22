@@ -17,7 +17,7 @@ export default function Customer() {
     }
     const [rows, setRows] = useState([]);
     useEffect(() => {
-        getCustomerAllData();
+        getCustomerAllData({});
     }, []);
     const getCustomerCallBack = (response) => {
         console.log('response: ', response);
@@ -35,7 +35,7 @@ export default function Customer() {
             console.log("Error");
         }
     }
-    const getCustomerAllData = () => {
+    const getCustomerAllData = ({ customerName, contactNo }) => {
         let url = 'https://3-extent-billing-backend.vercel.app/api/users?role=CUSTOMER';
         if (customerName) {
             url += `&name=${customerName}`
@@ -52,13 +52,13 @@ export default function Customer() {
         })
     }
     const handleSearchFilter = () => {
-        getCustomerAllData();
+        getCustomerAllData({ customerName, contactNo });
     }
     const handleResetFilter = () => {
         setContactNumber('');
         setCustomerName('');
         setCustomerType('');
-        getCustomerAllData();
+        getCustomerAllData({});
     }
     return (
         <div className="w-full">
