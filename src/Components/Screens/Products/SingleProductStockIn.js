@@ -126,14 +126,14 @@ function SingleProductStockIn() {
             font-family: sans-serif;
           }
           h1 {
-            margin: 0;
+            margin: 0px 0px 5px 0px;
             font-size: 100px;
             text-align: center;
             font-weight: bolder;
           }
           h2 {
             margin: 0;
-            font-size: 90px;
+            font-size: 80px;
             text-align: left;
             font-weight: bolder;
           }
