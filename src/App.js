@@ -13,6 +13,7 @@ import AddBrands from './Components/Screens/Brands/AddBrands';
 import AddModels from './Components/Screens/Brands/AddModels';
 import AddSupplier from './Components/Screens/Supplier/AddSupplier';
 import AddCustomer from './Components/Screens/Customer/AddCustomer';
+import Billinghistory from './Components/Screens/SalesBilling/Billinghistory';
 function App() {
 
   const [loginStatus, setLoginStatus] = useState(false);
@@ -49,6 +50,7 @@ function App() {
             <Route path="/addmodels" element={<AddModels />} />
             <Route path="/addcustomer" element={<AddCustomer />} />
             <Route path="/addsupplier" element={<AddSupplier />} />
+             <Route path="/billinghistory" element={<Billinghistory />} />
           </Routes>
         </div>
       </div>
