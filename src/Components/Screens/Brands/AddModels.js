@@ -154,7 +154,7 @@ export default function AddModels() {
                                         id={`combo-${index}`}
                                         value={combo}
                                         onChange={handleCheckboxChange}
-                                        // checked={selectedCombinations.includes(combo)}
+                                    
                                     />
                                     <label htmlFor={`combo-${index}`} className="ml-2">{combo}</label>
                                 </li>

@@ -14,7 +14,7 @@ function SingleProductStockIn() {
         sales_price: '',
         purchase_price: '',
         grade: '',
-        engineer_name: '',
+        engineer_name: '', 
         accessories: '',
         supplier_name: '',
         qc_remark: ''
