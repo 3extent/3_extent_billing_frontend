@@ -8,8 +8,8 @@ import { apiCall } from "../../../Util/AxiosUtils";
 import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
 import { useNavigate } from "react-router-dom";
 export default function SalesBilling() {
-     const navigate = useNavigate();
-      const navigateBillingHistory= () => {
+    const navigate = useNavigate();
+    const navigateBillingHistory = () => {
         navigate("/billinghistory")
     }
     const [rows, setRows] = useState([
@@ -40,9 +40,9 @@ export default function SalesBilling() {
     const [imeiOptions, setImeiOptions] = useState([]);
     const [selectedImei, setSelectedImei] = useState("");
     const [contactNoOptions, setContactNoOptions] = useState([]);
-const [selectedContactNo, setSelectedContactNo] = useState("");
- const [customers, setCustomers] = useState([]);
-  const [customerName, setCustomerName] = useState("");
+    const [selectedContactNo, setSelectedContactNo] = useState("");
+    const [customers, setCustomers] = useState([]);
+    const [customerName, setCustomerName] = useState("");
 
 
     const handleRateChange = (index, newRate) => {
@@ -50,45 +50,45 @@ const [selectedContactNo, setSelectedContactNo] = useState("");
         updatedRows[index]["Rate"] = Number(newRate);
         setRows(updatedRows);
     };
-useEffect(() => {
-    getAllImeis();
-    getCustomerAllData();
-    if (selectedImei) {
-        getsalesbillingAllData();
-    } else {
-        setRows([]); 
-    }
-}, [selectedImei]);
+    useEffect(() => {
+        getAllImeis();
+        getCustomerAllData();
+        if (selectedImei) {
+            getsalesbillingAllData();
+        } else {
+            setRows([]);
+        }
+    }, [selectedImei]);
 
-  const getCustomerAllData  = () => {
-    const url = 'https://3-extent-billing-backend.vercel.app/api/users?role=CUSTOMER';
+    const getCustomerAllData = () => {
+        const url = 'https://3-extent-billing-backend.vercel.app/api/users?role=CUSTOMER';
 
-    apiCall({
-        method: 'GET',
-        url: url,
-        data: {},
-        callback: getCustomersCallback,
-    });
-};
-const getCustomersCallback = (response) => {
-    if (response.status === 200) {
-        setCustomers(response.data);
-        const contactNos = response.data.map(customer => customer.contact_number);
-        setContactNoOptions(contactNos);
-    } else {
-        console.error("Customer contact numbers fetching error");
-    }
-};
-const handleContactNoChange = (value) => {
-  setSelectedContactNo(value);
-  if (!value) {
-    setCustomerName("");
-    return;
-  }
-  const customer = customers.find(customer => customer.contact_number === value);
-  setCustomerName(customer ? customer.name : "");
-};
-const getAllImeis = () => {
+        apiCall({
+            method: 'GET',
+            url: url,
+            data: {},
+            callback: getCustomersCallback,
+        });
+    };
+    const getCustomersCallback = (response) => {
+        if (response.status === 200) {
+            setCustomers(response.data);
+            const contactNos = response.data.map(customer => customer.contact_number);
+            setContactNoOptions(contactNos);
+        } else {
+            console.error("Customer contact numbers fetching error");
+        }
+    };
+    const handleContactNoChange = (value) => {
+        setSelectedContactNo(value);
+        if (!value) {
+            setCustomerName("");
+            return;
+        }
+        const customer = customers.find(customer => customer.contact_number === value);
+        setCustomerName(customer ? customer.name : "");
+    };
+    const getAllImeis = () => {
         const url = "https://3-extent-billing-backend.vercel.app/api/products";
         apiCall({
             method: "GET",
@@ -97,9 +97,9 @@ const getAllImeis = () => {
             callback: getImeisCallback,
         });
     };
-const getImeisCallback = (response) => {
+    const getImeisCallback = (response) => {
         if (response.status === 200) {
-            const imeis = response.data.map(item => item.imei_number); 
+            const imeis = response.data.map(item => item.imei_number);
             setImeiOptions(imeis);
         } else {
             console.error("IMEI numbers fetching error");
@@ -126,13 +126,13 @@ const getImeisCallback = (response) => {
         }
     }
     const getsalesbillingAllData = () => {
-         let url = 'https://3-extent-billing-backend.vercel.app/api/products?';
+        let url = 'https://3-extent-billing-backend.vercel.app/api/products?';
         if (selectedImei) {
             url += `&imei_number=${selectedImei}`
         }
         apiCall({
             method: 'GET',
-            url:url,
+            url: url,
             data: {},
             callback: getsalesbillingCallBack,
         })
@@ -147,33 +147,37 @@ const getImeisCallback = (response) => {
                 onClick={navigateBillingHistory}
             />
             <div className="flex items-center gap-4 mt-3">
-                 <CustomDropdownInputComponent
+                <CustomDropdownInputComponent
                     label="IMEI No :"
                     dropdownClassName="w-full mt-7"
                     placeholder="Select IMEI No"
                     value={selectedImei}
                     onChange={(value) => setSelectedImei(value)}
                     options={imeiOptions}
-                    
+                    className="w-[190px]"
                 />
-                  <CustomDropdownInputComponent
-          dropdownClassName="w-full mt-6"
-          placeholder="Select Contact No"
-          value={selectedContactNo}
-          onChange={handleContactNoChange} 
-          options={contactNoOptions}
-        />
-                    <InputComponent
-          type="text"
-          placeholder="Enter Customer Name"
-          value={customerName}   
-          onChange={(e) => setCustomerName(e.target.value)}
-        />
-   
+                <CustomDropdownInputComponent
+                    dropdownClassName="w-full mt-6"
+                    placeholder="Select Contact No"
+                    value={selectedContactNo}
+                    onChange={handleContactNoChange}
+                    options={contactNoOptions}
+                    className="w-[190px]"
+                />
+                <InputComponent
+                    type="text"
+                    placeholder="Enter Customer Name"
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    inputClassName="w-[190px]"
+
+                />
+
                 <InputComponent
                     type="Date"
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
+                    inputClassName="w-[190px]"
                 />
             </div>
             <div className="relative mt-4 mb-2">
@@ -205,32 +209,32 @@ const getImeisCallback = (response) => {
                     </div>
                 )}
             </div>
-                    <div>
-                        <CustomTableCompoent
-                            headers={dynamicHeaders}
-                            rows={rows}
-                            onRateChange={handleRateChange}
-                        />
-                    </div>
-                    <div className="flex justify-end gap-4 mt-5">
-                        <PrimaryButtonComponent
-                            label="Save"
-                            icon="fa fa-cloud-download"
-                            buttonClassName="py-1 px-5 text-xl font-bold"
-                        />
-                        <PrimaryButtonComponent
-                            label="Print"
-                            icon="fa fa-print"
-                            buttonClassName="py-1 px-5 text-xl font-bold"
-                        />
-                        <PrimaryButtonComponent
-                            label="Cancel"
-                            icon="fa fa-window-close"
-                            buttonClassName="py-1 px-5 text-xl font-bold"
-                        />
-                    </div>
-            
-        
+            <div>
+                <CustomTableCompoent
+                    headers={dynamicHeaders}
+                    rows={rows}
+                    onRateChange={handleRateChange}
+                />
+            </div>
+            <div className="flex justify-end gap-4 mt-5">
+                <PrimaryButtonComponent
+                    label="Save"
+                    icon="fa fa-cloud-download"
+                    buttonClassName="py-1 px-5 text-xl font-bold"
+                />
+                <PrimaryButtonComponent
+                    label="Print"
+                    icon="fa fa-print"
+                    buttonClassName="py-1 px-5 text-xl font-bold"
+                />
+                <PrimaryButtonComponent
+                    label="Cancel"
+                    icon="fa fa-window-close"
+                    buttonClassName="py-1 px-5 text-xl font-bold"
+                />
+            </div>
+
+
         </div>
 
     );

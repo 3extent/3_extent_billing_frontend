@@ -91,7 +91,7 @@ export default function Models() {
             />
             <div className="flex items-center gap-4">
                 <CustomDropdownInputComponent
-                    dropdownClassName="w-full mt-1"
+                    dropdownClassName="w-[190px] mt-1"
                     placeholder="Enter a brand"
                     value={brandName}
                     onChange={(value) => setBrandName(value)}
@@ -100,7 +100,7 @@ export default function Models() {
                 <InputComponent
                     type="text"
                     placeholder="Enter Models Name"
-                    inputClassName="w-[full] mb-5"
+                    inputClassName="w-[190px] mb-5"
                     value={modelName}
                     onChange={(e) => setModelName(e.target.value)}
                 />
