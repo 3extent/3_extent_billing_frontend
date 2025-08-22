@@ -13,7 +13,7 @@ function ListOfProducts() {
     const [grade, setGrade] = useState();
     const [modelName, setModelName] = useState();
     const [brandName, setBrandName] = useState('');
-    const [status, setStatus]=useState();
+    const [statusType, setStatusType] = useState();
     const [brandOptions, setBrandOptions] = useState([]);
     const [date, setDate] = useState(() => {
         const today = new Date();
@@ -21,7 +21,7 @@ function ListOfProducts() {
     });
     // const [date, setDate] = useState(getTodayDate);
     useEffect(() => {
-        getProductsAllData();
+        getProductsAllData({});
         getBrandsAllData();
     }, []);
     const getProductsCallBack = (response) => {
@@ -42,7 +42,7 @@ function ListOfProducts() {
             console.log("Error");
         }
     }
-    const getProductsAllData = () => {
+    const getProductsAllData = ({ imeiNumber, grade, modelName, brandName, statusType }) => {
         let url = 'https://3-extent-billing-backend.vercel.app/api/products?';
         if (imeiNumber) {
             url += `&imei_number=${imeiNumber}`
@@ -59,6 +59,9 @@ function ListOfProducts() {
         }
         if (brandName) {
             url += `&brandName=${brandName}`
+        }
+        if (statusType) {
+            url += `&type=${statusType}`
         }
         apiCall({
             method: 'GET',
@@ -86,7 +89,7 @@ function ListOfProducts() {
         }
     }
     const handleSearchFilter = () => {
-        getProductsAllData();
+        getProductsAllData({ imeiNumber, grade, modelName, brandName, statusType });
     }
     const handleResetFilter = () => {
         //  setDate(getTodayDate());
@@ -94,7 +97,7 @@ function ListOfProducts() {
         setGrade('');
         setIMEINumber('');
         setBrandName('');
-        getProductsAllData();
+        getProductsAllData({});
     }
     return (
         <div className='w-full'>
@@ -111,7 +114,7 @@ function ListOfProducts() {
                     value={brandName}
                     onChange={(value) => setBrandName(value)}
                     options={brandOptions}
-                     className="mt-3 w-[190px]"
+                    className="mt-3 w-[190px]"
                 />
                 <InputComponent
                     type="text"
@@ -138,8 +141,8 @@ function ListOfProducts() {
             <div className='flex items-center gap-4 mb-5'>
                 <DropdownCompoent
                     placeholder="Select status"
-                    value={status}
-                    onChange={(value) => setStatus(value)}
+                    value={statusType}
+                    onChange={(value) => setStatusType(value)}
                     options={STATUS_OPTIONS}
                     className="w-[190px]"
                 />
