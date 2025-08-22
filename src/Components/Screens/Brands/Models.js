@@ -18,12 +18,9 @@ export default function Models() {
         navigate("/addmodels")
     }
     useEffect(() => {
-        getModelsAllData();
+        getModelsAllData({});
         getBrandsAllData();
     }, []);
-    useEffect(() => {
-        getModelsAllData();
-    }, [modelName, brandName]);
     const getModelsCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
@@ -37,7 +34,7 @@ export default function Models() {
             console.log("Error");
         }
     }
-    const getModelsAllData = () => {
+    const getModelsAllData = ({ brandName, modelName }) => {
         let url = "https://3-extent-billing-backend.vercel.app/api/models?";
         if (modelName) {
             url += `&modelName=${modelName}`
@@ -75,11 +72,12 @@ export default function Models() {
         }
     }
     const handleSearchFilter = () => {
-        getModelsAllData();
+        getModelsAllData({ brandName, modelName });
     }
     const handleResetFilter = () => {
         setBrandName('');
         setModelName('');
+        getModelsAllData({});
     }
     return (
         <div>
