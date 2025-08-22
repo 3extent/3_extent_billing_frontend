@@ -21,6 +21,9 @@ export default function Models() {
         getModelsAllData();
         getBrandsAllData();
     }, []);
+    useEffect(() => {
+        getModelsAllData();
+    }, [modelName, brandName]);
     const getModelsCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
@@ -77,7 +80,6 @@ export default function Models() {
     const handleResetFilter = () => {
         setBrandName('');
         setModelName('');
-        getModelsAllData();
     }
     return (
         <div>

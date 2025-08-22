@@ -14,7 +14,6 @@ export default function AddBrands() {
         const { name, value } = event.target;
         setBrandData({ ...brandData, [name]: value });
     };
-
     const addBrandCallback = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
@@ -24,15 +23,13 @@ export default function AddBrands() {
                 position: "top-right",
                 hideProgressBar: true,
                 theme: "light",
-                closeButton: false
+                closeButton: false,
             });
             navigate("/brands")
-
         } else {
             console.log("Error while adding brand");
         }
     };
-
     const addBrand = () => {
         if (brandData.name.trim() === "") {
             toast.error("Please Enter Brand name", {
