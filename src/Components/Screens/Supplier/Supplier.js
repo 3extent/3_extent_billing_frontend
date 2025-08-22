@@ -15,7 +15,7 @@ function Supplier() {
         navigate("/addsupplier")
     }
     useEffect(() => {
-        getSupplierAllData();
+        getSupplierAllData({});
     }, []);
     const getSupplierCallBack = (response) => {
         console.log('response: ', response);
@@ -33,7 +33,7 @@ function Supplier() {
             console.log("Error");
         }
     }
-    const getSupplierAllData = () => {
+    const getSupplierAllData = ({ supplierName, contactNo }) => {
         let url = "https://3-extent-billing-backend.vercel.app/api/users?role=SUPPLIER"
         if (supplierName) {
             url += `&name=${supplierName}`
@@ -48,12 +48,12 @@ function Supplier() {
         })
     }
     const handleSearchFilter = () => {
-        getSupplierAllData();
+        getSupplierAllData({ supplierName, contactNo });
     }
     const handleResetFilter = () => {
         setSupplierName('');
         setContactNo('');
-        getSupplierAllData();
+        getSupplierAllData({});
     }
     return (
         <div className="w-full">
