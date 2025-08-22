@@ -72,7 +72,7 @@ function SingleProductStockIn() {
         apiCall({
             method: "POST",
             url: "https://3-extent-billing-backend.vercel.app/api/products",
-            data: [productData],
+            data: productData,
             callback: stockInCallback,
         });
     }
