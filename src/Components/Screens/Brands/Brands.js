@@ -61,7 +61,7 @@ function Brands() {
                 <InputComponent
                     type="text"
                     placeholder="Enter Brand Name"
-                    inputClassName="w-[full] mb-5"
+                    inputClassName="w-[190px] mb-5"
                     value={brandName}
                     onChange={(e) => setBrandName(e.target.value)}
                 />

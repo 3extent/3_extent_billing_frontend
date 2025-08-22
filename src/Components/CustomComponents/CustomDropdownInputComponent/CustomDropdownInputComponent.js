@@ -17,11 +17,18 @@ export default function CustomDropdownInputComponent({ name, dropdownClassName =
         onChange(option);
         setShowDropdown(false);   
     };
+    // const filteredOptions = inputValue.trim() === ''
+    //     ? options
+    //     : options.filter(option =>
+    //         option.toLowerCase().includes(inputValue.toLowerCase())
+    //     );
     const filteredOptions = inputValue.trim() === ''
-        ? options
-        : options.filter(option =>
-            option.toLowerCase().includes(inputValue.toLowerCase())
-        );
+    ? options
+    : options.filter(option =>
+        typeof option === 'string' &&
+        option.toLowerCase().includes(inputValue.toLowerCase())
+    );
+
     return (
         <div className=" relative">
             <div><label className={`font-bold ${labelClassName} `}>{name}</label></div>
