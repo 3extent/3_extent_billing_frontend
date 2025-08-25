@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react';
-export default function CustomDropdownInputComponent({ name, dropdownClassName = "", labelClassName="", placeholder = "", options = [], value = "", onChange = () => { }, }) {
+export default function CustomDropdownInputComponent({ name, dropdownClassName = "", labelClassName = "", placeholder = "", options = [], value = "", onChange = () => { }, }) {
     const [inputValue, setInputValue] = useState('');
     const [showDropdown, setShowDropdown] = useState(false);
     useEffect(() => {
@@ -10,18 +10,15 @@ export default function CustomDropdownInputComponent({ name, dropdownClassName =
         const value = e.target.value;
         setInputValue(value);
         setShowDropdown(true);
-        onChange(value);
+        // onChange(value);
+         onChange({ target: { name, value } });
     };
     const handleSelect = (option) => {
         setInputValue(option);
-        onChange(option);
-        setShowDropdown(false);   
+        // onChange(option);
+           onChange({ target: { name, value: option } });
+        setShowDropdown(false);
     };
-    // const filteredOptions = inputValue.trim() === ''
-    //     ? options
-    //     : options.filter(option =>
-    //         option.toLowerCase().includes(inputValue.toLowerCase())
-    //     );
     const filteredOptions = inputValue.trim() === ''
     ? options
     : options.filter(option =>

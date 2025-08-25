@@ -4,11 +4,11 @@ import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCo
 import SingleProductStockIn from './SingleProductStockIn';
 import BulkOfProduct from "./BulkOfProduct";
 import { STOCK_TYPE_OPTIONS } from './Constants';
-
 function StockIn() {
     const [stockType, setStockType] = useState('Single Product');
-
-
+    const handleInputChange = (event) => {
+        setStockType(event.target.value);
+    };
     return (
         <div className='w-full p-4'>
             <div className='text-xl font-serif mb-4'>Add Product</div>
@@ -21,15 +21,13 @@ function StockIn() {
                         options={STOCK_TYPE_OPTIONS}
                         placeholder="Select Type"
                         value={stockType}
-                        onChange={(val) => setStockType(val)}
+                        onChange={handleInputChange}
                         className="w-full"
                     />
                 </div>
             </div>
-
             {stockType === 'Single Product' ? <SingleProductStockIn /> : <BulkOfProduct />}
         </div>
     );
 }
-
 export default StockIn;
