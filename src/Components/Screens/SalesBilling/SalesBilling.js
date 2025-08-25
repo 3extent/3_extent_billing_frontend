@@ -43,8 +43,6 @@ export default function SalesBilling() {
     const [selectedContactNo, setSelectedContactNo] = useState("");
     const [customers, setCustomers] = useState([]);
     const [customerName, setCustomerName] = useState("");
-
-
     const handleRateChange = (index, newRate) => {
         const updatedRows = [...rows];
         updatedRows[index]["Rate"] = Number(newRate);
@@ -172,7 +170,6 @@ export default function SalesBilling() {
                     inputClassName="w-[190px]"
 
                 />
-
                 <InputComponent
                     type="Date"
                     value={date}
