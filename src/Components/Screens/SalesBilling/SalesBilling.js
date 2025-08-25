@@ -8,10 +8,7 @@ import { apiCall } from "../../../Util/AxiosUtils";
 import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
 import { useNavigate } from "react-router-dom";
 export default function SalesBilling() {
-    const navigate = useNavigate();
-    const navigateBillingHistory = () => {
-        navigate("/billinghistory")
-    }
+
     const [rows, setRows] = useState([
     ]);
     const [hiddenColumns, setHiddenColumns] = useState([
@@ -23,6 +20,10 @@ export default function SalesBilling() {
             (col) => !["Purchase Price"].includes(col)
         );
     });
+    const navigate = useNavigate();
+    const navigateBillingHistory = () => {
+        navigate("/billinghistory")
+    }
     const [showDropdown, setShowDropdown] = useState(false);
     const toggleColumn = (columnName) => {
         if (dynamicHeaders.includes(columnName)) {
@@ -43,8 +44,6 @@ export default function SalesBilling() {
     const [selectedContactNo, setSelectedContactNo] = useState("");
     const [customers, setCustomers] = useState([]);
     const [customerName, setCustomerName] = useState("");
-
-
     const handleRateChange = (index, newRate) => {
         const updatedRows = [...rows];
         updatedRows[index]["Rate"] = Number(newRate);
@@ -53,16 +52,15 @@ export default function SalesBilling() {
     useEffect(() => {
         getAllImeis();
         getCustomerAllData();
+    }, []);
+    useEffect(() => {
         if (selectedImei) {
             getsalesbillingAllData();
-        } else {
-            setRows([]);
         }
     }, [selectedImei]);
 
     const getCustomerAllData = () => {
         const url = 'https://3-extent-billing-backend.vercel.app/api/users?role=CUSTOMER';
-
         apiCall({
             method: 'GET',
             url: url,
@@ -118,9 +116,10 @@ export default function SalesBilling() {
                 "Purchase Price": product.purchase_price,
                 "Grade": product.grade,
                 "Box": product.box
-
             }))
-            setRows(productFormattedRows);
+            setRows(prevRows => [...prevRows, ...productFormattedRows]);
+            // setRows(productFormattedRows);
+            setSelectedImei("");
         } else {
             console.log("Error");
         }
@@ -162,20 +161,6 @@ export default function SalesBilling() {
                     onChange={handleContactNoChange}
                     options={contactNoOptions}
                 />
-                  {/* <CustomDropdownInputComponent
-          dropdownClassName="w-full mt-6"
-          placeholder="Select Contact No"
-          value={selectedContactNo}
-          onChange={handleContactNoChange} 
-          options={contactNoOptions}
-        /> */}
-                    {/* <InputComponent
-          type="text"
-          placeholder="Enter Customer Name"
-          value={customerName}   
-          onChange={(e) => setCustomerName(e.target.value)}
-        /> */}
-
                 <InputComponent
                     type="text"
                     placeholder="Enter Customer Name"
@@ -219,33 +204,30 @@ export default function SalesBilling() {
                     </div>
                 )}
             </div>
-                    <div>
-                        <CustomTableCompoent
-                            headers={dynamicHeaders}
-                            rows={rows}
-                            onRateChange={handleRateChange}
-                        />
-                    </div>
-                    <div className="flex justify-end gap-4 mt-5">
-                        <PrimaryButtonComponent
-                            label="Save"
-                            icon="fa fa-cloud-download"
-                            buttonClassName="py-1 px-5 text-xl font-bold"
-                        />
-                        <PrimaryButtonComponent
-                            label="Print"
-                            icon="fa fa-print"
-                            buttonClassName="py-1 px-5 text-xl font-bold"
-                        />
-                        <PrimaryButtonComponent
-                            label="Cancel"
-                            icon="fa fa-window-close"
-                            buttonClassName="py-1 px-5 text-xl font-bold"
-                        />
-                    </div>
-            
-        
+            <div>
+                <CustomTableCompoent
+                    headers={dynamicHeaders}
+                    rows={rows}
+                    onRateChange={handleRateChange}
+                />
+            </div>
+            <div className="flex justify-end gap-4 mt-5">
+                <PrimaryButtonComponent
+                    label="Save"
+                    icon="fa fa-cloud-download"
+                    buttonClassName="py-1 px-5 text-xl font-bold"
+                />
+                <PrimaryButtonComponent
+                    label="Print"
+                    icon="fa fa-print"
+                    buttonClassName="py-1 px-5 text-xl font-bold"
+                />
+                <PrimaryButtonComponent
+                    label="Cancel"
+                    icon="fa fa-window-close"
+                    buttonClassName="py-1 px-5 text-xl font-bold"
+                />
+            </div>
         </div>
-
     );
 }
