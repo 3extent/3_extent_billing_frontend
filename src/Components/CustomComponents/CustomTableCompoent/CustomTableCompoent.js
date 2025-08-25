@@ -48,7 +48,7 @@ export default function CustomTableCompoent({ headers, rows, onRateChange }) {
                 </table>
             ) : (
                 <div className="text-red-600 font-bold text-[25px] text-center mt-4">
-                 Record not found
+                 No Records Found
                 </div>
             )}
         </div>
