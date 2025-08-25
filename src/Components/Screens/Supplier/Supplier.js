@@ -71,12 +71,14 @@ function Supplier() {
                     placeholder="Suppiler Name"
                     value={supplierName}
                     onChange={(e) => setSupplierName(e.target.value)}
+                    inputClassName="w-[190px]"
                 />
                 <InputComponent
                     type="number"
                     placeholder="Contact No"
                     value={contactNo}
                     onChange={(e) => setContactNo(e.target.value)}
+                    inputClassName="w-[190px]"
                 />
                 <PrimaryButtonComponent
                     label="Search"

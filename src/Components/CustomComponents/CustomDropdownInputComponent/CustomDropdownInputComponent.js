@@ -1,6 +1,5 @@
-
 import { useEffect, useState } from 'react';
-export default function CustomDropdownInputComponent({ name, dropdownClassName = "", labelClassName="", placeholder = "", options = [], value = "", onChange = () => { }, }) {
+export default function CustomDropdownInputComponent({ name, dropdownClassName = "", labelClassName = "", placeholder = "", options = [], value = "", onChange = () => { }, }) {
     const [inputValue, setInputValue] = useState('');
     const [showDropdown, setShowDropdown] = useState(false);
     useEffect(() => {
@@ -8,28 +7,23 @@ export default function CustomDropdownInputComponent({ name, dropdownClassName =
     }, [value]);
     const handleChange = (e) => {
         const value = e.target.value;
+        console.log('value: ', value);
         setInputValue(value);
         setShowDropdown(true);
         onChange(value);
     };
     const handleSelect = (option) => {
+        console.log('option: ', option);
         setInputValue(option);
         onChange(option);
-        setShowDropdown(false);   
+        setShowDropdown(false);
     };
-    // const filteredOptions = inputValue.trim() === ''
-    //     ? options
-    //     : options.filter(option =>
-    //         option.toLowerCase().includes(inputValue.toLowerCase())
-    //     );
     const filteredOptions = inputValue.trim() === ''
-    ? options.filter(option => typeof option === 'string')
-    : options
-        .filter(option => typeof option === 'string')
-        .filter(option =>
-            option.toLowerCase().includes(inputValue.toLowerCase())
-        );
-
+    ? options
+    : options.filter(option =>
+        typeof option === 'string' &&
+        option.toLowerCase().includes(inputValue.toLowerCase())
+    );
     return (
         <div className=" relative">
             <div><label className={`font-bold ${labelClassName} `}>{name}</label></div>

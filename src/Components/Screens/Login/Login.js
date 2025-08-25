@@ -2,32 +2,39 @@ import { useNavigate } from 'react-router-dom';
 import billingimage from '../../../Assets/billingimage.webp';
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { apiCall } from '../../../Util/AxiosUtils';
-export default function Login() {
+
+export default function Login({ onLoginSuccess }) {
     const navigate = useNavigate();
     const [loginFormData, setLoginFormData] = useState({
-        mobile_number: "",
+        contact_number: "",
         password: ""
     });
-    useEffect(() => {
-        handleLogin();
-    }, []);
+
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setLoginFormData({ ...loginFormData, [name]: value });
     };
+
     const getLoginCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
             localStorage.setItem('isAuthenticated', 'true');
             console.log("Success");
             // localStorage.setItem('user', JSON.stringify(response.data.user));
+            
+            // Call the callback to update parent state
+            if (onLoginSuccess) {
+                onLoginSuccess();
+            }
+            
             navigate('/salesbilling');
         } else {
             console.log("login failed");
         }
     }
+
     const handleLogin = () => {
         apiCall({
             method: 'POST',
@@ -36,6 +43,7 @@ export default function Login() {
             callback: getLoginCallBack,
         })
     };
+
     return (
         <div className="w-[100%] h-screen flex">
             <div className="w-[50%] h-[100%]">
@@ -49,14 +57,14 @@ export default function Login() {
                         <InputComponent
                             label="Mobile Number"
                             type="number"
-                            name="mobile_number"
+                            name="contact_number"
                             placeholder="Enter your mobile number"
                             inputClassName="w-full"
-                            value={loginFormData.mobile_number}
+                            value={loginFormData.contact_number}
                             onChange={(e) => {
                                 const input = e.target.value.replace(/\D/g, '');
                                 if (input.length <= 10) {
-                                    setLoginFormData({ ...loginFormData, mobile_number: input });
+                                    setLoginFormData({ ...loginFormData, contact_number: input });
                                 }
                             }}
                             maxLength={10}
