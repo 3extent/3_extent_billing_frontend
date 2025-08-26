@@ -107,7 +107,7 @@ export default function SalesBilling() {
         console.log('response: ', response);
         if (response.status === 200) {
             const productFormattedRows = response.data.map((product, index) => ({
-                "Sr.No": index + 1,
+                "Sr.No": product._id,
                 "date": product.date,
                 "IMEI NO": product.imei_number,
                 "Company Name": typeof product.brand === 'object' ? product.brand.name : product.brand,
@@ -117,7 +117,7 @@ export default function SalesBilling() {
                 "Grade": product.grade,
                 "Box": product.box
             }))
-            setRows(prevRows => [...prevRows, ...productFormattedRows]);
+            setRows(Rows => [...Rows, ...productFormattedRows]);
             // setRows(productFormattedRows);
             setSelectedImei("");
         } else {
@@ -136,6 +136,35 @@ export default function SalesBilling() {
             callback: getsalesbillingCallBack,
         })
     }
+    const billsData = {
+        date,
+        customer_name: customerName,
+        contact_number: selectedContactNo,
+        productData: rows.map((row) => ({
+            _id: row["Sr.No"],
+            rate: row["Rate"],
+        })),
+    };
+    const billsCallback = (response) => {
+        console.log("response: ", response);
+        if (response.status === 200 || response.status === 201) {
+            alert("Bill saved successfully!");
+            setRows({});
+            setSelectedImei("");
+            setCustomerName("");
+            setSelectedContactNo("");
+        } else {
+            alert("Error saving bill.");
+        }
+    };
+    const handleSaveData = () => {
+        apiCall({
+            method: 'POST',
+            url: 'https://3-extent-billing-backend.vercel.app/api/billings',
+            data: billsData,
+            callback: billsCallback,
+        })
+    };
     return (
         <div>
             <CustomHeaderComponent
@@ -216,6 +245,7 @@ export default function SalesBilling() {
                     label="Save"
                     icon="fa fa-cloud-download"
                     buttonClassName="py-1 px-5 text-xl font-bold"
+                    onClick={handleSaveData}
                 />
                 <PrimaryButtonComponent
                     label="Print"
