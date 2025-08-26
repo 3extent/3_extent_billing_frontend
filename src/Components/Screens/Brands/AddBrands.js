@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import { apiCall } from "../../../Util/AxiosUtils";
+import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { toast } from "react-toastify";
@@ -10,6 +10,7 @@ export default function AddBrands() {
     const [brandData, setBrandData] = useState({
         name: ""
     });
+    const [loading, setLoading] = useState(false); 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setBrandData({ ...brandData, [name]: value });
@@ -45,10 +46,12 @@ export default function AddBrands() {
             url: "https://3-extent-billing-backend.vercel.app/api/brands",
             data: brandData,
             callback: addBrandCallback,
+             setLoading: setLoading,
         });
     };
     return (
         <div>
+            {loading && <Spinner />}
             <div className="text-xl font-serif mb-4">Add Brand</div>
             <InputComponent
                 label="Brand Name"

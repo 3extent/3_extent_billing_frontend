@@ -4,7 +4,7 @@ import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { MODELS_COLOUMNS } from "./Constants";
-import { apiCall } from "../../../Util/AxiosUtils";
+import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
@@ -13,6 +13,7 @@ export default function Models() {
     const [modelName, setModelName] = useState();
     const [brandName, setBrandName] = useState("");
     const [brandOptions, setBrandOptions] = useState([]);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const navigateAddModels = () => {
         navigate("/addmodels")
@@ -47,6 +48,7 @@ export default function Models() {
             url: url,
             data: {},
             callback: getModelsCallBack,
+                 setLoading: setLoading
         })
     }
     const getBrandsAllData = () => {
@@ -56,6 +58,7 @@ export default function Models() {
             url: url,
             data: {},
             callback: getBrandsCallBack,
+                 setLoading: setLoading
         })
     };
     const getBrandsCallBack = (response) => {
@@ -81,6 +84,7 @@ export default function Models() {
     }
     return (
         <div>
+              {loading && <Spinner/>}
             <CustomHeaderComponent
                 name="Models"
                 label="Add Models"

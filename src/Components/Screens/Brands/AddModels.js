@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
-import { apiCall } from "../../../Util/AxiosUtils";
+import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 export default function AddModels() {
     const [brandOptions, setBrandOptions] = useState([]);
     const [possibleCombinations, setPossibleCombinations] = useState([]);
     const [selectedCombinations, setSelectedCombinations] = useState([]);
     const [showData, setShowData] = useState(false);
+    const[loading,setLoading]=useState(false)
     const [modelData, setModelData] = useState({
           brand_name: "",
         name: "",
@@ -71,6 +72,7 @@ export default function AddModels() {
                 ramStorage: selectedCombinations
             },
             callback: addModelCallback,
+            setLoading: setLoading
         });
     };
     useEffect(() => {
@@ -97,6 +99,7 @@ export default function AddModels() {
     }
     return (
         <div>
+            {loading && <Spinner />}
             <div className="text-xl font-serif mb-4">Add Model</div>
             <div className="grid grid-cols-2">
                 <CustomDropdownInputComponent

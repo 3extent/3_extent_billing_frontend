@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { SUPPLIER_COLUMNS } from "./Constants";
-import { apiCall } from "../../../Util/AxiosUtils";
+import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
@@ -11,6 +11,7 @@ function Supplier() {
     const navigate = useNavigate();
     const [supplierName, setSupplierName] = useState();
     const [contactNo, setContactNo] = useState();
+        const [loading, setLoading] = useState(false);
     const navigateAddSupplier = () => {
         navigate("/addsupplier")
     }
@@ -45,6 +46,7 @@ function Supplier() {
             url: url,
             data: {},
             callback: getSupplierCallBack,
+             setLoading: setLoading
         })
     }
     const handleSearchFilter = () => {
@@ -57,6 +59,7 @@ function Supplier() {
     }
     return (
         <div className="w-full">
+             {loading && <Spinner/>}
             <CustomHeaderComponent
                 name="List of Supplier Information"
                 icon="fa fa-plus-circle"

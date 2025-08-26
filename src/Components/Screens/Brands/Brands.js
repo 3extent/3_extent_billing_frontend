@@ -6,11 +6,11 @@ import { BRANDS_COLOUMNS } from "./Constants";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
-import { apiCall } from "../../../Util/AxiosUtils";
+import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 function Brands() {
     const [rows, setRows] = useState([]);
     const [brandName, setBrandName] = useState('');
-    // const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const navigateAddBrands = () => {
         navigate("/addbrands")
@@ -19,7 +19,6 @@ function Brands() {
         getBrandsAllData({});
     }, []);
     const getBrandsCallBack = (response) => {
-        // setLoading(false);
         console.log('response: ', response);
         if (response.status === 200) {
             const brandsFormattedRows = response.data.map((brand) => ({
@@ -32,7 +31,6 @@ function Brands() {
         }
     }
     const getBrandsAllData = ({ brandName }) => {
-        // setLoading(true);
         let url = "https://3-extent-billing-backend.vercel.app/api/brands";
         if (brandName) {
             url += `?name=${brandName}`
@@ -42,6 +40,7 @@ function Brands() {
             url: url,
             data: {},
             callback: getBrandsCallBack,
+                 setLoading: setLoading
         })
     };
     const handleSearchFilter = () => {
@@ -53,17 +52,7 @@ function Brands() {
     }
     return (
         <div className='w-full'>
-            {/* {loading && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="relative w-10 h-10">
-                        <div className="absolute inset-0 rounded-full border-4 border-black border-t-transparent animate-spin"></div>
-                        <div className="absolute inset-2 rounded-full border-4 border-gray-600 border-b-transparent animate-spin [animation-direction:reverse]"></div>
-                    </div>
-                </div>
-                // <div className="absolute inset-0 flex items-center justify-center">
-                //     <div className="w-12 h-12 border-4 border-black border-dashed rounded-full animate-spin border-t-black"></div>
-                // </div>
-            )} */}
+             {loading && <Spinner/>}
             <CustomHeaderComponent
                 name="Brands"
                 label="Add Brands"

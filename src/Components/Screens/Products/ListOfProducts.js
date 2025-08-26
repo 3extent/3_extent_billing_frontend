@@ -4,7 +4,7 @@ import InputComponent from '../../CustomComponents/InputComponent/InputComponent
 import CustomTableCompoent from '../../CustomComponents/CustomTableCompoent/CustomTableCompoent';
 import DropdownCompoent from '../../CustomComponents/DropdownCompoent/DropdownCompoent';
 import { PRODUCT_COLOUMNS, STATUS_OPTIONS } from './Constants';
-import { apiCall } from '../../../Util/AxiosUtils';
+import { apiCall, Spinner } from '../../../Util/AxiosUtils';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
 function ListOfProducts() {
     // const getTodayDate = () => new Date().toISOString().split("T")[0];
@@ -15,6 +15,7 @@ function ListOfProducts() {
     const [brandName, setBrandName] = useState('');
     const [statusType, setStatusType] = useState();
     const [brandOptions, setBrandOptions] = useState([]);
+     const [loading, setLoading] = useState(false);
     const [date, setDate] = useState(() => {
         const today = new Date();
         return today.toISOString().split("T")[0];
@@ -68,6 +69,7 @@ function ListOfProducts() {
             url: url,
             data: {},
             callback: getProductsCallBack,
+                 setLoading: setLoading
         })
     }
     const getBrandsAllData = () => {
@@ -77,6 +79,8 @@ function ListOfProducts() {
             url: url,
             data: {},
             callback: getBrandsCallBack,
+                 setLoading: setLoading
+            
         })
     };
     const getBrandsCallBack = (response) => {
@@ -101,7 +105,8 @@ function ListOfProducts() {
     }
     return (
         <div className='w-full'>
-            <div className='text-xl font-serif'>List Of Products</div>
+                {loading && <Spinner/>}
+<div className='text-xl font-serif'>List Of Products</div>
             <div className='flex items-center gap-4'>
                 <InputComponent
                     type="Date"
