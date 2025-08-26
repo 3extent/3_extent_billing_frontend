@@ -140,21 +140,21 @@ export default function SalesBilling() {
         date,
         customer_name: customerName,
         contact_number: selectedContactNo,
-        productData: rows.map((row) => ({
+        products: rows.map((row) => ({
             _id: row["Sr.No"],
             rate: row["Rate"],
         })),
     };
     const billsCallback = (response) => {
         console.log("response: ", response);
-        if (response.status === 200 || response.status === 201) {
+        if (response.status === 200) {
             alert("Bill saved successfully!");
             setRows({});
             setSelectedImei("");
             setCustomerName("");
             setSelectedContactNo("");
         } else {
-            alert("Error saving bill.");
+             console.log("Error");
         }
     };
     const handleSaveData = () => {

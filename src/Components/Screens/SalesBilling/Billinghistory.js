@@ -14,11 +14,10 @@ function Billinghistory() {
             console.log('response: ', response);
              if (response.status === 200) {
             const billingformattedRows = response.data.map((bill) => ({
-                "Bill id": bill._id,
-                "Date": bill.date,
-                "Customer Name": bill.customer_name,
-                "Contact Number": bill.contact_number,
-                "Total Bill": bill.total_amount,
+                 "Bill id":bill.bill_id,
+                 "Date": bill.createdAt,
+                "Customer Name": bill.customer.name ,
+                "Contact Number": bill.customer.contact_number
             }));
                console.log("Formatted Billing Rows: ", billingformattedRows);
             setRows(billingformattedRows);
