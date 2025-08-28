@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
-import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 export default function AddBrands() {
     const navigate = useNavigate();
@@ -11,21 +10,17 @@ export default function AddBrands() {
         name: ""
     });
     const [loading, setLoading] = useState(false); 
+     const [error, setError] = useState("");
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setBrandData({ ...brandData, [name]: value });
+        setError("");
     };
     const addBrandCallback = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
             console.log('response: ', response);
             setBrandData({ name: "" });
-            toast.success("Brand name succesful", {
-                position: "top-right",
-                hideProgressBar: true,
-                theme: "light",
-                closeButton: false,
-            });
             navigate("/brands")
         } else {
             console.log("Error while adding brand");
@@ -33,12 +28,8 @@ export default function AddBrands() {
     };
     const addBrand = () => {
         if (brandData.name.trim() === "") {
-            toast.error("Please Enter Brand name", {
-                position: "top-right",
-                hideProgressBar: true,
-                theme: "light",
-                closeButton: false,
-            });
+        console.log("Please enter brand name");
+             setError("please Enter Brand Name"); 
             return;
         }
         apiCall({
@@ -53,6 +44,11 @@ export default function AddBrands() {
         <div>
             {loading && <Spinner />}
             <div className="text-xl font-serif mb-4">Add Brand</div>
+            {error && (
+                <div className="text-red-600 mt-1 ml-1">
+                    {error}
+                </div>
+)}
             <InputComponent
                 label="Brand Name"
                 type="text"
