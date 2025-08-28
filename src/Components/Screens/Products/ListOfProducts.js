@@ -13,7 +13,7 @@ function ListOfProducts() {
     const [grade, setGrade] = useState();
     const [modelName, setModelName] = useState();
     const [brandName, setBrandName] = useState('');
-    const [status, setStatus]=useState();
+    const [status, setStatus] = useState();
     const [brandOptions, setBrandOptions] = useState([]);
     const [date, setDate] = useState(() => {
         const today = new Date();
@@ -28,7 +28,7 @@ function ListOfProducts() {
         console.log('response: ', response);
         if (response.status === 200) {
             const productFormattedRows = response.data.map((product) => ({
-                "Date":product.createdAt,
+                "Date": product.createdAt,
                 "IMEI NO": product.imei_number,
                 "Product Name": typeof product.model === 'object' ? product.model.name : product.model,
                 "Brand Name": typeof product.brand === 'object' ? product.model.brand : product.model.brand.name,
@@ -59,6 +59,9 @@ function ListOfProducts() {
         }
         if (brandName) {
             url += `&brandName=${brandName}`
+        }
+        if (status) {
+            url += `&status=${status}`
         }
         apiCall({
             method: 'GET',
@@ -92,8 +95,9 @@ function ListOfProducts() {
         //  setDate(getTodayDate());
         setModelName('');
         setGrade('');
-        setIMEINumber(''); 
+        setIMEINumber('');
         setBrandName('');
+        setStatus('');
         getProductsAllData();
     }
     return (
@@ -109,9 +113,9 @@ function ListOfProducts() {
                 <DropdownCompoent
                     placeholder="Select Brands"
                     value={brandName}
-                    onChange={(value) => setBrandName(value)}
+                    onChange={(e) => setBrandName(e.target.value)}
                     options={brandOptions}
-                     className="mt-3 w-[190px]"
+                    className="mt-3 w-[190px]"
                 />
                 <InputComponent
                     type="text"
@@ -139,7 +143,7 @@ function ListOfProducts() {
                 <DropdownCompoent
                     placeholder="Select status"
                     value={status}
-                    onChange={(value) => setStatus(value)}
+                    onChange={(e) => setStatus(e.target.value)}
                     options={STATUS_OPTIONS}
                     className="w-[190px]"
                 />

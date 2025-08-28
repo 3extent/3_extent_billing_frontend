@@ -88,7 +88,7 @@ export default function Customer() {
                     options={CUSTOMER_TYPE_OPTIONS}
                     placeholder="Select Customer Type"
                     value={customerType}
-                    onChange={(value) => setCustomerType(value)}
+                    onChange={(e) => setCustomerType(e.target.value)}
                     className="w-[200px] mt-6"
                 />
                 <PrimaryButtonComponent

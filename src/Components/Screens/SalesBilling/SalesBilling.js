@@ -8,7 +8,6 @@ import { apiCall } from "../../../Util/AxiosUtils";
 import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
 import { useNavigate } from "react-router-dom";
 export default function SalesBilling() {
-
     const [rows, setRows] = useState([
     ]);
     const [hiddenColumns, setHiddenColumns] = useState([
@@ -107,7 +106,7 @@ export default function SalesBilling() {
         console.log('response: ', response);
         if (response.status === 200) {
             const productFormattedRows = response.data.map((product, index) => ({
-                "Sr.No": product._id,
+                "Sr.No": index + 1,
                 "date": product.date,
                 "IMEI NO": product.imei_number,
                 "Company Name": typeof product.brand === 'object' ? product.brand.name : product.brand,
@@ -116,7 +115,8 @@ export default function SalesBilling() {
                 "Purchase Price": product.purchase_price,
                 "Grade": product.grade,
                 "Box": product.box
-            }))
+            }));
+
             setRows(Rows => [...Rows, ...productFormattedRows]);
             // setRows(productFormattedRows);
             setSelectedImei("");
@@ -154,7 +154,7 @@ export default function SalesBilling() {
             setCustomerName("");
             setSelectedContactNo("");
         } else {
-             console.log("Error");
+            console.log("Error");
         }
     };
     const handleSaveData = () => {

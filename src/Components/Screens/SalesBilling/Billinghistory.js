@@ -33,7 +33,7 @@ function Billinghistory() {
     const getBillinghistoryAllData = ({ contactNo, paymentStatus, customerName }) => {
         let url = "https://3-extent-billing-backend.vercel.app/api/billings?";
         if (customerName) {
-            url += `&name=${customerName}`
+            url += `&customer_name=${customerName}`
         }
         if (contactNo) {
             url += `&contact_number=${contactNo}`
@@ -81,7 +81,7 @@ function Billinghistory() {
                 <DropdownCompoent
                     placeholder="Select status"
                     value={paymentStatus}
-                    onChange={(value) => setPaymentStatus(value)}
+                    onChange={(e) => setPaymentStatus(e.target.value)}
                     options={PAYMENTSTATUS_OPTIONS}
                     className="w-[190px]"
                 />
