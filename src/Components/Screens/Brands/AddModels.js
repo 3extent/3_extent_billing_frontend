@@ -103,12 +103,13 @@ export default function AddModels() {
             <div className="text-xl font-serif mb-4">Add Model</div>
             <div className="grid grid-cols-2">
                 <CustomDropdownInputComponent
-                     name="brand_name"
+                     name="Brand Name"
+                     type="text"
                     placeholder="Select a brand"
                     dropdownClassName="w-[90%]"
                     options={brandOptions}
                     value={modelData.brand_name}
-                 onChange={handleInputChange}
+                    onChange={(value) => setModelData({ ...modelData, brand_name: value })}
                 />
                 <InputComponent
                     label="Model Name"
@@ -118,7 +119,7 @@ export default function AddModels() {
                     inputClassName="w-[80%]"
                     labelClassName="font-bold"
                     value={modelData.name}
-                    onChange={handleInputChange}
+                    onChange={handleInputChange}   
                 />
             </div>
             <div className="grid grid-cols-2 mt-3">
@@ -140,7 +141,7 @@ export default function AddModels() {
                     inputClassName="w-[80%]"
                     labelClassName="font-bold"
                     value={modelData.storage}
-                    onChange={handleInputChange}
+                     onChange={handleInputChange}
                 />
             </div>
             <div className="flex justify-center mt-5">

@@ -3,10 +3,11 @@ import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/Cust
 import { BILLINGHISTORY_COLOUMNS } from "./Constants";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
-import { apiCall } from "../../../Util/AxiosUtils";
+import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 
 function Billinghistory() {
     const [rows, setRows] = useState([]);
+    const [loading,setLoading]=useState(false)
      useEffect(() => {
              getBillinghistoryAllData();
         }, []);
@@ -33,11 +34,13 @@ function Billinghistory() {
                 url: "https://3-extent-billing-backend.vercel.app/api/billings",
                 data: {},
                 callback: getBilllinghistoryCallBack,
+                setLoading:setLoading
             })
         }
 
     return (
         <div>
+            {loading && <Spinner/>}
              <div className='text-xl font-serif mb-4'>Billing History</div>
             <div className="flex items-center gap-4 ">
                             <InputComponent
