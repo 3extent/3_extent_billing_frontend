@@ -8,8 +8,7 @@ import { apiCall } from "../../../Util/AxiosUtils";
 import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
 import { useNavigate } from "react-router-dom";
 export default function SalesBilling() {
-    const [rows, setRows] = useState([
-    ]);
+    const [rows, setRows] = useState([]);
     const [hiddenColumns, setHiddenColumns] = useState([
         "Purchase Price",
         "Sale Price"
@@ -57,7 +56,6 @@ export default function SalesBilling() {
             getsalesbillingAllData();
         }
     }, [selectedImei]);
-
     const getCustomerAllData = () => {
         const url = 'https://3-extent-billing-backend.vercel.app/api/users?role=CUSTOMER';
         apiCall({
@@ -238,6 +236,7 @@ export default function SalesBilling() {
                     headers={dynamicHeaders}
                     rows={rows}
                     onRateChange={handleRateChange}
+                     maxHeight="max-h-[300px]"
                 />
             </div>
             <div className="flex justify-end gap-4 mt-5">

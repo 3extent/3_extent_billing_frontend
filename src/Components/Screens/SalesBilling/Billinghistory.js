@@ -76,7 +76,6 @@ function Billinghistory() {
                     inputClassName="w-[190px] mb-5"
                     value={contactNo}
                     onChange={(e) => setContactNo(e.target.value)}
-
                 />
                 <DropdownCompoent
                     placeholder="Select status"
