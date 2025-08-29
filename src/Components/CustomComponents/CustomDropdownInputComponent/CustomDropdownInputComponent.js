@@ -10,13 +10,11 @@ export default function CustomDropdownInputComponent({ name, dropdownClassName =
         const value = e.target.value;
         setInputValue(value);
         setShowDropdown(true);
-        // onChange(value);
-         onChange({ target: { name, value } });
+        onChange(value);
     };
     const handleSelect = (option) => {
         setInputValue(option);
-        // onChange(option);
-           onChange({ target: { name, value: option } });
+        onChange(option);
         setShowDropdown(false);
     };
     const filteredOptions = inputValue.trim() === ''

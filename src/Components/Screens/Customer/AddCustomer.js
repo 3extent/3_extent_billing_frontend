@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
-import { apiCall } from "../../../Util/AxiosUtils";
+import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { CUSTOMER_TYPE_OPTIONS } from "./Constants";
+import { useNavigate } from "react-router-dom";
 
 function AddCustomer() {
+    const [loading, setLoading] = useState(false); 
+      const navigate = useNavigate();
     const [customerData, setCustomerData] = useState({
         name: "",
         address: "",
@@ -23,6 +26,7 @@ function AddCustomer() {
         setCustomerData({ ...customerData, [name]: value });
     };
     const addCustomerCallback = (response) => {
+         navigate("/customer");
         console.log('response: ', response);
         if (response.status === 200) {
             setCustomerData({
@@ -47,10 +51,13 @@ function AddCustomer() {
             url: "https://3-extent-billing-backend.vercel.app/api/users",
             data: customerData,
             callback: addCustomerCallback,
+            setLoading:setLoading
+
         });
     };
     return (
         <div>
+            {loading && <Spinner/>}
             <div className='text-xl font-serif mb-4'>Add Customer</div>
             <div className="grid grid-cols-2 gap-x-5 gap-y-2">
                 <InputComponent

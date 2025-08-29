@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
-import { apiCall } from "../../../Util/AxiosUtils";
+import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 export default function AddModels() {
     const [brandOptions, setBrandOptions] = useState([]);
     const [possibleCombinations, setPossibleCombinations] = useState([]);
     const [selectedCombinations, setSelectedCombinations] = useState([]);
     const [showData, setShowData] = useState(false);
+    const[loading,setLoading]=useState(false)
     const [modelData, setModelData] = useState({
           brand_name: "",
         name: "",
@@ -71,6 +72,7 @@ export default function AddModels() {
                 ramStorage: selectedCombinations
             },
             callback: addModelCallback,
+            setLoading: setLoading
         });
     };
     useEffect(() => {
@@ -97,15 +99,17 @@ export default function AddModels() {
     }
     return (
         <div>
+            {loading && <Spinner />}
             <div className="text-xl font-serif mb-4">Add Model</div>
             <div className="grid grid-cols-2">
                 <CustomDropdownInputComponent
-                     name="brand_name"
+                     name="Brand Name"
+                     type="text"
                     placeholder="Select a brand"
                     dropdownClassName="w-[90%]"
                     options={brandOptions}
                     value={modelData.brand_name}
-                 onChange={handleInputChange}
+                    onChange={(value) => setModelData({ ...modelData, brand_name: value })}
                 />
                 <InputComponent
                     label="Model Name"
@@ -115,7 +119,7 @@ export default function AddModels() {
                     inputClassName="w-[80%]"
                     labelClassName="font-bold"
                     value={modelData.name}
-                    onChange={handleInputChange}
+                    onChange={handleInputChange}   
                 />
             </div>
             <div className="grid grid-cols-2 mt-3">
@@ -137,7 +141,7 @@ export default function AddModels() {
                     inputClassName="w-[80%]"
                     labelClassName="font-bold"
                     value={modelData.storage}
-                    onChange={handleInputChange}
+                     onChange={handleInputChange}
                 />
             </div>
             <div className="flex justify-center mt-5">

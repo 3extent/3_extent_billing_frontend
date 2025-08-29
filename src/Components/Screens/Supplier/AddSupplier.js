@@ -3,11 +3,10 @@ import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCo
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { SUPPLIER_TYPE_OPTIONS } from "./Constants";
-import { apiCall } from "../../../Util/AxiosUtils";
+import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useEffect, useState } from "react";
 
 function AddSupplier() {
-    const navigate = useNavigate();
     const [supplierData, setSupplierData] = useState({
         name: "",
         firm_name: "",
@@ -20,6 +19,7 @@ function AddSupplier() {
         type: "",
         role: "SUPPLIER",
     });
+    const[loading,setLoading]=useState(false)
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setSupplierData({ ...supplierData, [name]: value });
@@ -49,10 +49,12 @@ function AddSupplier() {
             url: "https://3-extent-billing-backend.vercel.app/api/users",
             data: supplierData,
             callback: addSupplierCallback,
+             setLoading: setLoading,
         });
     };
     return (
         <div className="w-full">
+            {loading && <Spinner/>}
             <div className='text-xl font-serif mb-4'>Add Supplier</div>
             <div className="grid grid-cols-2 gap-x-5 gap-y-2">
                 <InputComponent

@@ -3,7 +3,7 @@ import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/Cust
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { CUSTOMER_COLOUMS, CUSTOMER_TYPE_OPTIONS } from "./Constants";
-import { apiCall } from "../../../Util/AxiosUtils";
+import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
@@ -12,14 +12,18 @@ export default function Customer() {
     const [customerName, setCustomerName] = useState();
     const [contactNo, setContactNumber] = useState();
     const [customerType, setCustomerType] = useState();
+        const [loading, setLoading] = useState(false);
+
+    
     const navigateAddCustomer = () => {
         navigate("/addcustomer")
     }
     const [rows, setRows] = useState([]);
     useEffect(() => {
-        getCustomerAllData();
+        getCustomerAllData({});
     }, []);
     const getCustomerCallBack = (response) => {
+        // setLoading(false);
         console.log('response: ', response);
         if (response.status === 200) {
             const customerFormttedRows = response.data.map((customer) => ({
@@ -35,7 +39,8 @@ export default function Customer() {
             console.log("Error");
         }
     }
-    const getCustomerAllData = () => {
+    const getCustomerAllData = ({ customerName, contactNo }) => {
+        // setLoading(true)
         let url = 'https://3-extent-billing-backend.vercel.app/api/users?role=CUSTOMER';
         if (customerName) {
             url += `&name=${customerName}`
@@ -49,19 +54,21 @@ export default function Customer() {
             url: url,
             data: {},
             callback: getCustomerCallBack,
+            setLoading: setLoading
         })
     }
     const handleSearchFilter = () => {
-        getCustomerAllData();
+        getCustomerAllData({ customerName, contactNo });
     }
     const handleResetFilter = () => {
         setContactNumber('');
         setCustomerName('');
         setCustomerType('');
-        getCustomerAllData();
+        getCustomerAllData({});
     }
     return (
         <div className="w-full">
+              {loading && <Spinner/>}
             <CustomHeaderComponent
                 name="List Of Customer Information"
                 label="Add Customer"
