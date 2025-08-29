@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 export default function CustomTableCompoent({ headers, rows, onRateChange }) {
     const [tableHeaders, setTableHeaders] = useState(headers)
     const [tableRows, setTableRows] = useState(rows)
-    const Rows = tableRows && tableRows.length > 0;
+    const rows = tableRows && tableRows.length > 0;
 
     useEffect(() => {
         setTableHeaders(headers);
@@ -12,7 +12,7 @@ export default function CustomTableCompoent({ headers, rows, onRateChange }) {
     }, [rows]);
     return (
         <div className="overflow-x-auto">
-            {Rows ? (
+            {rows ? (
                 <table className="table border border-slate-800 w-full">
                     <tr className="bg-slate-800 text-white text-lg font-semibold">
                         {tableHeaders.map((header, index) => (
