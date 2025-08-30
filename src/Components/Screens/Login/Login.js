@@ -3,9 +3,11 @@ import billingimage from '../../../Assets/billingimage.webp';
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { useState } from 'react';
-import { apiCall } from '../../../Util/AxiosUtils';
+import { apiCall, Spinner } from '../../../Util/AxiosUtils';
+
 export default function Login({ onLoginSuccess }) {
     const navigate = useNavigate();
+    const[loading,setLoading]=useState(false);
     const [loginFormData, setLoginFormData] = useState({
         contact_number: "",
         password: ""
@@ -36,10 +38,12 @@ export default function Login({ onLoginSuccess }) {
             url: 'https://3-extent-billing-backend.vercel.app/api/users/login',
             data: loginFormData,
             callback: getLoginCallBack,
+            setLoading:setLoading
         })
     };
     return (
         <div className="w-[100%] h-screen flex">
+            {loading && <Spinner/>}
             <div className="w-[50%] h-[100%]">
                 <img className="w-full h-full object-cover" src={billingimage} />
             </div>

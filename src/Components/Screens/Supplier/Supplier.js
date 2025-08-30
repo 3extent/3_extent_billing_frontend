@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { SUPPLIER_COLUMNS } from "./Constants";
-import { apiCall } from "../../../Util/AxiosUtils";
+import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
@@ -11,11 +11,12 @@ function Supplier() {
     const navigate = useNavigate();
     const [supplierName, setSupplierName] = useState();
     const [contactNo, setContactNo] = useState();
+        const [loading, setLoading] = useState(false);
     const navigateAddSupplier = () => {
         navigate("/addsupplier")
     }
     useEffect(() => {
-        getSupplierAllData();
+        getSupplierAllData({});
     }, []);
     const getSupplierCallBack = (response) => {
         console.log('response: ', response);
@@ -33,7 +34,7 @@ function Supplier() {
             console.log("Error");
         }
     }
-    const getSupplierAllData = () => {
+    const getSupplierAllData = ({ supplierName, contactNo }) => {
         let url = "https://3-extent-billing-backend.vercel.app/api/users?role=SUPPLIER"
         if (supplierName) {
             url += `&name=${supplierName}`
@@ -45,18 +46,20 @@ function Supplier() {
             url: url,
             data: {},
             callback: getSupplierCallBack,
+             setLoading: setLoading
         })
     }
     const handleSearchFilter = () => {
-        getSupplierAllData();
+        getSupplierAllData({ supplierName, contactNo });
     }
     const handleResetFilter = () => {
         setSupplierName('');
         setContactNo('');
-        getSupplierAllData();
+        getSupplierAllData({});
     }
     return (
         <div className="w-full">
+             {loading && <Spinner/>}
             <CustomHeaderComponent
                 name="List of Supplier Information"
                 icon="fa fa-plus-circle"

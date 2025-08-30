@@ -4,24 +4,25 @@ import InputComponent from "../../CustomComponents/InputComponent/InputComponent
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import { BRANDS_COLOUMNS } from "./Constants";
 import { useEffect, useState } from "react";
-import { apiCall } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
+import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 function Brands() {
     const [rows, setRows] = useState([]);
     const [brandName, setBrandName] = useState('');
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const navigateAddBrands = () => {
         navigate("/addbrands")
     }
     useEffect(() => {
-        getBrandsAllData();
+        getBrandsAllData({});
     }, []);
     const getBrandsCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
-            const brandsFormattedRows = response.data.map((brand, index) => ({
-                "No": index + 1,
+            const brandsFormattedRows = response.data.map((brand) => ({
+                "No": brand.brand_id,
                 "Brand Name": brand.name
             }));
             setRows(brandsFormattedRows);
@@ -29,7 +30,7 @@ function Brands() {
             console.log("Error");
         }
     }
-    const getBrandsAllData = () => {
+    const getBrandsAllData = ({ brandName }) => {
         let url = "https://3-extent-billing-backend.vercel.app/api/brands";
         if (brandName) {
             url += `?name=${brandName}`
@@ -39,17 +40,19 @@ function Brands() {
             url: url,
             data: {},
             callback: getBrandsCallBack,
+                 setLoading: setLoading
         })
     };
     const handleSearchFilter = () => {
-        getBrandsAllData();
+        getBrandsAllData({ brandName });
     }
     const handleResetFilter = () => {
         setBrandName('');
-        getBrandsAllData();
+        getBrandsAllData({});
     }
     return (
         <div className='w-full'>
+             {loading && <Spinner/>}
             <CustomHeaderComponent
                 name="Brands"
                 label="Add Brands"

@@ -3,11 +3,11 @@ import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/Cust
 import { BILLINGHISTORY_COLOUMNS, PAYMENTSTATUS_OPTIONS } from "./Constants";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
-import { apiCall } from "../../../Util/AxiosUtils";
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
-
+import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 function Billinghistory() {
     const [rows, setRows] = useState([]);
+    const [loading,setLoading]=useState(false)
     const [customerName, setCustomerName] = useState("");
     const [contactNo, setContactNo] = useState("");
     const [date, setDate] = useState("");
@@ -47,6 +47,7 @@ function Billinghistory() {
             url: url,
             data: {},
             callback: getBilllinghistoryCallBack,
+            setLoading:setLoading
         })
     }
     const handleSearchFilter = () => {
@@ -61,6 +62,7 @@ function Billinghistory() {
     }
     return (
         <div>
+            {loading && <Spinner/>}
             <div className='text-xl font-serif mb-4'>Billing History</div>
             <div className="flex items-center gap-4 ">
                 <InputComponent

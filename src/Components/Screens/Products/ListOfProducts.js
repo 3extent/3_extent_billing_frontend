@@ -4,7 +4,7 @@ import InputComponent from '../../CustomComponents/InputComponent/InputComponent
 import CustomTableCompoent from '../../CustomComponents/CustomTableCompoent/CustomTableCompoent';
 import DropdownCompoent from '../../CustomComponents/DropdownCompoent/DropdownCompoent';
 import { PRODUCT_COLOUMNS, STATUS_OPTIONS } from './Constants';
-import { apiCall } from '../../../Util/AxiosUtils';
+import { apiCall, Spinner } from '../../../Util/AxiosUtils';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
 function ListOfProducts() {
     // const getTodayDate = () => new Date().toISOString().split("T")[0];
@@ -15,13 +15,14 @@ function ListOfProducts() {
     const [brandName, setBrandName] = useState('');
     const [status, setStatus] = useState();
     const [brandOptions, setBrandOptions] = useState([]);
+     const [loading, setLoading] = useState(false);
     const [date, setDate] = useState(() => {
         const today = new Date();
         return today.toISOString().split("T")[0];
     });
     // const [date, setDate] = useState(getTodayDate);
     useEffect(() => {
-        getProductsAllData();
+        getProductsAllData({});
         getBrandsAllData();
     }, []);
     const getProductsCallBack = (response) => {
@@ -42,7 +43,7 @@ function ListOfProducts() {
             console.log("Error");
         }
     }
-    const getProductsAllData = () => {
+    const getProductsAllData = ({ imeiNumber, grade, modelName, brandName, statusType }) => {
         let url = 'https://3-extent-billing-backend.vercel.app/api/products?';
         if (imeiNumber) {
             url += `&imei_number=${imeiNumber}`
@@ -68,6 +69,7 @@ function ListOfProducts() {
             url: url,
             data: {},
             callback: getProductsCallBack,
+                 setLoading: setLoading
         })
     }
     const getBrandsAllData = () => {
@@ -77,6 +79,8 @@ function ListOfProducts() {
             url: url,
             data: {},
             callback: getBrandsCallBack,
+                 setLoading: setLoading
+            
         })
     };
     const getBrandsCallBack = (response) => {
@@ -89,7 +93,7 @@ function ListOfProducts() {
         }
     }
     const handleSearchFilter = () => {
-        getProductsAllData();
+        getProductsAllData({ imeiNumber, grade, modelName, brandName, status });
     }
     const handleResetFilter = () => {
         //  setDate(getTodayDate());
@@ -97,12 +101,12 @@ function ListOfProducts() {
         setGrade('');
         setIMEINumber('');
         setBrandName('');
-        setStatus('');
-        getProductsAllData();
+        getProductsAllData({});
     }
     return (
         <div className='w-full'>
-            <div className='text-xl font-serif'>List Of Products</div>
+                {loading && <Spinner/>}
+<div className='text-xl font-serif'>List Of Products</div>
             <div className='flex items-center gap-4'>
                 <InputComponent
                     type="Date"

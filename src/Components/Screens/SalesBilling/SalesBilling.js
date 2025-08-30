@@ -4,11 +4,12 @@ import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/Cust
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { SALESBILLING_COLOUMNS } from "./Constants";
-import { apiCall } from "../../../Util/AxiosUtils";
+import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
 import { useNavigate } from "react-router-dom";
 export default function SalesBilling() {
     const [rows, setRows] = useState([]);
+    const[loading,setLoading]=useState(false);
     const [hiddenColumns, setHiddenColumns] = useState([
         "Purchase Price",
         "Sale Price"
@@ -63,6 +64,7 @@ export default function SalesBilling() {
             url: url,
             data: {},
             callback: getCustomersCallback,
+            setLoading:setLoading
         });
     };
     const getCustomersCallback = (response) => {
@@ -118,6 +120,8 @@ export default function SalesBilling() {
             setRows(Rows => [...Rows, ...productFormattedRows]);
             // setRows(productFormattedRows);
             setSelectedImei("");
+            setCustomerName("");
+            setSelectedContactNo("");
         } else {
             console.log("Error");
         }
@@ -132,6 +136,7 @@ export default function SalesBilling() {
             url: url,
             data: {},
             callback: getsalesbillingCallBack,
+            setLoading:setLoading
         })
     }
     const billsData = {
@@ -165,6 +170,7 @@ export default function SalesBilling() {
     };
     return (
         <div>
+            {loading && <Spinner/>}
             <CustomHeaderComponent
                 name="Sales Billing"
                 label="Billing History"
