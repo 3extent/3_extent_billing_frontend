@@ -9,13 +9,14 @@ import { apiCall, Spinner } from '../../../Util/AxiosUtils';
 function SingleProductStockIn() {
     const [modelOptions, setModelOptions] = useState([]);
     const[loading,setLoading]=useState(false)
+    const [supplierNameOptions,setSupplierNameOPtions]=useState([]);
     const [productData, setProductData] = useState({
         model_name: '',
         imei_number: '',
         sales_price: '',
         purchase_price: '',
         grade: '',
-        engineer_name: '', 
+        engineer_name: '',
         accessories: '',
         supplier_name: '',
         qc_remark: ''
@@ -47,6 +48,7 @@ function SingleProductStockIn() {
     };
     useEffect(() => {
         getModelsAllData();
+        getSupplierAllData();
     }, []);
     const getModelsAllData = () => {
         let url = "https://3-extent-billing-backend.vercel.app/api/models";
@@ -77,6 +79,25 @@ function SingleProductStockIn() {
             callback: stockInCallback,
             setLoading:setLoading
         });
+    }
+    const getSupplierCallBack = (response) => {
+        console.log('response: ', response);
+        if (response.status === 200) {
+            const suppliers = response.data.map(Supplier => Supplier.name);
+            setSupplierNameOPtions(suppliers);
+        } else {
+            console.log("Error");
+        }
+    }
+
+    const getSupplierAllData = () => {
+        let url = "https://3-extent-billing-backend.vercel.app/api/users?role=SUPPLIER";
+        apiCall({
+            method: 'GET',
+            url: url,
+            data: {},
+            callback: getSupplierCallBack,
+        })
     }
     const printBarcode = (barcodeList) => {
         console.log('barcodeList: ', barcodeList);
@@ -205,7 +226,7 @@ function SingleProductStockIn() {
             <DropdownCompoent
                 label="Supplier"
                 name="supplier_name"
-                options={SUPPLIER_OPTIONS}
+                options={supplierNameOptions}
                 placeholder="Select Supplier"
                 value={productData.supplier_name}
                 onChange={handleInputChange}

@@ -12,30 +12,26 @@ export default function Login({ onLoginSuccess }) {
         contact_number: "",
         password: ""
     });
-
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setLoginFormData({ ...loginFormData, [name]: value });
     };
-
     const getLoginCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
             localStorage.setItem('isAuthenticated', 'true');
             console.log("Success");
             // localStorage.setItem('user', JSON.stringify(response.data.user));
-            
+
             // Call the callback to update parent state
             if (onLoginSuccess) {
                 onLoginSuccess();
             }
-            
             navigate('/salesbilling');
         } else {
             console.log("login failed");
         }
     }
-
     const handleLogin = () => {
         apiCall({
             method: 'POST',
@@ -45,7 +41,6 @@ export default function Login({ onLoginSuccess }) {
             setLoading:setLoading
         })
     };
-
     return (
         <div className="w-[100%] h-screen flex">
             {loading && <Spinner/>}

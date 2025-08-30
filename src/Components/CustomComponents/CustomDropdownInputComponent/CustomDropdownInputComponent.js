@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 export default function CustomDropdownInputComponent({ name, dropdownClassName = "", labelClassName = "", placeholder = "", options = [], value = "", onChange = () => { }, }) {
     const [inputValue, setInputValue] = useState('');
@@ -8,11 +7,13 @@ export default function CustomDropdownInputComponent({ name, dropdownClassName =
     }, [value]);
     const handleChange = (e) => {
         const value = e.target.value;
+        console.log('value: ', value);
         setInputValue(value);
         setShowDropdown(true);
         onChange(value);
     };
     const handleSelect = (option) => {
+        console.log('option: ', option);
         setInputValue(option);
         onChange(option);
         setShowDropdown(false);
@@ -23,7 +24,6 @@ export default function CustomDropdownInputComponent({ name, dropdownClassName =
         typeof option === 'string' &&
         option.toLowerCase().includes(inputValue.toLowerCase())
     );
-
     return (
         <div className=" relative">
             <div><label className={`font-bold ${labelClassName} `}>{name}</label></div>

@@ -10,16 +10,16 @@ export default function AddModels() {
     const [showData, setShowData] = useState(false);
     const[loading,setLoading]=useState(false)
     const [modelData, setModelData] = useState({
-          brand_name: "",
+        brand_name: "",
         name: "",
         RAM: "",
         storage: ""
     });
-     const handleInputChange = (event) => {
+    const handleInputChange = (event) => {
         const { name, value } = event.target;
         setModelData({ ...modelData, [name]: value });
     };
-  
+
     const handleShowCombinations = async () => {
         const ramOptions = modelData.RAM.split(",");
         const storageOptions = modelData.storage.split(",");
@@ -27,8 +27,8 @@ export default function AddModels() {
             const combinations = [];
             ramOptions.forEach((RAM) => {
                 storageOptions.forEach((storage) => {
-                     combinations.push(`${RAM.trim()}/${storage.trim()}GB`);
-                    
+                    combinations.push(`${RAM.trim()}/${storage.trim()}GB`);
+
 
                 });
             });
@@ -50,12 +50,12 @@ export default function AddModels() {
         console.log("response:", response);
         if (response.status === 200) {
             setModelData({
-                  brand_name: "",
+                brand_name: "",
                 name: "",
                 RAM: "",
                 storage: ""
             });
-              setSelectedCombinations([]);
+            setSelectedCombinations([]);
             setPossibleCombinations([]);
             setShowData(false);
         } else {
@@ -66,8 +66,8 @@ export default function AddModels() {
         apiCall({
             method: "POST",
             url: "https://3-extent-billing-backend.vercel.app/api/models",
-             data: {
-                 brand_name: modelData.brand_name,
+            data: {
+                brand_name: modelData.brand_name,
                 name: modelData.name,
                 ramStorage: selectedCombinations
             },
@@ -163,7 +163,7 @@ export default function AddModels() {
                                         id={`combo-${index}`}
                                         value={combo}
                                         onChange={handleCheckboxChange}
-                                    
+
                                     />
                                     <label htmlFor={`combo-${index}`} className="ml-2">{combo}</label>
                                 </li>

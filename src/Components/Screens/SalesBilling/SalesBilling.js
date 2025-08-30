@@ -8,12 +8,7 @@ import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
 import { useNavigate } from "react-router-dom";
 export default function SalesBilling() {
-    const navigate = useNavigate();
-    const navigateBillingHistory = () => {
-        navigate("/billinghistory")
-    }
-    const [rows, setRows] = useState([
-    ]);
+    const [rows, setRows] = useState([]);
     const[loading,setLoading]=useState(false);
     const [hiddenColumns, setHiddenColumns] = useState([
         "Purchase Price",
@@ -24,6 +19,10 @@ export default function SalesBilling() {
             (col) => !["Purchase Price"].includes(col)
         );
     });
+    const navigate = useNavigate();
+    const navigateBillingHistory = () => {
+        navigate("/billinghistory")
+    }
     const [showDropdown, setShowDropdown] = useState(false);
     const toggleColumn = (columnName) => {
         if (dynamicHeaders.includes(columnName)) {
@@ -52,16 +51,14 @@ export default function SalesBilling() {
     useEffect(() => {
         getAllImeis();
         getCustomerAllData();
+    }, []);
+    useEffect(() => {
         if (selectedImei) {
             getsalesbillingAllData();
-        } else {
-            setRows([]);
         }
     }, [selectedImei]);
-
     const getCustomerAllData = () => {
         const url = 'https://3-extent-billing-backend.vercel.app/api/users?role=CUSTOMER';
-
         apiCall({
             method: 'GET',
             url: url,
@@ -118,9 +115,13 @@ export default function SalesBilling() {
                 "Purchase Price": product.purchase_price,
                 "Grade": product.grade,
                 "Box": product.box
+            }));
 
-            }))
-            setRows(productFormattedRows);
+            setRows(Rows => [...Rows, ...productFormattedRows]);
+            // setRows(productFormattedRows);
+            setSelectedImei("");
+            setCustomerName("");
+            setSelectedContactNo("");
         } else {
             console.log("Error");
         }
@@ -135,8 +136,38 @@ export default function SalesBilling() {
             url: url,
             data: {},
             callback: getsalesbillingCallBack,
+            setLoading:setLoading
         })
     }
+    const billsData = {
+        date,
+        customer_name: customerName,
+        contact_number: selectedContactNo,
+        products: rows.map((row) => ({
+            _id: row["Sr.No"],
+            rate: row["Rate"],
+        })),
+    };
+    const billsCallback = (response) => {
+        console.log("response: ", response);
+        if (response.status === 200) {
+            alert("Bill saved successfully!");
+            setRows({});
+            setSelectedImei("");
+            setCustomerName("");
+            setSelectedContactNo("");
+        } else {
+            console.log("Error");
+        }
+    };
+    const handleSaveData = () => {
+        apiCall({
+            method: 'POST',
+            url: 'https://3-extent-billing-backend.vercel.app/api/billings',
+            data: billsData,
+            callback: billsCallback,
+        })
+    };
     return (
         <div>
             {loading && <Spinner/>}
@@ -147,40 +178,37 @@ export default function SalesBilling() {
                 buttonClassName="py-1 px-3 text-sm font-bold"
                 onClick={navigateBillingHistory}
             />
-            <div className="flex items-center gap-4 mt-3">
+            <div className="flex items-center gap-4">
                 <CustomDropdownInputComponent
                     label="IMEI No :"
-                    dropdownClassName="w-full mt-7"
+                    dropdownClassName="w-[190px]"
                     placeholder="Select IMEI No"
                     value={selectedImei}
                     onChange={(value) => setSelectedImei(value)}
                     options={imeiOptions}
-                    className="w-[190px]"
                 />
                 <CustomDropdownInputComponent
-                    dropdownClassName="w-full mt-6"
+                    dropdownClassName="w-[190px] "
                     placeholder="Select Contact No"
                     value={selectedContactNo}
                     onChange={handleContactNoChange}
                     options={contactNoOptions}
-                    className="w-[190px]"
                 />
                 <InputComponent
                     type="text"
                     placeholder="Enter Customer Name"
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
-                    inputClassName="w-[190px]"
-
+                    inputClassName="w-[190px] mb-6"
                 />
                 <InputComponent
                     type="Date"
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
-                    inputClassName="w-[190px]"
+                    inputClassName="w-[190px] mb-6"
                 />
             </div>
-            <div className="relative mt-4 mb-2">
+            <div className="relative mb-2">
                 <button
                     onClick={() => setShowDropdown(!showDropdown)}
                     className="px-3 py-1 border rounded hover:bg-gray-200"
@@ -214,6 +242,7 @@ export default function SalesBilling() {
                     headers={dynamicHeaders}
                     rows={rows}
                     onRateChange={handleRateChange}
+                     maxHeight="max-h-[300px]"
                 />
             </div>
             <div className="flex justify-end gap-4 mt-5">
@@ -221,6 +250,7 @@ export default function SalesBilling() {
                     label="Save"
                     icon="fa fa-cloud-download"
                     buttonClassName="py-1 px-5 text-xl font-bold"
+                    onClick={handleSaveData}
                 />
                 <PrimaryButtonComponent
                     label="Print"
@@ -233,9 +263,6 @@ export default function SalesBilling() {
                     buttonClassName="py-1 px-5 text-xl font-bold"
                 />
             </div>
-
-
         </div>
-
     );
 }
