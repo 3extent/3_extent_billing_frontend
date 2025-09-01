@@ -3,7 +3,12 @@ import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownI
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
+import { useNavigate } from "react-router-dom";
 export default function AddModels() {
+     const navigate = useNavigate();
+          const handleBack = () => {
+        navigate(-1);
+    };
     const [brandOptions, setBrandOptions] = useState([]);
     const [possibleCombinations, setPossibleCombinations] = useState([]);
     const [selectedCombinations, setSelectedCombinations] = useState([]);
@@ -173,6 +178,12 @@ export default function AddModels() {
                 </div>
             )}
             <div className="flex justify-center mt-3">
+                  <PrimaryButtonComponent
+                    label="Back"
+                    icon="fa fa-arrow-left"
+                    buttonClassName="mt-2 py-1 px-5 mr-10 text-xl font-bold"
+                    onClick={handleBack}
+                                            />
                 <PrimaryButtonComponent
                     label="Submit"
                     icon="fa fa-bookmark-o"
