@@ -12,11 +12,11 @@ export default function SalesBilling() {
     const[loading,setLoading]=useState(false);
     const [hiddenColumns, setHiddenColumns] = useState([
         "Purchase Price",
-        "Sale Price"
+        "QC-Remark"
     ]);
     const [dynamicHeaders, setDynamicHeaders] = useState(() => {
         return SALESBILLING_COLOUMNS.filter(
-            (col) => !["Purchase Price"].includes(col)
+            (col) => !["Purchase Price","QC-Remark"].includes(col)
         );
     });
     const navigate = useNavigate();
@@ -109,12 +109,13 @@ export default function SalesBilling() {
                 "Sr.No": index + 1,
                 "date": product.date,
                 "IMEI NO": product.imei_number,
-                "Company Name": typeof product.brand === 'object' ? product.brand.name : product.brand,
-                "Model Name": typeof product.model === 'object' ? product.model.name : product.model,
+                "Brand": typeof product.brand === 'object' ? product.brand.name : product.brand,
+                "Model": typeof product.model === 'object' ? product.model.name : product.model,
                 "Rate": product.sales_price,
                 "Purchase Price": product.purchase_price,
                 "Grade": product.grade,
-                "Box": product.box
+                "Box": product.box,
+                "QC-Remark":product.qc_remark
             }));
 
             setRows(Rows => [...Rows, ...productFormattedRows]);
@@ -218,7 +219,7 @@ export default function SalesBilling() {
                 </button>
                 {showDropdown && (
                     <div className="absolute bg-white border shadow-md mt-1 rounded w-48 z-10 max-h-48 overflow-auto">
-                        {["Purchase Price"].map((col) => (
+                        {["Purchase Price","QC_Remark"].map((col) => (
                             <label
                                 key={col}
                                 className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
@@ -242,7 +243,7 @@ export default function SalesBilling() {
                     headers={dynamicHeaders}
                     rows={rows}
                     onRateChange={handleRateChange}
-                     maxHeight="max-h-[300px]"
+                    maxHeight="max-h-[200px]"
                 />
             </div>
             <div className="flex justify-end gap-4 mt-5">

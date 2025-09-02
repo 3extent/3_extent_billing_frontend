@@ -13,16 +13,16 @@ function ListOfProducts() {
     const [grade, setGrade] = useState();
     const [modelName, setModelName] = useState();
     const [brandName, setBrandName] = useState('');
-    const [status, setStatus] = useState();
+    const [status, setStatus] = useState('Available');
     const [brandOptions, setBrandOptions] = useState([]);
-     const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [date, setDate] = useState(() => {
         const today = new Date();
         return today.toISOString().split("T")[0];
     });
     // const [date, setDate] = useState(getTodayDate);
     useEffect(() => {
-        getProductsAllData({});
+        getProductsAllData({ status: 'Available' });
         getBrandsAllData();
     }, []);
     const getProductsCallBack = (response) => {
@@ -31,8 +31,8 @@ function ListOfProducts() {
             const productFormattedRows = response.data.map((product) => ({
                 "Date": product.createdAt,
                 "IMEI NO": product.imei_number,
-                "Product Name": typeof product.model === 'object' ? product.model.name : product.model,
-                "Brand Name": typeof product.brand === 'object' ? product.model.brand : product.model.brand.name,
+                "Model": typeof product.model === 'object' ? product.model.name : product.model,
+                "Brand": typeof product.brand === 'object' ? product.model.brand : product.model.brand.name,
                 "Sales Price": product.sales_price,
                 "Purchase Price": product.purchase_price,
                 "Grade": product.grade,
@@ -43,7 +43,7 @@ function ListOfProducts() {
             console.log("Error");
         }
     }
-    const getProductsAllData = ({ imeiNumber, grade, modelName, brandName, statusType }) => {
+    const getProductsAllData = ({ imeiNumber, grade, modelName, brandName, status }) => {
         let url = 'https://3-extent-billing-backend.vercel.app/api/products?';
         if (imeiNumber) {
             url += `&imei_number=${imeiNumber}`
@@ -69,7 +69,7 @@ function ListOfProducts() {
             url: url,
             data: {},
             callback: getProductsCallBack,
-                 setLoading: setLoading
+            setLoading: setLoading
         })
     }
     const getBrandsAllData = () => {
@@ -79,8 +79,8 @@ function ListOfProducts() {
             url: url,
             data: {},
             callback: getBrandsCallBack,
-                 setLoading: setLoading
-            
+            setLoading: setLoading
+
         })
     };
     const getBrandsCallBack = (response) => {
@@ -101,12 +101,13 @@ function ListOfProducts() {
         setGrade('');
         setIMEINumber('');
         setBrandName('');
-        getProductsAllData({});
+        setStatus('Available');
+        getProductsAllData({ status: 'Available' });
     }
     return (
         <div className='w-full'>
-                {loading && <Spinner/>}
-<div className='text-xl font-serif'>List Of Products</div>
+            {loading && <Spinner />}
+            <div className='text-xl font-serif'>List Of Products</div>
             <div className='flex items-center gap-4'>
                 <InputComponent
                     type="Date"
@@ -129,13 +130,20 @@ function ListOfProducts() {
                     onChange={(e) => setModelName(e.target.value)}
                 />
                 <InputComponent
-                    type="number"
+                    type="text"
                     placeholder="Enter IMEI NO"
                     inputClassName="mb-2 w-[190px]"
                     value={imeiNumber}
-                    onChange={(e) => setIMEINumber(e.target.value)}
+                    maxlength={15}
+                    // onChange={(e) => setIMEINumber(e.target.value)}
+                    onChange={(e) => {
+                        const value = e.target.value;
+                        if (/^\d{0,15}$/.test(value)) {
+                            setIMEINumber(value);
+                        }
+                    }}
                 />
-                <InputComponent
+                < InputComponent
                     type="text"
                     placeholder="Enter Grade"
                     inputClassName="mb-2 w-[190px]"
