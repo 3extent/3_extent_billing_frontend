@@ -33,10 +33,6 @@ export default function SalesBilling() {
             setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
         }
     };
-    // const [date, setDate] = useState(() => {
-    //     const today = new Date();
-    //     return today.toISOString().split("T")[0];
-    // });
     const [imeiOptions, setImeiOptions] = useState([]);
     const [selectedImei, setSelectedImei] = useState("");
     const [contactNoOptions, setContactNoOptions] = useState([]);
@@ -107,7 +103,7 @@ export default function SalesBilling() {
         if (response.status === 200) {
             const productFormattedRows = response.data.map((product, index) => ({
                 "Sr.No": rows.length + index + 1,
-                "date": product.date,
+                "date": product.createdAt,
                 "IMEI NO": product.imei_number,
                 "Brand": typeof product.brand === 'object' ? product.brand.name : product.brand,
                 "Model": typeof product.model === 'object' ? product.model.name : product.model,
@@ -145,7 +141,6 @@ export default function SalesBilling() {
         })
     }
     const billsData = {
-        // date,
         customer_name: customerName,
         contact_number: selectedContactNo,
         products: rows.map((row) => ({
@@ -195,7 +190,6 @@ export default function SalesBilling() {
                             setSelectedImei(value);
                         }
                     }}
-                    // options={imeiOptions}
                     options={
                         selectedImei.length >= 11
                             ? imeiOptions.filter((imei) => imei.startsWith(selectedImei))
@@ -216,18 +210,12 @@ export default function SalesBilling() {
                     onChange={(e) => setCustomerName(e.target.value)}
                     inputClassName="w-[190px] mb-6"
                 />
-                {/* <InputComponent
-                    type="Date"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    inputClassName="w-[190px] mb-6"
-                /> */}
             </div>
             {rows.length > 0 && (
             <div className="relative mb-2">
                 <button
                     onClick={() => setShowDropdown(!showDropdown)}
-                    className="px-3 py-1 border rounded hover:bg-gray-200"
+                    className="px-2 py-1 border rounded hover:bg-gray-200"
                     title="Show columns"
                 >
                     <i class="fa fa-ellipsis-h" aria-hidden="true"></i>

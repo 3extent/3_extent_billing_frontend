@@ -12,6 +12,8 @@ function Billinghistory() {
     const [contactNo, setContactNo] = useState("");
     const [date, setDate] = useState("");
     const [paymentStatus, setPaymentStatus] = useState("");
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
     useEffect(() => {
         getBillinghistoryAllData({});
     }, []);
@@ -86,12 +88,20 @@ function Billinghistory() {
                     options={PAYMENTSTATUS_OPTIONS}
                     className="w-[190px]"
                 />
+                
+                  <InputComponent
+                    type="date"
+                    placeholder="Start Date"
+                    inputClassName="w-[190px] mb-5"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                />
                 <InputComponent
                     type="date"
-                    placeholder="Date"
+                    placeholder="End Date"
                     inputClassName="w-[190px] mb-5"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
                 />
             </div>
             <div className='flex justify-end mb-2'>
