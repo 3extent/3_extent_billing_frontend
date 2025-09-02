@@ -37,8 +37,6 @@ export default function SalesBilling() {
     //     const today = new Date();
     //     return today.toISOString().split("T")[0];
     // });
-    const [imeiSearchTerm, setImeiSearchTerm] = useState("");
-    const [filteredImeis, setFilteredImeis] = useState([]);
     const [imeiOptions, setImeiOptions] = useState([]);
     const [selectedImei, setSelectedImei] = useState("");
     const [contactNoOptions, setContactNoOptions] = useState([]);
@@ -197,7 +195,12 @@ export default function SalesBilling() {
                             setSelectedImei(value);
                         }
                     }}
-                    options={imeiOptions}
+                    // options={imeiOptions}
+                    options={
+                        selectedImei.length >= 11
+                            ? imeiOptions.filter((imei) => imei.startsWith(selectedImei))
+                            : []
+                    }
                 />
                 <CustomDropdownInputComponent
                     dropdownClassName="w-[190px] "
@@ -220,6 +223,7 @@ export default function SalesBilling() {
                     inputClassName="w-[190px] mb-6"
                 /> */}
             </div>
+            {rows.length > 0 && (
             <div className="relative mb-2">
                 <button
                     onClick={() => setShowDropdown(!showDropdown)}
@@ -249,6 +253,7 @@ export default function SalesBilling() {
                     </div>
                 )}
             </div>
+            )}
             <div>
                 <CustomTableCompoent
                     headers={dynamicHeaders}
@@ -270,7 +275,7 @@ export default function SalesBilling() {
                     buttonClassName="py-1 px-3 text-sm font-bold"
                 />
                 <PrimaryButtonComponent
-                    label="view"
+                    label="View"
                     icon="fa fa-dashcube"
                     buttonClassName="py-1 px-3 text-sm font-bold"
                 />

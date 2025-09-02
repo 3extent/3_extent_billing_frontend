@@ -50,13 +50,13 @@ function App() {
     <Router>
       <div className="flex">
         {loginStatus ? (
-          <div className="w-[20%]">
+          <div className="w-[17%]">
             <DashboardSidebar onLogout={() => updateAuthState(false)} />
           </div>
         ) : (
           <div></div>
         )}
-        <div className={loginStatus ? "w-[80%] p-4" : "w-full"}>
+        <div className={loginStatus ? "w-[83%] p-4" : "w-full"}>
           <Routes>
             <Route path="/" element={
               <PublicRoute isAuthenticated={loginStatus}>

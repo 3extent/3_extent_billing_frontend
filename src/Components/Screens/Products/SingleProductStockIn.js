@@ -16,7 +16,7 @@ function SingleProductStockIn() {
         sales_price: '',
         purchase_price: '',
         grade: '',
-        repair_name: '',
+        enginner_name: '',
         accessories: '',
         supplier_name: '',
         qc_remark: ''
@@ -37,7 +37,7 @@ function SingleProductStockIn() {
                 purchase_price: '',
                 sales_price: '',
                 imei_number: '',
-                repair_name: '',
+                enginner_name: '',
                 qc_remark: '',
                 supplier_name: '',
                 accessories: '',
@@ -204,11 +204,11 @@ function SingleProductStockIn() {
                 labelClassName="font-serif font-bold"
             />
             <InputComponent
-                label="Repair Name"
+                label="Enginner Name "
                 type="text"
-                name="repair_name"
-                placeholder="Repair Name"
-                value={productData.repair_name}
+                name="enginner_name"
+                placeholder="Enginner Name"
+                value={productData.enginner_name}
                 onChange={handleInputChange}
                 inputClassName="w-[80%]"
                 labelClassName="font-serif font-bold"

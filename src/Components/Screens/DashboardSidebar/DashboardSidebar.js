@@ -38,10 +38,10 @@ export default function DashboardSidebar({ onLogout }) {
                             <span className="mr-3">
                                 <i className={item.icon} aria-hidden="true"></i>
                             </span>
-                            <span className="hover:font-bold">{item.label}</span>
+                            <span className="hover:font-bold text-sm">{item.label}</span>
                         </div>
                     ))}
-                    <div className="bottom-10 fixed justify-center cursor-pointer pl-4 transform hover:scale-110" onClick={handleLogout}><i class="fa fa-sign-out mr-2" aria-hidden="true"></i>Logout</div>
+                    <div className="bottom-10 fixed justify-center cursor-pointer pl-4 text-sm transform hover:scale-110" onClick={handleLogout}><i class="fa fa-sign-out mr-2" aria-hidden="true"></i>Logout</div>
                 </div>
             </div >
         </div>
