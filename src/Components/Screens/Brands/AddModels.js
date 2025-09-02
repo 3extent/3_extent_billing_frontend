@@ -24,25 +24,29 @@ export default function AddModels() {
         const { name, value } = event.target;
         setModelData({ ...modelData, [name]: value });
     };
-
     const handleShowCombinations = async () => {
-        const ramOptions = modelData.RAM.split(",");
-        const storageOptions = modelData.storage.split(",");
-        if (ramOptions.length && storageOptions.length) {
-            const combinations = [];
-            ramOptions.forEach((RAM) => {
-                storageOptions.forEach((storage) => {
-                    combinations.push(`${RAM.trim()}/${storage.trim()}GB`);
-
-
-                });
-            });
-            setPossibleCombinations(combinations);
-        } else {
-            setPossibleCombinations([]);
-        }
-        setShowData(true);
-    };
+    const ramOptions = modelData.RAM
+      ? modelData.RAM.split(",").map((ram) => ram.trim())
+      : [];
+    const storageOptions = modelData.storage
+      ? modelData.storage.split(",").map((storage) => storage.trim())
+      : [];
+    const combinations = [];
+    if (ramOptions.length && storageOptions.length) {
+      ramOptions.forEach((RAM) => {
+        storageOptions.forEach((storage) => {
+          combinations.push(`${RAM}/${storage}GB`);
+        });
+      });
+    }
+    if (!ramOptions.length && storageOptions.length) {
+      storageOptions.forEach((storage) => {
+        combinations.push(`${storage}GB`);
+      });
+    }
+    setPossibleCombinations(combinations);
+    setShowData(true);
+  };
     const handleCheckboxChange = (event) => {
         const value = event.target.value;
         if (event.target.checked) {
