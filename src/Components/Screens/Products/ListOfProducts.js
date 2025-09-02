@@ -22,7 +22,7 @@ function ListOfProducts() {
     });
     // const [date, setDate] = useState(getTodayDate);
     useEffect(() => {
-        getProductsAllData({ status: 'Available' });
+        getProductsAllData({ });
         getBrandsAllData();
     }, []);
     const getProductsCallBack = (response) => {
@@ -101,8 +101,8 @@ function ListOfProducts() {
         setGrade('');
         setIMEINumber('');
         setBrandName('');
-        setStatus('Available');
-        getProductsAllData({ status: 'Available' });
+        setStatus();
+        getProductsAllData({});
     }
     return (
         <div className='w-full'>

@@ -30,7 +30,7 @@ export default function CustomTableCompoent({ headers, rows, onRateChange,maxHei
                                 <td key={colIndex} className="px-4 py-2 text-left">
                                     {header === "Rate" ? (
                                         <input
-                                            type="number"
+                                            type="type"
                                             value={row[header] === 0 ? "" : row[header]}
                                             onChange={(e) => {
                                                 const value = e.target.value;
