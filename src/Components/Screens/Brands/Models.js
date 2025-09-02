@@ -58,7 +58,6 @@ export default function Models() {
             url: url,
             data: {},
             callback: getBrandsCallBack,
-                 setLoading: setLoading
         })
     };
     const getBrandsCallBack = (response) => {
