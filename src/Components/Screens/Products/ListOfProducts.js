@@ -16,13 +16,10 @@ function ListOfProducts() {
     const [status, setStatus] = useState('Available');
     const [brandOptions, setBrandOptions] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [date, setDate] = useState(() => {
-        const today = new Date();
-        return today.toISOString().split("T")[0];
-    });
-    // const [date, setDate] = useState(getTodayDate);
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
     useEffect(() => {
-        getProductsAllData({ });
+        getProductsAllData({});
         getBrandsAllData();
     }, []);
     const getProductsCallBack = (response) => {
@@ -96,7 +93,6 @@ function ListOfProducts() {
         getProductsAllData({ imeiNumber, grade, modelName, brandName, status });
     }
     const handleResetFilter = () => {
-        //  setDate(getTodayDate());
         setModelName('');
         setGrade('');
         setIMEINumber('');
@@ -110,10 +106,17 @@ function ListOfProducts() {
             <div className='text-xl font-serif'>List Of Products</div>
             <div className='flex items-center gap-4'>
                 <InputComponent
-                    type="Date"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    inputClassName="w-[190px] mb-2"
+                    type="text"
+                    placeholder="Enter IMEI NO"
+                    inputClassName="mb-2 w-[190px]"
+                    value={imeiNumber}
+                    maxlength={15}
+                    onChange={(e) => {
+                        const value = e.target.value;
+                        if (/^\d{0,15}$/.test(value)) {
+                            setIMEINumber(value);
+                        }
+                    }}
                 />
                 <DropdownCompoent
                     placeholder="Select Brands"
@@ -129,20 +132,6 @@ function ListOfProducts() {
                     value={modelName}
                     onChange={(e) => setModelName(e.target.value)}
                 />
-                <InputComponent
-                    type="text"
-                    placeholder="Enter IMEI NO"
-                    inputClassName="mb-2 w-[190px]"
-                    value={imeiNumber}
-                    maxlength={15}
-                    // onChange={(e) => setIMEINumber(e.target.value)}
-                    onChange={(e) => {
-                        const value = e.target.value;
-                        if (/^\d{0,15}$/.test(value)) {
-                            setIMEINumber(value);
-                        }
-                    }}
-                />
                 < InputComponent
                     type="text"
                     placeholder="Enter Grade"
@@ -150,14 +139,28 @@ function ListOfProducts() {
                     value={grade}
                     onChange={(e) => setGrade(e.target.value)}
                 />
-            </div>
-            <div className='flex items-center gap-4 mb-5'>
                 <DropdownCompoent
                     placeholder="Select status"
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
                     options={STATUS_OPTIONS}
-                    className="w-[190px]"
+                    className="w-[190px] mt-3"
+                />
+            </div>
+            <div className='flex items-center gap-4 '>
+                <InputComponent
+                    type="date"
+                    placeholder="Start Date"
+                    inputClassName="w-[190px] mb-5"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                />
+                <InputComponent
+                    type="date"
+                    placeholder="End Date"
+                    inputClassName="w-[190px] mb-5"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
                 />
                 <PrimaryButtonComponent
                     label="Search"
