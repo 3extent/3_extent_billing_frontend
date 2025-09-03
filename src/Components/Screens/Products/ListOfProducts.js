@@ -7,7 +7,6 @@ import { PRODUCT_COLOUMNS, STATUS_OPTIONS } from './Constants';
 import { apiCall, Spinner } from '../../../Util/AxiosUtils';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
 function ListOfProducts() {
-    // const getTodayDate = () => new Date().toISOString().split("T")[0];
     const [rows, setRows] = useState([]);
     const [imeiNumber, setIMEINumber] = useState();
     const [grade, setGrade] = useState();
@@ -18,7 +17,16 @@ function ListOfProducts() {
     const [loading, setLoading] = useState(false);
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
+    const [selectAllDates, setSelectAllDates] = useState(false);
+    const formatDate = (date) => date.toISOString().split('T')[0];
+    const today = new Date();
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(today.getDate() - 7);
+    const todayFormatted = formatDate(today);
+    const sevenDaysAgoFormatted = formatDate(sevenDaysAgo);
     useEffect(() => {
+        setStartDate(sevenDaysAgoFormatted);
+        setEndDate(todayFormatted);
         getProductsAllData({});
         getBrandsAllData();
     }, []);
@@ -48,10 +56,6 @@ function ListOfProducts() {
         if (grade) {
             url += `&grade=${grade}`
         }
-        // else if (date) {
-        //     const timestamp = new Date(date).getTime();
-        //     url += `&createdAt=${timestamp}`
-        // }
         if (modelName) {
             url += `&modelName=${modelName}`
         }
@@ -60,6 +64,10 @@ function ListOfProducts() {
         }
         if (status) {
             url += `&status=${status}`
+        }
+        if (!selectAllDates) {
+            if (startDate) url += `&startDate=${startDate}`;
+            if (endDate) url += `&endDate=${endDate}`;
         }
         apiCall({
             method: 'GET',
@@ -77,7 +85,6 @@ function ListOfProducts() {
             data: {},
             callback: getBrandsCallBack,
             setLoading: setLoading
-
         })
     };
     const getBrandsCallBack = (response) => {
@@ -90,14 +97,25 @@ function ListOfProducts() {
         }
     }
     const handleSearchFilter = () => {
-        getProductsAllData({ imeiNumber, grade, modelName, brandName, status });
+        getProductsAllData({ imeiNumber, grade, modelName, brandName, status, startDate, endDate });
     }
+    const handleDateChange = (value, setDate) => {
+        const todayFormatted = new Date().toISOString().split('T')[0];
+        if (value > todayFormatted) {
+            setDate(todayFormatted);
+        } else {
+            setDate(value);
+        }
+    };
     const handleResetFilter = () => {
         setModelName('');
         setGrade('');
         setIMEINumber('');
         setBrandName('');
         setStatus();
+        setStartDate(sevenDaysAgoFormatted);
+        setEndDate(todayFormatted);
+        setSelectAllDates();
         getProductsAllData({});
     }
     return (
@@ -147,20 +165,31 @@ function ListOfProducts() {
                     className="w-[190px] mt-3"
                 />
             </div>
-            <div className='flex items-center gap-4 '>
+            <div className='flex items-center gap-4'>
+                <label className='flex items-center gap-2 text-sm'>
+                    <input
+                        type="checkbox"
+                        checked={selectAllDates}
+                        onChange={(e) => setSelectAllDates(e.target.checked)}
+                    />
+                    All Data
+                </label>
                 <InputComponent
                     type="date"
-                    placeholder="Start Date"
                     inputClassName="w-[190px] mb-5"
                     value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
+                    max={todayFormatted}
+                    onChange={(e) => handleDateChange(e.target.value, setStartDate)}
+                    disabled={selectAllDates}
                 />
                 <InputComponent
                     type="date"
-                    placeholder="End Date"
                     inputClassName="w-[190px] mb-5"
                     value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
+                    min={startDate}
+                    max={todayFormatted}
+                    onChange={(e) => handleDateChange(e.target.value, setEndDate)}
+                    disabled={selectAllDates}
                 />
                 <PrimaryButtonComponent
                     label="Search"
