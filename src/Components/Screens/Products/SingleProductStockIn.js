@@ -8,8 +8,8 @@ import CustomDropdownInputComponent from '../../CustomComponents/CustomDropdownI
 import { apiCall, Spinner } from '../../../Util/AxiosUtils';
 function SingleProductStockIn() {
     const [modelOptions, setModelOptions] = useState([]);
-    const[loading,setLoading]=useState(false)
-    const [supplierNameOptions,setSupplierNameOPtions]=useState([]);
+    const [loading, setLoading] = useState(false)
+    const [supplierNameOptions, setSupplierNameOPtions] = useState([]);
     const [productData, setProductData] = useState({
         model_name: '',
         imei_number: '',
@@ -23,7 +23,14 @@ function SingleProductStockIn() {
     });
     const handleInputChange = (event) => {
         const { name, value } = event.target;
-        setProductData({ ...productData, [name]: value });
+        if (name === 'imei_number') {
+            const digitsOnly = value.replace(/\D/g, '');
+            if (digitsOnly.length <= 15) {
+                setProductData({ ...productData, [name]: digitsOnly });
+            }
+        } else {
+            setProductData({ ...productData, [name]: value });
+        }
     };
     const handleModelProductData = (value) => {
         setProductData(productData => ({ ...productData, model_name: value }));
@@ -77,7 +84,7 @@ function SingleProductStockIn() {
             url: "https://3-extent-billing-backend.vercel.app/api/products",
             data: productData,
             callback: stockInCallback,
-            setLoading:setLoading
+            setLoading: setLoading
         });
     }
     const getSupplierCallBack = (response) => {
@@ -153,7 +160,7 @@ function SingleProductStockIn() {
     };
     return (
         <div className="grid grid-cols-2 gap-x-5 gap-y-2">
-            {loading && <Spinner/>}
+            {loading && <Spinner />}
             <CustomDropdownInputComponent
                 name="Model Name"
                 dropdownClassName="w-[80%]"
@@ -175,7 +182,7 @@ function SingleProductStockIn() {
             />
             <InputComponent
                 label="Purchase Price"
-                type="number"
+                type="text"
                 name="purchase_price"
                 placeholder="Buying Purchase Price"
                 value={productData.purchase_price}
@@ -185,7 +192,7 @@ function SingleProductStockIn() {
             />
             <InputComponent
                 label="Sales Price"
-                type="number"
+                type="text"
                 name="sales_price"
                 placeholder="Rate Selling Price"
                 value={productData.sales_price}
@@ -195,7 +202,7 @@ function SingleProductStockIn() {
             />
             <InputComponent
                 label="IMEI"
-                type="number"
+                type="text"
                 name="imei_number"
                 placeholder="IMEI"
                 value={productData.imei_number}

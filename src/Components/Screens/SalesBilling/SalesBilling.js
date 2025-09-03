@@ -182,7 +182,7 @@ export default function SalesBilling() {
                 <CustomDropdownInputComponent
                     label="IMEI No :"
                     dropdownClassName="w-[190px]"
-                    placeholder="Select IMEI No"
+                    placeholder="Scan IMEI No"
                     value={selectedImei}
                     maxLength={15}
                     onChange={(value) => {
