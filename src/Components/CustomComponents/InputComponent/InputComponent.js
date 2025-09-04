@@ -6,7 +6,7 @@ export default function InputComponent({ label, type, placeholder, onChange, inp
             )}
             <br />
             <input
-                className={`border px-3 py-2 rounded ${inputClassName}`}
+                className={`border px-3 py-2 rounded ${inputClassName}  ${disabled ? "cursor-not-allowed bg-gray-200 opacity-50 " : ""}`}
                 type={type}
                 placeholder={placeholder}
                 onChange={onChange}
