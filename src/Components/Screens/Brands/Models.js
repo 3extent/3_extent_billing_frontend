@@ -28,7 +28,7 @@ export default function Models() {
             const modelFormattedaRows = response.data.map((model, index) => ({
                 "No": index + 1,
                 "Model Name": model.name,
-                "Qty": model.qty
+                "Brand Name":model.brand.name
             }))
             setRows(modelFormattedaRows);
         } else {
