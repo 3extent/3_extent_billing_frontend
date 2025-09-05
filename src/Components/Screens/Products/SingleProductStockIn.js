@@ -3,7 +3,7 @@ import InputComponent from "../../CustomComponents/InputComponent/InputComponent
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import CustomBarcodePrintComponent from '../../CustomComponents/CustomBarcodePrintComponent/CustomBarcodePrintComponent';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
-import { ACCESSORIES_OPTIONS, GRADE_OPTIONS, SUPPLIER_OPTIONS } from './Constants';
+import { ACCESSORIES_OPTIONS, GRADE_OPTIONS, STATUS_OPTIONS, } from './Constants';
 import CustomDropdownInputComponent from '../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent';
 import { apiCall, Spinner } from '../../../Util/AxiosUtils';
 function SingleProductStockIn() {
@@ -19,11 +19,12 @@ function SingleProductStockIn() {
         enginner_name: '',
         accessories: '',
         supplier_name: '',
-        qc_remark: ''
+        qc_remark: '',
+        status: ''
     });
     const handleInputChange = (event) => {
         const { name, value } = event.target;
-            setProductData({ ...productData, [name]: value });
+        setProductData({ ...productData, [name]: value });
     };
     const handleModelProductData = (value) => {
         setProductData(productData => ({ ...productData, model_name: value }));
@@ -41,6 +42,7 @@ function SingleProductStockIn() {
                 qc_remark: '',
                 supplier_name: '',
                 accessories: '',
+                status: ''
             });
         } else {
             console.log("error")
@@ -242,6 +244,16 @@ function SingleProductStockIn() {
                 value={productData.accessories}
                 onChange={handleInputChange}
                 className="w-[80%]"
+                labelClassName="font-serif font-bold"
+            />
+            <DropdownCompoent
+                label="Status"
+                name="status"
+                placeholder="Select status"
+                value={productData.status}
+                onChange={handleInputChange}
+                options={STATUS_OPTIONS}
+                className="w-[80%] "
                 labelClassName="font-serif font-bold"
             />
             <div className="col-span-2 mt-4 flex justify-center">
