@@ -2,12 +2,15 @@ import { useNavigate } from "react-router-dom";
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
-import { SUPPLIER_TYPE_OPTIONS } from "./Constants";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useEffect, useState } from "react";
 
 function AddSupplier() {
-    const [supplierData, setSupplierData] = useState({
+    const navigate = useNavigate();
+    const handleBack = () => {
+    navigate(-1);
+};
+const [supplierData, setSupplierData] = useState({
         name: "",
         firm_name: "",
         state: "",
@@ -15,8 +18,6 @@ function AddSupplier() {
         contact_number: "",
         contact_number_2: "",
         gst_number: "",
-        email: "",
-        type: "",
         role: "SUPPLIER",
     });
     const[loading,setLoading]=useState(false)
@@ -35,8 +36,6 @@ function AddSupplier() {
                 contact_number: "",
                 contact_number_2: "",
                 gst_number: "",
-                email: "",
-                type: "",
                 role: "SUPPLIER",
             });
         } else {
@@ -127,36 +126,23 @@ function AddSupplier() {
                     value={supplierData.gst_number}
                     onChange={handleInputChange}
                 />
-                <InputComponent
-                    name="email"
-                    label="Email ID."
-                    type="text"
-                    placeholder="Email ID."
-                    inputClassName="w-[80%]"
-                    labelClassName="font-serif font-bold"
-                    value={supplierData.email}
-                    onChange={handleInputChange}
-
-                />
-                <DropdownCompoent
-                    name="type"
-                    label="Supplier Type"
-                    options={SUPPLIER_TYPE_OPTIONS}
-                    placeholder="Supplier Type"
-                    className="w-[80%]"
-                    labelClassName="font-serif font-bold"
-                    value={supplierData.type}
-                    onChange={handleInputChange}
-
-                />
             </div>
             <div className="mt-4 flex justify-center">
+                <PrimaryButtonComponent
+                label="Back"
+                icon="fa fa-arrow-left"
+                buttonClassName="mt-2 py-1 px-5 mr-10 text-xl font-bold"
+                onClick={handleBack}
+/>
+
                 <PrimaryButtonComponent
                     label="Submit"
                     icon="fa fa-save"
                     buttonClassName="mt-2 py-1 px-5 text-xl font-bold"
                     onClick={addSupplier}
                 />
+              
+
             </div>
         </div>
 

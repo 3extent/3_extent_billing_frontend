@@ -11,7 +11,6 @@ export default function Customer() {
     const navigate = useNavigate();
     const [customerName, setCustomerName] = useState();
     const [contactNo, setContactNumber] = useState();
-    const [customerType, setCustomerType] = useState();
         const [loading, setLoading] = useState(false);
 
     
@@ -23,13 +22,11 @@ export default function Customer() {
         getCustomerAllData({});
     }, []);
     const getCustomerCallBack = (response) => {
-        // setLoading(false);
         console.log('response: ', response);
         if (response.status === 200) {
             const customerFormttedRows = response.data.map((customer) => ({
                 "Customer Name": customer.name,
                 "Contact No": customer.contact_number,
-                "Customer Type": customer.type,
                 "Address": customer.address,
                 "state": customer.state,
                 "GST No": customer.gst_number,
@@ -40,14 +37,11 @@ export default function Customer() {
         }
     }
     const getCustomerAllData = ({ customerName, contactNo }) => {
-        // setLoading(true)
         let url = 'https://3-extent-billing-backend.vercel.app/api/users?role=CUSTOMER';
         if (customerName) {
             url += `&name=${customerName}`
         } if (contactNo) {
             url += `&contact_number=${contactNo}`
-        } if (customerType) {
-            url += `&type=${customerType}`
         }
         apiCall({
             method: 'GET',
@@ -63,7 +57,6 @@ export default function Customer() {
     const handleResetFilter = () => {
         setContactNumber('');
         setCustomerName('');
-        setCustomerType('');
         getCustomerAllData({});
     }
     return (
@@ -85,18 +78,11 @@ export default function Customer() {
                     onChange={(e) => setCustomerName(e.target.value)}
                 />
                 <InputComponent
-                    type="number"
+                    type="text"
                     placeholder="Contact No"
                     inputClassName="w-[190px]"
                     value={contactNo}
                     onChange={(e) => setContactNumber(e.target.value)}
-                />
-                <DropdownCompoent
-                    options={CUSTOMER_TYPE_OPTIONS}
-                    placeholder="Select Customer Type"
-                    value={customerType}
-                    onChange={(e) => setCustomerType(e.target.value)}
-                    className="w-[200px] mt-6"
                 />
                 <PrimaryButtonComponent
                     label="Search"
