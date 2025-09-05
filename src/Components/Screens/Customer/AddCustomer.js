@@ -9,16 +9,16 @@ import { useNavigate } from "react-router-dom";
 function AddCustomer() {
     const [loading, setLoading] = useState(false); 
       const navigate = useNavigate();
+      const handleBack = () => {
+    navigate(-1);
+};
     const [customerData, setCustomerData] = useState({
         name: "",
         address: "",
         state: "",
         contact_number: "",
-        email: "",
         gst_number: "",
-        adhar_number: "",
         pan_number: "",
-        type: "",
         role: "CUSTOMER",
     });
     const handleInputChange = (event) => {
@@ -34,11 +34,8 @@ function AddCustomer() {
                 address: "",
                 state: "",
                 contact_number: "",
-                email: "",
                 gst_number: "",
-                adhar_number: "",
                 pan_number: "",
-                type: "",
                 role: "CUSTOMER",
             });
         } else {
@@ -101,16 +98,6 @@ function AddCustomer() {
                     onChange={handleInputChange}
                 />
                 <InputComponent
-                    label="Email ID"
-                    type="text"
-                    name="email"
-                    placeholder="Email ID"
-                    inputClassName="w-[80%]"
-                    labelClassName="font-serif font-bold"
-                    value={customerData.email}
-                    onChange={handleInputChange}
-                />
-                <InputComponent
                     label="GST No."
                     type="text"
                     name="gst_number"
@@ -118,16 +105,6 @@ function AddCustomer() {
                     inputClassName="w-[80%]"
                     labelClassName="font-serif font-bold"
                     value={customerData.gst_number}
-                    onChange={handleInputChange}
-                />
-                <InputComponent
-                    label="Adhar No."
-                    type="text"
-                    name="adhar_number"
-                    placeholder="Adhar No."
-                    inputClassName="w-[80%]"
-                    labelClassName="font-serif font-bold"
-                    value={customerData.adhar_number}
                     onChange={handleInputChange}
                 />
                 <InputComponent
@@ -140,19 +117,15 @@ function AddCustomer() {
                     value={customerData.pan_number}
                     onChange={handleInputChange}
                 />
-                <DropdownCompoent
-                    label="Customer Type"
-                    name="type"
-                    options={CUSTOMER_TYPE_OPTIONS}
-                    placeholder="Select customer type"
-                    className="w-[80%]"
-                    labelClassName="font-serif font-bold"
-                    value={customerData.type}
-                    onChange={handleInputChange}
-                />
 
             </div>
             <div className="mt-4 flex justify-center">
+                 <PrimaryButtonComponent
+                                label="Back"
+                                icon="fa fa-arrow-left"
+                                buttonClassName="mt-2 py-1 px-5 mr-10 text-xl font-bold"
+                                onClick={handleBack}
+                />
                 <PrimaryButtonComponent
                     label="Save"
                     icon="fa fa-save"

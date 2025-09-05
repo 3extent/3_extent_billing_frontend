@@ -3,12 +3,17 @@ import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownI
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
+import { useNavigate } from "react-router-dom";
 export default function AddModels() {
+    const navigate = useNavigate();
+    const handleBack = () => {
+        navigate(-1);
+    };
     const [brandOptions, setBrandOptions] = useState([]);
     const [possibleCombinations, setPossibleCombinations] = useState([]);
     const [selectedCombinations, setSelectedCombinations] = useState([]);
     const [showData, setShowData] = useState(false);
-    const[loading,setLoading]=useState(false)
+    const [loading, setLoading] = useState(false)
     const [modelData, setModelData] = useState({
         brand_name: "",
         name: "",
@@ -19,33 +24,38 @@ export default function AddModels() {
         const { name, value } = event.target;
         setModelData({ ...modelData, [name]: value });
     };
-
     const handleShowCombinations = async () => {
-        const ramOptions = modelData.RAM.split(",");
-        const storageOptions = modelData.storage.split(",");
+        const ramOptions = modelData.RAM
+            ? modelData.RAM.split(",").map((ram) => ram.trim())
+            : [];
+        const storageOptions = modelData.storage
+            ? modelData.storage.split(",").map((storage) => storage.trim())
+            : [];
+        const combinations = [];
         if (ramOptions.length && storageOptions.length) {
-            const combinations = [];
-            ramOptions.forEach((RAM) => {
+            ramOptions.forEach((ram) => {
                 storageOptions.forEach((storage) => {
-                    combinations.push(`${RAM.trim()}/${storage.trim()}GB`);
-
-
+                    combinations.push({ ram, storage });
                 });
             });
-            setPossibleCombinations(combinations);
-        } else {
-            setPossibleCombinations([]);
         }
+        if (!ramOptions.length && storageOptions.length) {
+            storageOptions.forEach((storage) => {
+                combinations.push({ ram: '', storage });
+            });
+        }
+        setPossibleCombinations(combinations);
         setShowData(true);
     };
     const handleCheckboxChange = (event) => {
-        const value = event.target.value;
+        const value = JSON.parse(event.target.value);
         if (event.target.checked) {
             setSelectedCombinations((possibleCombinations) => [...possibleCombinations, value]);
         } else {
-            setSelectedCombinations((possibleCombinations) => possibleCombinations.filter((combo) => combo !== value));
-        }
-    };
+            setSelectedCombinations((possibleCombinations) => possibleCombinations.filter(
+                (combo) => combo.ram !== value.ram || combo.storage !== value.storage));
+        };
+    }
     const addModelCallback = (response) => {
         console.log("response:", response);
         if (response.status === 200) {
@@ -103,8 +113,8 @@ export default function AddModels() {
             <div className="text-xl font-serif mb-4">Add Model</div>
             <div className="grid grid-cols-2">
                 <CustomDropdownInputComponent
-                     name="Brand Name"
-                     type="text"
+                    name="Brand Name"
+                    type="text"
                     placeholder="Select a brand"
                     dropdownClassName="w-[90%]"
                     options={brandOptions}
@@ -119,7 +129,7 @@ export default function AddModels() {
                     inputClassName="w-[80%]"
                     labelClassName="font-bold"
                     value={modelData.name}
-                    onChange={handleInputChange}   
+                    onChange={handleInputChange}
                 />
             </div>
             <div className="grid grid-cols-2 mt-3">
@@ -141,7 +151,7 @@ export default function AddModels() {
                     inputClassName="w-[80%]"
                     labelClassName="font-bold"
                     value={modelData.storage}
-                     onChange={handleInputChange}
+                    onChange={handleInputChange}
                 />
             </div>
             <div className="flex justify-center mt-5">
@@ -161,11 +171,14 @@ export default function AddModels() {
                                     <input
                                         type="checkbox"
                                         id={`combo-${index}`}
-                                        value={combo}
+                                        value={JSON.stringify(combo)}
                                         onChange={handleCheckboxChange}
 
                                     />
-                                    <label htmlFor={`combo-${index}`} className="ml-2">{combo}</label>
+                                    <label htmlFor={`combo-${index}`} className="ml-2">
+                                        {combo.ram ? `${combo.ram}/${combo.storage}GB` : `${combo.storage}GB`}
+
+                                    </label>
                                 </li>
                             ))}
                         </div>
@@ -173,6 +186,12 @@ export default function AddModels() {
                 </div>
             )}
             <div className="flex justify-center mt-3">
+                <PrimaryButtonComponent
+                    label="Back"
+                    icon="fa fa-arrow-left"
+                    buttonClassName="mt-2 py-1 px-5 mr-10 text-xl font-bold"
+                    onClick={handleBack}
+                />
                 <PrimaryButtonComponent
                     label="Submit"
                     icon="fa fa-bookmark-o"
