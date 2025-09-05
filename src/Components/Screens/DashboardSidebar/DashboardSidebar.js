@@ -26,7 +26,7 @@ export default function DashboardSidebar({ onLogout }) {
     return (
         <div>
             <div>
-                <div className={`space-y-2 px-4 pt-5 w-[100%] bg-slate-800 text-white h-screen `}>
+                <div className={`space-y-2 px-4 pt-5 w-[100%] bg-slate-800 text-white h-screen`}>
                     <div className="font-semibold text-xl pb-6 pl-4 pr-3">
                         <i class="fa fa-file-text-o mr-4" aria-hidden="true"></i>
                         3_EXTENT

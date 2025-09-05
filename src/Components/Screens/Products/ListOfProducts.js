@@ -41,7 +41,13 @@ function ListOfProducts() {
                 "Sales Price": product.sales_price,
                 "Purchase Price": product.purchase_price,
                 "Grade": product.grade,
-                "Barcode": product.barcode
+                "Barcode": (
+                    <PrimaryButtonComponent
+                    label="Barcode"
+                    icon="fa fa-print"
+                    buttonClassName="py-1 px-3 text-[12px] font-semibold"
+                    />
+                )
             }))
             setRows(productFormattedRows);
         } else {
@@ -128,13 +134,8 @@ function ListOfProducts() {
                     placeholder="Enter IMEI NO"
                     inputClassName="mb-2 w-[190px]"
                     value={imeiNumber}
-                    maxlength={15}
-                    onChange={(e) => {
-                        const value = e.target.value;
-                        if (/^\d{0,15}$/.test(value)) {
-                            setIMEINumber(value);
-                        }
-                    }}
+                    maxLength={15}
+                     onChange={(e) => setIMEINumber(e.target.value)}
                 />
                 <DropdownCompoent
                     placeholder="Select Brands"

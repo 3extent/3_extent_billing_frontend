@@ -23,14 +23,7 @@ function SingleProductStockIn() {
     });
     const handleInputChange = (event) => {
         const { name, value } = event.target;
-        if (name === 'imei_number') {
-            const digitsOnly = value.replace(/\D/g, '');
-            if (digitsOnly.length <= 15) {
-                setProductData({ ...productData, [name]: digitsOnly });
-            }
-        } else {
             setProductData({ ...productData, [name]: value });
-        }
     };
     const handleModelProductData = (value) => {
         setProductData(productData => ({ ...productData, model_name: value }));
@@ -206,6 +199,7 @@ function SingleProductStockIn() {
                 name="imei_number"
                 placeholder="IMEI"
                 value={productData.imei_number}
+                maxLength={15}
                 onChange={handleInputChange}
                 inputClassName="w-[80%]"
                 labelClassName="font-serif font-bold"

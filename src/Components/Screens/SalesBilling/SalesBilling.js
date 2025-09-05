@@ -185,11 +185,7 @@ export default function SalesBilling() {
                     placeholder="Scan IMEI No"
                     value={selectedImei}
                     maxLength={15}
-                    onChange={(value) => {
-                        if (/^\d{0,15}$/.test(value)) {
-                            setSelectedImei(value);
-                        }
-                    }}
+                    onChange={(value) => setSelectedImei(value)}
                     options={
                         selectedImei.length >= 11
                             ? imeiOptions.filter((imei) => imei.startsWith(selectedImei))
@@ -200,6 +196,7 @@ export default function SalesBilling() {
                     dropdownClassName="w-[190px] "
                     placeholder="Select Contact No"
                     value={selectedContactNo}
+                    maxLength={10}
                     onChange={handleContactNoChange}
                     options={contactNoOptions}
                 />

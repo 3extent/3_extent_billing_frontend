@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-export default function CustomDropdownInputComponent({ name, dropdownClassName = "", labelClassName = "", placeholder = "", options = [], value = "", onChange = () => { }, }) {
+export default function CustomDropdownInputComponent({ name, dropdownClassName = "", labelClassName = "", placeholder = "", options = [], value = "", onChange = () => { },maxLength }) {
     const [inputValue, setInputValue] = useState('');
     const [showDropdown, setShowDropdown] = useState(false);
     useEffect(() => {
@@ -32,6 +32,7 @@ export default function CustomDropdownInputComponent({ name, dropdownClassName =
                 onFocus={() => setShowDropdown(true)}
                 onBlur={() => setTimeout(() => setShowDropdown(false), 100)}
                 placeholder={placeholder}
+                maxLength={maxLength}
                 className={`px-3 py-2 border border-gray-300 rounded-md ${dropdownClassName} `}
             />
             {showDropdown && filteredOptions.length > 0 && (
