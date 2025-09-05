@@ -28,8 +28,8 @@ function Billinghistory() {
     const getBilllinghistoryCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
-            const billingformattedRows = response.data.map((bill) => ({
-                "Bill id": bill.bill_id,
+            const billingformattedRows = response.data.map((bill,index) => ({
+                "Bill id": index+1,
                 "Date": bill.createdAt,
                 "Customer Name": bill.customer.name,
                 "Contact Number": bill.customer.contact_number
