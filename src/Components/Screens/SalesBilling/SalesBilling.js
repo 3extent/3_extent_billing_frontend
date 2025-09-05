@@ -101,6 +101,7 @@ export default function SalesBilling() {
     const getsalesbillingCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
+
             const productFormattedRows = response.data.map((product, index) => ({
                 "Sr.No": rows.length + index + 1,
                 "date": product.createdAt,
@@ -140,11 +141,12 @@ export default function SalesBilling() {
             setLoading: setLoading
         })
     }
+    console.log("rows",rows);
     const billsData = {
         customer_name: customerName,
         contact_number: selectedContactNo,
         products: rows.map((row) => ({
-            _id: row["Sr.No"],
+            imei_number: row["IMEI NO"],
             rate: row["Rate"],
         })),
     };
