@@ -24,6 +24,10 @@ export default function SalesBilling() {
         navigate("/billinghistory")
     }
     const [showDropdown, setShowDropdown] = useState(false);
+    const [showPaymentPopup, setShowPaymentPopup] = useState(false);
+    const [cashAmount, setCashAmount] = useState("");
+    const [onlineAmount, setOnlineAmount] = useState("");
+    const [card, setCard] = useState("");
     const toggleColumn = (columnName) => {
         if (dynamicHeaders.includes(columnName)) {
             setDynamicHeaders(dynamicHeaders.filter(col => col !== columnName));
@@ -141,7 +145,7 @@ export default function SalesBilling() {
             setLoading: setLoading
         })
     }
-    console.log("rows",rows);
+    console.log("rows", rows);
     const billsData = {
         customer_name: customerName,
         contact_number: selectedContactNo,
@@ -163,6 +167,7 @@ export default function SalesBilling() {
         }
     };
     const handleSaveData = () => {
+        setShowPaymentPopup(true);
         apiCall({
             method: 'POST',
             url: 'https://3-extent-billing-backend.vercel.app/api/billings',
@@ -211,35 +216,35 @@ export default function SalesBilling() {
                 />
             </div>
             {rows.length > 0 && (
-            <div className="relative mb-2">
-                <button
-                    onClick={() => setShowDropdown(!showDropdown)}
-                    className="px-2 py-1 border rounded hover:bg-gray-200"
-                    title="Show columns"
-                >
-                    <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
-                </button>
-                {showDropdown && (
-                    <div className="absolute bg-white border shadow-md mt-1 rounded w-48 z-10 max-h-48 overflow-auto">
-                        {["Purchase Price", "QC_Remark"].map((col) => (
-                            <label
-                                key={col}
-                                className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                            >
-                                <input
-                                    type="checkbox"
-                                    checked={dynamicHeaders.includes(col)}
-                                    onChange={() => toggleColumn(col)}
-                                    className="mr-2"
-                                    onFocus={() => setShowDropdown(true)}
-                                    onBlur={() => setTimeout(() => setShowDropdown(false), 300)}
-                                />
-                                {col}
-                            </label>
-                        ))}
-                    </div>
-                )}
-            </div>
+                <div className="relative mb-2">
+                    <button
+                        onClick={() => setShowDropdown(!showDropdown)}
+                        className="px-2 py-1 border rounded hover:bg-gray-200"
+                        title="Show columns"
+                    >
+                        <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
+                    </button>
+                    {showDropdown && (
+                        <div className="absolute bg-white border shadow-md mt-1 rounded w-48 z-10 max-h-48 overflow-auto">
+                            {["Purchase Price", "QC_Remark"].map((col) => (
+                                <label
+                                    key={col}
+                                    className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        checked={dynamicHeaders.includes(col)}
+                                        onChange={() => toggleColumn(col)}
+                                        className="mr-2"
+                                        onFocus={() => setShowDropdown(true)}
+                                        onBlur={() => setTimeout(() => setShowDropdown(false), 300)}
+                                    />
+                                    {col}
+                                </label>
+                            ))}
+                        </div>
+                    )}
+                </div>
             )}
             <div>
                 <CustomTableCompoent
@@ -267,6 +272,55 @@ export default function SalesBilling() {
                     buttonClassName="py-1 px-3 text-sm font-bold"
                 />
             </div>
+            {showPaymentPopup && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                    <div className="bg-white p-5 rounded shadow-lg w-[300px]">
+                        <div className="text-lg font-bold  text-center">Payment Method</div>
+                        <div className="flex gap-2 items-center justify-center">
+                            <label className="font-bold w-[60px]">Cash:</label>
+                            <InputComponent
+                                type="text"
+                                placeholder=""
+                                value={cashAmount}
+                                onChange={(e) => setCashAmount(e.target.value)}
+                                inputClassName=" w-[150px]"
+                            />
+                        </div>
+                        <div className="flex gap-2 items-center justify-center ">
+                            <label className="font-bold w-[60px]">Online:</label>
+                            <InputComponent
+                                type="text"
+                                placeholder=""
+                                value={onlineAmount}
+                                onChange={(e) => setOnlineAmount(e.target.value)}
+                                inputClassName="w-[150px] "
+                            />
+                        </div>
+                        <div className="flex gap-2 items-center mb-2 justify-center ">
+                            <label className="font-bold w-[60px]">card:</label>
+                            <InputComponent
+                                type="text"
+                                placeholder=""
+                                value={card}
+                                onChange={(e) => setCard(e.target.value)}
+                                inputClassName="w-[150px] "
+                            />
+                        </div>
+                        <div className="flex justify-end gap-3">
+                            <PrimaryButtonComponent
+                                label="Cancel"
+                                buttonClassName="py-1 px-3 text-sm font-bold"
+                                onClick={() => setShowPaymentPopup(false)}
+                            />
+                            <PrimaryButtonComponent
+                                label="Print"
+                                buttonClassName="py-1 px-3 text-sm font-bold"
+                            // onClick={handleConfirmPayment}
+                            />
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
