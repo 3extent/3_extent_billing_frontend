@@ -17,7 +17,7 @@ export const exportToExcel = (data, fileName = "data.xlsx") => {
 };
 export const generateAndSavePdf = (customerName, selectedContactNo, dynamicHeaders, rows) => {
     const doc = new jsPDF();
-    doc.text("Sales Billing Invoice", 14, 20);
+    doc.text("3_Extent", 14, 20);
     doc.setFontSize(12);
     doc.text(`Customer Name: ${customerName}`, 14, 30);
     doc.text(`Contact No: ${selectedContactNo}`, 14, 37);
