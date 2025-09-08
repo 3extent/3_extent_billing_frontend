@@ -3,23 +3,24 @@ import InputComponent from "../../CustomComponents/InputComponent/InputComponent
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import CustomBarcodePrintComponent from '../../CustomComponents/CustomBarcodePrintComponent/CustomBarcodePrintComponent';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
-import { ACCESSORIES_OPTIONS, GRADE_OPTIONS, SUPPLIER_OPTIONS } from './Constants';
+import { ACCESSORIES_OPTIONS, GRADE_OPTIONS, STATUS_OPTIONS, } from './Constants';
 import CustomDropdownInputComponent from '../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent';
 import { apiCall, Spinner } from '../../../Util/AxiosUtils';
 function SingleProductStockIn() {
     const [modelOptions, setModelOptions] = useState([]);
-    const[loading,setLoading]=useState(false)
-    const [supplierNameOptions,setSupplierNameOPtions]=useState([]);
+    const [loading, setLoading] = useState(false)
+    const [supplierNameOptions, setSupplierNameOPtions] = useState([]);
     const [productData, setProductData] = useState({
         model_name: '',
         imei_number: '',
         sales_price: '',
         purchase_price: '',
         grade: '',
-        engineer_name: '',
+        enginner_name: '',
         accessories: '',
         supplier_name: '',
-        qc_remark: ''
+        qc_remark: '',
+        status: ''
     });
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -37,10 +38,11 @@ function SingleProductStockIn() {
                 purchase_price: '',
                 sales_price: '',
                 imei_number: '',
-                engineer_name: '',
+                enginner_name: '',
                 qc_remark: '',
                 supplier_name: '',
                 accessories: '',
+                status: ''
             });
         } else {
             console.log("error")
@@ -77,7 +79,7 @@ function SingleProductStockIn() {
             url: "https://3-extent-billing-backend.vercel.app/api/products",
             data: productData,
             callback: stockInCallback,
-            setLoading:setLoading
+            setLoading: setLoading
         });
     }
     const getSupplierCallBack = (response) => {
@@ -153,7 +155,7 @@ function SingleProductStockIn() {
     };
     return (
         <div className="grid grid-cols-2 gap-x-5 gap-y-2">
-            {loading && <Spinner/>}
+            {loading && <Spinner />}
             <CustomDropdownInputComponent
                 name="Model Name"
                 dropdownClassName="w-[80%]"
@@ -175,7 +177,7 @@ function SingleProductStockIn() {
             />
             <InputComponent
                 label="Purchase Price"
-                type="number"
+                type="text"
                 name="purchase_price"
                 placeholder="Buying Purchase Price"
                 value={productData.purchase_price}
@@ -185,7 +187,7 @@ function SingleProductStockIn() {
             />
             <InputComponent
                 label="Sales Price"
-                type="number"
+                type="text"
                 name="sales_price"
                 placeholder="Rate Selling Price"
                 value={productData.sales_price}
@@ -195,20 +197,21 @@ function SingleProductStockIn() {
             />
             <InputComponent
                 label="IMEI"
-                type="number"
+                type="text"
                 name="imei_number"
                 placeholder="IMEI"
                 value={productData.imei_number}
+                maxLength={15}
                 onChange={handleInputChange}
                 inputClassName="w-[80%]"
                 labelClassName="font-serif font-bold"
             />
             <InputComponent
-                label="Engineer Name"
+                label="Enginner Name "
                 type="text"
-                name="engineer_name"
-                placeholder="Engineer Name"
-                value={productData.engineer_name}
+                name="enginner_name"
+                placeholder="Enginner Name"
+                value={productData.enginner_name}
                 onChange={handleInputChange}
                 inputClassName="w-[80%]"
                 labelClassName="font-serif font-bold"
@@ -241,6 +244,16 @@ function SingleProductStockIn() {
                 value={productData.accessories}
                 onChange={handleInputChange}
                 className="w-[80%]"
+                labelClassName="font-serif font-bold"
+            />
+            <DropdownCompoent
+                label="Status"
+                name="status"
+                placeholder="Select status"
+                value={productData.status}
+                onChange={handleInputChange}
+                options={STATUS_OPTIONS}
+                className="w-[80%] "
                 labelClassName="font-serif font-bold"
             />
             <div className="col-span-2 mt-4 flex justify-center">

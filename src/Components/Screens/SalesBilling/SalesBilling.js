@@ -9,14 +9,14 @@ import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownI
 import { useNavigate } from "react-router-dom";
 export default function SalesBilling() {
     const [rows, setRows] = useState([]);
-    const[loading,setLoading]=useState(false);
+    const [loading, setLoading] = useState(false);
     const [hiddenColumns, setHiddenColumns] = useState([
         "Purchase Price",
-        "Sale Price"
+        "QC-Remark"
     ]);
     const [dynamicHeaders, setDynamicHeaders] = useState(() => {
         return SALESBILLING_COLOUMNS.filter(
-            (col) => !["Purchase Price"].includes(col)
+            (col) => !["Purchase Price", "QC-Remark"].includes(col)
         );
     });
     const navigate = useNavigate();
@@ -33,10 +33,6 @@ export default function SalesBilling() {
             setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
         }
     };
-    const [date, setDate] = useState(() => {
-        const today = new Date();
-        return today.toISOString().split("T")[0];
-    });
     const [imeiOptions, setImeiOptions] = useState([]);
     const [selectedImei, setSelectedImei] = useState("");
     const [contactNoOptions, setContactNoOptions] = useState([]);
@@ -53,7 +49,7 @@ export default function SalesBilling() {
         getCustomerAllData();
     }, []);
     useEffect(() => {
-        if (selectedImei) {
+        if (selectedImei.length === 15) {
             getsalesbillingAllData();
         }
     }, [selectedImei]);
@@ -64,7 +60,7 @@ export default function SalesBilling() {
             url: url,
             data: {},
             callback: getCustomersCallback,
-            setLoading:setLoading
+            setLoading: setLoading
         });
     };
     const getCustomersCallback = (response) => {
@@ -105,20 +101,26 @@ export default function SalesBilling() {
     const getsalesbillingCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
+
             const productFormattedRows = response.data.map((product, index) => ({
-                "Sr.No": index + 1,
-                "date": product.date,
+                "Sr.No": rows.length + index + 1,
+                "date": product.createdAt,
                 "IMEI NO": product.imei_number,
-                "Company Name": typeof product.brand === 'object' ? product.brand.name : product.brand,
-                "Model Name": typeof product.model === 'object' ? product.model.name : product.model,
+                "Brand": typeof product.brand === 'object' ? product.brand.name : product.brand,
+                "Model": typeof product.model === 'object' ? product.model.name : product.model,
                 "Rate": product.sales_price,
                 "Purchase Price": product.purchase_price,
                 "Grade": product.grade,
-                "Box": product.box
+                "Box": product.box,
+                "QC-Remark": product.qc_remark
             }));
-
-            setRows(Rows => [...Rows, ...productFormattedRows]);
-            // setRows(productFormattedRows);
+            const existingImeis = rows.map(row => row["IMEI NO"]);
+            const newUniqueRows = productFormattedRows.filter(
+                row => !existingImeis.includes(row["IMEI NO"])
+            );
+            if (newUniqueRows.length > 0) {
+                setRows(Rows => [...Rows, ...newUniqueRows]);
+            }
             setSelectedImei("");
             setCustomerName("");
             setSelectedContactNo("");
@@ -136,15 +138,15 @@ export default function SalesBilling() {
             url: url,
             data: {},
             callback: getsalesbillingCallBack,
-            setLoading:setLoading
+            setLoading: setLoading
         })
     }
+    console.log("rows",rows);
     const billsData = {
-        date,
         customer_name: customerName,
         contact_number: selectedContactNo,
         products: rows.map((row) => ({
-            _id: row["Sr.No"],
+            imei_number: row["IMEI NO"],
             rate: row["Rate"],
         })),
     };
@@ -170,7 +172,7 @@ export default function SalesBilling() {
     };
     return (
         <div>
-            {loading && <Spinner/>}
+            {loading && <Spinner />}
             <CustomHeaderComponent
                 name="Sales Billing"
                 label="Billing History"
@@ -182,15 +184,21 @@ export default function SalesBilling() {
                 <CustomDropdownInputComponent
                     label="IMEI No :"
                     dropdownClassName="w-[190px]"
-                    placeholder="Select IMEI No"
+                    placeholder="Scan IMEI No"
                     value={selectedImei}
+                    maxLength={15}
                     onChange={(value) => setSelectedImei(value)}
-                    options={imeiOptions}
+                    options={
+                        selectedImei.length >= 11
+                            ? imeiOptions.filter((imei) => imei.startsWith(selectedImei))
+                            : []
+                    }
                 />
                 <CustomDropdownInputComponent
                     dropdownClassName="w-[190px] "
                     placeholder="Select Contact No"
                     value={selectedContactNo}
+                    maxLength={10}
                     onChange={handleContactNoChange}
                     options={contactNoOptions}
                 />
@@ -201,24 +209,19 @@ export default function SalesBilling() {
                     onChange={(e) => setCustomerName(e.target.value)}
                     inputClassName="w-[190px] mb-6"
                 />
-                <InputComponent
-                    type="Date"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    inputClassName="w-[190px] mb-6"
-                />
             </div>
+            {rows.length > 0 && (
             <div className="relative mb-2">
                 <button
                     onClick={() => setShowDropdown(!showDropdown)}
-                    className="px-3 py-1 border rounded hover:bg-gray-200"
+                    className="px-2 py-1 border rounded hover:bg-gray-200"
                     title="Show columns"
                 >
                     <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
                 </button>
                 {showDropdown && (
                     <div className="absolute bg-white border shadow-md mt-1 rounded w-48 z-10 max-h-48 overflow-auto">
-                        {["Purchase Price"].map((col) => (
+                        {["Purchase Price", "QC_Remark"].map((col) => (
                             <label
                                 key={col}
                                 className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
@@ -237,30 +240,31 @@ export default function SalesBilling() {
                     </div>
                 )}
             </div>
+            )}
             <div>
                 <CustomTableCompoent
                     headers={dynamicHeaders}
                     rows={rows}
                     onRateChange={handleRateChange}
-                     maxHeight="max-h-[300px]"
+                    maxHeight="max-h-[300px]"
                 />
             </div>
             <div className="flex justify-end gap-4 mt-5">
                 <PrimaryButtonComponent
                     label="Save"
                     icon="fa fa-cloud-download"
-                    buttonClassName="py-1 px-5 text-xl font-bold"
+                    buttonClassName="py-1 px-3 text-sm font-bold"
                     onClick={handleSaveData}
                 />
                 <PrimaryButtonComponent
-                    label="Print"
-                    icon="fa fa-print"
-                    buttonClassName="py-1 px-5 text-xl font-bold"
+                    label="Draft"
+                    icon="fa fa-pencil-square-o"
+                    buttonClassName="py-1 px-3 text-sm font-bold"
                 />
                 <PrimaryButtonComponent
-                    label="Cancel"
-                    icon="fa fa-window-close"
-                    buttonClassName="py-1 px-5 text-xl font-bold"
+                    label="View"
+                    icon="fa fa-dashcube"
+                    buttonClassName="py-1 px-3 text-sm font-bold"
                 />
             </div>
         </div>

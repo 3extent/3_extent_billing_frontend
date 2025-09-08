@@ -26,7 +26,7 @@ export default function DashboardSidebar({ onLogout }) {
     return (
         <div>
             <div>
-                <div className={`space-y-2 px-4 pt-5 w-[100%] bg-slate-800 text-white h-screen `}>
+                <div className={`space-y-2 px-4 pt-5 w-[100%] bg-slate-800 text-white h-screen`}>
                     <div className="font-semibold text-xl pb-6 pl-4 pr-3">
                         <i class="fa fa-file-text-o mr-4" aria-hidden="true"></i>
                         3_EXTENT
@@ -38,10 +38,10 @@ export default function DashboardSidebar({ onLogout }) {
                             <span className="mr-3">
                                 <i className={item.icon} aria-hidden="true"></i>
                             </span>
-                            <span className="hover:font-bold">{item.label}</span>
+                            <span className="hover:font-bold text-sm">{item.label}</span>
                         </div>
                     ))}
-                    <div className="bottom-10 fixed justify-center cursor-pointer pl-4 transform hover:scale-110" onClick={handleLogout}><i class="fa fa-sign-out mr-2" aria-hidden="true"></i>Logout</div>
+                    <div className="bottom-10 fixed justify-center cursor-pointer pl-4 text-sm transform hover:scale-110" onClick={handleLogout}><i class="fa fa-sign-out mr-2" aria-hidden="true"></i>Logout</div>
                 </div>
             </div >
         </div>

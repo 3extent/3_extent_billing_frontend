@@ -5,24 +5,37 @@ import InputComponent from "../../CustomComponents/InputComponent/InputComponent
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
+import { useNavigate } from "react-router-dom";
 function Billinghistory() {
+    const navigate=useNavigate();
     const [rows, setRows] = useState([]);
-    const [loading,setLoading]=useState(false)
+    const [loading, setLoading] = useState(false)
     const [customerName, setCustomerName] = useState("");
     const [contactNo, setContactNo] = useState("");
-    const [date, setDate] = useState("");
     const [paymentStatus, setPaymentStatus] = useState("");
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
+    const [selectAllDates, setSelectAllDates] = useState(false);
+    const formatDate = (date) => date.toISOString().split('T')[0];
+    const today = new Date();
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(today.getDate() - 7);
+    const todayFormatted = formatDate(today);
+    const sevenDaysAgoFormatted = formatDate(sevenDaysAgo);
     useEffect(() => {
+        setStartDate(sevenDaysAgoFormatted);
+        setEndDate(todayFormatted);
         getBillinghistoryAllData({});
     }, []);
     const getBilllinghistoryCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
-            const billingformattedRows = response.data.map((bill) => ({
-                "Bill id": bill.bill_id,
+            const billingformattedRows = response.data.map((bill, index) => ({
+                "Bill id": index + 1,
                 "Date": bill.createdAt,
                 "Customer Name": bill.customer.name,
-                "Contact Number": bill.customer.contact_number
+                "Contact Number": bill.customer.contact_number,
+                 _id: bill._id
             }));
             console.log("Formatted Billing Rows: ", billingformattedRows);
             setRows(billingformattedRows);
@@ -30,7 +43,7 @@ function Billinghistory() {
             console.log("Error");
         }
     }
-    const getBillinghistoryAllData = ({ contactNo, paymentStatus, customerName }) => {
+    const getBillinghistoryAllData = ({ contactNo, paymentStatus, customerName, }) => {
         let url = "https://3-extent-billing-backend.vercel.app/api/billings?";
         if (customerName) {
             url += `&customer_name=${customerName}`
@@ -41,28 +54,47 @@ function Billinghistory() {
         if (paymentStatus) {
             url += `&status=${paymentStatus}`
         }
+        if (!selectAllDates) {
+            if (startDate) url += `&startDate=${startDate}`;
+            if (endDate) url += `&endDate=${endDate}`;
+        }
 
         apiCall({
             method: 'GET',
             url: url,
             data: {},
             callback: getBilllinghistoryCallBack,
-            setLoading:setLoading
+            setLoading: setLoading
         })
     }
+    const handleDateChange = (value, setDate) => {
+        const todayFormatted = new Date().toISOString().split('T')[0];
+        if (value > todayFormatted) {
+            setDate(todayFormatted);
+        } else {
+            setDate(value);
+        }
+    };
+     const handleRowClick = (row) => {
+        if (row._id) {
+            navigate(`/singleBillHistory/${row._id}`);
+        }
+    };
     const handleSearchFilter = () => {
-        getBillinghistoryAllData({ contactNo, paymentStatus, customerName });
+        getBillinghistoryAllData({ contactNo, paymentStatus, customerName, startDate, endDate });
     }
     const handleResetFilter = () => {
         setContactNo("");
         setCustomerName("");
         setPaymentStatus("");
-        setDate("");
+        setStartDate(sevenDaysAgoFormatted);
+        setEndDate(todayFormatted);
+        setSelectAllDates();
         getBillinghistoryAllData({});
     }
     return (
         <div>
-            {loading && <Spinner/>}
+            {loading && <Spinner />}
             <div className='text-xl font-serif mb-4'>Billing History</div>
             <div className="flex items-center gap-4 ">
                 <InputComponent
@@ -73,10 +105,11 @@ function Billinghistory() {
                     onChange={(e) => setCustomerName(e.target.value)}
                 />
                 <InputComponent
-                    type="number"
+                    type="text"
                     placeholder="Contact No"
-                    inputClassName="w-[190px] mb-5"
+                    inputClassName="w-[180px] mb-5"
                     value={contactNo}
+                    maxLength={10}
                     onChange={(e) => setContactNo(e.target.value)}
                 />
                 <DropdownCompoent
@@ -84,14 +117,34 @@ function Billinghistory() {
                     value={paymentStatus}
                     onChange={(e) => setPaymentStatus(e.target.value)}
                     options={PAYMENTSTATUS_OPTIONS}
-                    className="w-[190px]"
+                    className="w-[180px]"
+                />
+                <label className='flex items-center gap-2 text-sm'>
+                    <input
+                        type="checkbox"
+                        checked={selectAllDates}
+                        onChange={(e) => setSelectAllDates(e.target.checked)}
+                    />
+                    All Data
+                </label>
+                <InputComponent
+                    type="date"
+                    placeholder="Start Date"
+                    inputClassName="w-[190px] mb-5"
+                    value={startDate}
+                    max={todayFormatted}
+                    onChange={(e) => handleDateChange(e.target.value, setStartDate)}
+                    disabled={selectAllDates}
                 />
                 <InputComponent
                     type="date"
-                    placeholder="Date"
+                    placeholder="End Date"
                     inputClassName="w-[190px] mb-5"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
+                    value={endDate}
+                    min={startDate}
+                    max={todayFormatted}
+                    onChange={(e) => handleDateChange(e.target.value, setEndDate)}
+                    disabled={selectAllDates}
                 />
             </div>
             <div className='flex justify-end mb-2'>
@@ -110,10 +163,10 @@ function Billinghistory() {
                 <CustomTableCompoent
                     headers={BILLINGHISTORY_COLOUMNS}
                     rows={rows}
+                    onRowClick={handleRowClick}
                 />
             </div>
         </div>
     )
-
 }
 export default Billinghistory;

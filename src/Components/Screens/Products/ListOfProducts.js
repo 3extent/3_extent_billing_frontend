@@ -7,21 +7,26 @@ import { PRODUCT_COLOUMNS, STATUS_OPTIONS } from './Constants';
 import { apiCall, Spinner } from '../../../Util/AxiosUtils';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
 function ListOfProducts() {
-    // const getTodayDate = () => new Date().toISOString().split("T")[0];
     const [rows, setRows] = useState([]);
     const [imeiNumber, setIMEINumber] = useState();
     const [grade, setGrade] = useState();
     const [modelName, setModelName] = useState();
     const [brandName, setBrandName] = useState('');
-    const [status, setStatus] = useState();
+    const [status, setStatus] = useState('Available');
     const [brandOptions, setBrandOptions] = useState([]);
-     const [loading, setLoading] = useState(false);
-    const [date, setDate] = useState(() => {
-        const today = new Date();
-        return today.toISOString().split("T")[0];
-    });
-    // const [date, setDate] = useState(getTodayDate);
+    const [loading, setLoading] = useState(false);
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
+    const [selectAllDates, setSelectAllDates] = useState(false);
+    const formatDate = (date) => date.toISOString().split('T')[0];
+    const today = new Date();
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(today.getDate() - 7);
+    const todayFormatted = formatDate(today);
+    const sevenDaysAgoFormatted = formatDate(sevenDaysAgo);
     useEffect(() => {
+        setStartDate(sevenDaysAgoFormatted);
+        setEndDate(todayFormatted);
         getProductsAllData({});
         getBrandsAllData();
     }, []);
@@ -31,19 +36,25 @@ function ListOfProducts() {
             const productFormattedRows = response.data.map((product) => ({
                 "Date": product.createdAt,
                 "IMEI NO": product.imei_number,
-                "Product Name": typeof product.model === 'object' ? product.model.name : product.model,
-                "Brand Name": typeof product.brand === 'object' ? product.model.brand : product.model.brand.name,
+                "Model": typeof product.model === 'object' ? product.model.name : product.model,
+                "Brand": typeof product.brand === 'object' ? product.model.brand : product.model.brand.name,
                 "Sales Price": product.sales_price,
                 "Purchase Price": product.purchase_price,
                 "Grade": product.grade,
-                "Barcode": product.barcode
+                "Barcode": (
+                    <PrimaryButtonComponent
+                    label="Barcode"
+                    icon="fa fa-print"
+                    buttonClassName="py-1 px-3 text-[12px] font-semibold"
+                    />
+                )
             }))
             setRows(productFormattedRows);
         } else {
             console.log("Error");
         }
     }
-    const getProductsAllData = ({ imeiNumber, grade, modelName, brandName, statusType }) => {
+    const getProductsAllData = ({ imeiNumber, grade, modelName, brandName, status }) => {
         let url = 'https://3-extent-billing-backend.vercel.app/api/products?';
         if (imeiNumber) {
             url += `&imei_number=${imeiNumber}`
@@ -51,10 +62,6 @@ function ListOfProducts() {
         if (grade) {
             url += `&grade=${grade}`
         }
-        // else if (date) {
-        //     const timestamp = new Date(date).getTime();
-        //     url += `&createdAt=${timestamp}`
-        // }
         if (modelName) {
             url += `&modelName=${modelName}`
         }
@@ -64,12 +71,16 @@ function ListOfProducts() {
         if (status) {
             url += `&status=${status}`
         }
+        if (!selectAllDates) {
+            if (startDate) url += `&startDate=${startDate}`;
+            if (endDate) url += `&endDate=${endDate}`;
+        }
         apiCall({
             method: 'GET',
             url: url,
             data: {},
             callback: getProductsCallBack,
-                 setLoading: setLoading
+            setLoading: setLoading
         })
     }
     const getBrandsAllData = () => {
@@ -79,8 +90,7 @@ function ListOfProducts() {
             url: url,
             data: {},
             callback: getBrandsCallBack,
-                 setLoading: setLoading
-            
+            setLoading: setLoading
         })
     };
     const getBrandsCallBack = (response) => {
@@ -93,26 +103,39 @@ function ListOfProducts() {
         }
     }
     const handleSearchFilter = () => {
-        getProductsAllData({ imeiNumber, grade, modelName, brandName, status });
+        getProductsAllData({ imeiNumber, grade, modelName, brandName, status, startDate, endDate });
     }
+    const handleDateChange = (value, setDate) => {
+        const todayFormatted = new Date().toISOString().split('T')[0];
+        if (value > todayFormatted) {
+            setDate(todayFormatted);
+        } else {
+            setDate(value);
+        }
+    };
     const handleResetFilter = () => {
-        //  setDate(getTodayDate());
         setModelName('');
         setGrade('');
         setIMEINumber('');
         setBrandName('');
+        setStatus();
+        setStartDate(sevenDaysAgoFormatted);
+        setEndDate(todayFormatted);
+        setSelectAllDates();
         getProductsAllData({});
     }
     return (
         <div className='w-full'>
-                {loading && <Spinner/>}
-<div className='text-xl font-serif'>List Of Products</div>
+            {loading && <Spinner />}
+            <div className='text-xl font-serif'>List Of Products</div>
             <div className='flex items-center gap-4'>
                 <InputComponent
-                    type="Date"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    inputClassName="w-[190px] mb-2"
+                    type="text"
+                    placeholder="Enter IMEI NO"
+                    inputClassName="mb-2 w-[190px]"
+                    value={imeiNumber}
+                    maxLength={15}
+                     onChange={(e) => setIMEINumber(e.target.value)}
                 />
                 <DropdownCompoent
                     placeholder="Select Brands"
@@ -128,28 +151,46 @@ function ListOfProducts() {
                     value={modelName}
                     onChange={(e) => setModelName(e.target.value)}
                 />
-                <InputComponent
-                    type="number"
-                    placeholder="Enter IMEI NO"
-                    inputClassName="mb-2 w-[190px]"
-                    value={imeiNumber}
-                    onChange={(e) => setIMEINumber(e.target.value)}
-                />
-                <InputComponent
+                < InputComponent
                     type="text"
                     placeholder="Enter Grade"
                     inputClassName="mb-2 w-[190px]"
                     value={grade}
                     onChange={(e) => setGrade(e.target.value)}
                 />
-            </div>
-            <div className='flex items-center gap-4 mb-5'>
                 <DropdownCompoent
                     placeholder="Select status"
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
                     options={STATUS_OPTIONS}
-                    className="w-[190px]"
+                    className="w-[190px] mt-3"
+                />
+            </div>
+            <div className='flex items-center gap-4'>
+                <label className='flex items-center gap-2 text-sm'>
+                    <input
+                        type="checkbox"
+                        checked={selectAllDates}
+                        onChange={(e) => setSelectAllDates(e.target.checked)}
+                    />
+                    All Data
+                </label>
+                <InputComponent
+                    type="date"
+                    inputClassName="w-[190px] mb-5"
+                    value={startDate}
+                    max={todayFormatted}
+                    onChange={(e) => handleDateChange(e.target.value, setStartDate)}
+                    disabled={selectAllDates}
+                />
+                <InputComponent
+                    type="date"
+                    inputClassName="w-[190px] mb-5"
+                    value={endDate}
+                    min={startDate}
+                    max={todayFormatted}
+                    onChange={(e) => handleDateChange(e.target.value, setEndDate)}
+                    disabled={selectAllDates}
                 />
                 <PrimaryButtonComponent
                     label="Search"

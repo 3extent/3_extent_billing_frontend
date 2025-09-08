@@ -14,6 +14,7 @@ import AddModels from './Components/Screens/Brands/AddModels';
 import AddSupplier from './Components/Screens/Supplier/AddSupplier';
 import AddCustomer from './Components/Screens/Customer/AddCustomer';
 import Billinghistory from './Components/Screens/SalesBilling/Billinghistory';
+import SingleBillHistory from './Components/Screens/SalesBilling/SingleBillHistroy';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, isAuthenticated }) => {
@@ -50,13 +51,13 @@ function App() {
     <Router>
       <div className="flex">
         {loginStatus ? (
-          <div className="w-[20%]">
+          <div className="w-[17%]">
             <DashboardSidebar onLogout={() => updateAuthState(false)} />
           </div>
         ) : (
           <div></div>
         )}
-        <div className={loginStatus ? "w-[80%] p-4" : "w-full"}>
+        <div className={loginStatus ? "w-[83%] p-4" : "w-full"}>
           <Routes>
             <Route path="/" element={
               <PublicRoute isAuthenticated={loginStatus}>
@@ -123,6 +124,7 @@ function App() {
                 <Billinghistory />
               </ProtectedRoute>
             } />
+             <Route path="/singleBillHistory/:billId" element={<SingleBillHistory/>} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
