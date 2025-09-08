@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
+import { exportToExcel } from "../../../Util/Utility";
 function Brands() {
     const [rows, setRows] = useState([]);
     const [brandName, setBrandName] = useState('');
@@ -50,6 +51,10 @@ function Brands() {
         setBrandName('');
         getBrandsAllData({});
     }
+    
+    const handleExportToExcel = () => {
+        exportToExcel(rows, "BrandsData.xlsx");  
+    };
     return (
         <div className='w-full'>
              {loading && <Spinner/>}
@@ -77,6 +82,11 @@ function Brands() {
                     label="Reset"
                     buttonClassName="mt-1 py-1 px-5 text-xl font-bold"
                     onClick={handleResetFilter}
+                />
+                <PrimaryButtonComponent
+                    label="Export to Excel"
+                    buttonClassName="mt-1 py-1 px-5 text-xl font-bold"
+                    onClick={handleExportToExcel} 
                 />
             </div>
             <div>

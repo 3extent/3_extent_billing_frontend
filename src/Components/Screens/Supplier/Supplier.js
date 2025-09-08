@@ -6,6 +6,7 @@ import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
+import { exportToExcel } from "../../../Util/Utility";
 function Supplier() {
     const [rows, setRows] = useState([]);
     const navigate = useNavigate();
@@ -57,6 +58,9 @@ function Supplier() {
         setContactNo('');
         getSupplierAllData({});
     }
+     const handleExportToExcel = () => {
+        exportToExcel(rows, "SupplierData.xlsx");  
+    };
     return (
         <div className="w-full">
              {loading && <Spinner/>}
@@ -93,6 +97,12 @@ function Supplier() {
                     buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
                     onClick={handleResetFilter}
                 />
+                <PrimaryButtonComponent
+                    label="Export to Excel"
+                    buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
+                    onClick={handleExportToExcel}
+                />
+
             </div>
             <CustomTableCompoent
                 headers={SUPPLIER_COLUMNS}

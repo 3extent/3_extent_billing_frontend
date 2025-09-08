@@ -7,6 +7,7 @@ import { SALESBILLING_COLOUMNS } from "./Constants";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
 import { useNavigate } from "react-router-dom";
+import { exportToExcel, generateAndSavePdf } from "../../../Util/Utility";
 export default function SalesBilling() {
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -141,7 +142,7 @@ export default function SalesBilling() {
             setLoading: setLoading
         })
     }
-    console.log("rows",rows);
+    console.log("rows", rows);
     const billsData = {
         customer_name: customerName,
         contact_number: selectedContactNo,
@@ -163,12 +164,20 @@ export default function SalesBilling() {
         }
     };
     const handleSaveData = () => {
+          if (rows.length === 0) {
+            alert("Add at list one bill");
+            return;
+        }
+        generateAndSavePdf(customerName, selectedContactNo, dynamicHeaders, rows);
         apiCall({
             method: 'POST',
             url: 'https://3-extent-billing-backend.vercel.app/api/billings',
             data: billsData,
             callback: billsCallback,
         })
+    };
+    const handleExportToExcel = () => {
+        exportToExcel(rows, "salesbillingData.xlsx");
     };
     return (
         <div>
@@ -209,37 +218,43 @@ export default function SalesBilling() {
                     onChange={(e) => setCustomerName(e.target.value)}
                     inputClassName="w-[190px] mb-6"
                 />
+                 <PrimaryButtonComponent
+                    label="Export to Excel"
+                    buttonClassName=" py-1 px-5 text-xl font-bold"
+                    onClick={handleExportToExcel}
+                    
+                />
             </div>
             {rows.length > 0 && (
-            <div className="relative mb-2">
-                <button
-                    onClick={() => setShowDropdown(!showDropdown)}
-                    className="px-2 py-1 border rounded hover:bg-gray-200"
-                    title="Show columns"
-                >
-                    <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
-                </button>
-                {showDropdown && (
-                    <div className="absolute bg-white border shadow-md mt-1 rounded w-48 z-10 max-h-48 overflow-auto">
-                        {["Purchase Price", "QC_Remark"].map((col) => (
-                            <label
-                                key={col}
-                                className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                            >
-                                <input
-                                    type="checkbox"
-                                    checked={dynamicHeaders.includes(col)}
-                                    onChange={() => toggleColumn(col)}
-                                    className="mr-2"
-                                    onFocus={() => setShowDropdown(true)}
-                                    onBlur={() => setTimeout(() => setShowDropdown(false), 300)}
-                                />
-                                {col}
-                            </label>
-                        ))}
-                    </div>
-                )}
-            </div>
+                <div className="relative mb-2">
+                    <button
+                        onClick={() => setShowDropdown(!showDropdown)}
+                        className="px-2 py-1 border rounded hover:bg-gray-200"
+                        title="Show columns"
+                    >
+                        <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
+                    </button>
+                    {showDropdown && (
+                        <div className="absolute bg-white border shadow-md mt-1 rounded w-48 z-10 max-h-48 overflow-auto">
+                            {["Purchase Price", "QC_Remark"].map((col) => (
+                                <label
+                                    key={col}
+                                    className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        checked={dynamicHeaders.includes(col)}
+                                        onChange={() => toggleColumn(col)}
+                                        className="mr-2"
+                                        onFocus={() => setShowDropdown(true)}
+                                        onBlur={() => setTimeout(() => setShowDropdown(false), 300)}
+                                    />
+                                    {col}
+                                </label>
+                            ))}
+                        </div>
+                    )}
+                </div>
             )}
             <div>
                 <CustomTableCompoent
