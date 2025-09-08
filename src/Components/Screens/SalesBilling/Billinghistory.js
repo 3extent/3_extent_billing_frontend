@@ -5,21 +5,23 @@ import InputComponent from "../../CustomComponents/InputComponent/InputComponent
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
+import { useNavigate } from "react-router-dom";
 function Billinghistory() {
+    const navigate=useNavigate();
     const [rows, setRows] = useState([]);
-    const [loading,setLoading]=useState(false)
+    const [loading, setLoading] = useState(false)
     const [customerName, setCustomerName] = useState("");
     const [contactNo, setContactNo] = useState("");
     const [paymentStatus, setPaymentStatus] = useState("");
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
-     const [selectAllDates, setSelectAllDates] = useState(false);
-        const formatDate = (date) => date.toISOString().split('T')[0];
-        const today = new Date();
-        const sevenDaysAgo = new Date();
-        sevenDaysAgo.setDate(today.getDate() - 7);
-        const todayFormatted = formatDate(today);
-        const sevenDaysAgoFormatted = formatDate(sevenDaysAgo);
+    const [selectAllDates, setSelectAllDates] = useState(false);
+    const formatDate = (date) => date.toISOString().split('T')[0];
+    const today = new Date();
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(today.getDate() - 7);
+    const todayFormatted = formatDate(today);
+    const sevenDaysAgoFormatted = formatDate(sevenDaysAgo);
     useEffect(() => {
         setStartDate(sevenDaysAgoFormatted);
         setEndDate(todayFormatted);
@@ -28,11 +30,12 @@ function Billinghistory() {
     const getBilllinghistoryCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
-            const billingformattedRows = response.data.map((bill,index) => ({
-                "Bill id": index+1,
+            const billingformattedRows = response.data.map((bill, index) => ({
+                "Bill id": index + 1,
                 "Date": bill.createdAt,
                 "Customer Name": bill.customer.name,
-                "Contact Number": bill.customer.contact_number
+                "Contact Number": bill.customer.contact_number,
+                 _id: bill._id
             }));
             console.log("Formatted Billing Rows: ", billingformattedRows);
             setRows(billingformattedRows);
@@ -51,7 +54,7 @@ function Billinghistory() {
         if (paymentStatus) {
             url += `&status=${paymentStatus}`
         }
-         if (!selectAllDates) {
+        if (!selectAllDates) {
             if (startDate) url += `&startDate=${startDate}`;
             if (endDate) url += `&endDate=${endDate}`;
         }
@@ -61,10 +64,10 @@ function Billinghistory() {
             url: url,
             data: {},
             callback: getBilllinghistoryCallBack,
-            setLoading:setLoading
+            setLoading: setLoading
         })
     }
-     const handleDateChange = (value, setDate) => {
+    const handleDateChange = (value, setDate) => {
         const todayFormatted = new Date().toISOString().split('T')[0];
         if (value > todayFormatted) {
             setDate(todayFormatted);
@@ -72,8 +75,13 @@ function Billinghistory() {
             setDate(value);
         }
     };
+     const handleRowClick = (row) => {
+        if (row._id) {
+            navigate(`/singleBillHistory/${row._id}`);
+        }
+    };
     const handleSearchFilter = () => {
-        getBillinghistoryAllData({ contactNo, paymentStatus, customerName, startDate, endDate});
+        getBillinghistoryAllData({ contactNo, paymentStatus, customerName, startDate, endDate });
     }
     const handleResetFilter = () => {
         setContactNo("");
@@ -86,7 +94,7 @@ function Billinghistory() {
     }
     return (
         <div>
-            {loading && <Spinner/>}
+            {loading && <Spinner />}
             <div className='text-xl font-serif mb-4'>Billing History</div>
             <div className="flex items-center gap-4 ">
                 <InputComponent
@@ -111,7 +119,7 @@ function Billinghistory() {
                     options={PAYMENTSTATUS_OPTIONS}
                     className="w-[180px]"
                 />
-                 <label className='flex items-center gap-2 text-sm'>
+                <label className='flex items-center gap-2 text-sm'>
                     <input
                         type="checkbox"
                         checked={selectAllDates}
@@ -119,7 +127,7 @@ function Billinghistory() {
                     />
                     All Data
                 </label>
-                  <InputComponent
+                <InputComponent
                     type="date"
                     placeholder="Start Date"
                     inputClassName="w-[190px] mb-5"
@@ -155,6 +163,7 @@ function Billinghistory() {
                 <CustomTableCompoent
                     headers={BILLINGHISTORY_COLOUMNS}
                     rows={rows}
+                    onRowClick={handleRowClick}
                 />
             </div>
         </div>

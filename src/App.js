@@ -14,6 +14,7 @@ import AddModels from './Components/Screens/Brands/AddModels';
 import AddSupplier from './Components/Screens/Supplier/AddSupplier';
 import AddCustomer from './Components/Screens/Customer/AddCustomer';
 import Billinghistory from './Components/Screens/SalesBilling/Billinghistory';
+import SingleBillHistory from './Components/Screens/SalesBilling/SingleBillHistroy';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, isAuthenticated }) => {
@@ -123,6 +124,7 @@ function App() {
                 <Billinghistory />
               </ProtectedRoute>
             } />
+             <Route path="/singleBillHistory/:billId" element={<SingleBillHistory/>} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
