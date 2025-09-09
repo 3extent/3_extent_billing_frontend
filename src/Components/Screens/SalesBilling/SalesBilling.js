@@ -7,6 +7,7 @@ import { SALESBILLING_COLOUMNS } from "./Constants";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
 import { useNavigate } from "react-router-dom";
+import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
 export default function SalesBilling() {
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -28,6 +29,8 @@ export default function SalesBilling() {
     const [cashAmount, setCashAmount] = useState("");
     const [onlineAmount, setOnlineAmount] = useState("");
     const [card, setCard] = useState("");
+    const totalAmount = 10000;
+    const [pendingAmount, setPendingAmount] = useState(totalAmount);
     const toggleColumn = (columnName) => {
         if (dynamicHeaders.includes(columnName)) {
             setDynamicHeaders(dynamicHeaders.filter(col => col !== columnName));
@@ -57,6 +60,13 @@ export default function SalesBilling() {
             getsalesbillingAllData();
         }
     }, [selectedImei]);
+    useEffect(() => {
+        const cash = Number(cashAmount);
+        const online = Number(onlineAmount);
+        const cardAmt = Number(card);
+        const pending = totalAmount - (cash + online + cardAmt);
+        setPendingAmount(pending);
+    }, [cashAmount, card, onlineAmount]);
     const getCustomerAllData = () => {
         const url = 'https://3-extent-billing-backend.vercel.app/api/users?role=CUSTOMER';
         apiCall({
@@ -105,7 +115,6 @@ export default function SalesBilling() {
     const getsalesbillingCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
-
             const productFormattedRows = response.data.map((product, index) => ({
                 "Sr.No": rows.length + index + 1,
                 "date": product.createdAt,
@@ -115,7 +124,7 @@ export default function SalesBilling() {
                 "Rate": product.sales_price,
                 "Purchase Price": product.purchase_price,
                 "Grade": product.grade,
-                "Box": product.box,
+                "Accessories": product.accessories,
                 "QC-Remark": product.qc_remark
             }));
             const existingImeis = rows.map(row => row["IMEI NO"]);
@@ -145,15 +154,7 @@ export default function SalesBilling() {
             setLoading: setLoading
         })
     }
-    console.log("rows", rows);
-    const billsData = {
-        customer_name: customerName,
-        contact_number: selectedContactNo,
-        products: rows.map((row) => ({
-            imei_number: row["IMEI NO"],
-            rate: row["Rate"],
-        })),
-    };
+
     const billsCallback = (response) => {
         console.log("response: ", response);
         if (response.status === 200) {
@@ -162,19 +163,39 @@ export default function SalesBilling() {
             setSelectedImei("");
             setCustomerName("");
             setSelectedContactNo("");
+            setOnlineAmount("");
+            setCashAmount("");
+            setCard("");
+            setShowPaymentPopup(false);
+            setPendingAmount(totalAmount);
         } else {
             console.log("Error");
         }
     };
     const handleSaveData = () => {
         setShowPaymentPopup(true);
+    };
+    const handlePrintButton = () => {
+         const billsData = {
+            customer_name: customerName,
+            contact_number: selectedContactNo,
+            products: rows.map((row) => ({
+                imei_number: row["IMEI NO"],
+                rate: row["Rate"],
+            })),
+            payment: {
+                cash: Number(cashAmount),
+                online: Number(onlineAmount),
+                card: Number(card),
+            },
+        };
         apiCall({
             method: 'POST',
             url: 'https://3-extent-billing-backend.vercel.app/api/billings',
             data: billsData,
             callback: billsCallback,
         })
-    };
+    }
     return (
         <div>
             {loading && <Spinner />}
@@ -266,60 +287,25 @@ export default function SalesBilling() {
                     icon="fa fa-pencil-square-o"
                     buttonClassName="py-1 px-3 text-sm font-bold"
                 />
-                <PrimaryButtonComponent
+                {/* <PrimaryButtonComponent
                     label="View"
                     icon="fa fa-dashcube"
                     buttonClassName="py-1 px-3 text-sm font-bold"
-                />
+                /> */}
             </div>
             {showPaymentPopup && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                    <div className="bg-white p-5 rounded shadow-lg w-[300px]">
-                        <div className="text-lg font-bold  text-center">Payment Method</div>
-                        <div className="flex gap-2 items-center justify-center">
-                            <label className="font-bold w-[60px]">Cash:</label>
-                            <InputComponent
-                                type="text"
-                                placeholder=""
-                                value={cashAmount}
-                                onChange={(e) => setCashAmount(e.target.value)}
-                                inputClassName=" w-[150px]"
-                            />
-                        </div>
-                        <div className="flex gap-2 items-center justify-center ">
-                            <label className="font-bold w-[60px]">Online:</label>
-                            <InputComponent
-                                type="text"
-                                placeholder=""
-                                value={onlineAmount}
-                                onChange={(e) => setOnlineAmount(e.target.value)}
-                                inputClassName="w-[150px] "
-                            />
-                        </div>
-                        <div className="flex gap-2 items-center mb-2 justify-center ">
-                            <label className="font-bold w-[60px]">card:</label>
-                            <InputComponent
-                                type="text"
-                                placeholder=""
-                                value={card}
-                                onChange={(e) => setCard(e.target.value)}
-                                inputClassName="w-[150px] "
-                            />
-                        </div>
-                        <div className="flex justify-end gap-3">
-                            <PrimaryButtonComponent
-                                label="Cancel"
-                                buttonClassName="py-1 px-3 text-sm font-bold"
-                                onClick={() => setShowPaymentPopup(false)}
-                            />
-                            <PrimaryButtonComponent
-                                label="Print"
-                                buttonClassName="py-1 px-3 text-sm font-bold"
-                            // onClick={handleConfirmPayment}
-                            />
-                        </div>
-                    </div>
-                </div>
+                <CustomPopUpComponet
+                    totalAmount={totalAmount}
+                    cashAmount={cashAmount}
+                    onlineAmount={onlineAmount}
+                    card={card}
+                    pendingAmount={pendingAmount}
+                    setCashAmount={setCashAmount}
+                    setOnlineAmount={setOnlineAmount}
+                    setCard={setCard}
+                    handleCancelButton={() => setShowPaymentPopup(false)}
+                    handlePrintButton={handlePrintButton}
+                />
             )}
         </div>
     );
