@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useRef } from 'react';
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import CustomBarcodePrintComponent from '../../CustomComponents/CustomBarcodePrintComponent/CustomBarcodePrintComponent';
@@ -9,6 +9,7 @@ import { apiCall, Spinner } from '../../../Util/AxiosUtils';
 import JsBarcode from 'jsbarcode';
 
 function SingleProductStockIn() {
+  const barcodeRef = useRef();
   const [modelOptions, setModelOptions] = useState([]);
   const [loading, setLoading] = useState(false)
   const [supplierNameOptions, setSupplierNameOPtions] = useState([]);
@@ -89,7 +90,7 @@ function SingleProductStockIn() {
     }
   }
   const addProductStockIn = () => {
-    handlePrint({ modelName: modelName, grade: productData.grade, imei_number: productData.imei_number })
+    handlePrint({ modelName: productData.model_name, grade: productData.grade, imei_number: productData.imei_number })
     console.log('productData: ', productData);
     apiCall({
       method: "POST",
@@ -189,58 +190,7 @@ function SingleProductStockIn() {
       callback: getSupplierCallBack,
     })
   }
-  const printBarcode = (barcodeList) => {
-    console.log('barcodeList: ', barcodeList);
-    const printWindow = window.open('', '', 'width=600,height=800');
-    if (!printWindow) {
-      alert('Popup blocked! Please allow popups for this site.');
-      return;
-    }
-    const barcodeHTML = barcodeList
-      .map(
-        (code) => `<div style="page-break-after: always; text-align: left; margin-top: 100px;font-style:bold;width:50%">
-                            <div style="margin-top: 10px; font-size: 18px;text-align: left;">Model : ${code.modelName}</div>
-                            <div style="margin-top: 10px; font-size: 18px;text-align: left;">Grade : ${code.grade}</div>
-                            <svg id="barcode"></svg>
-                           </div>`
-      )
-      .join('');
-    printWindow.document.write(`
-      <html>
-        <head>
-          <title>Print Barcode</title>
-          <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-          <style>
-            body {
-              font-family: Arial, sans-serif;
-              margin: 0;
-              padding: 20px;
-              text-align: center;
-            }
-          </style>
-        </head>
-        <body>
-          ${barcodeHTML}
-          <script>
-            window.onload = function() {
-              JsBarcode("#barcode", "${barcodeList[0].imei}", {
-                format: "CODE128",
-                width: 3,
-                height: 50,
-                displayValue: true
-              });
-              window.print();
-              window.onafterprint = function() {
-                window.close();
-              };
-            }
-          </script>
-        </body>
-      </html>
-    `);
-
-    printWindow.document.close();
-  };
+  
   return (
     <div className="grid grid-cols-2 gap-x-5 gap-y-2">
       {loading && <Spinner />}
