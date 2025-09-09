@@ -6,7 +6,7 @@ import DropdownCompoent from '../../CustomComponents/DropdownCompoent/DropdownCo
 import { PRODUCT_COLOUMNS, STATUS_OPTIONS } from './Constants';
 import { apiCall, Spinner } from '../../../Util/AxiosUtils';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
-import { exportToExcel } from '../../../Util/Utility';
+import { exportToExcel, handleBarcodePrint } from '../../../Util/Utility';
 function ListOfProducts() {
     const [rows, setRows] = useState([]);
     const [imeiNumber, setIMEINumber] = useState();
@@ -31,6 +31,7 @@ function ListOfProducts() {
         getProductsAllData({});
         getBrandsAllData();
     }, []);
+
     const getProductsCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
@@ -47,6 +48,7 @@ function ListOfProducts() {
                         label="Barcode"
                         icon="fa fa-print"
                         buttonClassName="py-1 px-3 text-[12px] font-semibold"
+                        onClick={() => handleBarcodePrint({ modelName: product.model.name, grade: product.grade, imei_number: product.imei_number })}
                     />
                 )
             }))
@@ -209,7 +211,7 @@ function ListOfProducts() {
                 <PrimaryButtonComponent
                     label="Export to Excel"
                     buttonClassName="py-1 px-5 text-xl font-bold"
-                    onClick={handleExportToExcel} 
+                    onClick={handleExportToExcel}
                 />
             </div>
             <div>
