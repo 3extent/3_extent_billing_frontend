@@ -5,13 +5,14 @@ import InputComponent from "../../CustomComponents/InputComponent/InputComponent
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { CUSTOMER_TYPE_OPTIONS } from "./Constants";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function AddCustomer() {
-    const [loading, setLoading] = useState(false); 
-      const navigate = useNavigate();
-      const handleBack = () => {
-    navigate(-1);
-};
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+    const handleBack = () => {
+        navigate(-1);
+    };
     const [customerData, setCustomerData] = useState({
         name: "",
         address: "",
@@ -26,9 +27,13 @@ function AddCustomer() {
         setCustomerData({ ...customerData, [name]: value });
     };
     const addCustomerCallback = (response) => {
-         navigate("/customer");
+        // navigate("/customer");
         console.log('response: ', response);
         if (response.status === 200) {
+            toast.success("Customer added successfully!", {
+                position: "top-center",
+                autoClose: 2000,
+            });
             setCustomerData({
                 name: "",
                 address: "",
@@ -38,8 +43,17 @@ function AddCustomer() {
                 pan_number: "",
                 role: "CUSTOMER",
             });
+            setTimeout(() => {
+                navigate("/customer");
+            }, 2000);
         } else {
-            console.log("Error");
+            toast.error("Failed to add customer", {
+                position: "top-center",
+                autoClose: 2000,
+            });
+            setTimeout(() => {
+                navigate("/customer");
+            }, 2000);
         }
     };
     const addCustomer = () => {
@@ -48,13 +62,13 @@ function AddCustomer() {
             url: "https://3-extent-billing-backend.vercel.app/api/users",
             data: customerData,
             callback: addCustomerCallback,
-            setLoading:setLoading
+            setLoading: setLoading
 
         });
     };
     return (
         <div>
-            {loading && <Spinner/>}
+            {loading && <Spinner />}
             <div className='text-xl font-serif mb-4'>Add Customer</div>
             <div className="grid grid-cols-2 gap-x-5 gap-y-2">
                 <InputComponent
@@ -120,11 +134,11 @@ function AddCustomer() {
 
             </div>
             <div className="mt-4 flex justify-center">
-                 <PrimaryButtonComponent
-                                label="Back"
-                                icon="fa fa-arrow-left"
-                                buttonClassName="mt-2 py-1 px-5 mr-10 text-xl font-bold"
-                                onClick={handleBack}
+                <PrimaryButtonComponent
+                    label="Back"
+                    icon="fa fa-arrow-left"
+                    buttonClassName="mt-2 py-1 px-5 mr-10 text-xl font-bold"
+                    onClick={handleBack}
                 />
                 <PrimaryButtonComponent
                     label="Save"

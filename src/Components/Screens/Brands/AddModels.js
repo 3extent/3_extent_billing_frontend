@@ -4,6 +4,7 @@ import InputComponent from "../../CustomComponents/InputComponent/InputComponent
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 export default function AddModels() {
     const navigate = useNavigate();
     const handleBack = () => {
@@ -14,6 +15,13 @@ export default function AddModels() {
     const [selectedCombinations, setSelectedCombinations] = useState([]);
     const [showData, setShowData] = useState(false);
     const [loading, setLoading] = useState(false)
+    // const [error, setError] = useState("");
+    const [error, setError] = useState({
+        brand_name: "",
+        name: "",
+        RAM: "",
+        storage: ""
+    });
     const [modelData, setModelData] = useState({
         brand_name: "",
         name: "",
@@ -58,7 +66,11 @@ export default function AddModels() {
     }
     const addModelCallback = (response) => {
         console.log("response:", response);
-        if (response.status === 200) {
+        if (response.status === 201) {
+            toast.success("Model added successfully!", {
+                position: "top-center",
+                autoClose: 2000,
+            });
             setModelData({
                 brand_name: "",
                 name: "",
@@ -68,11 +80,88 @@ export default function AddModels() {
             setSelectedCombinations([]);
             setPossibleCombinations([]);
             setShowData(false);
+            setTimeout(() => {
+                navigate("/models");
+            }, 2000);
         } else {
-            console.log("error");
+            toast.error("Some models were skipped", {
+                position: "top-center"
+            });
+            setTimeout(() => {
+                navigate("/models");
+            }, 2000);
         }
     };
+
+    // const addModel = () => {
+    //     if (modelData.brand_name.trim() === "") {
+    //         setError("Please enter Brand Name");
+    //         return;
+    //     }
+    //     if (modelData.name.trim() === "") {
+    //         setError("Please enter Model Name");
+    //         return;
+    //     }
+    //     if (modelData.RAM.trim() === "") {
+    //         setError("Please enter RAM");
+    //         return;
+    //     }
+    //     if (modelData.storage.trim() === "") {
+    //         setError("Please enter Storage");
+    //         return;
+    //     }
+
+    //     if (selectedCombinations.length === 0) {
+    //         setError("Please select at least one RAM/Storage combination");
+    //         return;
+    //     }
+
+    //     setError("");
     const addModel = () => {
+        let errors = {
+            brand_name: "",
+            name: "",
+            RAM: "",
+            storage: ""
+        };
+        let hasError = false;
+
+        if (modelData.brand_name.trim() === "") {
+            errors.brand_name = "Please enter Brand Name";
+            hasError = true;
+        }
+        if (modelData.name.trim() === "") {
+            errors.name = "Please enter Model Name";
+            hasError = true;
+        }
+        if (modelData.RAM.trim() === "") {
+            errors.RAM = "Please enter RAM";
+            hasError = true;
+        }
+        if (modelData.storage.trim() === "") {
+            errors.storage = "Please enter Storage";
+            hasError = true;
+        }
+        if (selectedCombinations.length === 0) {
+            setError("Please select at least one RAM/Storage combination");
+            // toast.error("Please select at least one RAM/Storage combination");
+
+            hasError = true;
+        }
+
+        if (hasError) {
+            setError(errors);
+            return;
+        }
+
+        // Clear errors if no validation issues
+        setError({
+            brand_name: "",
+            name: "",
+            RAM: "",
+            storage: ""
+        });
+
         apiCall({
             method: "POST",
             url: "https://3-extent-billing-backend.vercel.app/api/models",
@@ -112,47 +201,67 @@ export default function AddModels() {
             {loading && <Spinner />}
             <div className="text-xl font-serif mb-4">Add Model</div>
             <div className="grid grid-cols-2">
-                <CustomDropdownInputComponent
-                    name="Brand Name"
-                    type="text"
-                    placeholder="Select a brand"
-                    dropdownClassName="w-[90%]"
-                    options={brandOptions}
-                    value={modelData.brand_name}
-                    onChange={(value) => setModelData({ ...modelData, brand_name: value })}
-                />
-                <InputComponent
-                    label="Model Name"
-                    name="name"
-                    type="text"
-                    placeholder="Enter Model Name"
-                    inputClassName="w-[80%]"
-                    labelClassName="font-bold"
-                    value={modelData.name}
-                    onChange={handleInputChange}
-                />
+                <div>
+                    <CustomDropdownInputComponent
+                        name="Brand Name"
+                        type="text"
+                        placeholder="Select a brand"
+                        dropdownClassName="w-[90%]"
+                        options={brandOptions}
+                        value={modelData.brand_name}
+                        onChange={(value) => setModelData({ ...modelData, brand_name: value })}
+                    />
+                    {error.brand_name && (
+                        <div className="text-red-600 mt-1 ml-1">{error.brand_name}</div>
+                    )}
+                </div>
+                <div>
+                    <InputComponent
+                        label="Model Name"
+                        name="name"
+                        type="text"
+                        placeholder="Enter Model Name"
+                        inputClassName="w-[80%]"
+                        labelClassName="font-bold"
+                        value={modelData.name}
+                        onChange={handleInputChange}
+                    />
+                    {error.name && (
+                        <div className="text-red-600 mt-1 ml-1">{error.name}</div>
+                    )}
+                </div>
             </div>
             <div className="grid grid-cols-2 mt-3">
-                <InputComponent
-                    label="RAM"
-                    name="RAM"
-                    type="text"
-                    placeholder="Enter RAM"
-                    inputClassName="w-[90%]"
-                    labelClassName="font-bold"
-                    value={modelData.RAM}
-                    onChange={handleInputChange}
-                />
-                <InputComponent
-                    label="Storage"
-                    name="storage"
-                    type="text"
-                    placeholder="Enter Storage"
-                    inputClassName="w-[80%]"
-                    labelClassName="font-bold"
-                    value={modelData.storage}
-                    onChange={handleInputChange}
-                />
+                <div>
+                    <InputComponent
+                        label="RAM"
+                        name="RAM"
+                        type="text"
+                        placeholder="Enter RAM"
+                        inputClassName="w-[90%]"
+                        labelClassName="font-bold"
+                        value={modelData.RAM}
+                        onChange={handleInputChange}
+                    />
+                    {error.RAM && (
+                        <div className="text-red-600 mt-1 ml-1">{error.RAM}</div>
+                    )}
+                </div>
+                <div>
+                    <InputComponent
+                        label="Storage"
+                        name="storage"
+                        type="text"
+                        placeholder="Enter Storage"
+                        inputClassName="w-[80%]"
+                        labelClassName="font-bold"
+                        value={modelData.storage}
+                        onChange={handleInputChange}
+                    />
+                    {error.storage && (
+                        <div className="text-red-600 mt-1 ml-1">{error.storage}</div>
+                    )}
+                </div>
             </div>
             <div className="flex justify-center mt-5">
                 <PrimaryButtonComponent

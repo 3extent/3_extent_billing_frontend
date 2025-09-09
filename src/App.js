@@ -15,6 +15,7 @@ import AddSupplier from './Components/Screens/Supplier/AddSupplier';
 import AddCustomer from './Components/Screens/Customer/AddCustomer';
 import Billinghistory from './Components/Screens/SalesBilling/Billinghistory';
 import SingleBillHistory from './Components/Screens/SalesBilling/SingleBillHistroy';
+import { ToastContainer } from 'react-toastify';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, isAuthenticated }) => {
@@ -58,6 +59,7 @@ function App() {
           <div></div>
         )}
         <div className={loginStatus ? "w-[83%] p-4" : "w-full"}>
+           <ToastContainer />
           <Routes>
             <Route path="/" element={
               <PublicRoute isAuthenticated={loginStatus}>
