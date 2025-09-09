@@ -6,8 +6,9 @@ import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponen
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
+import { exportToExcel } from "../../../Util/Utility";
 function Billinghistory() {
-    const navigate=useNavigate();
+    const navigate = useNavigate();
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false)
     const [customerName, setCustomerName] = useState("");
@@ -35,7 +36,7 @@ function Billinghistory() {
                 "Date": bill.createdAt,
                 "Customer Name": bill.customer.name,
                 "Contact Number": bill.customer.contact_number,
-                 _id: bill._id
+                _id: bill._id
             }));
             console.log("Formatted Billing Rows: ", billingformattedRows);
             setRows(billingformattedRows);
@@ -75,7 +76,7 @@ function Billinghistory() {
             setDate(value);
         }
     };
-     const handleRowClick = (row) => {
+    const handleRowClick = (row) => {
         if (row._id) {
             navigate(`/singleBillHistory/${row._id}`);
         }
@@ -92,6 +93,11 @@ function Billinghistory() {
         setSelectAllDates();
         getBillinghistoryAllData({});
     }
+
+    const handleExportToExcel = () => {
+        exportToExcel(rows, "BillingHistory.xlsx");
+    };
+
     return (
         <div>
             {loading && <Spinner />}
@@ -157,6 +163,11 @@ function Billinghistory() {
                     label="Reset"
                     buttonClassName="ml-5 py-1 px-5 text-xl font-bold"
                     onClick={handleResetFilter}
+                />
+                <PrimaryButtonComponent
+                    label="Export to Excel"
+                    buttonClassName="ml-5 py-1 px-5 text-xl font-bold"
+                    onClick={handleExportToExcel} 
                 />
             </div>
             <div>

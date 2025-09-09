@@ -7,6 +7,7 @@ import { SALESBILLING_COLOUMNS } from "./Constants";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
 import { useNavigate } from "react-router-dom";
+import { exportToExcel, generateAndSavePdf } from "../../../Util/Utility";
 import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
 export default function SalesBilling() {
     const [rows, setRows] = useState([]);
@@ -154,7 +155,15 @@ export default function SalesBilling() {
             setLoading: setLoading
         })
     }
-
+    console.log("rows", rows);
+    const billsData = {
+        customer_name: customerName,
+        contact_number: selectedContactNo,
+        products: rows.map((row) => ({
+            imei_number: row["IMEI NO"],
+            rate: row["Rate"],
+        })),
+    };
     const billsCallback = (response) => {
         console.log("response: ", response);
         if (response.status === 200) {
@@ -174,9 +183,14 @@ export default function SalesBilling() {
     };
     const handleSaveData = () => {
         setShowPaymentPopup(true);
+        if (rows.length === 0) {
+            alert("Add at list one bill");
+            return;
+        }
+        generateAndSavePdf(customerName, selectedContactNo, dynamicHeaders, rows);
     };
     const handlePrintButton = () => {
-         const billsData = {
+        const billsData = {
             customer_name: customerName,
             contact_number: selectedContactNo,
             products: rows.map((row) => ({
@@ -195,7 +209,10 @@ export default function SalesBilling() {
             data: billsData,
             callback: billsCallback,
         })
-    }
+    };
+    const handleExportToExcel = () => {
+        exportToExcel(rows, "salesbillingData.xlsx");
+    };
     return (
         <div>
             {loading && <Spinner />}
@@ -234,6 +251,12 @@ export default function SalesBilling() {
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                     inputClassName="w-[190px] mb-6"
+                />
+                <PrimaryButtonComponent
+                    label="Export to Excel"
+                    buttonClassName=" py-1 px-5 text-xl font-bold"
+                    onClick={handleExportToExcel}
+
                 />
             </div>
             {rows.length > 0 && (

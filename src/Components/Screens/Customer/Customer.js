@@ -7,13 +7,15 @@ import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
+import { exportToExcel } from "../../../Util/Utility.js";
+
 export default function Customer() {
     const navigate = useNavigate();
     const [customerName, setCustomerName] = useState();
     const [contactNo, setContactNumber] = useState();
-        const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
 
-    
+
     const navigateAddCustomer = () => {
         navigate("/addcustomer")
     }
@@ -59,9 +61,13 @@ export default function Customer() {
         setCustomerName('');
         getCustomerAllData({});
     }
+    const handleExportToExcel = () => {
+        exportToExcel(rows, "CustomerData.xlsx"); 
+    };
+
     return (
         <div className="w-full">
-              {loading && <Spinner/>}
+            {loading && <Spinner />}
             <CustomHeaderComponent
                 name="List Of Customer Information"
                 label="Add Customer"
@@ -93,6 +99,11 @@ export default function Customer() {
                     label="Reset"
                     buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
                     onClick={handleResetFilter}
+                />
+                <PrimaryButtonComponent
+                    label="Export to Excel"
+                    buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
+                    onClick={handleExportToExcel}
                 />
             </div>
             <div>
