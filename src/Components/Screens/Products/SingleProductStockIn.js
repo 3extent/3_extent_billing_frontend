@@ -6,10 +6,8 @@ import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponen
 import { ACCESSORIES_OPTIONS, GRADE_OPTIONS, STATUS_OPTIONS, } from './Constants';
 import CustomDropdownInputComponent from '../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent';
 import { apiCall, Spinner } from '../../../Util/AxiosUtils';
-import JsBarcode from 'jsbarcode';
 
 function SingleProductStockIn() {
-  const barcodeRef = useRef();
   const [modelOptions, setModelOptions] = useState([]);
   const [loading, setLoading] = useState(false)
   const [supplierNameOptions, setSupplierNameOPtions] = useState([]);
@@ -55,20 +53,6 @@ function SingleProductStockIn() {
     getModelsAllData();
     getSupplierAllData();
   }, []);
-
-  useEffect(() => {
-    if (productData.imei_number && barcodeRef.current) {
-      JsBarcode(barcodeRef.current, productData.imei_number, {
-        format: 'CODE128',
-        lineColor: '#000',
-        width: 2,           // Narrower bars for compact layout
-        height: 100,         // Shorter height to fit within page bounds
-        displayValue: true, // Shows the IMEI below the barcode
-        fontSize: 20,       // Adjust font size for readability
-        margin: 10,         // Adds padding around the barcode
-      });
-    }
-  }, [productData.imei_number]);
 
   const getModelsAllData = () => {
     let url = "https://3-extent-billing-backend.vercel.app/api/models";
