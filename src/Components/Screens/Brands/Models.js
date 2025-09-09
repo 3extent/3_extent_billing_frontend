@@ -8,6 +8,7 @@ import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
+import { exportToExcel } from "../../../Util/Utility";
 export default function Models() {
     const [rows, setRows] = useState([]);
     const [modelName, setModelName] = useState();
@@ -81,6 +82,9 @@ export default function Models() {
         setModelName('');
         getModelsAllData({});
     }
+        const handleExportToExcel = () => {
+        exportToExcel(rows, "ModelsData.xlsx"); 
+    };
     return (
         <div>
               {loading && <Spinner/>}
@@ -116,6 +120,11 @@ export default function Models() {
                     label="Reset"
                     buttonClassName="mt-1 py-1 px-5 text-xl font-bold"
                     onClick={handleResetFilter}
+                />
+                 <PrimaryButtonComponent
+                    label="Export to Excel"
+                    buttonClassName="mt-1 py-1 px-5 text-xl font-bold"
+                    onClick={handleExportToExcel}
                 />
             </div>
             <CustomTableCompoent

@@ -6,6 +6,7 @@ import DropdownCompoent from '../../CustomComponents/DropdownCompoent/DropdownCo
 import { PRODUCT_COLOUMNS, STATUS_OPTIONS } from './Constants';
 import { apiCall, Spinner } from '../../../Util/AxiosUtils';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
+import { exportToExcel } from '../../../Util/Utility';
 function ListOfProducts() {
     const [rows, setRows] = useState([]);
     const [imeiNumber, setIMEINumber] = useState();
@@ -43,9 +44,9 @@ function ListOfProducts() {
                 "Grade": product.grade,
                 "Barcode": (
                     <PrimaryButtonComponent
-                    label="Barcode"
-                    icon="fa fa-print"
-                    buttonClassName="py-1 px-3 text-[12px] font-semibold"
+                        label="Barcode"
+                        icon="fa fa-print"
+                        buttonClassName="py-1 px-3 text-[12px] font-semibold"
                     />
                 )
             }))
@@ -124,6 +125,9 @@ function ListOfProducts() {
         setSelectAllDates();
         getProductsAllData({});
     }
+    const handleExportToExcel = () => {
+        exportToExcel(rows, "ProductList.xlsx");
+    };
     return (
         <div className='w-full'>
             {loading && <Spinner />}
@@ -135,7 +139,7 @@ function ListOfProducts() {
                     inputClassName="mb-2 w-[190px]"
                     value={imeiNumber}
                     maxLength={15}
-                     onChange={(e) => setIMEINumber(e.target.value)}
+                    onChange={(e) => setIMEINumber(e.target.value)}
                 />
                 <DropdownCompoent
                     placeholder="Select Brands"
@@ -201,6 +205,11 @@ function ListOfProducts() {
                     label="Reset"
                     buttonClassName="py-1 px-5 text-xl font-bold"
                     onClick={handleResetFilter}
+                />
+                <PrimaryButtonComponent
+                    label="Export to Excel"
+                    buttonClassName="py-1 px-5 text-xl font-bold"
+                    onClick={handleExportToExcel} 
                 />
             </div>
             <div>
