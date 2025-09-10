@@ -15,12 +15,12 @@ export default function AddModels() {
     const [selectedCombinations, setSelectedCombinations] = useState([]);
     const [showData, setShowData] = useState(false);
     const [loading, setLoading] = useState(false)
-    // const [error, setError] = useState("");
     const [error, setError] = useState({
         brand_name: "",
         name: "",
         RAM: "",
-        storage: ""
+        storage: "",
+        combination: ""
     });
     const [modelData, setModelData] = useState({
         brand_name: "",
@@ -31,6 +31,10 @@ export default function AddModels() {
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setModelData({ ...modelData, [name]: value });
+        setError((prevError) => ({
+            ...prevError,
+            [name]: "",
+        }));
     };
     const handleShowCombinations = async () => {
         const ramOptions = modelData.RAM
@@ -92,37 +96,13 @@ export default function AddModels() {
             }, 2000);
         }
     };
-
-    // const addModel = () => {
-    //     if (modelData.brand_name.trim() === "") {
-    //         setError("Please enter Brand Name");
-    //         return;
-    //     }
-    //     if (modelData.name.trim() === "") {
-    //         setError("Please enter Model Name");
-    //         return;
-    //     }
-    //     if (modelData.RAM.trim() === "") {
-    //         setError("Please enter RAM");
-    //         return;
-    //     }
-    //     if (modelData.storage.trim() === "") {
-    //         setError("Please enter Storage");
-    //         return;
-    //     }
-
-    //     if (selectedCombinations.length === 0) {
-    //         setError("Please select at least one RAM/Storage combination");
-    //         return;
-    //     }
-
-    //     setError("");
     const addModel = () => {
         let errors = {
             brand_name: "",
             name: "",
             RAM: "",
-            storage: ""
+            storage: "",
+            combination: ""
         };
         let hasError = false;
 
@@ -143,23 +123,19 @@ export default function AddModels() {
             hasError = true;
         }
         if (selectedCombinations.length === 0) {
-            setError("Please select at least one RAM/Storage combination");
-            // toast.error("Please select at least one RAM/Storage combination");
-
+            errors.combination = "Please select at least one RAM/Storage combination";
             hasError = true;
         }
-
         if (hasError) {
             setError(errors);
             return;
         }
-
-        // Clear errors if no validation issues
         setError({
             brand_name: "",
             name: "",
             RAM: "",
-            storage: ""
+            storage: "",
+            combination: ""
         });
 
         apiCall({
@@ -292,6 +268,9 @@ export default function AddModels() {
                             ))}
                         </div>
                     </ul>
+                    {error.combination && (
+                        <div className="text-red-600 mt-1 ml-1">{error.combination}</div>
+                    )}
                 </div>
             )}
             <div className="flex justify-center mt-3">

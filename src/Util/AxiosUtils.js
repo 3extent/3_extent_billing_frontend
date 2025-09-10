@@ -1,5 +1,5 @@
 import axios from "axios";
-export const apiCall = async ({ method, url, data, callback , setLoading}) => {
+export const apiCall = async ({ method, url, data, callback, setLoading }) => {
     console.log('method, url, data: ', method, url, data);
     if (setLoading) setLoading(true);
     try {
@@ -9,8 +9,15 @@ export const apiCall = async ({ method, url, data, callback , setLoading}) => {
         });
     } catch (error) {
         console.log("ERROR:", error);
-    }
-    finally {
+        if (error.response) {
+            callback(error.response);
+        } else {
+            callback({
+                status: 500,
+                data: { error: "Network or server error occurred" }
+            });
+        }
+    } finally {
         if (setLoading) setLoading(false);
     }
 };

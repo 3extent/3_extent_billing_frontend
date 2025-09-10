@@ -4,6 +4,7 @@ import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 export default function AddBrands() {
     const navigate = useNavigate();
     const { brand_id } = useParams();
@@ -31,33 +32,57 @@ export default function AddBrands() {
     const submitCallback = (response) => {
         setLoading(false);
         if (response.status === 200) {
+            toast.success("Brand updated successfully!", { position: "top-center", autoClose: 2000 });
             navigate("/brands");
+            // } else {
+            //     setError("Error occurred while saving brand");
+            // }
         } else {
-            setError("Error occurred while saving brand");
+            const errorMsg = response?.data?.error || "Error occurred while saving brand";
+            toast.error(errorMsg, { position: "top-center", autoClose: 2000 });
         }
     };
     const deleteCallback = (response) => {
         setLoading(false);
         if (response.status === 200) {
+            toast.success("Brand deleted successfully!", {
+                position: "top-center",
+                autoClose: 2000
+            });
             navigate("/brands");
         } else {
-            setError("Error occurred while deleting brand");
+            // setError("Error occurred while deleting brand");
+            const errorMsg = response?.data?.error || "Error occurred while deleting brand";
+            toast.error(errorMsg, {
+                position: "top-center",
+                autoClose: 2000
+            });
         }
     };
     const addBrandCallback = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
             console.log('response: ', response);
+            toast.success("Brand added successfully!", {
+                position: "top-center",
+                autoClose: 2000,
+            });
             setBrandData({ name: "" });
-            navigate("/brands")
+            setTimeout(() => {
+                navigate("/brands");
+            }, 2000);
         } else {
-            console.log("Error while adding brand");
+            const errorMsg = response?.data?.error || "Something went wrong";
+            toast.error(errorMsg, {
+                position: "top-center",
+                autoClose: 2000,
+            });
         }
     };
     const addBrand = () => {
         if (brandData.name.trim() === "") {
             console.log("Please enter brand name");
-            setError("please Enter Brand Name");
+            setError("Please enter brand name");
             return;
         }
         if (/[^a-zA-Z ]/.test(brandData.name)) {
