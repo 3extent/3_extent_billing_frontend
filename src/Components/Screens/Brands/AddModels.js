@@ -3,10 +3,11 @@ import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownI
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams, } from "react-router-dom";
 import { toast } from "react-toastify";
 export default function AddModels() {
     const navigate = useNavigate();
+    const { model_id } = useParams();
     const handleBack = () => {
         navigate(-1);
     };
@@ -92,31 +93,6 @@ export default function AddModels() {
             }, 2000);
         }
     };
-
-    // const addModel = () => {
-    //     if (modelData.brand_name.trim() === "") {
-    //         setError("Please enter Brand Name");
-    //         return;
-    //     }
-    //     if (modelData.name.trim() === "") {
-    //         setError("Please enter Model Name");
-    //         return;
-    //     }
-    //     if (modelData.RAM.trim() === "") {
-    //         setError("Please enter RAM");
-    //         return;
-    //     }
-    //     if (modelData.storage.trim() === "") {
-    //         setError("Please enter Storage");
-    //         return;
-    //     }
-
-    //     if (selectedCombinations.length === 0) {
-    //         setError("Please select at least one RAM/Storage combination");
-    //         return;
-    //     }
-
-    //     setError("");
     const addModel = () => {
         let errors = {
             brand_name: "",
@@ -161,22 +137,28 @@ export default function AddModels() {
             RAM: "",
             storage: ""
         });
+        if (model_id) {
+            editModelData();
+        } else {
+            addModelData();
+        };
 
-        apiCall({
-            method: "POST",
-            url: "https://3-extent-billing-backend.vercel.app/api/models",
-            data: {
-                brand_name: modelData.brand_name,
-                name: modelData.name,
-                ramStorage: selectedCombinations
-            },
-            callback: addModelCallback,
-            setLoading: setLoading
-        });
+        // apiCall({
+        //     method: "POST",
+        //     url: "https://3-extent-billing-backend.vercel.app/api/models",
+        //     data: {
+        //         brand_name: modelData.brand_name,
+        //         name: modelData.name,
+        //         ramStorage: selectedCombinations
+        //     },
+        //     callback: addModelCallback,
+        //     setLoading: setLoading
+        // });
     };
     useEffect(() => {
         getBrandsAllData();
-    }, []);
+        getBrandData();
+    }, [model_id]);
     const getBrandsAllData = () => {
         let url = "https://3-extent-billing-backend.vercel.app/api/brands";
         apiCall({
@@ -196,10 +178,86 @@ export default function AddModels() {
             console.log("Error");
         }
     }
+    const submitCallback = (response) => {
+        setLoading(false);
+        if (response.status === 200) {
+            navigate("/brands");
+        } else {
+            setError("Error occurred while saving brand");
+        }
+    };
+
+    const addModelData = () => {
+        apiCall({
+            method: "POST",
+            url: "https://3-extent-billing-backend.vercel.app/api/models",
+            data: {
+                brand_name: modelData.brand_name,
+                name: modelData.name,
+                ramStorage: selectedCombinations
+            },
+            callback: addModelCallback,
+            setLoading: setLoading
+        });
+    }
+    const editModelData = () => {
+        // apiCall({
+        //     method: "PUT",
+        //     url: `https://3-extent-billing-backend.vercel.app/api/models/${model_id}`,
+        //     data: modelData,
+        //     callback: submitCallback,
+        //     setLoading: setLoading
+        // });
+        apiCall({
+            method: "PUT",
+            url: `https://3-extent-billing-backend.vercel.app/api/models/${model_id}`,
+            data: {
+                brand_name: modelData.brand_name,
+                name: modelData.name,
+                ramStorage: selectedCombinations
+            },
+            callback: submitCallback,
+            setLoading: setLoading
+        });
+    }
+    const getBrandData = () => {
+        apiCall({
+            method: "GET",
+            url: `https://3-extent-billing-backend.vercel.app/api/models/${model_id}`,
+            data: {},
+            callback: (response) => {
+                setLoading(false);
+                if (response.status === 200) {
+                    setModelData({ name: response.data.name });
+                } else {
+                    setError("Failed to fetch brand data");
+                }
+            },
+            setLoading: setLoading
+        });
+    }
+    const deleteCallback = (response) => {
+        setLoading(false);
+        if (response.status === 200) {
+            navigate("/models");
+        } else {
+            setError("Error occurred while deleting model");
+        }
+    };
+    const handleDelete = () => {
+        setLoading(true);
+        apiCall({
+            method: "DELETE",
+            url: `https://3-extent-billing-backend.vercel.app/api/models/${model_id}`,
+            data: {},
+            callback: deleteCallback,
+            setLoading: setLoading
+        });
+    };
     return (
         <div>
             {loading && <Spinner />}
-            <div className="text-xl font-serif mb-4">Add Model</div>
+            <div className="text-xl font-serif mb-4">{model_id ? "Edit Model" : "Add Model"}</div>
             <div className="grid grid-cols-2">
                 <div>
                     <CustomDropdownInputComponent
@@ -307,6 +365,14 @@ export default function AddModels() {
                     buttonClassName="mt-2 py-1 px-5 text-xl font-bold"
                     onClick={addModel}
                 />
+                {model_id && (
+                    <PrimaryButtonComponent
+                        label="Delete"
+                        icon="fa fa-trash"
+                        buttonClassName="mt-2 py-1 px-5 text-xl font-bold text-white bg-red-400 bg-opacity-90 hover:bg-red-700"
+                        onClick={handleDelete}
+                    />
+                )}
             </div>
         </div>
     );
