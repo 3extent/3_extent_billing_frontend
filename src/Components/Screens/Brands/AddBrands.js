@@ -113,7 +113,7 @@ export default function AddBrands() {
     return (
         <div>
             {loading && <Spinner />}
-            <div className="text-xl font-serif mb-4">Add Brand</div>
+            <div className="text-xl font-serif mb-4">{id ? "Edit Brand" : "Add Brand"}</div>
             {error && (
                 <div className="text-red-600 mt-1 ml-1">
                     {error}
@@ -137,7 +137,7 @@ export default function AddBrands() {
                     onClick={handleBack}
                 />
                 <PrimaryButtonComponent
-                    label={id ? "Edit" : "Submit"}
+                    label="Submit"
                     icon="fa fa-bookmark-o"
                     buttonClassName="mt-2 py-1 px-5 text-xl font-bold"
                     onClick={addBrand}
