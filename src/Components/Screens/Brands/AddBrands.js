@@ -6,7 +6,7 @@ import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponen
 import { useNavigate, useParams } from "react-router-dom";
 export default function AddBrands() {
     const navigate = useNavigate();
-    const { id } = useParams();
+    const { brand_id } = useParams();
     const handleBack = () => {
         navigate(-1);
     };
@@ -16,23 +16,8 @@ export default function AddBrands() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     useEffect(() => {
-        if (id) {
-            apiCall({
-                method: "GET",
-                url: `https://3-extent-billing-backend.vercel.app/api/brands/${id}`,
-                data: {},
-                callback: (response) => {
-                    setLoading(false);
-                    if (response.status === 200) {
-                        setBrandData({ name: response.data.name });
-                    } else {
-                        setError("Failed to fetch brand data");
-                    }
-                },
-                setLoading: setLoading
-            });
-        }
-    }, [id]);
+        getBrandData();
+    }, [brand_id]);
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         const hasSpecialChar = /[^a-zA-Z ]/.test(value);
@@ -81,30 +66,51 @@ export default function AddBrands() {
         }
         setError("");
 
-        if (id) {
-            apiCall({
-                method: "PUT",
-                url: `https://3-extent-billing-backend.vercel.app/api/brands/${id}`,
-                data: brandData,
-                callback: submitCallback,
-                setLoading: setLoading
-            });
-
+        if (brand_id) {
+            editBrandData();
         } else {
-            apiCall({
-                method: "POST",
-                url: "https://3-extent-billing-backend.vercel.app/api/brands",
-                data: brandData,
-                callback: addBrandCallback,
-                setLoading: setLoading,
-            });
+            addBrandData();
         };
+    }
+    const addBrandData = () => {
+        apiCall({
+            method: "POST",
+            url: "https://3-extent-billing-backend.vercel.app/api/brands",
+            data: brandData,
+            callback: addBrandCallback,
+            setLoading: setLoading,
+        });
+    }
+    const editBrandData = () => {
+        apiCall({
+            method: "PUT",
+            url: `https://3-extent-billing-backend.vercel.app/api/brands/${brand_id}`,
+            data: brandData,
+            callback: submitCallback,
+            setLoading: setLoading
+        });
+    }
+    const getBrandData = () => {
+        apiCall({
+            method: "GET",
+            url: `https://3-extent-billing-backend.vercel.app/api/brands/${brand_id}`,
+            data: {},
+            callback: (response) => {
+                setLoading(false);
+                if (response.status === 200) {
+                    setBrandData({ name: response.data.name });
+                } else {
+                    setError("Failed to fetch brand data");
+                }
+            },
+            setLoading: setLoading
+        });
     }
     const handleDelete = () => {
         setLoading(true);
         apiCall({
             method: "DELETE",
-            url: `https://3-extent-billing-backend.vercel.app/api/brands/${id}`,
+            url: `https://3-extent-billing-backend.vercel.app/api/brands/${brand_id}`,
             data: {},
             callback: deleteCallback,
             setLoading: setLoading
@@ -113,7 +119,7 @@ export default function AddBrands() {
     return (
         <div>
             {loading && <Spinner />}
-            <div className="text-xl font-serif mb-4">{id ? "Edit Brand" : "Add Brand"}</div>
+            <div className="text-xl font-serif mb-4">{brand_id ? "Edit Brand" : "Add Brand"}</div>
             {error && (
                 <div className="text-red-600 mt-1 ml-1">
                     {error}
@@ -142,11 +148,11 @@ export default function AddBrands() {
                     buttonClassName="mt-2 py-1 px-5 text-xl font-bold"
                     onClick={addBrand}
                 />
-                {id && (
+                {brand_id && (
                     <PrimaryButtonComponent
                         label="Delete"
                         icon="fa fa-trash"
-                        buttonClassName="mt-2 py-1 px-5 text-xl font-bold bg-red-300  hover:bg-red-700 opacity-80"
+                        buttonClassName="mt-2 py-1 px-5 text-xl font-bold text-white bg-red-400 bg-opacity-90 hover:bg-red-700"
                         onClick={handleDelete}
                     />
                 )}

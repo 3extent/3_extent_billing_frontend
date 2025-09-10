@@ -101,16 +101,12 @@ function App() {
                 <StockIn />
               </ProtectedRoute>
             } />
-            <Route path="/addbrands" element={
+            <Route path="/addbrands/:brand_id?" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <AddBrands />
               </ProtectedRoute>
             } />
-            <Route path="/addbrands/:id" element={
-              <ProtectedRoute isAuthenticated={loginStatus}>
-                <AddBrands />
-                </ProtectedRoute>
-              } />
+           
             <Route path="/addmodels" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <AddModels />
