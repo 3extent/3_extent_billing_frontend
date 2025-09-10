@@ -156,14 +156,14 @@ export default function SalesBilling() {
         })
     }
     console.log("rows", rows);
-    const billsData = {
-        customer_name: customerName,
-        contact_number: selectedContactNo,
-        products: rows.map((row) => ({
-            imei_number: row["IMEI NO"],
-            rate: row["Rate"],
-        })),
-    };
+    // const billsData = {
+    //     customer_name: customerName,
+    //     contact_number: selectedContactNo,
+    //     products: rows.map((row) => ({
+    //         imei_number: row["IMEI NO"],
+    //         rate: row["Rate"],
+    //     })),
+    // };
     const billsCallback = (response) => {
         console.log("response: ", response);
         if (response.status === 200) {
