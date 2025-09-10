@@ -156,14 +156,14 @@ export default function SalesBilling() {
         })
     }
     console.log("rows", rows);
-    const billsData = {
-        customer_name: customerName,
-        contact_number: selectedContactNo,
-        products: rows.map((row) => ({
-            imei_number: row["IMEI NO"],
-            rate: row["Rate"],
-        })),
-    };
+    // const billsData = {
+    //     customer_name: customerName,
+    //     contact_number: selectedContactNo,
+    //     products: rows.map((row) => ({
+    //         imei_number: row["IMEI NO"],
+    //         rate: row["Rate"],
+    //     })),
+    // };
     const billsCallback = (response) => {
         console.log("response: ", response);
         if (response.status === 200) {
@@ -295,7 +295,7 @@ export default function SalesBilling() {
                     headers={dynamicHeaders}
                     rows={rows}
                     onRateChange={handleRateChange}
-                    maxHeight="max-h-[300px]"
+                    maxHeight="max-h-[50vh]"
                 />
             </div>
             <div className="flex justify-end gap-4 mt-5">
