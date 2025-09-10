@@ -4,7 +4,7 @@ import InputComponent from "../../CustomComponents/InputComponent/InputComponent
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import { BRANDS_COLOUMNS } from "./Constants";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { exportToExcel } from "../../../Util/Utility";
@@ -22,9 +22,10 @@ function Brands() {
     const getBrandsCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
-            const brandsFormattedRows = response.data.map((brand,index) => ({
-                "No":index + 1,
-                "Brand Name": brand.name
+            const brandsFormattedRows = response.data.map((brand, index) => ({
+                "No": index + 1,
+                "Brand Name": brand.name,
+                id: brand._id
             }));
             setRows(brandsFormattedRows);
         } else {
@@ -41,7 +42,7 @@ function Brands() {
             url: url,
             data: {},
             callback: getBrandsCallBack,
-                 setLoading: setLoading
+            setLoading: setLoading
         })
     };
     const handleSearchFilter = () => {
@@ -51,13 +52,18 @@ function Brands() {
         setBrandName('');
         getBrandsAllData({});
     }
-    
+
     const handleExportToExcel = () => {
-        exportToExcel(rows, "BrandsData.xlsx");  
+        exportToExcel(rows, "BrandsData.xlsx");
+    };
+    const handleRowClick = (row) => {
+        if (row?.id) {
+            navigate(`/addbrands/${row.id}`);
+        }
     };
     return (
         <div className='w-full'>
-             {loading && <Spinner/>}
+            {loading && <Spinner />}
             <CustomHeaderComponent
                 name="Brands"
                 label="Add Brands"
@@ -86,13 +92,14 @@ function Brands() {
                 <PrimaryButtonComponent
                     label="Export to Excel"
                     buttonClassName="mt-1 py-1 px-5 text-xl font-bold"
-                    onClick={handleExportToExcel} 
+                    onClick={handleExportToExcel}
                 />
             </div>
             <div>
                 <CustomTableCompoent
                     headers={BRANDS_COLOUMNS}
                     rows={rows}
+                    onRowClick={handleRowClick}
                 />
             </div>
         </div>

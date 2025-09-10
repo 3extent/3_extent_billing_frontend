@@ -35,7 +35,7 @@ const PublicRoute = ({ children, isAuthenticated }) => {
 
 function App() {
   const [loginStatus, setLoginStatus] = useState(false);
-  
+
   useEffect(() => {
     const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
     setLoginStatus(isAuthenticated);
@@ -47,7 +47,7 @@ function App() {
   };
 
   console.log('loginStatus: ', loginStatus);
-  
+
   return (
     <Router>
       <div className="flex">
@@ -59,7 +59,7 @@ function App() {
           <div></div>
         )}
         <div className={loginStatus ? "w-[83%] p-4" : "w-full"}>
-           <ToastContainer />
+          <ToastContainer />
           <Routes>
             <Route path="/" element={
               <PublicRoute isAuthenticated={loginStatus}>
@@ -101,11 +101,12 @@ function App() {
                 <StockIn />
               </ProtectedRoute>
             } />
-            <Route path="/addbrands" element={
+            <Route path="/addbrands/:brand_id?" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <AddBrands />
               </ProtectedRoute>
             } />
+           
             <Route path="/addmodels" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <AddModels />
@@ -126,7 +127,8 @@ function App() {
                 <Billinghistory />
               </ProtectedRoute>
             } />
-             <Route path="/singleBillHistory/:billId" element={<SingleBillHistory/>} />
+            <Route path="/singleBillHistory/:billId" element={<SingleBillHistory />} />
+
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
