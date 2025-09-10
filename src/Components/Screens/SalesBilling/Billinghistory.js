@@ -7,6 +7,8 @@ import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCo
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import { exportToExcel } from "../../../Util/Utility";
+import moment from "moment";
+
 function Billinghistory() {
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
@@ -14,8 +16,8 @@ function Billinghistory() {
     const [customerName, setCustomerName] = useState("");
     const [contactNo, setContactNo] = useState("");
     const [paymentStatus, setPaymentStatus] = useState("");
-    const [startDate, setStartDate] = useState("");
-    const [endDate, setEndDate] = useState("");
+    const [from, setFrom] = useState("");
+    const [to, setTo] = useState("");
     const [selectAllDates, setSelectAllDates] = useState(false);
     const formatDate = (date) => date.toISOString().split('T')[0];
     const today = new Date();
@@ -24,8 +26,8 @@ function Billinghistory() {
     const todayFormatted = formatDate(today);
     const sevenDaysAgoFormatted = formatDate(sevenDaysAgo);
     useEffect(() => {
-        setStartDate(sevenDaysAgoFormatted);
-        setEndDate(todayFormatted);
+        setFrom(sevenDaysAgoFormatted);
+        setTo(todayFormatted);
         getBillinghistoryAllData({});
     }, []);
     const getBilllinghistoryCallBack = (response) => {
@@ -56,8 +58,8 @@ function Billinghistory() {
             url += `&status=${paymentStatus}`
         }
         if (!selectAllDates) {
-            if (startDate) url += `&startDate=${startDate}`;
-            if (endDate) url += `&endDate=${endDate}`;
+            if (from) url += `&from=${moment(from).valueOf()}`;
+            if (to) url += `&to=${moment(to).valueOf()}`;
         }
 
         apiCall({
@@ -82,14 +84,14 @@ function Billinghistory() {
         }
     };
     const handleSearchFilter = () => {
-        getBillinghistoryAllData({ contactNo, paymentStatus, customerName, startDate, endDate });
+        getBillinghistoryAllData({ contactNo, paymentStatus, customerName, from, to });
     }
     const handleResetFilter = () => {
         setContactNo("");
         setCustomerName("");
         setPaymentStatus("");
-        setStartDate(sevenDaysAgoFormatted);
-        setEndDate(todayFormatted);
+        setFrom(sevenDaysAgoFormatted);
+        setTo(todayFormatted);
         setSelectAllDates();
         getBillinghistoryAllData({});
     }
@@ -137,19 +139,19 @@ function Billinghistory() {
                     type="date"
                     placeholder="Start Date"
                     inputClassName="w-[190px] mb-5"
-                    value={startDate}
+                    value={from}
                     max={todayFormatted}
-                    onChange={(e) => handleDateChange(e.target.value, setStartDate)}
+                    onChange={(e) => handleDateChange(e.target.value, setFrom)}
                     disabled={selectAllDates}
                 />
                 <InputComponent
                     type="date"
                     placeholder="End Date"
                     inputClassName="w-[190px] mb-5"
-                    value={endDate}
-                    min={startDate}
+                    value={to}
+                    min={from}
                     max={todayFormatted}
-                    onChange={(e) => handleDateChange(e.target.value, setEndDate)}
+                    onChange={(e) => handleDateChange(e.target.value, setTo)}
                     disabled={selectAllDates}
                 />
             </div>
@@ -167,7 +169,7 @@ function Billinghistory() {
                 <PrimaryButtonComponent
                     label="Export to Excel"
                     buttonClassName="ml-5 py-1 px-5 text-xl font-bold"
-                    onClick={handleExportToExcel} 
+                    onClick={handleExportToExcel}
                 />
             </div>
             <div>

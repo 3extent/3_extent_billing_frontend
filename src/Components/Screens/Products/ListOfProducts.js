@@ -7,6 +7,7 @@ import { PRODUCT_COLOUMNS, STATUS_OPTIONS } from './Constants';
 import { apiCall, Spinner } from '../../../Util/AxiosUtils';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
 import { exportToExcel, handleBarcodePrint } from '../../../Util/Utility';
+import moment from 'moment';
 function ListOfProducts() {
     const [rows, setRows] = useState([]);
     const [imeiNumber, setIMEINumber] = useState();
@@ -16,8 +17,8 @@ function ListOfProducts() {
     const [status, setStatus] = useState('Available');
     const [brandOptions, setBrandOptions] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [startDate, setStartDate] = useState("");
-    const [endDate, setEndDate] = useState("");
+    const [from, setFrom] = useState("");
+    const [to, setTo] = useState("");
     const [selectAllDates, setSelectAllDates] = useState(false);
     const formatDate = (date) => date.toISOString().split('T')[0];
     const today = new Date();
@@ -26,8 +27,8 @@ function ListOfProducts() {
     const todayFormatted = formatDate(today);
     const sevenDaysAgoFormatted = formatDate(sevenDaysAgo);
     useEffect(() => {
-        setStartDate(sevenDaysAgoFormatted);
-        setEndDate(todayFormatted);
+        setFrom(sevenDaysAgoFormatted);
+        setTo(todayFormatted);
         getProductsAllData({});
         getBrandsAllData();
     }, []);
@@ -74,9 +75,11 @@ function ListOfProducts() {
         if (status) {
             url += `&status=${status}`
         }
+        console.log('from.valueOf(): ', moment(from).valueOf());
+        console.log('to.valueOf(): ', moment(to).valueOf());
         if (!selectAllDates) {
-            if (startDate) url += `&startDate=${startDate}`;
-            if (endDate) url += `&endDate=${endDate}`;
+            if (from) url += `&from=${moment(from).valueOf()}`;
+            if (to) url += `&to=${moment(to).valueOf()}`;
         }
         apiCall({
             method: 'GET',
@@ -106,7 +109,7 @@ function ListOfProducts() {
         }
     }
     const handleSearchFilter = () => {
-        getProductsAllData({ imeiNumber, grade, modelName, brandName, status, startDate, endDate });
+        getProductsAllData({ imeiNumber, grade, modelName, brandName, status, from, to });
     }
     const handleDateChange = (value, setDate) => {
         const todayFormatted = new Date().toISOString().split('T')[0];
@@ -122,8 +125,8 @@ function ListOfProducts() {
         setIMEINumber('');
         setBrandName('');
         setStatus();
-        setStartDate(sevenDaysAgoFormatted);
-        setEndDate(todayFormatted);
+        setFrom(sevenDaysAgoFormatted);
+        setTo(todayFormatted);
         setSelectAllDates();
         getProductsAllData({});
     }
@@ -184,18 +187,18 @@ function ListOfProducts() {
                 <InputComponent
                     type="date"
                     inputClassName="w-[190px] mb-5"
-                    value={startDate}
+                    value={from}
                     max={todayFormatted}
-                    onChange={(e) => handleDateChange(e.target.value, setStartDate)}
+                    onChange={(e) => handleDateChange(e.target.value, setFrom)}
                     disabled={selectAllDates}
                 />
                 <InputComponent
                     type="date"
                     inputClassName="w-[190px] mb-5"
-                    value={endDate}
-                    min={startDate}
+                    value={to}
+                    min={from}
                     max={todayFormatted}
-                    onChange={(e) => handleDateChange(e.target.value, setEndDate)}
+                    onChange={(e) => handleDateChange(e.target.value, setTo)}
                     disabled={selectAllDates}
                 />
                 <PrimaryButtonComponent
