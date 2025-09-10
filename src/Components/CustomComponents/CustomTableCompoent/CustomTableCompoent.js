@@ -10,7 +10,7 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
         setTableRows(rows);
     }, [rows]);
     return (
-        <div className={`w-full overflow-x-auto relative max-h-[300vh]  ${maxHeight ? maxHeight : "max-h-[470px]"}`}>
+        <div className={`w-full overflow-x-auto relative ${maxHeight ? maxHeight : "max-h-[75vh]"}`}>
             {Rows ? (
                 <div className="border border-slate-800">
                     <table className="table-fixed w-full ">

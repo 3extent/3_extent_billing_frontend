@@ -295,7 +295,7 @@ export default function SalesBilling() {
                     headers={dynamicHeaders}
                     rows={rows}
                     onRateChange={handleRateChange}
-                    maxHeight="max-h-[300px]"
+                    maxHeight="max-h-[50vh]"
                 />
             </div>
             <div className="flex justify-end gap-4 mt-5">
