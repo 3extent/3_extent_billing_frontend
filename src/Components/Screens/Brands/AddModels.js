@@ -12,6 +12,8 @@ export default function AddModels() {
     };
     useEffect(() => {
         getBrandsAllData();
+    })
+    useEffect(() => {
         getModelData();
     }, [model_id]);
     const [brandOptions, setBrandOptions] = useState([]);
@@ -188,7 +190,6 @@ export default function AddModels() {
         });
     }
     const getModelData = () => {
-        if (!model_id) return;
         apiCall({
             method: "GET",
             url: `https://3-extent-billing-backend.vercel.app/api/models/${model_id}`,
