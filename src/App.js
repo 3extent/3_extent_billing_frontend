@@ -107,7 +107,7 @@ function App() {
               </ProtectedRoute>
             } />
            
-            <Route path="/addmodels" element={
+            <Route path="/addmodels/:model_id?" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <AddModels />
               </ProtectedRoute>

@@ -29,7 +29,8 @@ export default function Models() {
             const modelFormattedaRows = response.data.map((model, index) => ({
                 "No": index + 1,
                 "Model Name": model.name,
-                "Brand Name":model.brand.name
+                "Brand Name":model.brand.name,
+                id: model._id
             }))
             setRows(modelFormattedaRows);
         } else {
@@ -85,6 +86,11 @@ export default function Models() {
         const handleExportToExcel = () => {
         exportToExcel(rows, "ModelsData.xlsx"); 
     };
+     const handleRowClick = (row) => {
+        if (row?.id) {
+            navigate(`/addmodels/${row.id}`);
+        }
+    };
     return (
         <div>
               {loading && <Spinner/>}
@@ -130,6 +136,7 @@ export default function Models() {
             <CustomTableCompoent
                 headers={MODELS_COLOUMNS}
                 rows={rows}
+                onRowClick={handleRowClick}
             />
         </div>
     );
