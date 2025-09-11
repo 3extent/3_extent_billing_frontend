@@ -8,14 +8,11 @@ import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { exportToExcel } from "../../../Util/Utility.js";
-
 export default function Customer() {
     const navigate = useNavigate();
     const [customerName, setCustomerName] = useState();
     const [contactNo, setContactNumber] = useState();
     const [loading, setLoading] = useState(false);
-
-
     const navigateAddCustomer = () => {
         navigate("/addcustomer")
     }
