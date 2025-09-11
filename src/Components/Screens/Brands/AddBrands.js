@@ -38,9 +38,6 @@ export default function AddBrands() {
         if (response.status === 200) {
             toast.success("Brand updated successfully!", { position: "top-center", autoClose: 2000 });
             navigate("/brands");
-            // } else {
-            //     setError("Error occurred while saving brand");
-            // }
         } else {
             const errorMsg = response?.data?.error || "Error occurred while saving brand";
             toast.error(errorMsg, { position: "top-center", autoClose: 2000 });
@@ -109,7 +106,6 @@ export default function AddBrands() {
             url: `https://3-extent-billing-backend.vercel.app/api/brands/${brand_id}`,
             data: {},
             callback: (response) => {
-                setLoading(false);
                 if (response.status === 200) {
                     setBrandData({ name: response.data.name });
                 } else {
