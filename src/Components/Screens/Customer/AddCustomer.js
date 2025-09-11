@@ -1,18 +1,19 @@
 import { useEffect, useState } from "react";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
-import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
-import { CUSTOMER_TYPE_OPTIONS } from "./Constants";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-
 function AddCustomer() {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { customer_id } = useParams();
     const handleBack = () => {
         navigate(-1);
     };
+    useEffect(() => {
+        getCustomerData();
+    }, [customer_id])
     const [customerData, setCustomerData] = useState({
         name: "",
         address: "",
@@ -27,7 +28,6 @@ function AddCustomer() {
         setCustomerData({ ...customerData, [name]: value });
     };
     const addCustomerCallback = (response) => {
-        // navigate("/customer");
         console.log('response: ', response);
         if (response.status === 200) {
             toast.success("Customer added successfully!", {
@@ -56,20 +56,56 @@ function AddCustomer() {
             }, 2000);
         }
     };
-    const addCustomer = () => {
-        apiCall({
-            method: "POST",
-            url: "https://3-extent-billing-backend.vercel.app/api/users",
-            data: customerData,
-            callback: addCustomerCallback,
-            setLoading: setLoading
-
-        });
+    const saveCallback = (response) => {
+        if (response.status === 200) {
+            navigate("/customer");
+        } else {
+            // setError("Error occurred while saving customer");
+        }
     };
+    const addCustomer = () => {
+        if (customer_id) {
+            apiCall({
+                method: "PUT",
+                url: `https://3-extent-billing-backend.vercel.app/api/users/${customer_id}`,
+                data: customerData,
+                callback: saveCallback,
+                setLoading: setLoading,
+            });
+        } else {
+            apiCall({
+                method: "POST",
+                url: "https://3-extent-billing-backend.vercel.app/api/users",
+                data: customerData,
+                callback: addCustomerCallback,
+                setLoading: setLoading
+
+            });
+        };
+    }
+    const getCustomerData = () => {
+        apiCall({
+            method: "GET",
+            url: `https://3-extent-billing-backend.vercel.app/api/users/${customer_id}`,
+            data: {},
+            callback: (response) => {
+                if (response.status === 200) {
+                    setCustomerData({
+                        name: response.data.name, address: response.data.address,
+                        state: response.data.state, contact_number: response.data.contact_number, gst_number: response.data.gst_number,
+                        pan_number: response.data.pan_number,
+                    });
+                } else {
+                    // error("Failed to fetch customer data");
+                }
+            },
+            setLoading: setLoading
+        });
+    }
     return (
         <div>
             {loading && <Spinner />}
-            <div className='text-xl font-serif mb-4'>Add Customer</div>
+            <div className='text-xl font-serif mb-4'>{customer_id ? "Edit Customer" : "Add Customer"}</div>
             <div className="grid grid-cols-2 gap-x-5 gap-y-2">
                 <InputComponent
                     label="Customer Name"
@@ -131,7 +167,6 @@ function AddCustomer() {
                     value={customerData.pan_number}
                     onChange={handleInputChange}
                 />
-
             </div>
             <div className="mt-4 flex justify-center">
                 <PrimaryButtonComponent
