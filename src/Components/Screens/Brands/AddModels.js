@@ -25,7 +25,8 @@ export default function AddModels() {
         brand_name: "",
         name: "",
         RAM: "",
-        storage: ""
+        storage: "",
+        combination: ""
     });
     const [modelData, setModelData] = useState({
         brand_name: "",
@@ -36,6 +37,10 @@ export default function AddModels() {
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setModelData({ ...modelData, [name]: value });
+        setError((prevError) => ({
+            ...prevError,
+            [name]: "",
+        }));
     };
     const handleShowCombinations = async () => {
         const ramOptions = modelData.RAM
@@ -74,7 +79,8 @@ export default function AddModels() {
             brand_name: "",
             name: "",
             RAM: "",
-            storage: ""
+            storage: "",
+            combination: ""
         };
         let hasError = false;
 
@@ -108,7 +114,8 @@ export default function AddModels() {
             brand_name: "",
             name: "",
             RAM: "",
-            storage: ""
+            storage: "",
+            combination: ""
         });
         if (model_id) {
             editModelData();
