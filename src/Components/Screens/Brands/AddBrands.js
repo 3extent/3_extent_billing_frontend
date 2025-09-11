@@ -4,6 +4,7 @@ import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 export default function AddBrands() {
     const navigate = useNavigate();
     const { brand_id } = useParams();
@@ -15,9 +16,13 @@ export default function AddBrands() {
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+
     useEffect(() => {
-        getBrandData();
+        if (brand_id) {
+            getBrandData();
+        }
     }, [brand_id]);
+
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         const hasSpecialChar = /[^a-zA-Z ]/.test(value);
@@ -31,33 +36,38 @@ export default function AddBrands() {
     const submitCallback = (response) => {
         setLoading(false);
         if (response.status === 200) {
+            toast.success("Brand updated successfully!", { position: "top-center", autoClose: 2000 });
             navigate("/brands");
         } else {
-            setError("Error occurred while saving brand");
+            const errorMsg = response?.data?.error || "Error occurred while saving brand";
+            toast.error(errorMsg, { position: "top-center", autoClose: 2000 });
         }
     };
-    const deleteCallback = (response) => {
-        setLoading(false);
-        if (response.status === 200) {
-            navigate("/brands");
-        } else {
-            setError("Error occurred while deleting brand");
-        }
-    };
+
     const addBrandCallback = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
             console.log('response: ', response);
+            toast.success("Brand added successfully!", {
+                position: "top-center",
+                autoClose: 2000,
+            });
             setBrandData({ name: "" });
-            navigate("/brands")
+            setTimeout(() => {
+                navigate("/brands");
+            }, 2000);
         } else {
-            console.log("Error while adding brand");
+            const errorMsg = response?.data?.error || "Something went wrong";
+            toast.error(errorMsg, {
+                position: "top-center",
+                autoClose: 2000,
+            });
         }
     };
     const addBrand = () => {
         if (brandData.name.trim() === "") {
             console.log("Please enter brand name");
-            setError("please Enter Brand Name");
+            setError("Please enter brand name");
             return;
         }
         if (/[^a-zA-Z ]/.test(brandData.name)) {
@@ -96,7 +106,6 @@ export default function AddBrands() {
             url: `https://3-extent-billing-backend.vercel.app/api/brands/${brand_id}`,
             data: {},
             callback: (response) => {
-                setLoading(false);
                 if (response.status === 200) {
                     setBrandData({ name: response.data.name });
                 } else {
@@ -106,16 +115,6 @@ export default function AddBrands() {
             setLoading: setLoading
         });
     }
-    const handleDelete = () => {
-        setLoading(true);
-        apiCall({
-            method: "DELETE",
-            url: `https://3-extent-billing-backend.vercel.app/api/brands/${brand_id}`,
-            data: {},
-            callback: deleteCallback,
-            setLoading: setLoading
-        });
-    };
     return (
         <div>
             {loading && <Spinner />}
@@ -148,14 +147,6 @@ export default function AddBrands() {
                     buttonClassName="mt-2 py-1 px-5 text-xl font-bold"
                     onClick={addBrand}
                 />
-                {brand_id && (
-                    <PrimaryButtonComponent
-                        label="Delete"
-                        icon="fa fa-trash"
-                        buttonClassName="mt-2 py-1 px-5 text-xl font-bold text-white bg-red-400 bg-opacity-90 hover:bg-red-700"
-                        onClick={handleDelete}
-                    />
-                )}
             </div>
         </div>
     );
