@@ -9,9 +9,9 @@ function AddSupplier() {
     const handleBack = () => {
         navigate(-1);
     };
-    useEffect(()=>{
+    useEffect(() => {
         getSupplierData();
-    },[suppiler_id])
+    }, [suppiler_id])
     const [supplierData, setSupplierData] = useState({
         name: "",
         firm_name: "",
@@ -45,54 +45,55 @@ function AddSupplier() {
         }
     };
     const saveSupplier = (() => {
-         if (suppiler_id) {
+        if (suppiler_id) {
             editSupplierData();
         } else {
             addSupplierData();
         }
     })
-       
-     const saveCallback = (response) => {
+
+    const saveCallback = (response) => {
         if (response.status === 200) {
             navigate("/supplier");
         } else {
             // setError("Error occurred while saving customer");
         }
     };
-    const addSupplierData=(()=>{
-       apiCall({
+    const addSupplierData = (() => {
+        apiCall({
             method: "POST",
             url: "https://3-extent-billing-backend.vercel.app/api/users",
             data: supplierData,
             callback: addSupplierCallback,
             setLoading: setLoading,
-        }); 
+        });
     })
-     const editSupplierData = () => {
+    const editSupplierData = () => {
         apiCall({
             method: "PUT",
             url: `https://3-extent-billing-backend.vercel.app/api/users/${suppiler_id}`,
-            data:supplierData,
+            data: supplierData,
             callback: saveCallback,
             setLoading: setLoading,
         });
+    }
+    const getSupplierDataCallback = (response) => {
+        if (response.status === 200) {
+            setSupplierData({
+                name: response.data.name, address: response.data.address,
+                state: response.data.state, contact_number: response.data.contact_number, contact_number2: response.data.contact_number2, gst_number: response.data.gst_number,
+                firm_name: response.data.firm_name,
+            });
+        } else {
+            // error("Failed to fetch customer data");
+        }
     }
     const getSupplierData = () => {
         apiCall({
             method: "GET",
             url: `https://3-extent-billing-backend.vercel.app/api/users/${suppiler_id}`,
             data: {},
-            callback: (response) => {
-                if (response.status === 200) {
-                    setSupplierData({
-                        name: response.data.name, address: response.data.address,
-                        state: response.data.state, contact_number: response.data.contact_number,contact_number2: response.data.contact_number2, gst_number: response.data.gst_number,
-                        firm_name: response.data.firm_name,
-                    });
-                } else {
-                    // error("Failed to fetch customer data");
-                }
-            },
+            callback: getSupplierDataCallback,
             setLoading: setLoading
         });
     }
