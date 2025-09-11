@@ -16,9 +16,13 @@ export default function AddBrands() {
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+
     useEffect(() => {
-        getBrandData();
+        if (brand_id) {
+            getBrandData();
+        }
     }, [brand_id]);
+
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         const hasSpecialChar = /[^a-zA-Z ]/.test(value);
@@ -42,23 +46,7 @@ export default function AddBrands() {
             toast.error(errorMsg, { position: "top-center", autoClose: 2000 });
         }
     };
-    const deleteCallback = (response) => {
-        setLoading(false);
-        if (response.status === 200) {
-            toast.success("Brand deleted successfully!", {
-                position: "top-center",
-                autoClose: 2000
-            });
-            navigate("/brands");
-        } else {
-            // setError("Error occurred while deleting brand");
-            const errorMsg = response?.data?.error || "Error occurred while deleting brand";
-            toast.error(errorMsg, {
-                position: "top-center",
-                autoClose: 2000
-            });
-        }
-    };
+
     const addBrandCallback = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
@@ -131,16 +119,6 @@ export default function AddBrands() {
             setLoading: setLoading
         });
     }
-    const handleDelete = () => {
-        setLoading(true);
-        apiCall({
-            method: "DELETE",
-            url: `https://3-extent-billing-backend.vercel.app/api/brands/${brand_id}`,
-            data: {},
-            callback: deleteCallback,
-            setLoading: setLoading
-        });
-    };
     return (
         <div>
             {loading && <Spinner />}
@@ -173,14 +151,6 @@ export default function AddBrands() {
                     buttonClassName="mt-2 py-1 px-5 text-xl font-bold"
                     onClick={addBrand}
                 />
-                {brand_id && (
-                    <PrimaryButtonComponent
-                        label="Delete"
-                        icon="fa fa-trash"
-                        buttonClassName="mt-2 py-1 px-5 text-xl font-bold text-white bg-red-400 bg-opacity-90 hover:bg-red-700"
-                        onClick={handleDelete}
-                    />
-                )}
             </div>
         </div>
     );
