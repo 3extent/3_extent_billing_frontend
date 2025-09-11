@@ -65,24 +65,31 @@ function AddCustomer() {
     };
     const addCustomer = () => {
         if (customer_id) {
-            apiCall({
-                method: "PUT",
-                url: `https://3-extent-billing-backend.vercel.app/api/users/${customer_id}`,
-                data: customerData,
-                callback: saveCallback,
-                setLoading: setLoading,
-            });
+            editCustomerData();
         } else {
-            apiCall({
-                method: "POST",
-                url: "https://3-extent-billing-backend.vercel.app/api/users",
-                data: customerData,
-                callback: addCustomerCallback,
-                setLoading: setLoading
-
-            });
-        };
+            addCustomerData();
+        }
     }
+    const addCustomerData = () => {
+        apiCall({
+            method: "POST",
+            url: "https://3-extent-billing-backend.vercel.app/api/users",
+            data: customerData,
+            callback: addCustomerCallback,
+            setLoading: setLoading
+
+        });
+    }
+    const editCustomerData = () => {
+        apiCall({
+            method: "PUT",
+            url: `https://3-extent-billing-backend.vercel.app/api/users/${customer_id}`,
+            data: customerData,
+            callback: saveCallback,
+            setLoading: setLoading,
+        });
+    }
+
     const getCustomerData = () => {
         apiCall({
             method: "GET",
