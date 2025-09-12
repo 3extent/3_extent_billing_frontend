@@ -28,7 +28,8 @@ function Supplier() {
                 "GST No": supplier.gst_number,
                 "State": supplier.state,
                 "Balance": supplier.balance,
-                "Supplier Type": supplier.type
+                "Supplier Type": supplier.type,
+                id: supplier._id
             }));
             setRows(supplierFormattedRows);
         } else {
@@ -60,6 +61,11 @@ function Supplier() {
     }
      const handleExportToExcel = () => {
         exportToExcel(rows, "SupplierData.xlsx");  
+    };
+     const handleRowClick = (row) => {
+        if (row?.id) {
+            navigate(`/addsupplier/${row.id}`);
+        }
     };
     return (
         <div className="w-full">
@@ -107,6 +113,7 @@ function Supplier() {
             <CustomTableCompoent
                 headers={SUPPLIER_COLUMNS}
                 rows={rows}
+                onRowClick={handleRowClick}
             />
         </div>
     );

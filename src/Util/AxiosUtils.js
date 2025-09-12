@@ -22,10 +22,11 @@ export const apiCall = async ({ method, url, data, callback, setLoading }) => {
     }
 };
 export const Spinner = () => (
-    <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-50 z-50">
-        <div className="relative w-10 h-10">
-            <div className="absolute inset-0 rounded-full border-4 border-gray border-t-transparent animate-spin"></div>
-            <div className="absolute inset-2 rounded-full border-4 border-gray-600 border-b-transparent animate-spin [animation-direction:reverse]"></div>
-        </div>
+    <div className="flex justify-center items-center h-screen">
+        <div
+            className="animate-spin rounded-full
+                 h-8 w-8 border-4 border-gray-900
+                 border-t-transparent"
+        ></div>
     </div>
 );

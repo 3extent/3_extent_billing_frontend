@@ -112,12 +112,12 @@ function App() {
                 <AddModels />
               </ProtectedRoute>
             } />
-            <Route path="/addcustomer" element={
+            <Route path="/addcustomer/:customer_id?" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <AddCustomer />
               </ProtectedRoute>
             } />
-            <Route path="/addsupplier" element={
+            <Route path="/addsupplier/:suppiler_id?" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <AddSupplier />
               </ProtectedRoute>

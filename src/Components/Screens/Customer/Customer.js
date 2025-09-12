@@ -1,21 +1,17 @@
 import { useEffect, useState } from "react";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
-import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
-import { CUSTOMER_COLOUMS, CUSTOMER_TYPE_OPTIONS } from "./Constants";
+import { CUSTOMER_COLOUMS } from "./Constants";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { exportToExcel } from "../../../Util/Utility.js";
-
 export default function Customer() {
     const navigate = useNavigate();
     const [customerName, setCustomerName] = useState();
     const [contactNo, setContactNumber] = useState();
     const [loading, setLoading] = useState(false);
-
-
     const navigateAddCustomer = () => {
         navigate("/addcustomer")
     }
@@ -30,8 +26,10 @@ export default function Customer() {
                 "Customer Name": customer.name,
                 "Contact No": customer.contact_number,
                 "Address": customer.address,
-                "state": customer.state,
+                "State": customer.state,
                 "GST No": customer.gst_number,
+                "PAN No": customer.pan_number,
+                id: customer._id
             }))
             setRows(customerFormttedRows);
         } else {
@@ -62,9 +60,13 @@ export default function Customer() {
         getCustomerAllData({});
     }
     const handleExportToExcel = () => {
-        exportToExcel(rows, "CustomerData.xlsx"); 
+        exportToExcel(rows, "CustomerData.xlsx");
     };
-
+    const handleRowClick = (row) => {
+        if (row?.id) {
+            navigate(`/addcustomer/${row.id}`);
+        }
+    };
     return (
         <div className="w-full">
             {loading && <Spinner />}
@@ -110,6 +112,7 @@ export default function Customer() {
                 <CustomTableCompoent
                     headers={CUSTOMER_COLOUMS}
                     rows={rows}
+                    onRowClick={handleRowClick}
                 />
             </div>
         </div>
