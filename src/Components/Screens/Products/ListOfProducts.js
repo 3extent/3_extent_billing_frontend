@@ -39,7 +39,7 @@ function ListOfProducts() {
         console.log('response: ', response);
         if (response.status === 200) {
             const productFormattedRows = response.data.map((product) => ({
-                "Date": moment(Number(product.created_at)).format('ll'),
+                "Date": moment(Number(product.created_at)).format('lll'),
                 "IMEI NO": product.imei_number,
                 "Model": typeof product.model === 'object' ? product.model.name : product.model,
                 "Brand": typeof product.brand === 'object' ? product.model.brand : product.model.brand.name,
@@ -61,7 +61,7 @@ function ListOfProducts() {
             console.log("Error");
         }
     }
-    const getProductsAllData = ({ imeiNumber, grade, modelName, brandName, status }) => {
+    const getProductsAllData = ({ imeiNumber, grade, modelName, brandName, status,from, to }) => {
         let url = 'https://3-extent-billing-backend.vercel.app/api/products?';
         if (imeiNumber) {
             url += `&imei_number=${imeiNumber}`
