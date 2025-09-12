@@ -7,11 +7,14 @@ import { ACCESSORIES_OPTIONS, GRADE_OPTIONS, STATUS_OPTIONS, } from './Constants
 import CustomDropdownInputComponent from '../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent';
 import { apiCall, Spinner } from '../../../Util/AxiosUtils';
 import { handleBarcodePrint } from '../../../Util/Utility';
+import { useNavigate, useParams } from 'react-router-dom';
 
 function SingleProductStockIn() {
   const [modelOptions, setModelOptions] = useState([]);
   const [loading, setLoading] = useState(false)
   const [supplierNameOptions, setSupplierNameOPtions] = useState([]);
+  const { product_id } = useParams();
+  const navigate = useNavigate();
   const [productData, setProductData] = useState({
     model_name: '',
     imei_number: '',
@@ -54,7 +57,9 @@ function SingleProductStockIn() {
     getModelsAllData();
     getSupplierAllData();
   }, []);
-
+  useEffect(() => {
+    getProductData();
+  }, [product_id])
   const getModelsAllData = () => {
     let url = "https://3-extent-billing-backend.vercel.app/api/models";
     apiCall({
@@ -74,16 +79,21 @@ function SingleProductStockIn() {
       console.log("Error");
     }
   }
-  const addProductStockIn = () => {
+  const saveProductStockIn = () => {
     handleBarcodePrint({ modelName: productData.model_name, grade: productData.grade, imei_number: productData.imei_number })
     console.log('productData: ', productData);
-    apiCall({
-      method: "POST",
-      url: "https://3-extent-billing-backend.vercel.app/api/products",
-      data: productData,
-      callback: stockInCallback,
-      setLoading: setLoading
-    });
+    // apiCall({
+    //   method: "POST",
+    //   url: "https://3-extent-billing-backend.vercel.app/api/products",
+    //   data: productData,
+    //   callback: stockInCallback,
+    //   setLoading: setLoading
+    // });
+    if (product_id) {
+      editProductData();
+    } else {
+      addProductData();
+    }
   }
 
   const getSupplierCallBack = (response) => {
@@ -105,7 +115,52 @@ function SingleProductStockIn() {
       callback: getSupplierCallBack,
     })
   }
-
+  const saveProductCallback = (response) => {
+    if (response.status === 200) {
+      navigate("/products");
+    } else {
+      // setError("Error occurred while saving customer");
+    }
+  };
+  const addProductData = () => {
+    apiCall({
+      method: "POST",
+      url: "https://3-extent-billing-backend.vercel.app/api/products",
+      data: productData,
+      callback: stockInCallback,
+      setLoading: setLoading
+    });
+  }
+  const editProductData = () => {
+    apiCall({
+      method: "PUT",
+      url: `https://3-extent-billing-backend.vercel.app/api/products/${product_id}`,
+      data: productData,
+      callback: saveProductCallback,
+      setLoading: setLoading,
+    });
+  }
+  const getProductCallback = (response) => {
+    if (response.status === 200) {
+      setProductData({
+        model_name: response.data.model.name, imei_number: response.data.imei_number,
+        sales_price: response.data.sales_price, purchase_price: response.data.purchase_price,
+        grade: response.data.grade, enginner_name: response.data.enginner_name, accessories: response.data.accessories,
+        supplier_name: response.data.supplier_name, qc_remark: response.data.qc_remark, status: response.data.status
+      });
+    } else {
+      console.log("Failed to fetch product data.");
+    }
+  };
+  const getProductData = () => {
+    apiCall({
+      method: 'GET',
+      url: `https://3-extent-billing-backend.vercel.app/api/products/${product_id}`,
+      data: {},
+      callback: getProductCallback,
+      setLoading: setLoading,
+    });
+  }
   return (
     <div className="grid grid-cols-2 gap-x-5 gap-y-2">
       {loading && <Spinner />}
@@ -209,13 +264,21 @@ function SingleProductStockIn() {
         className="w-[80%] "
         labelClassName="font-serif font-bold"
       />
-      <div className="col-span-2 mt-4 flex justify-center">
+      <div className="col-span-2 mt-4 flex justify-center gap-4">
         <PrimaryButtonComponent
           label="Save"
           icon="fa fa-save"
           buttonClassName="mt-2 py-1 px-5 text-xl font-bold"
-          onClick={addProductStockIn}
+          onClick={saveProductStockIn}
         />
+        {product_id && (
+          <PrimaryButtonComponent
+            label="Delete"
+            icon="fa fa-trash"
+            buttonClassName="mt-2 py-1 px-3 text-xl bg-red-300 hover:bg-red-700 opacity-80 text-white"
+          // onClick={deleteProduct}
+          />
+        )}
       </div>
     </div>
   );

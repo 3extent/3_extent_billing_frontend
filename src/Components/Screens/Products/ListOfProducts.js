@@ -8,6 +8,7 @@ import { apiCall, Spinner } from '../../../Util/AxiosUtils';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
 import { exportToExcel, handleBarcodePrint } from '../../../Util/Utility';
 import moment from 'moment';
+import { useNavigate } from 'react-router-dom';
 function ListOfProducts() {
     const [rows, setRows] = useState([]);
     const [imeiNumber, setIMEINumber] = useState();
@@ -26,6 +27,7 @@ function ListOfProducts() {
     sevenDaysAgo.setDate(today.getDate() - 7);
     const todayFormatted = formatDate(today);
     const sevenDaysAgoFormatted = formatDate(sevenDaysAgo);
+    const navigate=useNavigate();
     useEffect(() => {
         setFrom(sevenDaysAgoFormatted);
         setTo(todayFormatted);
@@ -37,13 +39,16 @@ function ListOfProducts() {
         console.log('response: ', response);
         if (response.status === 200) {
             const productFormattedRows = response.data.map((product) => ({
-                "Date": product.createdAt,
+                "Date": moment(Number(product.created_at)).isValid() 
+                ? moment(Number(product.created_at)).format('LLL') 
+                : 'Invalid Date',
                 "IMEI NO": product.imei_number,
                 "Model": typeof product.model === 'object' ? product.model.name : product.model,
                 "Brand": typeof product.brand === 'object' ? product.model.brand : product.model.brand.name,
                 "Sales Price": product.sales_price,
                 "Purchase Price": product.purchase_price,
                 "Grade": product.grade,
+                id: product._id,
                 "Barcode": (
                     <PrimaryButtonComponent
                         label="Barcode"
@@ -133,6 +138,11 @@ function ListOfProducts() {
     const handleExportToExcel = () => {
         exportToExcel(rows, "ProductList.xlsx");
     };
+     const handleRowClick = (row) => {
+        if (row?.id) {
+            navigate(`/stockin/${row.id}`);
+        }
+    };
     return (
         <div className='w-full'>
             {loading && <Spinner />}
@@ -221,6 +231,7 @@ function ListOfProducts() {
                 <CustomTableCompoent
                     headers={PRODUCT_COLOUMNS}
                     rows={rows}
+                    onRowClick={handleRowClick}
                 />
             </div>
         </div>
