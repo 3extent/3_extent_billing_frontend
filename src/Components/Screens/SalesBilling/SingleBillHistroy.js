@@ -5,6 +5,7 @@ import { apiCall } from "../../../Util/AxiosUtils";
 import { useParams } from "react-router-dom";
 import { exportToExcel } from "../../../Util/Utility";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
+import moment from "moment";
 
 export default function SingleBillHistory() {
     const { billId } = useParams();
@@ -18,15 +19,18 @@ export default function SingleBillHistory() {
         console.log('response: ', response);
         if (response.status === 200) {
             const bill = response.data;
-            const singleBillHistrotFormattedRows = [{
-                "Bill ID": bill._id,
-                "Date": bill.createdAt,
-                "Customer Name": bill.customer.name,
-                "Contact Number": bill.customer.contact_number,
-                "Total Amount": bill.total_amount,
-                "Remaining Amount": bill.remaining_amount,
-                "Profit": bill.profit
-            }]
+            const singleBillHistrotFormattedRows = bill.products.map((product, index) => ({
+                "Sr.No": index + 1,
+                "Date": moment(Number(product.created_at)).format('ll'),
+                "IMEI NO": product.imei_number,
+                "Brand": product.brand?.name,       // safely access nested object property
+                "Model": product.model?.name,
+                "Rate": product.sales_price,
+                "Purchase Price": product.purchase_price,
+                "QC-Remark": product.qc_remark,
+                "Grade": product.grade,
+                "Accessories": product.accessories
+            }));
             setRows(singleBillHistrotFormattedRows);
         } else {
             console.log("Error");
@@ -44,7 +48,6 @@ export default function SingleBillHistory() {
     const handleExportToExcel = () => {
         exportToExcel(rows, "SingleBillHistory.xlsx");
     };
-
     return (
         <div>
             <div className="mb-2">

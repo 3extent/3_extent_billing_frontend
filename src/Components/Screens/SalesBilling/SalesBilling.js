@@ -9,6 +9,7 @@ import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownI
 import { useNavigate } from "react-router-dom";
 import { exportToExcel, generateAndSavePdf } from "../../../Util/Utility";
 import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
+import moment from "moment";
 export default function SalesBilling() {
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -118,7 +119,7 @@ export default function SalesBilling() {
         if (response.status === 200) {
             const productFormattedRows = response.data.map((product, index) => ({
                 "Sr.No": rows.length + index + 1,
-                "date": product.createdAt,
+                "Date":  moment(Number(product.created_at)).format('ll'),
                 "IMEI NO": product.imei_number,
                 "Brand": typeof product.brand === 'object' ? product.brand.name : product.brand,
                 "Model": typeof product.model === 'object' ? product.model.name : product.model,
@@ -168,7 +169,7 @@ export default function SalesBilling() {
         console.log("response: ", response);
         if (response.status === 200) {
             alert("Bill saved successfully!");
-            setRows({});
+            setRows([]);
             setSelectedImei("");
             setCustomerName("");
             setSelectedContactNo("");
@@ -177,6 +178,7 @@ export default function SalesBilling() {
             setCard("");
             setShowPaymentPopup(false);
             setPendingAmount(totalAmount);
+            navigate("/billinghistory");
         } else {
             console.log("Error");
         }
@@ -191,7 +193,7 @@ export default function SalesBilling() {
     };
     const handlePrintButton = () => {
         const billsData = {
-            customer_name: customerName,
+            customer_name: customerName,    
             contact_number: selectedContactNo,
             products: rows.map((row) => ({
                 imei_number: row["IMEI NO"],
