@@ -27,7 +27,7 @@ function ListOfProducts() {
     sevenDaysAgo.setDate(today.getDate() - 7);
     const todayFormatted = formatDate(today);
     const sevenDaysAgoFormatted = formatDate(sevenDaysAgo);
-    const navigate=useNavigate();
+    const navigate = useNavigate();
     useEffect(() => {
         setFrom(sevenDaysAgoFormatted);
         setTo(todayFormatted);
@@ -39,9 +39,7 @@ function ListOfProducts() {
         console.log('response: ', response);
         if (response.status === 200) {
             const productFormattedRows = response.data.map((product) => ({
-                "Date": moment(Number(product.created_at)).isValid() 
-                ? moment(Number(product.created_at)).format('LLL') 
-                : 'Invalid Date',
+                "Date": moment(Number(product.created_at)).format('lll'),
                 "IMEI NO": product.imei_number,
                 "Model": typeof product.model === 'object' ? product.model.name : product.model,
                 "Brand": typeof product.brand === 'object' ? product.model.brand : product.model.brand.name,
@@ -138,7 +136,7 @@ function ListOfProducts() {
     const handleExportToExcel = () => {
         exportToExcel(rows, "ProductList.xlsx");
     };
-     const handleRowClick = (row) => {
+    const handleRowClick = (row) => {
         if (row?.id) {
             navigate(`/stockin/${row.id}`);
         }
