@@ -1,14 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
-import CustomBarcodePrintComponent from '../../CustomComponents/CustomBarcodePrintComponent/CustomBarcodePrintComponent';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
 import { ACCESSORIES_OPTIONS, GRADE_OPTIONS, STATUS_OPTIONS, } from './Constants';
 import CustomDropdownInputComponent from '../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent';
 import { apiCall, Spinner } from '../../../Util/AxiosUtils';
 import { handleBarcodePrint } from '../../../Util/Utility';
 import { useNavigate, useParams } from 'react-router-dom';
-
 function SingleProductStockIn() {
   const [modelOptions, setModelOptions] = useState([]);
   const [loading, setLoading] = useState(false)
@@ -104,7 +102,6 @@ function SingleProductStockIn() {
       addProductData();
     }
   }
-
   const getSupplierCallBack = (response) => {
     console.log('response: ', response);
     if (response.status === 200) {
@@ -114,7 +111,6 @@ function SingleProductStockIn() {
       console.log("Error");
     }
   }
-
   const getSupplierAllData = () => {
     let url = "https://3-extent-billing-backend.vercel.app/api/users?role=SUPPLIER";
     apiCall({

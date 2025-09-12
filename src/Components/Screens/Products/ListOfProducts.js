@@ -211,17 +211,14 @@ function ListOfProducts() {
                 />
                 <PrimaryButtonComponent
                     label="Search"
-                    buttonClassName=" py-1 px-5 text-xl font-bold"
                     onClick={handleSearchFilter}
                 />
                 <PrimaryButtonComponent
                     label="Reset"
-                    buttonClassName="py-1 px-5 text-xl font-bold"
                     onClick={handleResetFilter}
                 />
                 <PrimaryButtonComponent
                     label="Export to Excel"
-                    buttonClassName="py-1 px-5 text-xl font-bold"
                     onClick={handleExportToExcel}
                 />
             </div>
