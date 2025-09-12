@@ -23,7 +23,7 @@ function SingleProductStockIn() {
     accessories: '',
     supplier_name: '',
     qc_remark: '',
-    status: ''
+    status: STATUS_OPTIONS[0] || ''
   });
   const handleInputChange = (event) => {
     const { name, value } = event.target;
