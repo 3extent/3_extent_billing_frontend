@@ -55,8 +55,10 @@ function SingleProductStockIn() {
     getSupplierAllData();
   }, []);
   useEffect(() => {
+  if (product_id) {
     getProductData();
-  }, [product_id])
+  }
+}, [product_id]);
   const getModelsAllData = () => {
     let url = "https://3-extent-billing-backend.vercel.app/api/models";
     apiCall({
