@@ -31,7 +31,7 @@ export default function SalesBilling() {
     const [cashAmount, setCashAmount] = useState("");
     const [onlineAmount, setOnlineAmount] = useState("");
     const [card, setCard] = useState("");
-    const totalAmount = 10000;
+    const [totalAmount, setTotalAmount] = useState(0);
     const [pendingAmount, setPendingAmount] = useState(totalAmount);
     const toggleColumn = (columnName) => {
         if (dynamicHeaders.includes(columnName)) {
@@ -69,6 +69,10 @@ export default function SalesBilling() {
         const pending = totalAmount - (cash + online + cardAmt);
         setPendingAmount(pending);
     }, [cashAmount, card, onlineAmount]);
+    useEffect(() => {
+        const total = rows.reduce((sum, row) => sum + Number(row["Rate"] || 0), 0);
+        setTotalAmount(total);
+    }, [rows]);
     const getCustomerAllData = () => {
         const url = 'https://3-extent-billing-backend.vercel.app/api/users?role=CUSTOMER';
         apiCall({
@@ -256,7 +260,6 @@ export default function SalesBilling() {
                 />
                 <PrimaryButtonComponent
                     label="Export to Excel"
-                    buttonClassName=" py-1 px-5 text-xl font-bold"
                     onClick={handleExportToExcel}
 
                 />
@@ -300,18 +303,25 @@ export default function SalesBilling() {
                     maxHeight="max-h-[50vh]"
                 />
             </div>
-            <div className="flex justify-end gap-4 mt-5">
-                <PrimaryButtonComponent
-                    label="Save"
-                    icon="fa fa-cloud-download"
-                    buttonClassName="py-1 px-3 text-sm font-bold"
-                    onClick={handleSaveData}
-                />
-                <PrimaryButtonComponent
-                    label="Draft"
-                    icon="fa fa-pencil-square-o"
-                    buttonClassName="py-1 px-3 text-sm font-bold"
-                />
+            <div>
+                <div className="flex justify-end">
+                    <div>
+                        <span className="font-bold gap-4 ml-7 text-[18px] mt-5">
+                            Total Amount : {Number(totalAmount).toLocaleString("en-IN")}
+                        </span>
+                    </div>
+                    <div className="flex justify-end gap-4 mt-5">
+                        <PrimaryButtonComponent
+                            label="Save"
+                            icon="fa fa-cloud-download"
+                            onClick={handleSaveData}
+                        />
+                        <PrimaryButtonComponent
+                            label="Draft"
+                            icon="fa fa-pencil-square-o"
+                        />
+                    </div>
+                </div>
                 {/* <PrimaryButtonComponent
                     label="View"
                     icon="fa fa-dashcube"

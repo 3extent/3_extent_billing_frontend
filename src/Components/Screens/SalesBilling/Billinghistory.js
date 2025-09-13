@@ -8,7 +8,6 @@ import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import { exportToExcel } from "../../../Util/Utility";
 import moment from "moment";
-
 function Billinghistory() {
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
@@ -155,20 +154,17 @@ function Billinghistory() {
                     disabled={selectAllDates}
                 />
             </div>
-            <div className='flex justify-end mb-2'>
+            <div className='flex justify-end mb-2 gap-4'>
                 <PrimaryButtonComponent
                     label="Search"
-                    buttonClassName=" py-1 px-5 text-xl font-bold"
                     onClick={handleSearchFilter}
                 />
                 <PrimaryButtonComponent
                     label="Reset"
-                    buttonClassName="ml-5 py-1 px-5 text-xl font-bold"
                     onClick={handleResetFilter}
                 />
                 <PrimaryButtonComponent
                     label="Export to Excel"
-                    buttonClassName="ml-5 py-1 px-5 text-xl font-bold"
                     onClick={handleExportToExcel}
                 />
             </div>
