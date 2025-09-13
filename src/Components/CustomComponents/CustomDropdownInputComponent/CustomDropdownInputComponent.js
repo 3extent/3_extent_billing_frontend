@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-export default function CustomDropdownInputComponent({ name, dropdownClassName = "", labelClassName = "", placeholder = "", options = [], value = "", onChange = () => { },maxLength }) {
+export default function CustomDropdownInputComponent({ name, dropdownClassName = "", labelClassName = "", placeholder = "", options = [], value = "", onChange = () => { }, maxLength, error }) {
     const [inputValue, setInputValue] = useState('');
     const [showDropdown, setShowDropdown] = useState(false);
     useEffect(() => {
@@ -33,7 +33,7 @@ export default function CustomDropdownInputComponent({ name, dropdownClassName =
                 onBlur={() => setTimeout(() => setShowDropdown(false), 100)}
                 placeholder={placeholder}
                 maxLength={maxLength}
-                className={`px-3 py-2 border border-gray-300 rounded-md ${dropdownClassName} `}
+                className={`px-3 py-2 border border-gray-300 rounded-md ${error ? 'border-red-600' : 'border-gray-300'} ${dropdownClassName}`}
             />
             {showDropdown && filteredOptions.length > 0 && (
                 <div className={`absolute z-10 mt-1 bg-white border border-gray-300 rounded-md max-h-40 overflow-y-auto ${dropdownClassName}`}>
@@ -48,6 +48,7 @@ export default function CustomDropdownInputComponent({ name, dropdownClassName =
                     ))}
                 </div>
             )}
+            {error && <div className="text-red-600 mt-1 ml-1 text-sm">{error}</div>}
         </div>
     );
 }

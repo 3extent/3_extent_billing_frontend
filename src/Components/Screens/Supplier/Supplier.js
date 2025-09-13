@@ -12,7 +12,7 @@ function Supplier() {
     const navigate = useNavigate();
     const [supplierName, setSupplierName] = useState();
     const [contactNo, setContactNo] = useState();
-        const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
     const navigateAddSupplier = () => {
         navigate("/addsupplier")
     }
@@ -48,7 +48,7 @@ function Supplier() {
             url: url,
             data: {},
             callback: getSupplierCallBack,
-             setLoading: setLoading
+            setLoading: setLoading
         })
     }
     const handleSearchFilter = () => {
@@ -59,17 +59,17 @@ function Supplier() {
         setContactNo('');
         getSupplierAllData({});
     }
-     const handleExportToExcel = () => {
-        exportToExcel(rows, "SupplierData.xlsx");  
+    const handleExportToExcel = () => {
+        exportToExcel(rows, "SupplierData.xlsx");
     };
-     const handleRowClick = (row) => {
+    const handleRowClick = (row) => {
         if (row?.id) {
             navigate(`/addsupplier/${row.id}`);
         }
     };
     return (
         <div className="w-full">
-             {loading && <Spinner/>}
+            {loading && <Spinner />}
             <CustomHeaderComponent
                 name="List of Supplier Information"
                 icon="fa fa-plus-circle"
@@ -87,11 +87,12 @@ function Supplier() {
                     inputClassName="w-[190px]"
                 />
                 <InputComponent
-                    type="number"
+                    type="text"
                     placeholder="Contact No"
                     value={contactNo}
                     onChange={(e) => setContactNo(e.target.value)}
                     inputClassName="w-[190px]"
+                    maxLength={10}
                 />
                 <PrimaryButtonComponent
                     label="Search"
