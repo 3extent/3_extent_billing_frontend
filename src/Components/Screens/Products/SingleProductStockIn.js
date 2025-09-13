@@ -7,6 +7,7 @@ import CustomDropdownInputComponent from '../../CustomComponents/CustomDropdownI
 import { apiCall, Spinner } from '../../../Util/AxiosUtils';
 import { handleBarcodePrint } from '../../../Util/Utility';
 import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 function SingleProductStockIn() {
   const [modelOptions, setModelOptions] = useState([]);
   const [loading, setLoading] = useState(false)
@@ -32,10 +33,15 @@ function SingleProductStockIn() {
     setProductData({ ...productData, [name]: value });
   };
   const handleModelProductData = (value) => {
+    setErrors(prev => ({ ...prev, model_name: "" }));
     setProductData(productData => ({ ...productData, model_name: value }));
   };
   const stockInCallback = (response) => {
     if (response.status === 200) {
+      toast.success("Stock added successfully!", {
+        position: "top-center",
+        autoClose: 2000,
+      });
       setProductData({
         model_name: '',
         grade: '',
@@ -48,8 +54,15 @@ function SingleProductStockIn() {
         accessories: '',
         status: ''
       });
+      setTimeout(() => {
+        navigate("/products");
+      }, 2000);
     } else {
-      console.log("error")
+      const errorMsg = response?.data?.error || "Failed to add stock!";
+      toast.error(errorMsg, {
+        position: "top-center",
+        autoClose: 2000,
+      });
     }
   };
   useEffect(() => {
@@ -82,10 +95,17 @@ function SingleProductStockIn() {
   }
   const deleteCallback = (response) => {
     if (response.status === 200) {
-      // seterror("Product deleted successfully.");
+      toast.success("Product deleted successfully!", {
+        position: "top-center",
+        autoClose: 2000,
+      });
       navigate("/products");
     } else {
-      // seterror("Failed to delete product.");
+      const errorMsg = response?.data?.error || "Failed to delete product!";
+      toast.error(errorMsg, {
+        position: "top-center",
+        autoClose: 2000,
+      });
     }
   }
   const deleteProduct = () => {
@@ -99,7 +119,6 @@ function SingleProductStockIn() {
   }
   const handleValidation = () => {
     const newErrors = {};
-
     if (!productData.model_name.trim())
       newErrors.model_name = "Please select Model Name";
     if (!productData.imei_number.trim())
@@ -118,7 +137,8 @@ function SingleProductStockIn() {
       newErrors.supplier_name = "Please select Supplier Name";
     if (!productData.status.trim())
       newErrors.status = "Please select Status";
-
+    if (!productData.qc_remark.trim())
+      newErrors.qc_remark = "Please enter a QC Remark";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -152,9 +172,18 @@ function SingleProductStockIn() {
   }
   const saveProductCallback = (response) => {
     if (response.status === 200) {
-      navigate("/products");
+      toast.success("Stock updated successfully!", {
+        position: "top-center",
+        autoClose: 2000,
+      });
+      setTimeout(() => navigate("/products"), 2000);
     } else {
-      // setError("Error occurred while saving customer");
+      const errorMsg = response?.data?.error || "Failed to update stock!";
+      toast.error(errorMsg, {
+        position: "top-center",
+        autoClose: 2000,
+      });
+
     }
   };
   const addProductData = () => {
@@ -276,8 +305,7 @@ function SingleProductStockIn() {
         labelClassName="font-serif font-bold"
         value={productData.qc_remark}
         onChange={handleInputChange}
-
-
+        error={errors.qc_remark}
       />
       <DropdownCompoent
         label="Supplier"
