@@ -10,6 +10,7 @@ import moment from "moment";
 export default function SingleBillHistory() {
     const { billId } = useParams();
     const [rows, setRows] = useState([]);
+    const [customerInfo, setCustomerInfo] = useState();
     useEffect(() => {
         if (billId) {
             getSingleBillHistroyAllData(billId);
@@ -19,11 +20,15 @@ export default function SingleBillHistory() {
         console.log('response: ', response);
         if (response.status === 200) {
             const bill = response.data;
+            setCustomerInfo({
+                name: bill.customer?.name,
+                contact: bill.customer?.contact_number
+            });
             const singleBillHistrotFormattedRows = bill.products.map((product, index) => ({
                 "Sr.No": index + 1,
                 "Date": moment(Number(product.created_at)).format('ll'),
                 "IMEI NO": product.imei_number,
-                "Brand": product.brand?.name,       // safely access nested object property
+                "Brand": product.model.brand?.name,   
                 "Model": product.model?.name,
                 "Rate": product.sales_price,
                 "Purchase Price": product.purchase_price,
@@ -50,12 +55,24 @@ export default function SingleBillHistory() {
     };
     return (
         <div>
-            <div className="mb-2">
-                <PrimaryButtonComponent
-                    label="Export to Excel"
-                    buttonClassName="mt-4 py-2 px-5 text-xl font-bold"
-                    onClick={handleExportToExcel}
-                />
+            <div className="text-xl font-serif mb-4">Details of bill</div>
+            <div className=" flex justify-between items-center mb-3">
+                {customerInfo && (
+                    <div className="">
+                        <div className="text-[16px] font-semibold">
+                            Customer Name :<span className="font-normal text-[14px]">{customerInfo.name}</span>
+                        </div>
+                        <div className="text-[16px] font-semibold">
+                            Contact Number : <span className="font-normal text-[14px]">{customerInfo.contact}</span>
+                        </div>
+                    </div>
+                )}
+                <div>
+                    <PrimaryButtonComponent
+                        label="Export to Excel"
+                        onClick={handleExportToExcel}
+                    />
+                </div>
             </div>
             <div>
                 <CustomTableCompoent

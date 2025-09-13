@@ -119,7 +119,7 @@ export default function SalesBilling() {
         if (response.status === 200) {
             const productFormattedRows = response.data.map((product, index) => ({
                 "Sr.No": rows.length + index + 1,
-                "Date":  moment(Number(product.created_at)).format('ll'),
+                "Date": moment(Number(product.created_at)).format('ll'),
                 "IMEI NO": product.imei_number,
                 "Brand": typeof product.brand === 'object' ? product.brand.name : product.brand,
                 "Model": typeof product.model === 'object' ? product.model.name : product.model,
@@ -189,11 +189,10 @@ export default function SalesBilling() {
             alert("Add at list one bill");
             return;
         }
-        generateAndSavePdf(customerName, selectedContactNo, dynamicHeaders, rows);
     };
     const handlePrintButton = () => {
         const billsData = {
-            customer_name: customerName,    
+            customer_name: customerName,
             contact_number: selectedContactNo,
             products: rows.map((row) => ({
                 imei_number: row["IMEI NO"],
@@ -211,6 +210,7 @@ export default function SalesBilling() {
             data: billsData,
             callback: billsCallback,
         })
+        generateAndSavePdf(customerName, selectedContactNo, dynamicHeaders, rows);
     };
     const handleExportToExcel = () => {
         exportToExcel(rows, "salesbillingData.xlsx");
