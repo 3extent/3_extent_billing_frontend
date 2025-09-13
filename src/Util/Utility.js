@@ -88,8 +88,8 @@ export const handleBarcodePrint = (product) => {
       <body>
         <div id="barcode-wrapper">
           <h1>3_EXTENT</h1>
-          <h2>${product.modelName}</h2>
-          <h2>Grade : ${product.grade}</h2>
+          <h1>${product.modelName}</h1>
+          <h1>Grade : ${product.grade}</h1>
           <svg id="barcode"></svg>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
@@ -98,7 +98,7 @@ export const handleBarcodePrint = (product) => {
             format: 'CODE128',
             lineColor: '#000',
             width: 2,
-            height: 50,
+            height: 40,
             displayValue: true,
             fontSize: 25
           });
