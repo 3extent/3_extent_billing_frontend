@@ -75,7 +75,7 @@ export const handleBarcodePrint = (product) => {
           }
           .h2 {
             margin: 0;
-            font-size: 85px;
+            font-size: 100px;
             text-align: left;
             font-weight: bolder;
           }
