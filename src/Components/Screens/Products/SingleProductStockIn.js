@@ -275,14 +275,14 @@ function SingleProductStockIn() {
         <PrimaryButtonComponent
           label="Save"
           icon="fa fa-save"
-          buttonClassName="mt-2 py-1 px-5 text-xl font-bold"
+          // buttonClassName="font-bold"
           onClick={saveProductStockIn}
         />
         {product_id && (
           <PrimaryButtonComponent
             label="Delete"
             icon="fa fa-trash"
-            buttonClassName="mt-2 py-1 px-3 text-xl border border-red-500 text-red-500 bg-transparent hover:bg-red-500 hover:text-white"
+            buttonClassName="border border-red-500 !text-red-500 bg-transparent hover:bg-red-500 hover:text-white"
             onClick={deleteProduct}
           />
         )}
