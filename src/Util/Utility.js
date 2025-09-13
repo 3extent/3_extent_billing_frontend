@@ -56,7 +56,6 @@ export const handleBarcodePrint = (product) => {
           }
           html, body {
             margin: 0;
-            padding: 0px 5px;
             height: 100vh;
             width: 100vw;
           }
@@ -68,7 +67,6 @@ export const handleBarcodePrint = (product) => {
             font-family: sans-serif;
           }
           .header {
-            margin: 5px 0px;
             font-size: 100px;
             text-align: center;
             font-weight: bolder;
