@@ -4,6 +4,7 @@ import InputComponent from "../../CustomComponents/InputComponent/InputComponent
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate, useParams, } from "react-router-dom";
+import { toast } from "react-toastify";
 export default function AddModels() {
     const navigate = useNavigate();
     const { model_id } = useParams();
@@ -12,7 +13,7 @@ export default function AddModels() {
     };
     useEffect(() => {
         getBrandsAllData();
-    })
+    }, [])
     useEffect(() => {
         getModelData();
     }, [model_id]);
@@ -21,12 +22,7 @@ export default function AddModels() {
     const [selectedCombinations, setSelectedCombinations] = useState([]);
     const [showData, setShowData] = useState(false);
     const [loading, setLoading] = useState(false)
-    const [error, setError] = useState({
-        brand_name: "",
-        name: "",
-        RAM: "",
-        storage: "",
-        combination: ""
+    const [errors, setErrors] = useState({
     });
     const [modelData, setModelData] = useState({
         brand_name: "",
@@ -37,7 +33,7 @@ export default function AddModels() {
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setModelData({ ...modelData, [name]: value });
-        setError((prevError) => ({
+        setErrors((prevError) => ({
             ...prevError,
             [name]: "",
         }));
@@ -49,6 +45,15 @@ export default function AddModels() {
         const storageOptions = modelData.storage
             ? modelData.storage.split(",").map((storage) => storage.trim())
             : [];
+        const newErrors = {};
+        if (!modelData.brand_name.trim()) newErrors.brand_name = "Please enter Brand Name";
+        if (!modelData.name.trim()) newErrors.name = "Please enter Model Name";
+        if (ramOptions.length === 0) newErrors.RAM = "Please enter RAM";
+        if (storageOptions.length === 0) newErrors.storage = "Please enter Storage";
+        if (Object.keys(newErrors).length > 0) {
+            setErrors((prevErrors) => ({ ...prevErrors, ...newErrors }));
+            return;
+        }
         const combinations = [];
         if (ramOptions.length && storageOptions.length) {
             ramOptions.forEach((ram) => {
@@ -69,54 +74,31 @@ export default function AddModels() {
         const value = JSON.parse(event.target.value);
         if (event.target.checked) {
             setSelectedCombinations((possibleCombinations) => [...possibleCombinations, value]);
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                combination: ""
+            }));
+
         } else {
             setSelectedCombinations((possibleCombinations) => possibleCombinations.filter(
                 (combo) => combo.ram !== value.ram || combo.storage !== value.storage));
         };
     }
-    const addModel = () => {
-        let errors = {
-            brand_name: "",
-            name: "",
-            RAM: "",
-            storage: "",
-            combination: ""
-        };
-        let hasError = false;
-
-        if (modelData.brand_name.trim() === "") {
-            errors.brand_name = "Please enter Brand Name";
-            hasError = true;
-        }
-        if (modelData.name.trim() === "") {
-            errors.name = "Please enter Model Name";
-            hasError = true;
-        }
+    const handleValidation = () => {
+        const newErrors = {};
+        if (!modelData.brand_name.trim()) newErrors.brand_name = "Please enter Brand Name";
+        if (!modelData.name.trim()) newErrors.name = "Please enter Model Name";
         if (!model_id) {
-            if (modelData.RAM.trim() === "") {
-                errors.RAM = "Please enter RAM";
-                hasError = true;
-            }
-            if (modelData.storage.trim() === "") {
-                errors.storage = "Please enter Storage";
-                hasError = true;
-            }
-            if (selectedCombinations.length === 0) {
-                setError("Please select at least one RAM/Storage combination");
-                hasError = true;
-            }
+            if (!modelData.RAM.trim()) newErrors.RAM = "Please enter RAM";
+            if (!modelData.storage.trim()) newErrors.storage = "Please enter Storage";
+            if (selectedCombinations.length === 0)
+                newErrors.combination = "Please select at least one RAM/Storage combination";
         }
-        if (hasError) {
-            setError(errors);
-            return;
-        }
-        setError({
-            brand_name: "",
-            name: "",
-            RAM: "",
-            storage: "",
-            combination: ""
-        });
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+    const saveModel = () => {
+        if (!handleValidation()) return;
         if (model_id) {
             editModelData();
         } else {
@@ -126,6 +108,10 @@ export default function AddModels() {
     const addModelCallback = (response) => {
         console.log("response:", response);
         if (response.status === 201) {
+            toast.success("Model added successfully!", {
+                position: "top-center",
+                autoClose: 2000,
+            });
             setModelData({
                 brand_name: "",
                 name: "",
@@ -139,9 +125,11 @@ export default function AddModels() {
                 navigate("/models");
             }, 2000);
         } else {
-            setTimeout(() => {
-                navigate("/models");
-            }, 2000);
+            const errorMsg = response?.data?.error || "Failed to add model";
+            toast.error(errorMsg, {
+                position: "top-center",
+                autoClose: 2000,
+            });
         }
     };
     const getBrandsAllData = () => {
@@ -165,12 +153,20 @@ export default function AddModels() {
     }
     const submitCallback = (response) => {
         if (response.status === 200) {
+            toast.success("Model updated successfully!", {
+                position: "top-center",
+                autoClose: 2000,
+            });
             navigate("/models");
         } else {
-            setError("Error occurred while saving models");
+            console.log('response: ', response);
+            const errorMsg = response?.data?.error || "Failed to update model";
+            toast.error(errorMsg, {
+                position: "top-center",
+                autoClose: 2000,
+            });
         }
     };
-
     const addModelData = () => {
         apiCall({
             method: "POST",
@@ -206,7 +202,7 @@ export default function AddModels() {
                 if (response.status === 200) {
                     setModelData({ name: response.data.name, brand_name: response.data.brand.name });
                 } else {
-                    setError("Failed to fetch model data");
+                    setErrors("Failed to fetch model data");
                 }
             },
             setLoading: setLoading
@@ -225,12 +221,13 @@ export default function AddModels() {
                         dropdownClassName="w-[90%]"
                         options={brandOptions}
                         value={modelData.brand_name}
-                        onChange={(value) => setModelData({ ...modelData, brand_name: value })}
 
+                        onChange={(value) => {
+                            setModelData({ ...modelData, brand_name: value });
+                            setErrors((prev) => ({ ...prev, brand_name: "" }));
+                        }}
+                        error={errors.brand_name}
                     />
-                    {error.brand_name && (
-                        <div className="text-red-600 mt-1 ml-1">{error.brand_name}</div>
-                    )}
                 </div>
                 <div>
                     <InputComponent
@@ -242,10 +239,8 @@ export default function AddModels() {
                         labelClassName="font-bold"
                         value={modelData.name}
                         onChange={handleInputChange}
+                        error={errors.name}
                     />
-                    {error.name && (
-                        <div className="text-red-600 mt-1 ml-1">{error.name}</div>
-                    )}
                 </div>
             </div>
             {!model_id && (
@@ -261,10 +256,8 @@ export default function AddModels() {
                                 labelClassName="font-bold"
                                 value={modelData.RAM}
                                 onChange={handleInputChange}
+                                error={errors.RAM}
                             />
-                            {error.RAM && (
-                                <div className="text-red-600 mt-1 ml-1">{error.RAM}</div>
-                            )}
                         </div>
                         <div>
                             <InputComponent
@@ -276,10 +269,8 @@ export default function AddModels() {
                                 labelClassName="font-bold"
                                 value={modelData.storage}
                                 onChange={handleInputChange}
+                                error={errors.storage}
                             />
-                            {error.storage && (
-                                <div className="text-red-600 mt-1 ml-1">{error.storage}</div>
-                            )}
                         </div>
                     </div>
                     <div className="flex justify-center mt-5">
@@ -310,7 +301,13 @@ export default function AddModels() {
                                         </li>
                                     ))}
                                 </div>
+                                {errors.combination && (
+                                    <span className="text-red-500 text-sm mt-1">
+                                        {errors.combination}
+                                    </span>
+                                )}
                             </ul>
+
                         </div>
                     )}
                 </>
@@ -326,7 +323,7 @@ export default function AddModels() {
                     label="Submit"
                     icon="fa fa-bookmark-o"
                     buttonClassName="mt-2 py-1 px-5 text-xl font-bold"
-                    onClick={addModel}
+                    onClick={saveModel}
                 />
             </div>
         </div>

@@ -3,6 +3,7 @@ import InputComponent from "../../CustomComponents/InputComponent/InputComponent
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 function AddSupplier() {
     const navigate = useNavigate();
     const { suppiler_id } = useParams();
@@ -23,13 +24,19 @@ function AddSupplier() {
         role: "SUPPLIER",
     });
     const [loading, setLoading] = useState(false)
+    const [errors, setErrors] = useState({});
     const handleInputChange = (event) => {
         const { name, value } = event.target;
+        setErrors(prev => ({ ...prev, [name]: "" }));
         setSupplierData({ ...supplierData, [name]: value });
     };
     const addSupplierCallback = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
+            toast.success("Supplier added successfully!", {
+                position: "top-center",
+                autoClose: 2000,
+            });
             setSupplierData({
                 name: "",
                 firm_name: "",
@@ -40,11 +47,41 @@ function AddSupplier() {
                 gst_number: "",
                 role: "SUPPLIER",
             });
+            setTimeout(() => {
+                navigate("/supplier");
+            }, 2000);
         } else {
-            console.log("Error");
+            const errorMsg = response?.data?.error || "Failed to add supplier";
+            toast.error(errorMsg, {
+                position: "top-center",
+                autoClose: 2000,
+            });
+        };
+    }
+    const handleValidation = () => {
+        const newErrors = {};
+
+        if (!supplierData.name?.trim()) {
+            newErrors.name = "Supplier name is required";
         }
+        if (!supplierData.contact_number?.trim()) {
+            newErrors.contact_number = "Contact number 1 is required";
+        }
+        if (!supplierData.contact_number2?.trim()) {
+            newErrors.contact_number2 = "Contact number 2 is required";
+        }
+        if (!supplierData.gst_number?.trim()) {
+            newErrors.gst_number = "GST number is required";
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
     };
+
     const saveSupplier = (() => {
+        if (!handleValidation()) {
+            return;
+        }
         if (suppiler_id) {
             editSupplierData();
         } else {
@@ -54,11 +91,19 @@ function AddSupplier() {
 
     const saveCallback = (response) => {
         if (response.status === 200) {
+            toast.success("Supplier updated successfully!", {
+                position: "top-center",
+                autoClose: 2000,
+            });
             navigate("/supplier");
         } else {
-            // setError("Error occurred while saving customer");
-        }
-    };
+            const errorMsg = response?.data?.error || "Failed to update supplier";
+            toast.error(errorMsg, {
+                position: "top-center",
+                autoClose: 2000,
+            });
+        };
+    }
     const addSupplierData = (() => {
         apiCall({
             method: "POST",
@@ -111,6 +156,7 @@ function AddSupplier() {
                     labelClassName="font-serif font-bold"
                     value={supplierData.name}
                     onChange={handleInputChange}
+                    error={errors.name}
                 />
                 <InputComponent
                     name="firm_name"
@@ -151,6 +197,8 @@ function AddSupplier() {
                     labelClassName="font-serif font-bold"
                     value={supplierData.contact_number}
                     onChange={handleInputChange}
+                    error={errors.contact_number}
+                    maxLength={10}
                 />
                 <InputComponent
                     name="contact_number2"
@@ -161,6 +209,8 @@ function AddSupplier() {
                     labelClassName="font-serif font-bold"
                     value={supplierData.contact_number2}
                     onChange={handleInputChange}
+                    error={errors.contact_number2}
+                    maxLength={10}
                 />
                 <InputComponent
                     name="gst_number"
@@ -171,6 +221,7 @@ function AddSupplier() {
                     labelClassName="font-serif font-bold"
                     value={supplierData.gst_number}
                     onChange={handleInputChange}
+                    error={errors.gst_number}
                 />
             </div>
             <div className="mt-4 flex justify-center">
