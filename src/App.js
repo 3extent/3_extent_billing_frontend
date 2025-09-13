@@ -96,7 +96,7 @@ function App() {
                 <Models />
               </ProtectedRoute>
             } />
-            <Route path="/stockin" element={
+            <Route path="/stockin/:product_id?" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <StockIn />
               </ProtectedRoute>
