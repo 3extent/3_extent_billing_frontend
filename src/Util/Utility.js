@@ -73,7 +73,7 @@ export const handleBarcodePrint = (product) => {
             text-align: center;
             font-weight: bolder;
           }
-          h2 {
+          .h2 {
             margin: 0;
             font-size: 85px;
             text-align: left;
@@ -88,8 +88,8 @@ export const handleBarcodePrint = (product) => {
       <body>
         <div id="barcode-wrapper">
           <h1 class="header">3_EXTENT</h1>
-          <h1>${product.modelName}</h1>
-          <h1>Grade : ${product.grade}</h1>
+          <h1 class="h2">${product.modelName}</h1>
+          <h1 class="h2">Grade : ${product.grade}</h1>
           <svg id="barcode"></svg>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
