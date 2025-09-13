@@ -7,11 +7,13 @@ import CustomDropdownInputComponent from '../../CustomComponents/CustomDropdownI
 import { apiCall, Spinner } from '../../../Util/AxiosUtils';
 import { handleBarcodePrint } from '../../../Util/Utility';
 import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 function SingleProductStockIn() {
   const [modelOptions, setModelOptions] = useState([]);
   const [loading, setLoading] = useState(false)
   const [supplierNameOptions, setSupplierNameOPtions] = useState([]);
   const { product_id } = useParams();
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
   const [productData, setProductData] = useState({
     model_name: '',
@@ -27,13 +29,19 @@ function SingleProductStockIn() {
   });
   const handleInputChange = (event) => {
     const { name, value } = event.target;
+    setErrors((prev) => ({ ...prev, [name]: "" }));
     setProductData({ ...productData, [name]: value });
   };
   const handleModelProductData = (value) => {
+    setErrors(prev => ({ ...prev, model_name: "" }));
     setProductData(productData => ({ ...productData, model_name: value }));
   };
   const stockInCallback = (response) => {
     if (response.status === 200) {
+      toast.success("Stock added successfully!", {
+        position: "top-center",
+        autoClose: 2000,
+      });
       setProductData({
         model_name: '',
         grade: '',
@@ -46,8 +54,15 @@ function SingleProductStockIn() {
         accessories: '',
         status: ''
       });
+      setTimeout(() => {
+        navigate("/products");
+      }, 2000);
     } else {
-      console.log("error")
+      const errorMsg = response?.data?.error || "Failed to add stock!";
+      toast.error(errorMsg, {
+        position: "top-center",
+        autoClose: 2000,
+      });
     }
   };
   useEffect(() => {
@@ -55,10 +70,10 @@ function SingleProductStockIn() {
     getSupplierAllData();
   }, []);
   useEffect(() => {
-  if (product_id) {
-    getProductData();
-  }
-}, [product_id]);
+    if (product_id) {
+      getProductData();
+    }
+  }, [product_id]);
   const getModelsAllData = () => {
     let url = "https://3-extent-billing-backend.vercel.app/api/models";
     apiCall({
@@ -78,13 +93,20 @@ function SingleProductStockIn() {
       console.log("Error");
     }
   }
-  const deleteCallback=(response)=>{
+  const deleteCallback = (response) => {
     if (response.status === 200) {
-        // seterror("Product deleted successfully.");
-        navigate("/products");
-      } else {
-        // seterror("Failed to delete product.");
-      }
+      toast.success("Product deleted successfully!", {
+        position: "top-center",
+        autoClose: 2000,
+      });
+      navigate("/products");
+    } else {
+      const errorMsg = response?.data?.error || "Failed to delete product!";
+      toast.error(errorMsg, {
+        position: "top-center",
+        autoClose: 2000,
+      });
+    }
   }
   const deleteProduct = () => {
     apiCall({
@@ -95,7 +117,33 @@ function SingleProductStockIn() {
       setLoading: setLoading
     })
   }
+  const handleValidation = () => {
+    const newErrors = {};
+    if (!productData.model_name.trim())
+      newErrors.model_name = "Please select Model Name";
+    if (!productData.imei_number.trim())
+      newErrors.imei_number = "Please enter IMEI Number";
+    if (!productData.purchase_price.trim() || isNaN(productData.purchase_price))
+      newErrors.purchase_price = "Please enter valid Purchase Price";
+    if (!productData.sales_price.trim() || isNaN(productData.sales_price))
+      newErrors.sales_price = "Please enter valid Sales Price";
+    if (!productData.grade.trim())
+      newErrors.grade = "Please select Grade";
+    if (!productData.engineer_name.trim())
+      newErrors.engineer_name = "Please enter Engineer Name";
+    if (!productData.accessories.trim())
+      newErrors.accessories = "Please select Accessories";
+    if (!productData.supplier_name.trim())
+      newErrors.supplier_name = "Please select Supplier Name";
+    if (!productData.status.trim())
+      newErrors.status = "Please select Status";
+    if (!productData.qc_remark.trim())
+      newErrors.qc_remark = "Please enter a QC Remark";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
   const saveProductStockIn = () => {
+    if (!handleValidation()) return;
     handleBarcodePrint({ modelName: productData.model_name, grade: productData.grade, imei_number: productData.imei_number })
     console.log('productData: ', productData);
     if (product_id) {
@@ -124,9 +172,18 @@ function SingleProductStockIn() {
   }
   const saveProductCallback = (response) => {
     if (response.status === 200) {
-      navigate("/products");
+      toast.success("Stock updated successfully!", {
+        position: "top-center",
+        autoClose: 2000,
+      });
+      setTimeout(() => navigate("/products"), 2000);
     } else {
-      // setError("Error occurred while saving customer");
+      const errorMsg = response?.data?.error || "Failed to update stock!";
+      toast.error(errorMsg, {
+        position: "top-center",
+        autoClose: 2000,
+      });
+
     }
   };
   const addProductData = () => {
@@ -179,6 +236,7 @@ function SingleProductStockIn() {
         onChange={handleModelProductData}
         options={modelOptions}
         labelClassName="font-serif font-bold"
+        error={errors.model_name}
       />
       <DropdownCompoent
         label="Grade"
@@ -189,6 +247,8 @@ function SingleProductStockIn() {
         onChange={handleInputChange}
         className="w-[80%]"
         labelClassName="font-serif font-bold"
+        error={errors.grade}
+
       />
       <InputComponent
         label="Purchase Price"
@@ -199,6 +259,7 @@ function SingleProductStockIn() {
         onChange={handleInputChange}
         inputClassName="w-[80%]"
         labelClassName="font-serif font-bold"
+        error={errors.purchase_price}
       />
       <InputComponent
         label="Sales Price"
@@ -209,6 +270,7 @@ function SingleProductStockIn() {
         onChange={handleInputChange}
         inputClassName="w-[80%]"
         labelClassName="font-serif font-bold"
+        error={errors.sales_price}
       />
       <InputComponent
         label="IMEI"
@@ -220,6 +282,8 @@ function SingleProductStockIn() {
         onChange={handleInputChange}
         inputClassName="w-[80%]"
         labelClassName="font-serif font-bold"
+        error={errors.imei_number}
+
       />
       <InputComponent
         label="Enginner Name "
@@ -230,6 +294,7 @@ function SingleProductStockIn() {
         onChange={handleInputChange}
         inputClassName="w-[80%]"
         labelClassName="font-serif font-bold"
+        error={errors.engineer_name}
       />
       <InputComponent
         label="QC Remark"
@@ -240,6 +305,7 @@ function SingleProductStockIn() {
         labelClassName="font-serif font-bold"
         value={productData.qc_remark}
         onChange={handleInputChange}
+        error={errors.qc_remark}
       />
       <DropdownCompoent
         label="Supplier"
@@ -250,6 +316,7 @@ function SingleProductStockIn() {
         onChange={handleInputChange}
         className="w-[80%]"
         labelClassName="font-serif font-bold"
+        error={errors.supplier_name}
       />
       <DropdownCompoent
         label="Accessories"
@@ -260,6 +327,7 @@ function SingleProductStockIn() {
         onChange={handleInputChange}
         className="w-[80%]"
         labelClassName="font-serif font-bold"
+        error={errors.accessories}
       />
       <DropdownCompoent
         label="Status"
@@ -270,6 +338,7 @@ function SingleProductStockIn() {
         options={STATUS_OPTIONS}
         className="w-[80%] "
         labelClassName="font-serif font-bold"
+        error={errors.status}
       />
       <div className="col-span-2 mt-4 flex justify-center gap-4">
         <PrimaryButtonComponent
