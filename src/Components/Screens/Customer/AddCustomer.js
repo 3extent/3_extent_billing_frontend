@@ -8,6 +8,7 @@ function AddCustomer() {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const { customer_id } = useParams();
+    const [errors, setErrors] = useState("");
     const handleBack = () => {
         navigate(-1);
     };
@@ -25,6 +26,7 @@ function AddCustomer() {
     });
     const handleInputChange = (event) => {
         const { name, value } = event.target;
+        setErrors(prev => ({ ...prev, [name]: "" }));
         setCustomerData({ ...customerData, [name]: value });
     };
     const addCustomerCallback = (response) => {
@@ -47,7 +49,8 @@ function AddCustomer() {
                 navigate("/customer");
             }, 2000);
         } else {
-            toast.error("Failed to add customer", {
+            const errorMsg = response?.data?.error || "Failed to add customer";
+            toast.error(errorMsg, {
                 position: "top-center",
                 autoClose: 2000,
             });
@@ -58,12 +61,42 @@ function AddCustomer() {
     };
     const saveCallback = (response) => {
         if (response.status === 200) {
+            toast.success("Customer updated successfully!", {
+                position: "top-center",
+                autoClose: 2000,
+            });
             navigate("/customer");
         } else {
-            // setError("Error occurred while saving customer");
+            const errorMsg = response?.data?.error || "Failed to update customer";
+            toast.error(errorMsg, {
+                position: "top-center",
+                autoClose: 2000,
+            });
         }
     };
+    const handleValidation = () => {
+        const newErrors = {};
+        if (!customerData.name.trim()) {
+            newErrors.name = "Customer name is required";
+        }
+        if (!customerData.contact_number.trim()) {
+            newErrors.contact_number = "Contact no is required";
+        }
+        if (!customerData.gst_number.trim()) {
+            newErrors.gst_number = "GST no is required";
+        }
+        if (!customerData.pan_number.trim()) {
+            newErrors.pan_number = "PAN no is required";
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
     const addCustomer = () => {
+        if (!handleValidation()) {
+            return;
+        }
+
         if (customer_id) {
             editCustomerData();
         } else {
@@ -100,6 +133,7 @@ function AddCustomer() {
             // error("Failed to fetch customer data");
         }
     }
+
     const getCustomerData = () => {
         apiCall({
             method: "GET",
@@ -123,6 +157,7 @@ function AddCustomer() {
                     labelClassName="font-serif font-bold"
                     value={customerData.name}
                     onChange={handleInputChange}
+                    error={errors.name}
                 />
                 <InputComponent
                     label="Address"
@@ -153,6 +188,8 @@ function AddCustomer() {
                     labelClassName="font-serif font-bold"
                     value={customerData.contact_number}
                     onChange={handleInputChange}
+                    error={errors.contact_number}
+                    maxLength={10}
                 />
                 <InputComponent
                     label="GST No."
@@ -163,6 +200,7 @@ function AddCustomer() {
                     labelClassName="font-serif font-bold"
                     value={customerData.gst_number}
                     onChange={handleInputChange}
+                    error={errors.gst_number}
                 />
                 <InputComponent
                     label="PAN No."
@@ -173,6 +211,7 @@ function AddCustomer() {
                     labelClassName="font-serif font-bold"
                     value={customerData.pan_number}
                     onChange={handleInputChange}
+                    error={errors.pan_number}
                 />
             </div>
             <div className="mt-4 flex justify-center">

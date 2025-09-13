@@ -56,9 +56,10 @@ export const handleBarcodePrint = (product) => {
           }
           html, body {
             margin: 0;
-            padding: 0px 5px;
+            padding: 0;
             height: 100vh;
             width: 100vw;
+            font-family: "Courier New", Courier, monospace;
           }
           #barcode-wrapper {
             position: absolute;
@@ -67,15 +68,15 @@ export const handleBarcodePrint = (product) => {
             text-align: center;
             font-family: sans-serif;
           }
-          h1 {
+          .header {
             margin: 5px 0px;
             font-size: 100px;
             text-align: center;
             font-weight: bolder;
           }
-          h2 {
+          .h2 {
             margin: 0;
-            font-size: 85px;
+            font-size: 100px;
             text-align: left;
             font-weight: bolder;
           }
@@ -87,9 +88,9 @@ export const handleBarcodePrint = (product) => {
       </head>
       <body>
         <div id="barcode-wrapper">
-          <h1>3_EXTENT</h1>
-          <h2>${product.modelName}</h2>
-          <h2>Grade : ${product.grade}</h2>
+          <h1 class="header">3_EXTENT</h1>
+          <h1 class="h2">${product.modelName}</h1>
+          <h1 class="h2">Grade : ${product.grade}</h1>
           <svg id="barcode"></svg>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
@@ -97,8 +98,8 @@ export const handleBarcodePrint = (product) => {
           JsBarcode("#barcode", "${product.imei_number}", {
             format: 'CODE128',
             lineColor: '#000',
-            width: 2,
-            height: 50,
+            width: 4,
+            height: 40,
             displayValue: true,
             fontSize: 25
           });
