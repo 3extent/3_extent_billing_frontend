@@ -44,8 +44,8 @@ export const generateAndSavePdf = (customerName, selectedContactNo, dynamicHeade
 };
 
 export const handleBarcodePrint = (product) => {
-  const win = window.open('', '', 'height=800,width=600');
-  win.document.write(`
+    const win = window.open('', '', 'height=800,width=600');
+    win.document.write(`
     <html>
       <head>
         <title>Print Barcode</title>
@@ -59,29 +59,24 @@ export const handleBarcodePrint = (product) => {
             padding: 0;
             height: 100vh;
             width: 100vw;
-            /* Use monospace or a fixed-width fallback first */
             font-family: "Courier New", Courier, monospace;
-            /* You might want a bigger default font size */
-            font-size: 14px;
           }
           #barcode-wrapper {
             position: absolute;
             top: 5%;
             width: 100%;
             text-align: center;
-            /* maybe enforce monospace or other readable font here also */
-            font-family: "Courier New", Courier, monospace;
+            font-family: sans-serif;
           }
           .header {
             margin: 5px 0px;
-            /* reduce or adjust size to what printer can handle */
-            font-size: 72px; /* maybe large, adjust as needed */
+            font-size: 100px;
             text-align: center;
             font-weight: bolder;
           }
           .h2 {
             margin: 0;
-            font-size: 60px;
+            font-size: 100px;
             text-align: left;
             font-weight: bolder;
           }
@@ -106,8 +101,7 @@ export const handleBarcodePrint = (product) => {
             width: 2,
             height: 40,
             displayValue: true,
-            fontSize: 25,
-            font: "monospace"  // you can try forcing the barcode text to monospace
+            fontSize: 25
           });
           window.onload = function() {
             window.print();
@@ -116,6 +110,6 @@ export const handleBarcodePrint = (product) => {
       </body>
     </html>
   `);
-  win.document.close();
-  win.focus();
+    win.document.close();
+    win.focus();
 };
