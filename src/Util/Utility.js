@@ -67,7 +67,7 @@ export const handleBarcodePrint = (product) => {
             text-align: center;
             font-family: sans-serif;
           }
-          h1 {
+          .header {
             margin: 5px 0px;
             font-size: 100px;
             text-align: center;
@@ -87,7 +87,7 @@ export const handleBarcodePrint = (product) => {
       </head>
       <body>
         <div id="barcode-wrapper">
-          <h1>3_EXTENT</h1>
+          <h1 class="header">3_EXTENT</h1>
           <h1>${product.modelName}</h1>
           <h1>Grade : ${product.grade}</h1>
           <svg id="barcode"></svg>
