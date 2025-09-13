@@ -56,8 +56,10 @@ export const handleBarcodePrint = (product) => {
           }
           html, body {
             margin: 0;
+            padding: 0;
             height: 100vh;
             width: 100vw;
+            font-family: "Courier New", Courier, monospace;
           }
           #barcode-wrapper {
             position: absolute;
@@ -67,6 +69,7 @@ export const handleBarcodePrint = (product) => {
             font-family: sans-serif;
           }
           .header {
+            margin: 5px 0px;
             font-size: 100px;
             text-align: center;
             font-weight: bolder;
