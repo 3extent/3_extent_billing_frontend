@@ -1,4 +1,4 @@
-export default function PrimaryButtonComponent({ label, onClick, icon, buttonClassName = "", iconPosition = "left", error = "", }) {
+export default function PrimaryButtonComponent({ label, onClick, icon, buttonClassName = "", iconPosition = "left" }) {
     return (
         <div>
             <button onClick={onClick} className={` bg-slate-800 text-white rounded flex items-center justify-center gap-2 ${buttonClassName}`}>
