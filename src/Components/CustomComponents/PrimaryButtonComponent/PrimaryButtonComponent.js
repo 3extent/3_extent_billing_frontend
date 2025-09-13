@@ -6,7 +6,6 @@ export default function PrimaryButtonComponent({ label, onClick, icon, buttonCla
                 <span className="">{label}</span>
                 {icon && iconPosition === "right" && <i className={icon} aria-hidden="true"></i>}
             </button>
-            {error && <div className="text-red-600 mt-1 text-sm">{error}</div>}
         </div>
     );
 };

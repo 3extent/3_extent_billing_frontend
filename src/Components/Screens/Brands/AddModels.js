@@ -45,6 +45,15 @@ export default function AddModels() {
         const storageOptions = modelData.storage
             ? modelData.storage.split(",").map((storage) => storage.trim())
             : [];
+        const newErrors = {};
+        if (!modelData.brand_name.trim()) newErrors.brand_name = "Please enter Brand Name";
+        if (!modelData.name.trim()) newErrors.name = "Please enter Model Name";
+        if (ramOptions.length === 0) newErrors.RAM = "Please enter RAM";
+        if (storageOptions.length === 0) newErrors.storage = "Please enter Storage";
+        if (Object.keys(newErrors).length > 0) {
+            setErrors((prevErrors) => ({ ...prevErrors, ...newErrors }));
+            return;
+        }
         const combinations = [];
         if (ramOptions.length && storageOptions.length) {
             ramOptions.forEach((ram) => {
@@ -269,8 +278,6 @@ export default function AddModels() {
                             label="Show Combination"
                             buttonClassName="mt-2 py-1 px-5 text-sm font-blod"
                             onClick={handleShowCombinations}
-                            error={errors.combination}
-
                         />
                     </div>
                     {showData && (
@@ -294,6 +301,11 @@ export default function AddModels() {
                                         </li>
                                     ))}
                                 </div>
+                                {errors.combination && (
+                                    <span className="text-red-500 text-sm mt-1">
+                                        {errors.combination}
+                                    </span>
+                                )}
                             </ul>
 
                         </div>
