@@ -98,7 +98,7 @@ export const handleBarcodePrint = (product) => {
           JsBarcode("#barcode", "${product.imei_number}", {
             format: 'CODE128',
             lineColor: '#000',
-            width: 4,
+            width: 2,
             height: 40,
             displayValue: true,
             fontSize: 25
