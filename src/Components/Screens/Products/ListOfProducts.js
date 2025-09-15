@@ -22,6 +22,8 @@ function ListOfProducts() {
     const [to, setTo] = useState("");
     const [selectAllDates, setSelectAllDates] = useState(false);
     const formatDate = (date) => date.toISOString().split('T')[0];
+    const [supplier, setSupplier] = useState('');
+    const [supplierOptions, setSupplierOptions] = useState([]);
     const today = new Date();
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(today.getDate() - 7);
@@ -33,7 +35,27 @@ function ListOfProducts() {
         setTo(todayFormatted);
         getProductsAllData({});
         getBrandsAllData();
+        getSuppliersAllData();
     }, []);
+    const getSuppliersAllData = () => {
+        let url = "https://3-extent-billing-backend.vercel.app/api/suppliers";
+        apiCall({
+            method: 'GET',
+            url: url,
+            data: {},
+            callback: getSuppliersCallBack,
+            setLoading: setLoading
+        });
+    };
+
+    const getSuppliersCallBack = (response) => {
+        if (response.status === 200) {
+            const suppliers = response.data.map(supplier => supplier.name);
+            setSupplierOptions(suppliers);
+        } else {
+            console.log("Error fetching suppliers");
+        }
+    };
 
     const getProductsCallBack = (response) => {
         console.log('response: ', response);
@@ -43,6 +65,7 @@ function ListOfProducts() {
                 "IMEI NO": product.imei_number,
                 "Model": typeof product.model === 'object' ? product.model.name : product.model,
                 "Brand": typeof product.brand === 'object' ? product.model.brand : product.model.brand.name,
+                "Supplier": typeof product.supplier === 'object' ? product.supplier.name : product.supplier || '-',
                 "Sales Price": product.sales_price,
                 "Purchase Price": product.purchase_price,
                 "Grade": product.grade,
@@ -54,20 +77,33 @@ function ListOfProducts() {
                         buttonClassName="py-1 px-3 text-[12px] font-semibold"
                         onClick={() => handleBarcodePrint({ modelName: product.model.name, grade: product.grade, imei_number: product.imei_number })}
                     />
+                ),
+                "Edit": (
+                    <div
+                        title="Edit"
+                        onClick={() => navigate(`/stockin/${product._id}`)}
+                        className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
+                    >
+                        <i className="fa fa-pencil text-gray-700 text-sm" />
+                    </div>
                 )
+
             }))
             setRows(productFormattedRows);
         } else {
             console.log("Error");
         }
     }
-    const getProductsAllData = ({ imeiNumber, grade, modelName, brandName, status,from, to }) => {
+    const getProductsAllData = ({ imeiNumber, grade, modelName, brandName, status, supplier, from, to }) => {
         let url = 'https://3-extent-billing-backend.vercel.app/api/products?';
         if (imeiNumber) {
             url += `&imei_number=${imeiNumber}`
         }
         if (grade) {
             url += `&grade=${grade}`
+        }
+        if (supplier) {
+            url += `&supplier=${supplier}`;
         }
         if (modelName) {
             url += `&modelName=${modelName}`
@@ -112,7 +148,7 @@ function ListOfProducts() {
         }
     }
     const handleSearchFilter = () => {
-        getProductsAllData({ imeiNumber, grade, modelName, brandName, status, from, to });
+        getProductsAllData({ imeiNumber, grade, modelName, brandName, status, supplier, from, to });
     }
     const handleDateChange = (value, setDate) => {
         const todayFormatted = new Date().toISOString().split('T')[0];
@@ -132,14 +168,10 @@ function ListOfProducts() {
         setTo(todayFormatted);
         setSelectAllDates();
         getProductsAllData({});
+        setSupplier('');
     }
     const handleExportToExcel = () => {
         exportToExcel(rows, "ProductList.xlsx");
-    };
-    const handleRowClick = (row) => {
-        if (row?.id) {
-            navigate(`/stockin/${row.id}`);
-        }
     };
     return (
         <div className='w-full'>
@@ -159,6 +191,13 @@ function ListOfProducts() {
                     value={brandName}
                     onChange={(e) => setBrandName(e.target.value)}
                     options={brandOptions}
+                    className="mt-3 w-[190px]"
+                />
+                <DropdownCompoent
+                    placeholder="Select Supplier"
+                    value={supplier}
+                    onChange={(e) => setSupplier(e.target.value)}
+                    options={supplierOptions}
                     className="mt-3 w-[190px]"
                 />
                 <InputComponent
@@ -211,14 +250,17 @@ function ListOfProducts() {
                 />
                 <PrimaryButtonComponent
                     label="Search"
+                    icon="fa fa-search"
                     onClick={handleSearchFilter}
                 />
                 <PrimaryButtonComponent
                     label="Reset"
+                    icon="fa fa-refresh"
                     onClick={handleResetFilter}
                 />
                 <PrimaryButtonComponent
                     label="Export to Excel"
+                    icon="fa fa-file-excel-o"
                     onClick={handleExportToExcel}
                 />
             </div>
@@ -226,7 +268,6 @@ function ListOfProducts() {
                 <CustomTableCompoent
                     headers={PRODUCT_COLOUMNS}
                     rows={rows}
-                    onRowClick={handleRowClick}
                 />
             </div>
         </div>

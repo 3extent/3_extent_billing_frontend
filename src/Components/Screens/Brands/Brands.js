@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
-import { exportToExcel } from "../../../Util/Utility";
 function Brands() {
     const [rows, setRows] = useState([]);
     const [brandName, setBrandName] = useState('');
@@ -25,6 +24,16 @@ function Brands() {
             const brandsFormattedRows = response.data.map((brand, index) => ({
                 "No": index + 1,
                 "Brand Name": brand.name,
+                "Edit": (
+                    <div
+                        title="Edit"
+                        onClick={() => navigate(`/addbrands/${brand._id}`)}
+                        className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
+                    >
+                        <i className="fa fa-pencil text-gray-700 text-sm" />
+                    </div>
+                ),
+
                 id: brand._id
             }));
             setRows(brandsFormattedRows);
@@ -52,15 +61,6 @@ function Brands() {
         setBrandName('');
         getBrandsAllData({});
     }
-
-    const handleExportToExcel = () => {
-        exportToExcel(rows, "BrandsData.xlsx");
-    };
-    const handleRowClick = (row) => {
-        if (row?.id) {
-            navigate(`/addbrands/${row.id}`);
-        }
-    };
     return (
         <div className='w-full'>
             {loading && <Spinner />}
@@ -81,25 +81,21 @@ function Brands() {
                 />
                 <PrimaryButtonComponent
                     label="Search"
+                    icon="fa fa-search"
                     buttonClassName="mt-1 py-1 px-5"
                     onClick={handleSearchFilter}
                 />
                 <PrimaryButtonComponent
                     label="Reset"
+                    icon="fa fa-refresh"
                     buttonClassName="mt-1 py-1 px-5"
                     onClick={handleResetFilter}
-                />
-                <PrimaryButtonComponent
-                    label="Export to Excel"
-                    buttonClassName="mt-1 py-1 px-5"
-                    onClick={handleExportToExcel}
                 />
             </div>
             <div>
                 <CustomTableCompoent
                     headers={BRANDS_COLOUMNS}
                     rows={rows}
-                    onRowClick={handleRowClick}
                 />
             </div>
         </div>

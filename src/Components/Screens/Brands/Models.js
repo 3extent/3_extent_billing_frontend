@@ -8,7 +8,6 @@ import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
-import { exportToExcel } from "../../../Util/Utility";
 export default function Models() {
     const [rows, setRows] = useState([]);
     const [modelName, setModelName] = useState();
@@ -29,7 +28,17 @@ export default function Models() {
             const modelFormattedaRows = response.data.map((model, index) => ({
                 "No": index + 1,
                 "Model Name": model.name,
-                "Brand Name":model.brand.name,
+                "Brand Name": model.brand.name,
+                "Edit": (
+                    <div
+                        title="Edit"
+                        onClick={() => navigate(`/addmodels/${model._id}`)}
+                        className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
+                    >
+                        <i className="fa fa-pencil text-gray-700 text-sm" />
+                    </div>
+                ),
+
                 id: model._id
             }))
             setRows(modelFormattedaRows);
@@ -50,7 +59,7 @@ export default function Models() {
             url: url,
             data: {},
             callback: getModelsCallBack,
-                 setLoading: setLoading
+            setLoading: setLoading
         })
     }
     const getBrandsAllData = () => {
@@ -83,17 +92,9 @@ export default function Models() {
         setModelName('');
         getModelsAllData({});
     }
-        const handleExportToExcel = () => {
-        exportToExcel(rows, "ModelsData.xlsx"); 
-    };
-     const handleRowClick = (row) => {
-        if (row?.id) {
-            navigate(`/addmodels/${row.id}`);
-        }
-    };
     return (
         <div>
-              {loading && <Spinner/>}
+            {loading && <Spinner />}
             <CustomHeaderComponent
                 name="Models"
                 label="Add Models"
@@ -119,24 +120,20 @@ export default function Models() {
                 />
                 <PrimaryButtonComponent
                     label="Search"
+                    icon="fa fa-search"
                     buttonClassName="mt-1 py-1 px-5"
                     onClick={handleSearchFilter}
                 />
                 <PrimaryButtonComponent
                     label="Reset"
+                    icon="fa fa-refresh"
                     buttonClassName="mt-1 py-1 px-5"
                     onClick={handleResetFilter}
-                />
-                 <PrimaryButtonComponent
-                    label="Export to Excel"
-                    buttonClassName="mt-1 py-1 px-5"
-                    onClick={handleExportToExcel}
                 />
             </div>
             <CustomTableCompoent
                 headers={MODELS_COLOUMNS}
                 rows={rows}
-                onRowClick={handleRowClick}
             />
         </div>
     );

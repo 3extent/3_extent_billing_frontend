@@ -82,13 +82,12 @@ function AddCustomer() {
         if (!customerData.contact_number.trim()) {
             newErrors.contact_number = "Contact no is required";
         }
-        if (!customerData.gst_number.trim()) {
-            newErrors.gst_number = "GST no is required";
+        if (!customerData.address.trim()) {
+            newErrors.address = "Address is required";
         }
-        if (!customerData.pan_number.trim()) {
-            newErrors.pan_number = "PAN no is required";
+        if (!customerData.state.trim()) {
+            newErrors.state = "State is required";
         }
-
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -168,6 +167,7 @@ function AddCustomer() {
                     labelClassName="font-serif font-bold"
                     value={customerData.address}
                     onChange={handleInputChange}
+                    error={errors.address}
                 />
                 <InputComponent
                     label="State"
@@ -178,6 +178,7 @@ function AddCustomer() {
                     labelClassName="font-serif font-bold"
                     value={customerData.state}
                     onChange={handleInputChange}
+                    error={errors.state}
                 />
                 <InputComponent
                     label="Contact No "
@@ -200,7 +201,6 @@ function AddCustomer() {
                     labelClassName="font-serif font-bold"
                     value={customerData.gst_number}
                     onChange={handleInputChange}
-                    error={errors.gst_number}
                 />
                 <InputComponent
                     label="PAN No."
@@ -211,7 +211,6 @@ function AddCustomer() {
                     labelClassName="font-serif font-bold"
                     value={customerData.pan_number}
                     onChange={handleInputChange}
-                    error={errors.pan_number}
                 />
             </div>
             <div className="mt-4 flex justify-center">
