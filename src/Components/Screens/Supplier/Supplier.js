@@ -96,17 +96,17 @@ function Supplier() {
                 />
                 <PrimaryButtonComponent
                     label="Search"
-                    buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
+                    buttonClassName="mt-5 py-1 px-5"
                     onClick={handleSearchFilter}
                 />
                 <PrimaryButtonComponent
                     label="Reset"
-                    buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
+                    buttonClassName="mt-5 py-1 px-5"
                     onClick={handleResetFilter}
                 />
                 <PrimaryButtonComponent
                     label="Export to Excel"
-                    buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
+                    buttonClassName="mt-5 py-1 px-5"
                     onClick={handleExportToExcel}
                 />
 

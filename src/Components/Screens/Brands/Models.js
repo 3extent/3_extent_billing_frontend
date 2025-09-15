@@ -119,17 +119,17 @@ export default function Models() {
                 />
                 <PrimaryButtonComponent
                     label="Search"
-                    buttonClassName="mt-1 py-1 px-5 text-xl font-bold"
+                    buttonClassName="mt-1 py-1 px-5"
                     onClick={handleSearchFilter}
                 />
                 <PrimaryButtonComponent
                     label="Reset"
-                    buttonClassName="mt-1 py-1 px-5 text-xl font-bold"
+                    buttonClassName="mt-1 py-1 px-5"
                     onClick={handleResetFilter}
                 />
                  <PrimaryButtonComponent
                     label="Export to Excel"
-                    buttonClassName="mt-1 py-1 px-5 text-xl font-bold"
+                    buttonClassName="mt-1 py-1 px-5"
                     onClick={handleExportToExcel}
                 />
             </div>
