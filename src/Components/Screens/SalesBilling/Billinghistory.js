@@ -8,6 +8,7 @@ import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import { exportToExcel } from "../../../Util/Utility";
 import moment from "moment";
+import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 function Billinghistory() {
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
@@ -37,6 +38,8 @@ function Billinghistory() {
                 "Date": bill.createdAt,
                 "Customer Name": bill.customer.name,
                 "Contact Number": bill.customer.contact_number,
+                "Total Amount": bill.total_amount,
+                "Remaining Amount": bill.pending_amount,
                 _id: bill._id
             }));
             console.log("Formatted Billing Rows: ", billingformattedRows);
@@ -60,7 +63,6 @@ function Billinghistory() {
             if (from) url += `&from=${moment(from).valueOf()}`;
             if (to) url += `&to=${moment(to).valueOf()}`;
         }
-
         apiCall({
             method: 'GET',
             url: url,
@@ -94,15 +96,18 @@ function Billinghistory() {
         setSelectAllDates();
         getBillinghistoryAllData({});
     }
-
     const handleExportToExcel = () => {
         exportToExcel(rows, "BillingHistory.xlsx");
     };
-
     return (
         <div>
             {loading && <Spinner />}
-            <div className='text-xl font-serif mb-4'>Billing History</div>
+            <CustomHeaderComponent
+                name="Billing History"
+                label="Export to Excel"
+                icon=""
+                onClick={handleExportToExcel}
+            />
             <div className="flex items-center gap-4 ">
                 <InputComponent
                     type="text"
@@ -126,14 +131,6 @@ function Billinghistory() {
                     options={PAYMENTSTATUS_OPTIONS}
                     className="w-[180px]"
                 />
-                <label className='flex items-center gap-2 text-sm'>
-                    <input
-                        type="checkbox"
-                        checked={selectAllDates}
-                        onChange={(e) => setSelectAllDates(e.target.checked)}
-                    />
-                    All Data
-                </label>
                 <InputComponent
                     type="date"
                     placeholder="Start Date"
@@ -153,6 +150,14 @@ function Billinghistory() {
                     onChange={(e) => handleDateChange(e.target.value, setTo)}
                     disabled={selectAllDates}
                 />
+                <label className='flex items-center gap-2 text-sm'>
+                    <input
+                        type="checkbox"
+                        checked={selectAllDates}
+                        onChange={(e) => setSelectAllDates(e.target.checked)}
+                    />
+                    All Data
+                </label>
             </div>
             <div className='flex justify-end mb-2 gap-4'>
                 <PrimaryButtonComponent
@@ -162,10 +167,6 @@ function Billinghistory() {
                 <PrimaryButtonComponent
                     label="Reset"
                     onClick={handleResetFilter}
-                />
-                <PrimaryButtonComponent
-                    label="Export to Excel"
-                    onClick={handleExportToExcel}
                 />
             </div>
             <div>

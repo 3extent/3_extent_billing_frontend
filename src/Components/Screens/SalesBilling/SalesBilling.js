@@ -32,7 +32,7 @@ export default function SalesBilling() {
     const [onlineAmount, setOnlineAmount] = useState("");
     const [card, setCard] = useState("");
     const [totalAmount, setTotalAmount] = useState(0);
-    const [pendingAmount, setPendingAmount] = useState(totalAmount);
+    const [pendingAmount, setPendingAmount] = useState(0);
     const toggleColumn = (columnName) => {
         if (dynamicHeaders.includes(columnName)) {
             setDynamicHeaders(dynamicHeaders.filter(col => col !== columnName));
@@ -68,7 +68,7 @@ export default function SalesBilling() {
         const cardAmt = Number(card);
         const pending = totalAmount - (cash + online + cardAmt);
         setPendingAmount(pending);
-    }, [cashAmount, card, onlineAmount]);
+    }, [cashAmount, card, onlineAmount, totalAmount, pendingAmount]);
     useEffect(() => {
         const total = rows.reduce((sum, row) => sum + Number(row["Rate"] || 0), 0);
         setTotalAmount(total);
@@ -162,14 +162,6 @@ export default function SalesBilling() {
         })
     }
     console.log("rows", rows);
-    // const billsData = {
-    //     customer_name: customerName,
-    //     contact_number: selectedContactNo,
-    //     products: rows.map((row) => ({
-    //         imei_number: row["IMEI NO"],
-    //         rate: row["Rate"],
-    //     })),
-    // };
     const billsCallback = (response) => {
         console.log("response: ", response);
         if (response.status === 200) {
@@ -182,8 +174,9 @@ export default function SalesBilling() {
             setCashAmount("");
             setCard("");
             setShowPaymentPopup(false);
-            setPendingAmount(totalAmount);
+            setPendingAmount(0);
             navigate("/billinghistory");
+            generateAndSavePdf(customerName, selectedContactNo, dynamicHeaders, rows, totalAmount, pendingAmount);
         } else {
             console.log("Error");
         }
@@ -204,6 +197,8 @@ export default function SalesBilling() {
                 online: Number(onlineAmount),
                 card: Number(card),
             },
+            total_amount: totalAmount,
+            pending_amount: pendingAmount,
         };
         apiCall({
             method: 'POST',
@@ -211,7 +206,6 @@ export default function SalesBilling() {
             data: billsData,
             callback: billsCallback,
         })
-        generateAndSavePdf(customerName, selectedContactNo, dynamicHeaders, rows);
     };
     const handleExportToExcel = () => {
         exportToExcel(rows, "salesbillingData.xlsx");
@@ -223,7 +217,6 @@ export default function SalesBilling() {
                 name="Sales Billing"
                 label="Billing History"
                 icon="fa fa-history"
-                buttonClassName="py-1 px-3 text-sm font-bold"
                 onClick={navigateBillingHistory}
             />
             <div className="flex justify-between items-center ">

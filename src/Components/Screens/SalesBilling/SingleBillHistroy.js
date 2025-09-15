@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import { exportToExcel } from "../../../Util/Utility";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import moment from "moment";
+import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 export default function SingleBillHistory() {
     const { billId } = useParams();
     const [rows, setRows] = useState([]);
@@ -27,7 +28,7 @@ export default function SingleBillHistory() {
                 "Sr.No": index + 1,
                 "Date": moment(Number(product.created_at)).format('ll'),
                 "IMEI NO": product.imei_number,
-                "Brand": product.model.brand?.name,   
+                "Brand": product.model.brand?.name,
                 "Model": product.model?.name,
                 "Rate": product.sales_price,
                 "Purchase Price": product.purchase_price,
@@ -54,8 +55,13 @@ export default function SingleBillHistory() {
     };
     return (
         <div>
-            <div className="text-xl font-serif mb-4">Details of bill</div>
-            <div className=" flex justify-between items-center mb-3">
+            <CustomHeaderComponent
+                name="Details of bill"
+                label="Export to Excel"
+                icon=""
+                onClick={handleExportToExcel}
+            />
+            <div className="my-5">
                 {customerInfo && (
                     <div className="">
                         <div className="text-[16px] font-semibold">
@@ -66,12 +72,6 @@ export default function SingleBillHistory() {
                         </div>
                     </div>
                 )}
-                <div>
-                    <PrimaryButtonComponent
-                        label="Export to Excel"
-                        onClick={handleExportToExcel}
-                    />
-                </div>
             </div>
             <div>
                 <CustomTableCompoent
