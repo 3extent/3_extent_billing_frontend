@@ -82,7 +82,7 @@ function ListOfProducts() {
                     <div
                         title="Edit"
                         onClick={() => navigate(`/stockin/${product._id}`)}
-                        className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
+                        className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-red-500 cursor-pointer"
                     >
                         <i className="fa fa-pencil text-gray-700 text-sm" />
                     </div>
