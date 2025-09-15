@@ -227,6 +227,7 @@ function ListOfProducts() {
                     headers={PRODUCT_COLOUMNS}
                     rows={rows}
                     onRowClick={handleRowClick}
+                    maxHeight="max-h-[65vh]"
                 />
             </div>
         </div>
