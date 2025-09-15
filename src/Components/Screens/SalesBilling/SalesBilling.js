@@ -125,14 +125,15 @@ export default function SalesBilling() {
                 "Sr.No": rows.length + index + 1,
                 "Date": moment(Number(product.created_at)).format('ll'),
                 "IMEI NO": product.imei_number,
-                "Brand": typeof product.brand === 'object' ? product.brand.name : product.brand,
-                "Model": typeof product.model === 'object' ? product.model.name : product.model,
+                "Brand": product?.model.brand?.name || product?.brand,
+                "Model": product?.model?.name || product?.model,
                 "Rate": product.sales_price,
                 "Purchase Price": product.purchase_price,
                 "Grade": product.grade,
                 "Accessories": product.accessories,
                 "QC-Remark": product.qc_remark
             }));
+            console.log('productFormattedRows: ', productFormattedRows);
             const existingImeis = rows.map(row => row["IMEI NO"]);
             const newUniqueRows = productFormattedRows.filter(
                 row => !existingImeis.includes(row["IMEI NO"])
@@ -189,10 +190,6 @@ export default function SalesBilling() {
     };
     const handleSaveData = () => {
         setShowPaymentPopup(true);
-        if (rows.length === 0) {
-            alert("Add at list one bill");
-            return;
-        }
     };
     const handlePrintButton = () => {
         const billsData = {
@@ -229,40 +226,44 @@ export default function SalesBilling() {
                 buttonClassName="py-1 px-3 text-sm font-bold"
                 onClick={navigateBillingHistory}
             />
-            <div className="flex items-center gap-4">
-                <CustomDropdownInputComponent
-                    label="IMEI No :"
-                    dropdownClassName="w-[190px]"
-                    placeholder="Scan IMEI No"
-                    value={selectedImei}
-                    maxLength={15}
-                    onChange={(value) => setSelectedImei(value)}
-                    options={
-                        selectedImei.length >= 11
-                            ? imeiOptions.filter((imei) => imei.startsWith(selectedImei))
-                            : []
-                    }
-                />
-                <CustomDropdownInputComponent
-                    dropdownClassName="w-[190px] "
-                    placeholder="Select Contact No"
-                    value={selectedContactNo}
-                    maxLength={10}
-                    onChange={handleContactNoChange}
-                    options={contactNoOptions}
-                />
-                <InputComponent
-                    type="text"
-                    placeholder="Enter Customer Name"
-                    value={customerName}
-                    onChange={(e) => setCustomerName(e.target.value)}
-                    inputClassName="w-[190px] mb-6"
-                />
-                <PrimaryButtonComponent
-                    label="Export to Excel"
-                    onClick={handleExportToExcel}
+            <div className="flex justify-between items-center ">
+                <div className="flex items-center gap-3">
+                    <CustomDropdownInputComponent
+                        label="IMEI No :"
+                        dropdownClassName="w-[190px]"
+                        placeholder="Scan IMEI No"
+                        value={selectedImei}
+                        maxLength={15}
+                        onChange={(value) => setSelectedImei(value)}
+                        options={
+                            selectedImei.length >= 11
+                                ? imeiOptions.filter((imei) => imei.startsWith(selectedImei))
+                                : []
+                        }
+                    />
+                    <CustomDropdownInputComponent
+                        dropdownClassName="w-[190px] "
+                        placeholder="Select Contact No"
+                        value={selectedContactNo}
+                        maxLength={10}
+                        onChange={handleContactNoChange}
+                        options={contactNoOptions}
+                    />
+                    <InputComponent
+                        type="text"
+                        placeholder="Enter Customer Name"
+                        value={customerName}
+                        onChange={(e) => setCustomerName(e.target.value)}
+                        inputClassName="w-[190px] mb-6"
+                    />
+                </div>
+                <div>
+                    <PrimaryButtonComponent
+                        label="Export to Excel"
+                        onClick={handleExportToExcel}
 
-                />
+                    />
+                </div>
             </div>
             {rows.length > 0 && (
                 <div className="relative mb-2">
@@ -303,14 +304,14 @@ export default function SalesBilling() {
                     maxHeight="max-h-[50vh]"
                 />
             </div>
-            <div>
+            <div className="fixed bottom-0 right-5 bg-white shadow-md px-6 py-4 border border-gray rounded-[7px] z-50">
                 <div className="flex justify-end">
-                    <div>
-                        <span className="font-bold gap-4 ml-7 text-[18px] mt-5">
-                            Total Amount : {Number(totalAmount).toLocaleString("en-IN")}
-                        </span>
+
+                    <div className="font-bold gap-4 text-[18px] ml-10">
+                        Total Amount : {Number(totalAmount).toLocaleString("en-IN")}
                     </div>
-                    <div className="flex justify-end gap-4 mt-5">
+
+                    <div className="flex gap-4 mt-10">
                         <PrimaryButtonComponent
                             label="Save"
                             icon="fa fa-cloud-download"
@@ -322,11 +323,6 @@ export default function SalesBilling() {
                         />
                     </div>
                 </div>
-                {/* <PrimaryButtonComponent
-                    label="View"
-                    icon="fa fa-dashcube"
-                    buttonClassName="py-1 px-3 text-sm font-bold"
-                /> */}
             </div>
             {showPaymentPopup && (
                 <CustomPopUpComponet

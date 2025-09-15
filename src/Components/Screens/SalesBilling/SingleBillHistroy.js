@@ -6,7 +6,6 @@ import { useParams } from "react-router-dom";
 import { exportToExcel } from "../../../Util/Utility";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import moment from "moment";
-
 export default function SingleBillHistory() {
     const { billId } = useParams();
     const [rows, setRows] = useState([]);
