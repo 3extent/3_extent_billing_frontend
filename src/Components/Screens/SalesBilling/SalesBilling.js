@@ -217,6 +217,21 @@ export default function SalesBilling() {
             callback: billsCallback,
         })
     };
+    const draftCallback = (response) => {
+        if (response.status === 200) {
+            // toast.success("Draft saved successfully!");
+            setRows([]);
+            setSelectedImei("");
+            setCustomerName("");
+            setSelectedContactNo("");
+            setCashAmount("");
+            setOnlineAmount("");
+            setCard("");
+            setPendingAmount(0);
+        } else {
+            // toast.error("Failed to save draft");
+        }
+    }
     const handleDraftData = () => {
         const billsData = {
             customer_name: customerName,
@@ -230,15 +245,16 @@ export default function SalesBilling() {
                 { method: "online", amount: Number(onlineAmount) },
                 { method: "card", amount: Number(card) },
             ],
+            // paid_amount: [],
             payable_amount: totalAmount,
-            pending_amount: pendingAmount,
-            // status: DRAFTED
+            pending_amount: totalAmount,
+            status: "DRAFTED"
         };
         apiCall({
             method: 'POST',
             url: 'https://3-extent-billing-backend.vercel.app/api/billings',
             data: billsData,
-            callback: billsCallback,
+            callback: draftCallback,
         })
     };
     const handleExportToExcel = () => {
