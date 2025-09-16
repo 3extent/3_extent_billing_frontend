@@ -344,7 +344,6 @@ function SingleProductStockIn() {
         <PrimaryButtonComponent
           label="Save"
           icon="fa fa-save"
-          // buttonClassName="font-bold"
           onClick={saveProductStockIn}
         />
         {product_id && (

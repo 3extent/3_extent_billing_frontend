@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { exportToExcel, generateAndSavePdf } from "../../../Util/Utility";
 import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
 import moment from "moment";
+import { toast } from "react-toastify";
 export default function SalesBilling() {
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -165,7 +166,10 @@ export default function SalesBilling() {
     const billsCallback = (response) => {
         console.log("response: ", response);
         if (response.status === 200) {
-            alert("Bill saved successfully!");
+            toast.success("Bill saved successfully!", {
+                position: "top-center",
+                autoClose: 2000,
+            });
             setRows([]);
             setSelectedImei("");
             setCustomerName("");
@@ -181,6 +185,12 @@ export default function SalesBilling() {
             console.log("Error");
         }
     };
+    const handleCancelPopup = () => {
+        setCashAmount("");
+        setOnlineAmount("");
+        setCard("");
+        setShowPaymentPopup(false);
+    };
     const handleSaveData = () => {
         setShowPaymentPopup(true);
     };
@@ -192,12 +202,12 @@ export default function SalesBilling() {
                 imei_number: row["IMEI NO"],
                 rate: row["Rate"],
             })),
-            payment: {
-                cash: Number(cashAmount),
-                online: Number(onlineAmount),
-                card: Number(card),
-            },
-            total_amount: totalAmount,
+            paid_amount: [
+                { method: "cash", amount: Number(cashAmount) },
+                { method: "online", amount: Number(onlineAmount) },
+                { method: "card", amount: Number(card) },
+            ],
+            payable_amount: totalAmount,
             pending_amount: pendingAmount,
         };
         apiCall({
@@ -207,6 +217,30 @@ export default function SalesBilling() {
             callback: billsCallback,
         })
     };
+    // const handleDraftData = () => {
+    //     const billsData = {
+    //         customer_name: customerName,
+    //         contact_number: selectedContactNo,
+    //         products: rows.map((row) => ({
+    //             imei_number: row["IMEI NO"],
+    //             rate: row["Rate"],
+    //         })),
+    //         paid_amount: [
+    //             { method: "cash", amount: Number(cashAmount) },
+    //             { method: "online", amount: Number(onlineAmount) },
+    //             { method: "card", amount: Number(card) },
+    //         ],
+    //         payable_amount: totalAmount,
+    //         pending_amount: pendingAmount,
+    //         status: "drafted"
+    //     };
+    //     apiCall({
+    //         method: 'POST',
+    //         url: 'https://3-extent-billing-backend.vercel.app/api/billings',
+    //         data: billsData,
+    //         callback: billsCallback,
+    //     })
+    // };
     const handleExportToExcel = () => {
         exportToExcel(rows, "salesbillingData.xlsx");
     };
@@ -297,24 +331,23 @@ export default function SalesBilling() {
                     maxHeight="max-h-[50vh]"
                 />
             </div>
-            <div className="fixed bottom-0 right-5 bg-white shadow-md px-6 py-4 border border-gray rounded-[7px] z-50">
-                <div className="flex justify-end">
-
-                    <div className="font-bold gap-4 text-[18px] ml-10">
+            <div className="fixed bottom-5 right-5">
+                <div>
+                    <span className="font-bold gap-4 text-[22px]  flex justify-end">
                         Total Amount : {Number(totalAmount).toLocaleString("en-IN")}
-                    </div>
-
-                    <div className="flex gap-4 mt-10">
-                        <PrimaryButtonComponent
-                            label="Save"
-                            icon="fa fa-cloud-download"
-                            onClick={handleSaveData}
-                        />
-                        <PrimaryButtonComponent
-                            label="Draft"
-                            icon="fa fa-pencil-square-o"
-                        />
-                    </div>
+                    </span>
+                </div>
+                <div className="flex gap-4 mt-3">
+                    <PrimaryButtonComponent
+                        label="Save"
+                        icon="fa fa-cloud-download"
+                        onClick={handleSaveData}
+                    />
+                    <PrimaryButtonComponent
+                        label="Draft"
+                        icon="fa fa-pencil-square-o"
+                        // onClick={handleDraftData}
+                    />
                 </div>
             </div>
             {showPaymentPopup && (
@@ -327,7 +360,7 @@ export default function SalesBilling() {
                     setCashAmount={setCashAmount}
                     setOnlineAmount={setOnlineAmount}
                     setCard={setCard}
-                    handleCancelButton={() => setShowPaymentPopup(false)}
+                    handleCancelButton={handleCancelPopup}
                     handlePrintButton={handlePrintButton}
                 />
             )}
