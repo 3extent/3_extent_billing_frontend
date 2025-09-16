@@ -4,7 +4,6 @@ import { SINGLEBILLHISTORY_COLOUMNS } from "./Constants";
 import { apiCall } from "../../../Util/AxiosUtils";
 import { useParams } from "react-router-dom";
 import { exportToExcel } from "../../../Util/Utility";
-import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import moment from "moment";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 export default function SingleBillHistory() {
@@ -22,16 +21,15 @@ export default function SingleBillHistory() {
             const bill = response.data;
             setCustomerInfo({
                 name: bill.customer?.name,
-                contact: bill.customer?.contact_number
+                contact: bill.customer?.contact_number,
+                date: moment((bill.created_at)).format('ll')
             });
             const singleBillHistrotFormattedRows = bill.products.map((product, index) => ({
                 "Sr.No": index + 1,
-                "Date": moment(Number(product.created_at)).format('ll'),
                 "IMEI NO": product.imei_number,
                 "Brand": product.model.brand?.name,
                 "Model": product.model?.name,
                 "Rate": product.sales_price,
-                "Purchase Price": product.purchase_price,
                 "QC-Remark": product.qc_remark,
                 "Grade": product.grade,
                 "Accessories": product.accessories
@@ -58,7 +56,6 @@ export default function SingleBillHistory() {
             <CustomHeaderComponent
                 name="Details of bill"
                 label="Export to Excel"
-                icon=""
                 onClick={handleExportToExcel}
             />
             <div className="my-5">
@@ -69,6 +66,9 @@ export default function SingleBillHistory() {
                         </div>
                         <div className="text-[16px] font-semibold">
                             Contact Number : <span className="font-normal text-[14px]">{customerInfo.contact}</span>
+                        </div>
+                        <div className="text-[16px] font-semibold">
+                            Date: <span className="font-normal text-[14px]">{customerInfo.date}</span>
                         </div>
                     </div>
                 )}

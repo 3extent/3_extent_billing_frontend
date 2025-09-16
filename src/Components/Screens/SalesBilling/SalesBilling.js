@@ -232,7 +232,7 @@ export default function SalesBilling() {
             ],
             payable_amount: totalAmount,
             pending_amount: pendingAmount,
-            status: DRAFTED
+            // status: DRAFTED
         };
         apiCall({
             method: 'POST',
@@ -328,6 +328,7 @@ export default function SalesBilling() {
                     headers={dynamicHeaders}
                     rows={rows}
                     onRateChange={handleRateChange}
+                    editable={true}
                     maxHeight="max-h-[50vh]"
                 />
             </div>
