@@ -133,10 +133,13 @@ export default function Models() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <CustomTableCompoent
-                headers={MODELS_COLOUMNS}
-                rows={rows}
-            />
+            <div className="h-[500px]">
+                <CustomTableCompoent
+                    headers={MODELS_COLOUMNS}
+                    rows={rows}
+                    maxHeight="h-full"
+                />
+            </div>
         </div>
     );
 }

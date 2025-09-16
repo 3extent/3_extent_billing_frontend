@@ -94,10 +94,11 @@ function Brands() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <div>
+            <div  className="h-[500px]">
                 <CustomTableCompoent
                     headers={BRANDS_COLOUMNS}
                     rows={rows}
+                    maxHeight="h-full"
                 />
             </div>
         </div>

@@ -9,6 +9,7 @@ import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponen
 import { exportToExcel, handleBarcodePrint } from '../../../Util/Utility';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
+import CustomDropdownInputComponent from '../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent';
 function ListOfProducts() {
     const [rows, setRows] = useState([]);
     const [imeiNumber, setIMEINumber] = useState();
@@ -20,10 +21,10 @@ function ListOfProducts() {
     const [loading, setLoading] = useState(false);
     const [from, setFrom] = useState("");
     const [to, setTo] = useState("");
+    const [supplierName, setSupplierName] = useState('');
+    const [supplierOptions, setSupplierOptions] = useState([]);
     const [selectAllDates, setSelectAllDates] = useState(false);
     const formatDate = (date) => date.toISOString().split('T')[0];
-    const [supplier, setSupplier] = useState('');
-    const [supplierOptions, setSupplierOptions] = useState([]);
     const today = new Date();
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(today.getDate() - 7);
@@ -38,16 +39,15 @@ function ListOfProducts() {
         getSuppliersAllData();
     }, []);
     const getSuppliersAllData = () => {
-        let url = "https://3-extent-billing-backend.vercel.app/api/suppliers";
+        let url = "https://3-extent-billing-backend.vercel.app/api/users?role=SUPPLIER";
         apiCall({
             method: 'GET',
-            url: url,
+            url,
             data: {},
             callback: getSuppliersCallBack,
-            setLoading: setLoading
+            setLoading: setLoading,
         });
     };
-
     const getSuppliersCallBack = (response) => {
         if (response.status === 200) {
             const suppliers = response.data.map(supplier => supplier.name);
@@ -56,7 +56,6 @@ function ListOfProducts() {
             console.log("Error fetching suppliers");
         }
     };
-
     const getProductsCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
@@ -70,33 +69,32 @@ function ListOfProducts() {
                 "Purchase Price": product.purchase_price,
                 "Grade": product.grade,
                 id: product._id,
-                "Barcode": (
-                    <PrimaryButtonComponent
-                        label="Barcode"
-                        icon="fa fa-print"
-                        buttonClassName="py-1 px-3 text-[12px] font-semibold"
-                        onClick={() => handleBarcodePrint({ modelName: product.model.name, grade: product.grade, imei_number: product.imei_number })}
-                    />
-                ),
-                "Action": (
-                    <div className='flex justify-end'>
-                        <div
-                              title="Edit"
-                            onClick={() => navigate(`/stockin/${product._id}`)}
-                            className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
-                        >
-                            <i className="fa fa-pencil text-gray-700 text-sm" />
+                "Actions": (
+                    <div className='flex items-center justify-end gap-2'>
+                        <PrimaryButtonComponent
+                            label="Barcode"
+                            icon="fa fa-print"
+                            buttonClassName="py-1 px-3 text-[12px] font-semibold"
+                            onClick={() => handleBarcodePrint({ modelName: product.model.name, grade: product.grade, imei_number: product.imei_number })}
+                        />
+                        <div className='flex justify-end'>
+                            <div
+                                title="Edit"
+                                onClick={() => navigate(`/stockin/${product._id}`)}
+                                className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
+                            >
+                                <i className="fa fa-pencil text-gray-700 text-sm" />
+                            </div>
                         </div>
                     </div>
                 )
-
-            }))
+            }));
             setRows(productFormattedRows);
         } else {
             console.log("Error");
         }
     }
-    const getProductsAllData = ({ imeiNumber, grade, modelName, brandName, status, supplier, from, to }) => {
+    const getProductsAllData = ({ imeiNumber, grade, modelName, brandName, supplierName, status, from, to }) => {
         let url = 'https://3-extent-billing-backend.vercel.app/api/products?';
         if (imeiNumber) {
             url += `&imei_number=${imeiNumber}`
@@ -104,14 +102,14 @@ function ListOfProducts() {
         if (grade) {
             url += `&grade=${grade}`
         }
-        if (supplier) {
-            url += `&supplier=${supplier}`;
-        }
         if (modelName) {
             url += `&modelName=${modelName}`
         }
         if (brandName) {
             url += `&brandName=${brandName}`
+        }
+        if (supplierName) {
+            url += `&supplierName=${supplierName}`;
         }
         if (status) {
             url += `&status=${status}`
@@ -150,7 +148,7 @@ function ListOfProducts() {
         }
     }
     const handleSearchFilter = () => {
-        getProductsAllData({ imeiNumber, grade, modelName, brandName, status, supplier, from, to });
+        getProductsAllData({ imeiNumber, grade, modelName, brandName, supplierName, status, from, to });
     }
     const handleDateChange = (value, setDate) => {
         const todayFormatted = new Date().toISOString().split('T')[0];
@@ -170,7 +168,8 @@ function ListOfProducts() {
         setTo(todayFormatted);
         setSelectAllDates();
         getProductsAllData({});
-        setSupplier('');
+        getSuppliersAllData();
+
     }
     const handleExportToExcel = () => {
         exportToExcel(rows, "ProductList.xlsx");
@@ -203,13 +202,14 @@ function ListOfProducts() {
                     options={brandOptions}
                     className="mt-3 w-[190px]"
                 />
-                <DropdownCompoent
+                <CustomDropdownInputComponent
+                    dropdownClassName="w-[190px] mt-1"
                     placeholder="Select Supplier"
-                    value={supplier}
-                    onChange={(e) => setSupplier(e.target.value)}
+                    value={supplierName}
+                    onChange={(value) => setSupplierName(value)}
                     options={supplierOptions}
-                    className="mt-3 w-[190px]"
                 />
+
                 <InputComponent
                     type="text"
                     placeholder="Enter Models Name"
@@ -269,12 +269,14 @@ function ListOfProducts() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <div>
+            <div className="h-[500px]">
                 <CustomTableCompoent
                     headers={PRODUCT_COLOUMNS}
                     rows={rows}
+                    maxHeight="h-full"
                 />
             </div>
+
         </div>
     );
 }

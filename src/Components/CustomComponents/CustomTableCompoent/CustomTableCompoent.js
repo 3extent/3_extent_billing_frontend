@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-export default function CustomTableCompoent({ headers, rows, onRateChange, maxHeight = "", onRowClick }) {
+export default function CustomTableCompoent({ headers, rows, onRateChange, maxHeight = "h-full", onRowClick }) {
     const [tableHeaders, setTableHeaders] = useState(headers)
     const [tableRows, setTableRows] = useState(rows)
     const Rows = tableRows && tableRows.length > 0;
@@ -10,7 +10,7 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
         setTableRows(rows);
     }, [rows]);
     return (
-        <div className={`w-full overflow-x-auto relative ${maxHeight ? maxHeight : "max-h-[75vh]"}`}>
+        <div className={`w-full overflow-x-auto relative ${maxHeight} min-h-[200px]`}>
             {Rows ? (
                 <div className="border border-slate-800">
                     <table className="table-fixed w-full ">
@@ -58,14 +58,11 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
                     </table>
                 </div>
             ) : (
-                // <div className="text-red-600 font-bold text-[25px] text-center mt-4">
-                //     No Records Found
-                // </div>
-                <div className="w-full h-[300px] flex items-center justify-center">
-                <div className="text-red-600 font-bold text-[25px] text-center">
-                    No Records Found
+                <div className="flex items-center justify-center h-full w-full">
+                    <p className="text-red-600 font-bold text-[25px] text-center">
+                        No Records Found
+                    </p>
                 </div>
-            </div>
             )}
         </div>
     );

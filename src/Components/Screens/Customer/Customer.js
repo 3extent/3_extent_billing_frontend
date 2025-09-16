@@ -108,10 +108,11 @@ export default function Customer() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <div>
+            <div className="h-[500px]">
                 <CustomTableCompoent
                     headers={CUSTOMER_COLOUMS}
                     rows={rows}
+                    maxHeight="h-full"
                 />
             </div>
         </div>
