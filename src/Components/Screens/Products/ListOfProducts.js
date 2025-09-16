@@ -71,12 +71,6 @@ function ListOfProducts() {
                 id: product._id,
                 "Actions": (
                     <div className='flex items-center justify-end gap-2'>
-                        <PrimaryButtonComponent
-                            label="Barcode"
-                            icon="fa fa-print"
-                            buttonClassName="py-1 px-3 text-[12px] font-semibold"
-                            onClick={() => handleBarcodePrint({ modelName: product.model.name, grade: product.grade, imei_number: product.imei_number })}
-                        />
                         <div className='flex justify-end'>
                             <div
                                 title="Edit"
@@ -86,6 +80,13 @@ function ListOfProducts() {
                                 <i className="fa fa-pencil text-gray-700 text-sm" />
                             </div>
                         </div>
+                        <PrimaryButtonComponent
+                            label="Barcode"
+                            icon="fa fa-print"
+                            buttonClassName="py-1 px-3 text-[12px] font-semibold"
+                            onClick={() => handleBarcodePrint({ modelName: product.model.name, grade: product.grade, imei_number: product.imei_number })}
+                        />
+
                     </div>
                 )
             }));
@@ -203,13 +204,13 @@ function ListOfProducts() {
                     className="mt-3 w-[190px]"
                 />
                 <CustomDropdownInputComponent
-                    dropdownClassName="w-[190px] mt-1"
+                    dropdownClassName="w-[190px] mt-3"
                     placeholder="Select Supplier"
                     value={supplierName}
                     onChange={(value) => setSupplierName(value)}
                     options={supplierOptions}
-                />
 
+                />
                 <InputComponent
                     type="text"
                     placeholder="Enter Models Name"
@@ -269,7 +270,7 @@ function ListOfProducts() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <div className="h-[500px]">
+            <div className="h-[64vh]">
                 <CustomTableCompoent
                     headers={PRODUCT_COLOUMNS}
                     rows={rows}

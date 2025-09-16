@@ -10,7 +10,7 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
         setTableRows(rows);
     }, [rows]);
     return (
-        <div className={`w-full overflow-x-auto relative ${maxHeight} min-h-[200px]`}>
+        <div className={`w-full overflow-x-auto relative ${maxHeight}`}>
             {Rows ? (
                 <div className="border border-slate-800">
                     <table className="table-fixed w-full ">
@@ -58,10 +58,8 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
                     </table>
                 </div>
             ) : (
-                <div className="flex items-center justify-center h-full w-full">
-                    <p className="text-red-600 font-bold text-[25px] text-center">
-                        No Records Found
-                    </p>
+                <div className="flex items-center justify-center h-full w-full text-red-600 font-bold text-[25px] text-center">
+                    No Records Found
                 </div>
             )}
         </div>

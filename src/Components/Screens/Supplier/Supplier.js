@@ -110,11 +110,10 @@ function Supplier() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <div className="h-[500px]">
+            <div className="h-[64vh]">
                 <CustomTableCompoent
                     headers={SUPPLIER_COLUMNS}
                     rows={rows}
-                    maxHeight="h-full"
                 />
             </div>
         </div>
