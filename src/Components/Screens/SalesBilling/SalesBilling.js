@@ -217,30 +217,30 @@ export default function SalesBilling() {
             callback: billsCallback,
         })
     };
-    // const handleDraftData = () => {
-    //     const billsData = {
-    //         customer_name: customerName,
-    //         contact_number: selectedContactNo,
-    //         products: rows.map((row) => ({
-    //             imei_number: row["IMEI NO"],
-    //             rate: row["Rate"],
-    //         })),
-    //         paid_amount: [
-    //             { method: "cash", amount: Number(cashAmount) },
-    //             { method: "online", amount: Number(onlineAmount) },
-    //             { method: "card", amount: Number(card) },
-    //         ],
-    //         payable_amount: totalAmount,
-    //         pending_amount: pendingAmount,
-    //         status: "drafted"
-    //     };
-    //     apiCall({
-    //         method: 'POST',
-    //         url: 'https://3-extent-billing-backend.vercel.app/api/billings',
-    //         data: billsData,
-    //         callback: billsCallback,
-    //     })
-    // };
+    const handleDraftData = () => {
+        const billsData = {
+            customer_name: customerName,
+            contact_number: selectedContactNo,
+            products: rows.map((row) => ({
+                imei_number: row["IMEI NO"],
+                rate: row["Rate"],
+            })),
+            paid_amount: [
+                { method: "cash", amount: Number(cashAmount) },
+                { method: "online", amount: Number(onlineAmount) },
+                { method: "card", amount: Number(card) },
+            ],
+            payable_amount: totalAmount,
+            pending_amount: pendingAmount,
+            status: DRAFTED
+        };
+        apiCall({
+            method: 'POST',
+            url: 'https://3-extent-billing-backend.vercel.app/api/billings',
+            data: billsData,
+            callback: billsCallback,
+        })
+    };
     const handleExportToExcel = () => {
         exportToExcel(rows, "salesbillingData.xlsx");
     };
@@ -346,7 +346,7 @@ export default function SalesBilling() {
                     <PrimaryButtonComponent
                         label="Draft"
                         icon="fa fa-pencil-square-o"
-                        // onClick={handleDraftData}
+                        onClick={handleDraftData}
                     />
                 </div>
             </div>
