@@ -24,13 +24,15 @@ function Brands() {
             const brandsFormattedRows = response.data.map((brand, index) => ({
                 "No": index + 1,
                 "Brand Name": brand.name,
-                "Edit": (
-                    <div
-                        title="Edit"
-                        onClick={() => navigate(`/addbrands/${brand._id}`)}
-                        className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
-                    >
-                        <i className="fa fa-pencil text-gray-700 text-sm" />
+                "Action": (
+                    <div className="flex justify-end">
+                        <div
+                            title="Edit"
+                            onClick={() => navigate(`/addbrands/${brand._id}`)}
+                            className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
+                        >
+                            <i className="fa fa-pencil text-gray-700 text-sm" />
+                        </div>
                     </div>
                 ),
 

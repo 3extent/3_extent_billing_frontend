@@ -78,13 +78,15 @@ function ListOfProducts() {
                         onClick={() => handleBarcodePrint({ modelName: product.model.name, grade: product.grade, imei_number: product.imei_number })}
                     />
                 ),
-                "Edit": (
-                    <div
-                        title="Edit"
-                        onClick={() => navigate(`/stockin/${product._id}`)}
-                        className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-red-500 cursor-pointer"
-                    >
-                        <i className="fa fa-pencil text-gray-700 text-sm" />
+                "Action": (
+                    <div className='flex justify-end'>
+                        <div
+                              title="Edit"
+                            onClick={() => navigate(`/stockin/${product._id}`)}
+                            className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
+                        >
+                            <i className="fa fa-pencil text-gray-700 text-sm" />
+                        </div>
                     </div>
                 )
 
@@ -176,7 +178,15 @@ function ListOfProducts() {
     return (
         <div className='w-full'>
             {loading && <Spinner />}
-            <div className='text-xl font-serif'>List Of Products</div>
+            <div className='flex justify-between items-center mb-4'>
+                <div className='text-xl font-serif'>List Of Products</div>
+                <PrimaryButtonComponent
+                    label="Export to Excel"
+                    icon="fa fa-file-excel-o"
+                    buttonClassName="py-1 px-5 text-sm font-bold"
+                    onClick={handleExportToExcel}
+                />
+            </div>
             <div className='flex items-center gap-4'>
                 <InputComponent
                     type="text"
@@ -257,11 +267,6 @@ function ListOfProducts() {
                     label="Reset"
                     icon="fa fa-refresh"
                     onClick={handleResetFilter}
-                />
-                <PrimaryButtonComponent
-                    label="Export to Excel"
-                    icon="fa fa-file-excel-o"
-                    onClick={handleExportToExcel}
                 />
             </div>
             <div>

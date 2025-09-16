@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-export default function CustomTableCompoent({ headers, rows, onRateChange, maxHeight = "",onRowClick  }) {
+export default function CustomTableCompoent({ headers, rows, onRateChange, maxHeight = "", onRowClick }) {
     const [tableHeaders, setTableHeaders] = useState(headers)
     const [tableRows, setTableRows] = useState(rows)
     const Rows = tableRows && tableRows.length > 0;
@@ -17,7 +17,9 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
                         <thead className=" sticky top-0 bg-slate-800 text-white text-sm font-semibold">
                             <tr>
                                 {tableHeaders.map((header, index) => (
-                                    <th key={index} className="px-4 py-2 text-left ">
+                                    <th key={index}
+                                        className={`px-4 py-2 ${header === "Action" ? "text-right" : "text-left"}`}
+                                    >
                                         {header}
                                     </th>
                                 ))}
@@ -56,9 +58,14 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
                     </table>
                 </div>
             ) : (
-                <div className="text-red-600 font-bold text-[25px] text-center mt-4">
+                // <div className="text-red-600 font-bold text-[25px] text-center mt-4">
+                //     No Records Found
+                // </div>
+                <div className="w-full h-[300px] flex items-center justify-center">
+                <div className="text-red-600 font-bold text-[25px] text-center">
                     No Records Found
                 </div>
+            </div>
             )}
         </div>
     );
