@@ -30,7 +30,6 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
                                         }`}
                                     onClick={() => onRowClick && onRowClick(row)}
                                 >
-                                    {/* <tr key={rowIndex} className="border-b border-slate-300 text-left text-[12px]"> */}
                                     {tableHeaders.map((header, colIndex) => (
                                         <td key={colIndex} className="px-4 py-2 text-left">
                                             {editable && header === "Rate" ? (

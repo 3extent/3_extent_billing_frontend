@@ -219,7 +219,10 @@ export default function SalesBilling() {
     };
     const draftCallback = (response) => {
         if (response.status === 200) {
-            // toast.success("Draft saved successfully!");
+            toast.success("Draft saved successfully!", {
+                position: "top-center",
+                autoClose: 2000,
+            });
             setRows([]);
             setSelectedImei("");
             setCustomerName("");
@@ -229,7 +232,6 @@ export default function SalesBilling() {
             setCard("");
             setPendingAmount(0);
         } else {
-            // toast.error("Failed to save draft");
         }
     }
     const handleDraftData = () => {
@@ -245,7 +247,6 @@ export default function SalesBilling() {
                 { method: "online", amount: Number(onlineAmount) },
                 { method: "card", amount: Number(card) },
             ],
-            // paid_amount: [],
             payable_amount: totalAmount,
             pending_amount: totalAmount,
             status: "DRAFTED"
