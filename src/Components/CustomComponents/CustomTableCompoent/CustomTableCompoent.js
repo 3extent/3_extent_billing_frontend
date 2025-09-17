@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-export default function CustomTableCompoent({ headers, rows, onRateChange, maxHeight = "h-full", onRowClick }) {
+export default function CustomTableCompoent({ headers, rows, onRateChange, maxHeight = "h-full", onRowClick, editable = false }) {
     const [tableHeaders, setTableHeaders] = useState(headers)
     const [tableRows, setTableRows] = useState(rows)
     const Rows = tableRows && tableRows.length > 0;
@@ -32,10 +32,9 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
                                         }`}
                                     onClick={() => onRowClick && onRowClick(row)}
                                 >
-                                    {/* <tr key={rowIndex} className="border-b border-slate-300 text-left text-[12px]"> */}
                                     {tableHeaders.map((header, colIndex) => (
                                         <td key={colIndex} className="px-4 py-2 text-left">
-                                            {header === "Rate" ? (
+                                            {editable && header === "Rate" ? (
                                                 <input
                                                     type="type"
                                                     value={row[header] === 0 ? "" : row[header]}
