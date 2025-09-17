@@ -4,48 +4,127 @@ import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
 import autoTable from 'jspdf-autotable';
 export const exportToExcel = (data, fileName = "data.xlsx") => {
-    if (data.length === 0) {
-        alert("No data to export!");
-        return;
-    }
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
-    const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
-    saveAs(blob, fileName);
+  if (data.length === 0) {
+    alert("No data to export!");
+    return;
+  }
+  const worksheet = XLSX.utils.json_to_sheet(data);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+  const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+  const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+  saveAs(blob, fileName);
 };
-export const generateAndSavePdf = (customerName, selectedContactNo, dynamicHeaders, rows) => {
-    const doc = new jsPDF();
-    doc.text("3_Extent", 14, 20);
-    doc.setFontSize(12);
-    doc.text(`Customer Name: ${customerName}`, 14, 30);
-    doc.text(`Contact No: ${selectedContactNo}`, 14, 37);
+/**
+ * Generates a sales billing PDF and saves it as "SalesBilling.pdf".
+ *
+ * @param {string} customerName - The name of the customer.
+ * @param {string} selectedContactNo - The contact number of the customer.
+ * @param {Array} dynamicHeaders - (Unused in this function) Dynamic table headers, possibly for future use.
+ * @param {Array} rows - Array of objects, each representing a product/item row with details like Brand, Model, IMEI NO, Grade, and Rate.
+ * @param {number} totalAmount - The total amount for all items.
+ *
+ * This function uses jsPDF and jsPDF-AutoTable to:
+ * 1. Create a new PDF document.
+ * 2. Add a company header and address.
+ * 3. Add customer details and the current date.
+ * 4. Generate a table listing all products/items, including a total row.
+ * 5. Add a thank you note at the end.
+ * 6. Save the PDF as "SalesBilling.pdf".
+ */
+export const generateAndSavePdf = (
+  customerName,
+  selectedContactNo,
+  dynamicHeaders,
+  rows,
+  totalAmount
+) => {
+  // Create a new PDF document
+  const doc = new jsPDF();
 
-    const tableColumn = dynamicHeaders;
-    const tableRows = rows.map(row => tableColumn.map(header => row[header]));
+  // Add company name and address as header
+  doc.setFont("times", "bold");
+  doc.setFontSize(18);
+  doc.text("3_EXTENT", 105, 20, { align: "center" });
+  doc.setFont("times", "normal");
+  doc.setFontSize(10);
+  doc.text("3rd Floor, Office No. 312", 105, 26, { align: "center" });
+  doc.text("Delux Fortune Mall, Pimpri, Pune", 105, 30, { align: "center" });
+  doc.text("NR Kotak Bank Office - 411018", 105, 34, { align: "center" });
 
-    autoTable(doc, {
-        startY: 45,
-        head: [tableColumn],
-        body: tableRows,
-        styles: {
-            fontSize: 8,
-            cellPadding: 2,
-        },
-        headStyles: {
-            fillColor: [200, 200, 200],
-            textColor: [0, 0, 0],
-        },
-        theme: 'striped',
-    });
+  // Add customer details and date
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(12);
+  doc.text(`Customer Name: ${customerName}`, 14, 45);
+  doc.text(`Contact No: ${selectedContactNo}`, 14, 51);
+  doc.text(`Date: ${new Date().toLocaleDateString("en-GB")}`, 150, 51);
 
-    doc.save("SalesBilling.pdf");
+  // Define table columns
+  const tableColumn = ["Sr", "Product Description", "IMEI No", "Grade", "Amount"];
+
+  // Map each row to table format
+  const tableRows = rows.map((row, index) => [
+    index + 1,
+    `${row.Brand || ""} ${row.Model || ""}`,
+    row["IMEI NO"] || "",
+    row["Grade"] || "",
+    `${Number(row["Rate"] || 0).toFixed(2)}`
+  ]);
+
+  // Add a total row at the end
+  tableRows.push([
+    {
+      content: "TOTAL",
+      colSpan: 4,
+      styles: {
+        halign: "right",
+        fontStyle: "bold",
+        fontSize: 11,
+      },
+    },
+    {
+      content: `${Number(totalAmount).toFixed(2)}`,
+      styles: {
+        fontStyle: "bold",
+        fontSize: 11,
+        halign: "right",
+      },
+    },
+  ]);
+
+  // Generate the table in the PDF
+  autoTable(doc, {
+    startY: 60,
+    head: [tableColumn],
+    body: tableRows,
+    styles: {
+      fontSize: 9,
+      cellPadding: 3,
+      lineColor: [0, 0, 0],
+      lineWidth: 0.3,
+    },
+    headStyles: {
+      fillColor: [220, 220, 220],
+      textColor: [0, 0, 0],
+      halign: "center",
+      fontStyle: "bold",
+    },
+    theme: "grid",
+    margin: { left: 14, right: 14 },
+  });
+
+  // Add a thank you note below the table
+  const finalY = doc.lastAutoTable.finalY + 15;
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  doc.text("Thank you for your purchase!", 105, finalY, { align: "center" });
+
+  // Save the PDF file
+  doc.save("SalesBilling.pdf");
 };
-
 export const handleBarcodePrint = (product) => {
-    const win = window.open('', '', 'height=800,width=600');
-    win.document.write(`
+  const win = window.open('', '', 'height=800,width=600');
+  win.document.write(`
     <html>
       <head>
         <title>Print Barcode</title>
@@ -110,6 +189,6 @@ export const handleBarcodePrint = (product) => {
       </body>
     </html>
   `);
-    win.document.close();
-    win.focus();
+  win.document.close();
+  win.focus();
 };

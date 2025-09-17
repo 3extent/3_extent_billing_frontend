@@ -180,7 +180,8 @@ export default function SalesBilling() {
             setShowPaymentPopup(false);
             setPendingAmount(0);
             navigate("/billinghistory");
-            generateAndSavePdf(customerName, selectedContactNo, dynamicHeaders, rows, totalAmount, pendingAmount);
+            generateAndSavePdf(customerName, selectedContactNo, dynamicHeaders, rows, totalAmount);
+
         } else {
             const errorMsg = response?.data?.error || "Something went wrong while saving bill.";
             toast.error(errorMsg, {
