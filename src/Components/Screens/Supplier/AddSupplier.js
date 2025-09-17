@@ -64,16 +64,18 @@ function AddSupplier() {
         if (!supplierData.name?.trim()) {
             newErrors.name = "Supplier name is required";
         }
+        if (!supplierData.firm_name?.trim()) {
+            newErrors.firm_name = "Firm name is required";
+        }
+        if (!supplierData.address?.trim()) {
+            newErrors.address = "Address is required";
+        }
+        if (!supplierData.state?.trim()) {
+            newErrors.state = "State is required";
+        }
         if (!supplierData.contact_number?.trim()) {
             newErrors.contact_number = "Contact number 1 is required";
         }
-        if (!supplierData.contact_number2?.trim()) {
-            newErrors.contact_number2 = "Contact number 2 is required";
-        }
-        if (!supplierData.gst_number?.trim()) {
-            newErrors.gst_number = "GST number is required";
-        }
-
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -167,6 +169,7 @@ function AddSupplier() {
                     labelClassName="font-serif font-bold"
                     value={supplierData.firm_name}
                     onChange={handleInputChange}
+                    error={errors.firm_name}
                 />
                 <InputComponent
                     name="state"
@@ -177,6 +180,8 @@ function AddSupplier() {
                     labelClassName="font-serif font-bold"
                     value={supplierData.state}
                     onChange={handleInputChange}
+                    error={errors.state}
+
                 />
                 <InputComponent
                     name="address"
@@ -187,6 +192,7 @@ function AddSupplier() {
                     labelClassName="font-serif font-bold"
                     value={supplierData.address}
                     onChange={handleInputChange}
+                    error={errors.firm_address}
                 />
                 <InputComponent
                     name="contact_number"
@@ -209,7 +215,6 @@ function AddSupplier() {
                     labelClassName="font-serif font-bold"
                     value={supplierData.contact_number2}
                     onChange={handleInputChange}
-                    error={errors.contact_number2}
                     maxLength={10}
                 />
                 <InputComponent
@@ -221,7 +226,6 @@ function AddSupplier() {
                     labelClassName="font-serif font-bold"
                     value={supplierData.gst_number}
                     onChange={handleInputChange}
-                    error={errors.gst_number}
                 />
             </div>
             <div className="mt-4 flex justify-center">

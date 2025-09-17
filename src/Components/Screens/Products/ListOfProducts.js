@@ -9,6 +9,7 @@ import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponen
 import { exportToExcel, handleBarcodePrint } from '../../../Util/Utility';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
+import CustomDropdownInputComponent from '../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent';
 function ListOfProducts() {
     const [rows, setRows] = useState([]);
     const [imeiNumber, setIMEINumber] = useState();
@@ -22,6 +23,9 @@ function ListOfProducts() {
     const toDate = moment().format('YYYY-MM-DD');
     const [from, setFrom] = useState(fromDate);
     const [to, setTo] = useState(toDate);
+    const [supplierName, setSupplierName] = useState('');
+    const [supplierOptions, setSupplierOptions] = useState([]);
+
     const [selectAllDates, setSelectAllDates] = useState(false);
     const navigate = useNavigate();
     useEffect(() => {
@@ -29,8 +33,26 @@ function ListOfProducts() {
         setTo(toDate);
         getProductsAllData({ from, to, status });
         getBrandsAllData();
+        getSuppliersAllData();
     }, []);
-
+    const getSuppliersAllData = () => {
+        let url = "https://3-extent-billing-backend.vercel.app/api/users?role=SUPPLIER";
+        apiCall({
+            method: 'GET',
+            url,
+            data: {},
+            callback: getSuppliersCallBack,
+            setLoading: setLoading,
+        });
+    };
+    const getSuppliersCallBack = (response) => {
+        if (response.status === 200) {
+            const suppliers = response.data.map(supplier => supplier.name);
+            setSupplierOptions(suppliers);
+        } else {
+            console.log("Error fetching suppliers");
+        }
+    };
     const getProductsCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
@@ -39,25 +61,38 @@ function ListOfProducts() {
                 "IMEI NO": product.imei_number,
                 "Model": typeof product.model === 'object' ? product.model.name : product.model,
                 "Brand": typeof product.brand === 'object' ? product.model.brand : product.model.brand.name,
+                "Supplier": typeof product.supplier === 'object' ? product.supplier.name : product.supplier || '-',
                 "Sales Price": product.sales_price,
                 "Purchase Price": product.purchase_price,
                 "Grade": product.grade,
                 id: product._id,
-                "Barcode": (
-                    <PrimaryButtonComponent
-                        label="Barcode"
-                        icon="fa fa-print"
-                        buttonClassName="py-1 px-3 text-[12px] font-semibold"
-                        onClick={() => handleBarcodePrint({ modelName: product.model.name, grade: product.grade, imei_number: product.imei_number })}
-                    />
+                "Actions": (
+                    <div className='flex items-center justify-end gap-2'>
+                        <div className='flex justify-end'>
+                            <div
+                                title="Edit"
+                                onClick={() => navigate(`/stockin/${product._id}`)}
+                                className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
+                            >
+                                <i className="fa fa-pencil text-gray-700 text-sm" />
+                            </div>
+                        </div>
+                        <PrimaryButtonComponent
+                            label="Barcode"
+                            icon="fa fa-print"
+                            buttonClassName="py-1 px-3 text-[12px] font-semibold"
+                            onClick={() => handleBarcodePrint({ modelName: product.model.name, grade: product.grade, imei_number: product.imei_number })}
+                        />
+
+                    </div>
                 )
-            }))
+            }));
             setRows(productFormattedRows);
         } else {
             console.log("Error");
         }
     }
-    const getProductsAllData = ({ imeiNumber, grade, modelName, brandName, status, from, to, selectAllDates }) => {
+    const getProductsAllData = ({ imeiNumber, grade, modelName, brandName, supplierName, status, from, to, selectAllDates }) => {
         let url = 'https://3-extent-billing-backend.vercel.app/api/products?';
         if (imeiNumber) {
             url += `&imei_number=${imeiNumber}`
@@ -70,6 +105,9 @@ function ListOfProducts() {
         }
         if (brandName) {
             url += `&brandName=${brandName}`
+        }
+        if (supplierName) {
+            url += `&supplierName=${supplierName}`;
         }
         if (status) {
             url += `&status=${status}`
@@ -106,7 +144,7 @@ function ListOfProducts() {
         }
     }
     const handleSearchFilter = () => {
-        getProductsAllData({ imeiNumber, grade, modelName, brandName, status, from, to, selectAllDates });
+        getProductsAllData({ imeiNumber, grade, modelName, brandName, supplierName, status, from, to, selectAllDates });
     }
     const handleDateChange = (value, setDate) => {
         const today = moment().format('YYYY-MM-DD');
@@ -126,19 +164,24 @@ function ListOfProducts() {
         setTo(toDate);
         setSelectAllDates();
         getProductsAllData({ from, to, status: 'Available' });
+        getSuppliersAllData();
+
     }
     const handleExportToExcel = () => {
         exportToExcel(rows, "ProductList.xlsx");
     };
-    const handleRowClick = (row) => {
-        if (row?.id) {
-            navigate(`/stockin/${row.id}`);
-        }
-    };
     return (
         <div className='w-full'>
             {loading && <Spinner />}
-            <div className='text-xl font-serif'>List Of Products</div>
+            <div className='flex justify-between items-center mb-4'>
+                <div className='text-xl font-serif'>List Of Products</div>
+                <PrimaryButtonComponent
+                    label="Export to Excel"
+                    icon="fa fa-file-excel-o"
+                    buttonClassName="py-1 px-5 text-sm font-bold"
+                    onClick={handleExportToExcel}
+                />
+            </div>
             <div className='flex items-center gap-4'>
                 <InputComponent
                     type="text"
@@ -154,6 +197,14 @@ function ListOfProducts() {
                     onChange={(e) => setBrandName(e.target.value)}
                     options={brandOptions}
                     className="mt-3 w-[190px]"
+                />
+                <CustomDropdownInputComponent
+                    dropdownClassName="w-[190px] mt-3"
+                    placeholder="Select Supplier"
+                    value={supplierName}
+                    onChange={(value) => setSupplierName(value)}
+                    options={supplierOptions}
+
                 />
                 <InputComponent
                     type="text"
@@ -202,25 +253,22 @@ function ListOfProducts() {
                 />
                 <PrimaryButtonComponent
                     label="Search"
+                    icon="fa fa-search"
                     onClick={handleSearchFilter}
                 />
                 <PrimaryButtonComponent
                     label="Reset"
+                    icon="fa fa-refresh"
                     onClick={handleResetFilter}
                 />
-                <PrimaryButtonComponent
-                    label="Export to Excel"
-                    onClick={handleExportToExcel}
-                />
             </div>
-            <div>
+            <div className="h-[64vh]">
                 <CustomTableCompoent
                     headers={PRODUCT_COLOUMNS}
                     rows={rows}
-                    onRowClick={handleRowClick}
-                    maxHeight="max-h-[65vh]"
                 />
             </div>
+
         </div>
     );
 }

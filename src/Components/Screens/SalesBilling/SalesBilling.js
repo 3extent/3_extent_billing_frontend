@@ -182,7 +182,12 @@ export default function SalesBilling() {
             navigate("/billinghistory");
             generateAndSavePdf(customerName, selectedContactNo, dynamicHeaders, rows, totalAmount, pendingAmount);
         } else {
-            console.log("Error");
+            const errorMsg = response?.data?.error || "Something went wrong while saving bill.";
+            toast.error(errorMsg, {
+                position: "top-center",
+                autoClose: 3000,
+            });
+            setShowPaymentPopup(false);
         }
     };
     const handleCancelPopup = () => {
@@ -192,6 +197,13 @@ export default function SalesBilling() {
         setShowPaymentPopup(false);
     };
     const handleSaveData = () => {
+        if (totalAmount <= 0) {
+            toast.warning("Please add products before proceeding to payment.", {
+                position: "top-center",
+                autoClose: 2000,
+            });
+            return;
+        }
         setShowPaymentPopup(true);
     };
     const handlePrintButton = () => {
@@ -232,6 +244,11 @@ export default function SalesBilling() {
             setCard("");
             setPendingAmount(0);
         } else {
+            const errorMsg = response?.data?.error || "Something went wrong while saving draft.";
+            toast.error(errorMsg, {
+                position: "top-center",
+                autoClose: 3000,
+            });
         }
     }
     const handleDraftData = () => {
@@ -304,6 +321,7 @@ export default function SalesBilling() {
                 <div>
                     <PrimaryButtonComponent
                         label="Export to Excel"
+                        icon="fa fa-file-excel-o"
                         onClick={handleExportToExcel}
 
                     />
@@ -340,13 +358,12 @@ export default function SalesBilling() {
                     )}
                 </div>
             )}
-            <div>
+            <div className="h-[64vh]">
                 <CustomTableCompoent
                     headers={dynamicHeaders}
                     rows={rows}
                     onRateChange={handleRateChange}
                     editable={true}
-                    maxHeight="max-h-[50vh]"
                 />
             </div>
             <div className="fixed bottom-5 right-5">

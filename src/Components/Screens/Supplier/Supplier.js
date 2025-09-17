@@ -6,7 +6,6 @@ import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
-import { exportToExcel } from "../../../Util/Utility";
 function Supplier() {
     const [rows, setRows] = useState([]);
     const navigate = useNavigate();
@@ -29,6 +28,18 @@ function Supplier() {
                 "State": supplier.state,
                 "Balance": supplier.balance,
                 "Supplier Type": supplier.type,
+                "Action": (
+                    <div className="flex justify-end">
+                        <div
+                            title="Edit"
+                            onClick={() => navigate(`/addsupplier/${supplier._id}`)}
+                            className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
+                        >
+                            <i className="fa fa-pencil text-gray-700 text-sm" />
+                        </div>
+                    </div>
+                ),
+
                 id: supplier._id
             }));
             setRows(supplierFormattedRows);
@@ -59,14 +70,6 @@ function Supplier() {
         setContactNo('');
         getSupplierAllData({});
     }
-    const handleExportToExcel = () => {
-        exportToExcel(rows, "SupplierData.xlsx");
-    };
-    const handleRowClick = (row) => {
-        if (row?.id) {
-            navigate(`/addsupplier/${row.id}`);
-        }
-    };
     return (
         <div className="w-full">
             {loading && <Spinner />}
@@ -96,26 +99,23 @@ function Supplier() {
                 />
                 <PrimaryButtonComponent
                     label="Search"
-                    buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
+                    icon="fa fa-search"
+                    buttonClassName="mt-5 py-1 px-5"
                     onClick={handleSearchFilter}
                 />
                 <PrimaryButtonComponent
                     label="Reset"
-                    buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
+                    icon="fa fa-refresh"
+                    buttonClassName="mt-5 py-1 px-5"
                     onClick={handleResetFilter}
                 />
-                <PrimaryButtonComponent
-                    label="Export to Excel"
-                    buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
-                    onClick={handleExportToExcel}
-                />
-
             </div>
-            <CustomTableCompoent
-                headers={SUPPLIER_COLUMNS}
-                rows={rows}
-                onRowClick={handleRowClick}
-            />
+            <div className="h-[64vh]">
+                <CustomTableCompoent
+                    headers={SUPPLIER_COLUMNS}
+                    rows={rows}
+                />
+            </div>
         </div>
     );
 }
