@@ -18,20 +18,16 @@ function ListOfProducts() {
     const [status, setStatus] = useState('Available');
     const [brandOptions, setBrandOptions] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [from, setFrom] = useState("");
-    const [to, setTo] = useState("");
+    const fromDate = moment().subtract(7, 'days').format('YYYY-MM-DD');
+    const toDate = moment().format('YYYY-MM-DD');
+    const [from, setFrom] = useState(fromDate);
+    const [to, setTo] = useState(toDate);
     const [selectAllDates, setSelectAllDates] = useState(false);
-    const formatDate = (date) => date.toISOString().split('T')[0];
-    const today = new Date();
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(today.getDate() - 7);
-    const todayFormatted = formatDate(today);
-    const sevenDaysAgoFormatted = formatDate(sevenDaysAgo);
     const navigate = useNavigate();
     useEffect(() => {
-        setFrom(sevenDaysAgoFormatted);
-        setTo(todayFormatted);
-        getProductsAllData({});
+        setFrom(fromDate);
+        setTo(toDate);
+        getProductsAllData({ from, to, status });
         getBrandsAllData();
     }, []);
 
@@ -61,7 +57,7 @@ function ListOfProducts() {
             console.log("Error");
         }
     }
-    const getProductsAllData = ({ imeiNumber, grade, modelName, brandName, status,from, to }) => {
+    const getProductsAllData = ({ imeiNumber, grade, modelName, brandName, status, from, to, selectAllDates }) => {
         let url = 'https://3-extent-billing-backend.vercel.app/api/products?';
         if (imeiNumber) {
             url += `&imei_number=${imeiNumber}`
@@ -78,11 +74,9 @@ function ListOfProducts() {
         if (status) {
             url += `&status=${status}`
         }
-        console.log('from.valueOf(): ', moment(from).valueOf());
-        console.log('to.valueOf(): ', moment(to).valueOf());
         if (!selectAllDates) {
-            if (from) url += `&from=${moment(from).valueOf()}`;
-            if (to) url += `&to=${moment(to).valueOf()}`;
+            if (from) url += `&from=${moment(from).valueOf(from)}`;
+            if (to) url += `&to=${moment(to).valueOf(to)}`;
         }
         apiCall({
             method: 'GET',
@@ -112,12 +106,12 @@ function ListOfProducts() {
         }
     }
     const handleSearchFilter = () => {
-        getProductsAllData({ imeiNumber, grade, modelName, brandName, status, from, to });
+        getProductsAllData({ imeiNumber, grade, modelName, brandName, status, from, to, selectAllDates });
     }
     const handleDateChange = (value, setDate) => {
-        const todayFormatted = new Date().toISOString().split('T')[0];
-        if (value > todayFormatted) {
-            setDate(todayFormatted);
+        const today = moment().format('YYYY-MM-DD');
+        if (value > today) {
+            setDate(today);
         } else {
             setDate(value);
         }
@@ -128,10 +122,10 @@ function ListOfProducts() {
         setIMEINumber('');
         setBrandName('');
         setStatus();
-        setFrom(sevenDaysAgoFormatted);
-        setTo(todayFormatted);
+        setFrom(fromDate);
+        setTo(toDate);
         setSelectAllDates();
-        getProductsAllData({});
+        getProductsAllData({ from, to, status: 'Available' });
     }
     const handleExportToExcel = () => {
         exportToExcel(rows, "ProductList.xlsx");
@@ -196,7 +190,6 @@ function ListOfProducts() {
                     type="date"
                     inputClassName="w-[190px] mb-5"
                     value={from}
-                    max={todayFormatted}
                     onChange={(e) => handleDateChange(e.target.value, setFrom)}
                     disabled={selectAllDates}
                 />
@@ -204,8 +197,6 @@ function ListOfProducts() {
                     type="date"
                     inputClassName="w-[190px] mb-5"
                     value={to}
-                    min={from}
-                    max={todayFormatted}
                     onChange={(e) => handleDateChange(e.target.value, setTo)}
                     disabled={selectAllDates}
                 />
