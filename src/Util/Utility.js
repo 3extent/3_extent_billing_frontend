@@ -15,6 +15,23 @@ export const exportToExcel = (data, fileName = "data.xlsx") => {
   const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
   saveAs(blob, fileName);
 };
+/**
+ * Generates a sales billing PDF and saves it as "SalesBilling.pdf".
+ *
+ * @param {string} customerName - The name of the customer.
+ * @param {string} selectedContactNo - The contact number of the customer.
+ * @param {Array} dynamicHeaders - (Unused in this function) Dynamic table headers, possibly for future use.
+ * @param {Array} rows - Array of objects, each representing a product/item row with details like Brand, Model, IMEI NO, Grade, and Rate.
+ * @param {number} totalAmount - The total amount for all items.
+ *
+ * This function uses jsPDF and jsPDF-AutoTable to:
+ * 1. Create a new PDF document.
+ * 2. Add a company header and address.
+ * 3. Add customer details and the current date.
+ * 4. Generate a table listing all products/items, including a total row.
+ * 5. Add a thank you note at the end.
+ * 6. Save the PDF as "SalesBilling.pdf".
+ */
 export const generateAndSavePdf = (
   customerName,
   selectedContactNo,
@@ -22,29 +39,40 @@ export const generateAndSavePdf = (
   rows,
   totalAmount
 ) => {
+  // Create a new PDF document
   const doc = new jsPDF();
+
+  // Add company name and address as header
   doc.setFont("times", "bold");
   doc.setFontSize(18);
   doc.text("3_EXTENT", 105, 20, { align: "center" });
- doc.setFont("times", "normal");
+  doc.setFont("times", "normal");
   doc.setFontSize(10);
   doc.text("3rd Floor, Office No. 312", 105, 26, { align: "center" });
   doc.text("Delux Fortune Mall, Pimpri, Pune", 105, 30, { align: "center" });
   doc.text("NR Kotak Bank Office - 411018", 105, 34, { align: "center" });
+
+  // Add customer details and date
   doc.setFont("helvetica", "normal");
   doc.setFontSize(12);
   doc.text(`Customer Name: ${customerName}`, 14, 45);
   doc.text(`Contact No: ${selectedContactNo}`, 14, 51);
   doc.text(`Date: ${new Date().toLocaleDateString("en-GB")}`, 150, 51);
-const tableColumn = ["Sr", "Product Description", "IMEI No", "Grade", "Amount"];
+
+  // Define table columns
+  const tableColumn = ["Sr", "Product Description", "IMEI No", "Grade", "Amount"];
+
+  // Map each row to table format
   const tableRows = rows.map((row, index) => [
     index + 1,
     `${row.Brand || ""} ${row.Model || ""}`,
     row["IMEI NO"] || "",
     row["Grade"] || "",
-    `₹ ${Number(row["Rate"] || 0).toFixed(2)}`
+    `${Number(row["Rate"] || 0).toFixed(2)}`
   ]);
- tableRows.push([
+
+  // Add a total row at the end
+  tableRows.push([
     {
       content: "TOTAL",
       colSpan: 4,
@@ -55,7 +83,7 @@ const tableColumn = ["Sr", "Product Description", "IMEI No", "Grade", "Amount"];
       },
     },
     {
-      content: `₹ ${Number(totalAmount).toFixed(2)}`,
+      content: `${Number(totalAmount).toFixed(2)}`,
       styles: {
         fontStyle: "bold",
         fontSize: 11,
@@ -63,6 +91,8 @@ const tableColumn = ["Sr", "Product Description", "IMEI No", "Grade", "Amount"];
       },
     },
   ]);
+
+  // Generate the table in the PDF
   autoTable(doc, {
     startY: 60,
     head: [tableColumn],
@@ -82,10 +112,14 @@ const tableColumn = ["Sr", "Product Description", "IMEI No", "Grade", "Amount"];
     theme: "grid",
     margin: { left: 14, right: 14 },
   });
+
+  // Add a thank you note below the table
   const finalY = doc.lastAutoTable.finalY + 15;
   doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
   doc.text("Thank you for your purchase!", 105, finalY, { align: "center" });
+
+  // Save the PDF file
   doc.save("SalesBilling.pdf");
 };
 export const handleBarcodePrint = (product) => {
