@@ -16,19 +16,15 @@ function Billinghistory() {
     const [customerName, setCustomerName] = useState("");
     const [contactNo, setContactNo] = useState("");
     const [paymentStatus, setPaymentStatus] = useState("");
-    const [from, setFrom] = useState("");
-    const [to, setTo] = useState("");
+    const fromDate = moment().subtract(7, 'days').format('YYYY-MM-DD');
+    const toDate = moment().format('YYYY-MM-DD');
+    const [from, setFrom] = useState(fromDate);
+    const [to, setTo] = useState(toDate);
     const [selectAllDates, setSelectAllDates] = useState(false);
-    const formatDate = (date) => date.toISOString().split('T')[0];
-    const today = new Date();
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(today.getDate() - 7);
-    const todayFormatted = formatDate(today);
-    const sevenDaysAgoFormatted = formatDate(sevenDaysAgo);
     useEffect(() => {
-        setFrom(sevenDaysAgoFormatted);
-        setTo(todayFormatted);
-        getBillinghistoryAllData({});
+        setFrom(from);
+        setTo(to);
+        getBillinghistoryAllData({ from, to });
     }, []);
     const getBilllinghistoryCallBack = (response) => {
         console.log('response: ', response);
@@ -48,7 +44,7 @@ function Billinghistory() {
             console.log("Error");
         }
     }
-    const getBillinghistoryAllData = ({ contactNo, paymentStatus, customerName, }) => {
+    const getBillinghistoryAllData = ({ contactNo, paymentStatus, customerName, from, to, selectAllDates }) => {
         let url = "https://3-extent-billing-backend.vercel.app/api/billings?";
         if (customerName) {
             url += `&customer_name=${customerName}`
@@ -60,8 +56,8 @@ function Billinghistory() {
             url += `&status=${paymentStatus}`
         }
         if (!selectAllDates) {
-            if (from) url += `&from=${moment(from).valueOf()}`;
-            if (to) url += `&to=${moment(to).valueOf()}`;
+            if (from) url += `&from=${moment(from).valueOf(from)}`;
+            if (to) url += `&to=${moment(to).valueOf(to)}`;
         }
         apiCall({
             method: 'GET',
@@ -72,9 +68,9 @@ function Billinghistory() {
         })
     }
     const handleDateChange = (value, setDate) => {
-        const todayFormatted = new Date().toISOString().split('T')[0];
-        if (value > todayFormatted) {
-            setDate(todayFormatted);
+        const today = moment().format('YYYY-MM-DD');
+        if (value > today) {
+            setDate(today);
         } else {
             setDate(value);
         }
@@ -85,16 +81,16 @@ function Billinghistory() {
         }
     };
     const handleSearchFilter = () => {
-        getBillinghistoryAllData({ contactNo, paymentStatus, customerName, from, to });
+        getBillinghistoryAllData({ contactNo, paymentStatus, customerName, from, to,selectAllDates});
     }
     const handleResetFilter = () => {
         setContactNo("");
         setCustomerName("");
         setPaymentStatus("");
-        setFrom(sevenDaysAgoFormatted);
-        setTo(todayFormatted);
-        setSelectAllDates();
-        getBillinghistoryAllData({});
+        setFrom(fromDate);
+        setTo(toDate);
+        setSelectAllDates(selectAllDates);
+        getBillinghistoryAllData({ from, to, selectAllDates });
     }
     const handleExportToExcel = () => {
         exportToExcel(rows, "BillingHistory.xlsx");
@@ -136,7 +132,6 @@ function Billinghistory() {
                     placeholder="Start Date"
                     inputClassName="w-[190px] mb-5"
                     value={from}
-                    max={todayFormatted}
                     onChange={(e) => handleDateChange(e.target.value, setFrom)}
                     disabled={selectAllDates}
                 />
@@ -145,8 +140,6 @@ function Billinghistory() {
                     placeholder="End Date"
                     inputClassName="w-[190px] mb-5"
                     value={to}
-                    min={from}
-                    max={todayFormatted}
                     onChange={(e) => handleDateChange(e.target.value, setTo)}
                     disabled={selectAllDates}
                 />
