@@ -103,7 +103,7 @@ export default function SalesBilling() {
         setCustomerName(customer ? customer.name : "");
     };
     const getAllImeis = () => {
-        const url = "https://3-extent-billing-backend.vercel.app/api/products";
+        const url = "https://3-extent-billing-backend.vercel.app/api/products?status=AVAILABLE";
         apiCall({
             method: "GET",
             url: url,
