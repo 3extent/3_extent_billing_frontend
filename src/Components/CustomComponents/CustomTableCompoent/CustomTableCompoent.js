@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-export default function CustomTableCompoent({ headers, rows, onRateChange, maxHeight = "", onRowClick, editable = false }) {
+export default function CustomTableCompoent({ headers, rows, onRateChange, maxHeight = "h-full", onRowClick, editable = false }) {
     const [tableHeaders, setTableHeaders] = useState(headers)
     const [tableRows, setTableRows] = useState(rows)
     const Rows = tableRows && tableRows.length > 0;
@@ -10,14 +10,16 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
         setTableRows(rows);
     }, [rows]);
     return (
-        <div className={`w-full overflow-x-auto relative ${maxHeight ? maxHeight : "max-h-[75vh]"}`}>
+        <div className={`w-full overflow-x-auto relative ${maxHeight}`}>
             {Rows ? (
                 <div className="border border-slate-800">
                     <table className="table-fixed w-full ">
                         <thead className=" sticky top-0 bg-slate-800 text-white text-sm font-semibold">
                             <tr>
                                 {tableHeaders.map((header, index) => (
-                                    <th key={index} className="px-4 py-2 text-left ">
+                                    <th key={index}
+                                        className={`px-4 py-2 ${header === "Action" ? "text-right" : "text-left"}`}
+                                    >
                                         {header}
                                     </th>
                                 ))}
@@ -55,7 +57,7 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
                     </table>
                 </div>
             ) : (
-                <div className="text-red-600 font-bold text-[25px] text-center mt-4">
+                <div className="flex items-center justify-center h-full w-full text-red-600 font-bold text-[25px] text-center">
                     No Records Found
                 </div>
             )}

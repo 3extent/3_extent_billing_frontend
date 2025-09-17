@@ -56,6 +56,7 @@ export default function SingleBillHistory() {
             <CustomHeaderComponent
                 name="Details of bill"
                 label="Export to Excel"
+                icon="fa fa-file-excel-o"
                 onClick={handleExportToExcel}
             />
             <div className="my-5">
@@ -73,7 +74,7 @@ export default function SingleBillHistory() {
                     </div>
                 )}
             </div>
-            <div>
+            <div className="h-[64vh]">
                 <CustomTableCompoent
                     headers={SINGLEBILLHISTORY_COLOUMNS}
                     rows={rows}

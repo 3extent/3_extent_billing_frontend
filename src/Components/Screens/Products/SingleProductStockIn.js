@@ -329,17 +329,23 @@ function SingleProductStockIn() {
         labelClassName="font-serif font-bold"
         error={errors.accessories}
       />
-      <DropdownCompoent
-        label="Status"
-        name="status"
-        placeholder="Select status"
-        value={productData.status}
-        onChange={handleInputChange}
-        options={STATUS_OPTIONS}
-        className="w-[80%] "
-        labelClassName="font-serif font-bold"
-        error={errors.status}
-      />
+      <div className="mt-4 flex flex-col">
+        <label className="font-serif font-bold mb-1">Status</label>
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={productData.status === 'RETURN'}
+            onChange={(e) =>
+              setProductData((productData) => ({
+                ...productData,
+                status: e.target.checked ? 'RETURN' : ''
+              }))
+            }
+            className="cursor-pointer"
+          />
+          Return
+        </label>
+      </div>
       <div className="col-span-2 mt-4 flex justify-center gap-4">
         <PrimaryButtonComponent
           label="Save"

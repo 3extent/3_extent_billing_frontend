@@ -104,8 +104,9 @@ function Billinghistory() {
             {loading && <Spinner />}
             <CustomHeaderComponent
                 name="Billing History"
+                icon="fa fa-file-excel-o"
                 label="Export to Excel"
-                icon=""
+
                 onClick={handleExportToExcel}
             />
             <div className="flex items-center gap-4 ">
@@ -162,14 +163,16 @@ function Billinghistory() {
             <div className='flex justify-end mb-2 gap-4'>
                 <PrimaryButtonComponent
                     label="Search"
+                    icon="fa fa-search"
                     onClick={handleSearchFilter}
                 />
                 <PrimaryButtonComponent
                     label="Reset"
+                    icon="fa fa-refresh"
                     onClick={handleResetFilter}
                 />
             </div>
-            <div>
+            <div className="h-[64vh]">
                 <CustomTableCompoent
                     headers={BILLINGHISTORY_COLOUMNS}
                     rows={rows}
