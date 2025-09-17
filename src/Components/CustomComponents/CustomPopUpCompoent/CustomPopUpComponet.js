@@ -47,7 +47,7 @@ export default function CustomPopUpComponet({ totalAmount, cashAmount, onlineAmo
                     <div className="flex justify-end gap-3 mt-3 mr-7">
                         <PrimaryButtonComponent
                             label="Cancel"
-                            buttonClassName="py-1 px-3 text-sm font-bold bg-transparent text-black"
+                            buttonClassName="border border-black !text-black bg-transparent hover:bg-black hover:!text-white "
                             onClick={handleCancelButton}
                         />
                         <PrimaryButtonComponent

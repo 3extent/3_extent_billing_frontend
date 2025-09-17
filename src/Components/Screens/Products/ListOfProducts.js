@@ -39,7 +39,7 @@ function ListOfProducts() {
         console.log('response: ', response);
         if (response.status === 200) {
             const productFormattedRows = response.data.map((product) => ({
-                "Date": moment(Number(product.created_at)).format('lll'),
+                "Date": moment(Number(product.created_at)).format('ll'),
                 "IMEI NO": product.imei_number,
                 "Model": typeof product.model === 'object' ? product.model.name : product.model,
                 "Brand": typeof product.brand === 'object' ? product.model.brand : product.model.brand.name,
@@ -227,6 +227,7 @@ function ListOfProducts() {
                     headers={PRODUCT_COLOUMNS}
                     rows={rows}
                     onRowClick={handleRowClick}
+                    maxHeight="max-h-[65vh]"
                 />
             </div>
         </div>

@@ -9,6 +9,8 @@ import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownI
 import { useNavigate } from "react-router-dom";
 import { exportToExcel, generateAndSavePdf } from "../../../Util/Utility";
 import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
+import moment from "moment";
+import { toast } from "react-toastify";
 export default function SalesBilling() {
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -30,8 +32,8 @@ export default function SalesBilling() {
     const [cashAmount, setCashAmount] = useState("");
     const [onlineAmount, setOnlineAmount] = useState("");
     const [card, setCard] = useState("");
-    const totalAmount = 10000;
-    const [pendingAmount, setPendingAmount] = useState(totalAmount);
+    const [totalAmount, setTotalAmount] = useState(0);
+    const [pendingAmount, setPendingAmount] = useState(0);
     const toggleColumn = (columnName) => {
         if (dynamicHeaders.includes(columnName)) {
             setDynamicHeaders(dynamicHeaders.filter(col => col !== columnName));
@@ -67,7 +69,11 @@ export default function SalesBilling() {
         const cardAmt = Number(card);
         const pending = totalAmount - (cash + online + cardAmt);
         setPendingAmount(pending);
-    }, [cashAmount, card, onlineAmount]);
+    }, [cashAmount, card, onlineAmount, totalAmount, pendingAmount]);
+    useEffect(() => {
+        const total = rows.reduce((sum, row) => sum + Number(row["Rate"] || 0), 0);
+        setTotalAmount(total);
+    }, [rows]);
     const getCustomerAllData = () => {
         const url = 'https://3-extent-billing-backend.vercel.app/api/users?role=CUSTOMER';
         apiCall({
@@ -118,16 +124,17 @@ export default function SalesBilling() {
         if (response.status === 200) {
             const productFormattedRows = response.data.map((product, index) => ({
                 "Sr.No": rows.length + index + 1,
-                "date": product.createdAt,
+                "Date": moment(Number(product.created_at)).format('ll'),
                 "IMEI NO": product.imei_number,
-                "Brand": typeof product.brand === 'object' ? product.brand.name : product.brand,
-                "Model": typeof product.model === 'object' ? product.model.name : product.model,
+                "Brand": product?.model.brand?.name || product?.brand,
+                "Model": product?.model?.name || product?.model,
                 "Rate": product.sales_price,
                 "Purchase Price": product.purchase_price,
                 "Grade": product.grade,
                 "Accessories": product.accessories,
                 "QC-Remark": product.qc_remark
             }));
+            console.log('productFormattedRows: ', productFormattedRows);
             const existingImeis = rows.map(row => row["IMEI NO"]);
             const newUniqueRows = productFormattedRows.filter(
                 row => !existingImeis.includes(row["IMEI NO"])
@@ -156,19 +163,14 @@ export default function SalesBilling() {
         })
     }
     console.log("rows", rows);
-    // const billsData = {
-    //     customer_name: customerName,
-    //     contact_number: selectedContactNo,
-    //     products: rows.map((row) => ({
-    //         imei_number: row["IMEI NO"],
-    //         rate: row["Rate"],
-    //     })),
-    // };
     const billsCallback = (response) => {
         console.log("response: ", response);
         if (response.status === 200) {
-            alert("Bill saved successfully!");
-            setRows({});
+            toast.success("Bill saved successfully!", {
+                position: "top-center",
+                autoClose: 2000,
+            });
+            setRows([]);
             setSelectedImei("");
             setCustomerName("");
             setSelectedContactNo("");
@@ -176,18 +178,21 @@ export default function SalesBilling() {
             setCashAmount("");
             setCard("");
             setShowPaymentPopup(false);
-            setPendingAmount(totalAmount);
+            setPendingAmount(0);
+            navigate("/billinghistory");
+            generateAndSavePdf(customerName, selectedContactNo, dynamicHeaders, rows, totalAmount, pendingAmount);
         } else {
             console.log("Error");
         }
     };
+    const handleCancelPopup = () => {
+        setCashAmount("");
+        setOnlineAmount("");
+        setCard("");
+        setShowPaymentPopup(false);
+    };
     const handleSaveData = () => {
         setShowPaymentPopup(true);
-        if (rows.length === 0) {
-            alert("Add at list one bill");
-            return;
-        }
-        generateAndSavePdf(customerName, selectedContactNo, dynamicHeaders, rows);
     };
     const handlePrintButton = () => {
         const billsData = {
@@ -197,17 +202,60 @@ export default function SalesBilling() {
                 imei_number: row["IMEI NO"],
                 rate: row["Rate"],
             })),
-            payment: {
-                cash: Number(cashAmount),
-                online: Number(onlineAmount),
-                card: Number(card),
-            },
+            paid_amount: [
+                { method: "cash", amount: Number(cashAmount) },
+                { method: "online", amount: Number(onlineAmount) },
+                { method: "card", amount: Number(card) },
+            ],
+            payable_amount: totalAmount,
+            pending_amount: pendingAmount,
         };
         apiCall({
             method: 'POST',
             url: 'https://3-extent-billing-backend.vercel.app/api/billings',
             data: billsData,
             callback: billsCallback,
+        })
+    };
+    const draftCallback = (response) => {
+        if (response.status === 200) {
+            toast.success("Draft saved successfully!", {
+                position: "top-center",
+                autoClose: 2000,
+            });
+            setRows([]);
+            setSelectedImei("");
+            setCustomerName("");
+            setSelectedContactNo("");
+            setCashAmount("");
+            setOnlineAmount("");
+            setCard("");
+            setPendingAmount(0);
+        } else {
+        }
+    }
+    const handleDraftData = () => {
+        const billsData = {
+            customer_name: customerName,
+            contact_number: selectedContactNo,
+            products: rows.map((row) => ({
+                imei_number: row["IMEI NO"],
+                rate: row["Rate"],
+            })),
+            paid_amount: [
+                { method: "cash", amount: Number(cashAmount) },
+                { method: "online", amount: Number(onlineAmount) },
+                { method: "card", amount: Number(card) },
+            ],
+            payable_amount: totalAmount,
+            pending_amount: totalAmount,
+            status: "DRAFTED"
+        };
+        apiCall({
+            method: 'POST',
+            url: 'https://3-extent-billing-backend.vercel.app/api/billings',
+            data: billsData,
+            callback: draftCallback,
         })
     };
     const handleExportToExcel = () => {
@@ -220,44 +268,46 @@ export default function SalesBilling() {
                 name="Sales Billing"
                 label="Billing History"
                 icon="fa fa-history"
-                buttonClassName="py-1 px-3 text-sm font-bold"
                 onClick={navigateBillingHistory}
             />
-            <div className="flex items-center gap-4">
-                <CustomDropdownInputComponent
-                    label="IMEI No :"
-                    dropdownClassName="w-[190px]"
-                    placeholder="Scan IMEI No"
-                    value={selectedImei}
-                    maxLength={15}
-                    onChange={(value) => setSelectedImei(value)}
-                    options={
-                        selectedImei.length >= 11
-                            ? imeiOptions.filter((imei) => imei.startsWith(selectedImei))
-                            : []
-                    }
-                />
-                <CustomDropdownInputComponent
-                    dropdownClassName="w-[190px] "
-                    placeholder="Select Contact No"
-                    value={selectedContactNo}
-                    maxLength={10}
-                    onChange={handleContactNoChange}
-                    options={contactNoOptions}
-                />
-                <InputComponent
-                    type="text"
-                    placeholder="Enter Customer Name"
-                    value={customerName}
-                    onChange={(e) => setCustomerName(e.target.value)}
-                    inputClassName="w-[190px] mb-6"
-                />
-                <PrimaryButtonComponent
-                    label="Export to Excel"
-                    buttonClassName=" py-1 px-5 text-xl font-bold"
-                    onClick={handleExportToExcel}
+            <div className="flex justify-between items-center ">
+                <div className="flex items-center gap-3">
+                    <CustomDropdownInputComponent
+                        label="IMEI No :"
+                        dropdownClassName="w-[190px]"
+                        placeholder="Scan IMEI No"
+                        value={selectedImei}
+                        maxLength={15}
+                        onChange={(value) => setSelectedImei(value)}
+                        options={
+                            selectedImei.length >= 11
+                                ? imeiOptions.filter((imei) => imei.startsWith(selectedImei))
+                                : []
+                        }
+                    />
+                    <CustomDropdownInputComponent
+                        dropdownClassName="w-[190px] "
+                        placeholder="Select Contact No"
+                        value={selectedContactNo}
+                        maxLength={10}
+                        onChange={handleContactNoChange}
+                        options={contactNoOptions}
+                    />
+                    <InputComponent
+                        type="text"
+                        placeholder="Enter Customer Name"
+                        value={customerName}
+                        onChange={(e) => setCustomerName(e.target.value)}
+                        inputClassName="w-[190px] mb-6"
+                    />
+                </div>
+                <div>
+                    <PrimaryButtonComponent
+                        label="Export to Excel"
+                        onClick={handleExportToExcel}
 
-                />
+                    />
+                </div>
             </div>
             {rows.length > 0 && (
                 <div className="relative mb-2">
@@ -295,26 +345,28 @@ export default function SalesBilling() {
                     headers={dynamicHeaders}
                     rows={rows}
                     onRateChange={handleRateChange}
+                    editable={true}
                     maxHeight="max-h-[50vh]"
                 />
             </div>
-            <div className="flex justify-end gap-4 mt-5">
-                <PrimaryButtonComponent
-                    label="Save"
-                    icon="fa fa-cloud-download"
-                    buttonClassName="py-1 px-3 text-sm font-bold"
-                    onClick={handleSaveData}
-                />
-                <PrimaryButtonComponent
-                    label="Draft"
-                    icon="fa fa-pencil-square-o"
-                    buttonClassName="py-1 px-3 text-sm font-bold"
-                />
-                {/* <PrimaryButtonComponent
-                    label="View"
-                    icon="fa fa-dashcube"
-                    buttonClassName="py-1 px-3 text-sm font-bold"
-                /> */}
+            <div className="fixed bottom-5 right-5">
+                <div>
+                    <span className="font-bold gap-4 text-[22px]  flex justify-end">
+                        Total Amount : {Number(totalAmount).toLocaleString("en-IN")}
+                    </span>
+                </div>
+                <div className="flex gap-4 mt-3">
+                    <PrimaryButtonComponent
+                        label="Save"
+                        icon="fa fa-cloud-download"
+                        onClick={handleSaveData}
+                    />
+                    <PrimaryButtonComponent
+                        label="Draft"
+                        icon="fa fa-pencil-square-o"
+                        onClick={handleDraftData}
+                    />
+                </div>
             </div>
             {showPaymentPopup && (
                 <CustomPopUpComponet
@@ -326,7 +378,7 @@ export default function SalesBilling() {
                     setCashAmount={setCashAmount}
                     setOnlineAmount={setOnlineAmount}
                     setCard={setCard}
-                    handleCancelButton={() => setShowPaymentPopup(false)}
+                    handleCancelButton={handleCancelPopup}
                     handlePrintButton={handlePrintButton}
                 />
             )}

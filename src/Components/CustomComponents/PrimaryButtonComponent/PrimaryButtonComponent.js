@@ -1,8 +1,8 @@
 export default function PrimaryButtonComponent({ label, onClick, icon, buttonClassName = "", iconPosition = "left" }) {
     return (
-        <button onClick={onClick} className={` bg-slate-800 text-white py-2 px-3 text-sm font-bold rounded flex items-center justify-center gap-2 ${buttonClassName}`}>
+        <button onClick={onClick} className={` ${buttonClassName} bg-slate-800 py-2 px-3 text-white text-sm font-bold rounded flex items-center justify-center gap-2`}>
             {icon && iconPosition === "left" && <i className={icon} aria-hidden="true"></i>}
-            <span className="">{label}</span>
+            <span>{label}</span>
             {icon && iconPosition === "right" && <i className={icon} aria-hidden="true"></i>}
         </button>
     );
