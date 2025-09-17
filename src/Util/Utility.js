@@ -57,8 +57,8 @@ export const handleBarcodePrint = (product) => {
           html, body {
             margin: 0;
             padding: 0;
-            height: 100vh;
-            width: 100vw;
+            height: 100%;
+            width: 100%;
             font-family: "Courier New", Courier, monospace;
           }
           #barcode-wrapper {
@@ -98,10 +98,10 @@ export const handleBarcodePrint = (product) => {
           JsBarcode("#barcode", "${product.imei_number}", {
             format: 'CODE128',
             lineColor: '#000',
-            width: 4,
+            width: 2,
             height: 40,
             displayValue: true,
-            fontSize: 25
+            fontSize: 30
           });
           window.onload = function() {
             window.print();
