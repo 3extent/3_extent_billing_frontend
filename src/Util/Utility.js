@@ -26,7 +26,7 @@ export const generateAndSavePdf = (
   doc.setFont("times", "bold");
   doc.setFontSize(18);
   doc.text("3_EXTENT", 105, 20, { align: "center" });
- doc.setFont("times", "normal");
+  doc.setFont("times", "normal");
   doc.setFontSize(10);
   doc.text("3rd Floor, Office No. 312", 105, 26, { align: "center" });
   doc.text("Delux Fortune Mall, Pimpri, Pune", 105, 30, { align: "center" });
@@ -36,7 +36,7 @@ export const generateAndSavePdf = (
   doc.text(`Customer Name: ${customerName}`, 14, 45);
   doc.text(`Contact No: ${selectedContactNo}`, 14, 51);
   doc.text(`Date: ${new Date().toLocaleDateString("en-GB")}`, 150, 51);
-const tableColumn = ["Sr", "Product Description", "IMEI No", "Grade", "Amount"];
+  const tableColumn = ["Sr", "Product Description", "IMEI No", "Grade", "Amount"];
   const tableRows = rows.map((row, index) => [
     index + 1,
     `${row.Brand || ""} ${row.Model || ""}`,
@@ -44,7 +44,7 @@ const tableColumn = ["Sr", "Product Description", "IMEI No", "Grade", "Amount"];
     row["Grade"] || "",
     `₹ ${Number(row["Rate"] || 0).toFixed(2)}`
   ]);
- tableRows.push([
+  tableRows.push([
     {
       content: "TOTAL",
       colSpan: 4,
