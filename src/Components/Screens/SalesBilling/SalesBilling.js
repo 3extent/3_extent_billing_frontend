@@ -296,6 +296,7 @@ export default function SalesBilling() {
                         placeholder="Scan IMEI No"
                         value={selectedImei}
                         maxLength={15}
+                        numericOnly={true}
                         onChange={(value) => setSelectedImei(value)}
                         options={
                             selectedImei.length >= 11
@@ -308,6 +309,7 @@ export default function SalesBilling() {
                         placeholder="Select Contact No"
                         value={selectedContactNo}
                         maxLength={10}
+                        numericOnly={true}
                         onChange={handleContactNoChange}
                         options={contactNoOptions}
                     />
