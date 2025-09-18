@@ -279,6 +279,7 @@ function SingleProductStockIn() {
         placeholder="IMEI"
         value={productData.imei_number}
         maxLength={15}
+        numericOnly={true}
         onChange={handleInputChange}
         inputClassName="w-[80%]"
         labelClassName="font-serif font-bold"
