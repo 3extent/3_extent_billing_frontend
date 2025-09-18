@@ -183,7 +183,7 @@ function AddCustomer() {
                 />
                 <InputComponent
                     label="Contact No "
-                     type="text"
+                    type="text"
                     name="contact_number"
                     placeholder="Contact No "
                     inputClassName="w-[80%]"
