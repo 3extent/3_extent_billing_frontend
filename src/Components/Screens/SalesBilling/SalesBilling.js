@@ -58,8 +58,9 @@ export default function SalesBilling() {
         getAllImeis();
         getCustomerAllData();
     }, []);
+
     useEffect(() => {
-        if (selectedImei.length === 15) {
+        if (selectedImei.length === 12) {
             getsalesbillingAllData();
         }
     }, [selectedImei]);
