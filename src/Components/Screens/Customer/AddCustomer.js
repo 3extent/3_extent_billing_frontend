@@ -183,7 +183,7 @@ function AddCustomer() {
                 />
                 <InputComponent
                     label="Contact No "
-                    type="text"
+                     type="text"
                     name="contact_number"
                     placeholder="Contact No "
                     inputClassName="w-[80%]"
@@ -192,6 +192,7 @@ function AddCustomer() {
                     onChange={handleInputChange}
                     error={errors.contact_number}
                     maxLength={10}
+                    numericOnly={true}
                 />
                 <InputComponent
                     label="GST No."
@@ -202,6 +203,7 @@ function AddCustomer() {
                     labelClassName="font-serif font-bold"
                     value={customerData.gst_number}
                     onChange={handleInputChange}
+                    maxLength={15}
                 />
                 <InputComponent
                     label="PAN No."
@@ -212,6 +214,7 @@ function AddCustomer() {
                     labelClassName="font-serif font-bold"
                     value={customerData.pan_number}
                     onChange={handleInputChange}
+                    maxLength={10}
                 />
             </div>
             <div className="mt-4 flex justify-center">
