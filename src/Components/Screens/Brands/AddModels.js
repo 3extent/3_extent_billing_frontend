@@ -32,10 +32,11 @@ export default function AddModels() {
     });
     const handleInputChange = (event) => {
         const { name, value } = event.target;
-        setModelData({ ...modelData, [name]: value });
+        const uppercasedValue = value.toUpperCase();
+        setModelData({ ...modelData, [name]: uppercasedValue });
         setErrors((prevError) => ({
             ...prevError,
-            [name]: "",
+            [name]: uppercasedValue,
         }));
     };
     const handleShowCombinations = async () => {
@@ -221,7 +222,6 @@ export default function AddModels() {
                         dropdownClassName="w-[90%]"
                         options={brandOptions}
                         value={modelData.brand_name}
-
                         onChange={(value) => {
                             setModelData({ ...modelData, brand_name: value });
                             setErrors((prev) => ({ ...prev, brand_name: "" }));
