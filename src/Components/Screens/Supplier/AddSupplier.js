@@ -27,8 +27,9 @@ function AddSupplier() {
     const [errors, setErrors] = useState({});
     const handleInputChange = (event) => {
         const { name, value } = event.target;
+        const uppercasedValue = value.toUpperCase();
         setErrors(prev => ({ ...prev, [name]: "" }));
-        setSupplierData({ ...supplierData, [name]: value });
+        setSupplierData({ ...supplierData, [name]: uppercasedValue });
     };
     const addSupplierCallback = (response) => {
         console.log('response: ', response);
@@ -205,6 +206,7 @@ function AddSupplier() {
                     onChange={handleInputChange}
                     error={errors.contact_number}
                     maxLength={10}
+                    numericOnly={true}
                 />
                 <InputComponent
                     name="contact_number2"
@@ -216,6 +218,7 @@ function AddSupplier() {
                     value={supplierData.contact_number2}
                     onChange={handleInputChange}
                     maxLength={10}
+                    numericOnly={true}
                 />
                 <InputComponent
                     name="gst_number"
@@ -226,6 +229,7 @@ function AddSupplier() {
                     labelClassName="font-serif font-bold"
                     value={supplierData.gst_number}
                     onChange={handleInputChange}
+                    maxLength={15}
                 />
             </div>
             <div className="mt-4 flex justify-center">

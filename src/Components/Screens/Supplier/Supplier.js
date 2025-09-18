@@ -96,6 +96,7 @@ function Supplier() {
                     onChange={(e) => setContactNo(e.target.value)}
                     inputClassName="w-[190px]"
                     maxLength={10}
+                    numericOnly={true}
                 />
                 <PrimaryButtonComponent
                     label="Search"

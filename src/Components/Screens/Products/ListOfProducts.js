@@ -189,6 +189,7 @@ function ListOfProducts() {
                     inputClassName="mb-2 w-[190px]"
                     value={imeiNumber}
                     maxLength={15}
+                    numericOnly={true}
                     onChange={(e) => setIMEINumber(e.target.value)}
                 />
                 <DropdownCompoent

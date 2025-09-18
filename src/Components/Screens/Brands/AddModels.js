@@ -32,7 +32,8 @@ export default function AddModels() {
     });
     const handleInputChange = (event) => {
         const { name, value } = event.target;
-        setModelData({ ...modelData, [name]: value });
+        const uppercasedValue = value.toUpperCase();
+        setModelData({ ...modelData, [name]: uppercasedValue });
         setErrors((prevError) => ({
             ...prevError,
             [name]: "",

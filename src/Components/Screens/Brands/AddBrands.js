@@ -16,22 +16,21 @@ export default function AddBrands() {
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
-
     useEffect(() => {
         if (brand_id) {
             getBrandData();
         }
     }, [brand_id]);
-
     const handleInputChange = (event) => {
         const { name, value } = event.target;
-        const hasSpecialChar = /[^a-zA-Z ]/.test(value);
+        const uppercasedValue = value.toUpperCase();
+        const hasSpecialChar = /[^a-zA-Z ]/.test(uppercasedValue);
         if (hasSpecialChar) {
             setError("Special characters not allow");
         } else {
             setError("");
         }
-        setBrandData({ ...brandData, [name]: value });
+        setBrandData({ ...brandData, [name]: uppercasedValue });
     };
     const submitCallback = (response) => {
         setLoading(false);
@@ -43,7 +42,6 @@ export default function AddBrands() {
             toast.error(errorMsg, { position: "top-center", autoClose: 2000 });
         }
     };
-
     const addBrandCallback = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
@@ -75,7 +73,6 @@ export default function AddBrands() {
             return;
         }
         setError("");
-
         if (brand_id) {
             editBrandData();
         } else {
