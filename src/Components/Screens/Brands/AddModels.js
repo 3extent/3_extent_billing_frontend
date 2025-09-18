@@ -36,7 +36,7 @@ export default function AddModels() {
         setModelData({ ...modelData, [name]: uppercasedValue });
         setErrors((prevError) => ({
             ...prevError,
-            [name]: uppercasedValue,
+            [name]: "",
         }));
     };
     const handleShowCombinations = async () => {
@@ -222,6 +222,7 @@ export default function AddModels() {
                         dropdownClassName="w-[90%]"
                         options={brandOptions}
                         value={modelData.brand_name}
+
                         onChange={(value) => {
                             setModelData({ ...modelData, brand_name: value });
                             setErrors((prev) => ({ ...prev, brand_name: "" }));
