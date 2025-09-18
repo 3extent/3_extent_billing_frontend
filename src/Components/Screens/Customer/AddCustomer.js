@@ -26,8 +26,9 @@ function AddCustomer() {
     });
     const handleInputChange = (event) => {
         const { name, value } = event.target;
+        const uppercasedValue = value.toUpperCase();
         setErrors(prev => ({ ...prev, [name]: "" }));
-        setCustomerData({ ...customerData, [name]: value });
+        setCustomerData({ ...customerData, [name]: uppercasedValue });
     };
     const addCustomerCallback = (response) => {
         console.log('response: ', response);
