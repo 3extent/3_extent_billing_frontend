@@ -6,9 +6,7 @@ import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponen
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
-import { exportToExcel } from "../../../Util/Utility";
 import moment from "moment";
-import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 function Billinghistory() {
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
@@ -92,19 +90,10 @@ function Billinghistory() {
         setSelectAllDates(selectAllDates);
         getBillinghistoryAllData({ from, to, selectAllDates });
     }
-    const handleExportToExcel = () => {
-        exportToExcel(rows, "BillingHistory.xlsx");
-    };
     return (
         <div>
             {loading && <Spinner />}
-            <CustomHeaderComponent
-                name="Billing History"
-                icon="fa fa-file-excel-o"
-                label="Export to Excel"
-
-                onClick={handleExportToExcel}
-            />
+            <div className="text-xl font-serif">Billing History</div>
             <div className="flex items-center gap-4 ">
                 <InputComponent
                     type="text"

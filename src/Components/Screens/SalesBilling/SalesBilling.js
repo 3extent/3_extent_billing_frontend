@@ -125,7 +125,7 @@ export default function SalesBilling() {
         if (response.status === 200) {
             const productFormattedRows = response.data.map((product, index) => ({
                 "Sr.No": rows.length + index + 1,
-                "Date": moment(Number(product.created_at)).format('ll'),
+                "Date": moment(product.created_at).format('ll'),
                 "IMEI NO": product.imei_number,
                 "Brand": product?.model.brand?.name || product?.brand,
                 "Model": product?.model?.name || product?.model,
