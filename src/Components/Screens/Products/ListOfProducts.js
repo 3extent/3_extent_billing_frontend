@@ -16,7 +16,7 @@ function ListOfProducts() {
     const [grade, setGrade] = useState();
     const [modelName, setModelName] = useState();
     const [brandName, setBrandName] = useState('');
-    const [status, setStatus] = useState('Available');
+    const [status, setStatus] = useState(STATUS_OPTIONS[0]);
     const [brandOptions, setBrandOptions] = useState([]);
     const [loading, setLoading] = useState(false);
     const fromDate = moment().subtract(7, 'days').format('YYYY-MM-DD');
@@ -163,7 +163,7 @@ function ListOfProducts() {
         setFrom(fromDate);
         setTo(toDate);
         setSelectAllDates();
-        getProductsAllData({ from, to, status: 'Available' });
+        getProductsAllData({ from, to, status: STATUS_OPTIONS[0] });
         getSuppliersAllData();
 
     }
