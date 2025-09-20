@@ -54,8 +54,8 @@ function Billinghistory() {
             url += `&status=${paymentStatus}`
         }
         if (!selectAllDates) {
-            if (from) url += `&from=${moment(from).valueOf(from)}`;
-            if (to) url += `&to=${moment(to).valueOf(to)}`;
+            if (from) url += `&from=${moment.utc(from).valueOf(from)}`;
+            if (to) url += `&to=${moment.utc(to).endOf('day').valueOf(to)}`;
         }
         apiCall({
             method: 'GET',
