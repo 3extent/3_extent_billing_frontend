@@ -114,7 +114,7 @@ function ListOfProducts() {
         }
         if (!selectAllDates) {
             if (from) url += `&from=${moment.utc(from).valueOf()}`;
-            if (to) url += `&to=${moment.utc(to).valueOf().endOf('day')}`;
+            if (to) url += `&to=${moment.utc(to).endOf('day').valueOf()}`;
         }
         apiCall({
             method: 'GET',
