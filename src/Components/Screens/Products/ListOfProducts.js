@@ -113,8 +113,8 @@ function ListOfProducts() {
             url += `&status=${status}`
         }
         if (!selectAllDates) {
-            if (from) url += `&from=${moment(from).valueOf(from)}`;
-            if (to) url += `&to=${moment(to).valueOf(to)}`;
+            if (from) url += `&from=${moment(from).valueOf()}`;
+            if (to) url += `&to=${moment(to).valueOf()}`;
         }
         apiCall({
             method: 'GET',
