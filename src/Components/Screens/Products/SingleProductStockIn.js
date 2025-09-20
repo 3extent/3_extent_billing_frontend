@@ -344,7 +344,7 @@ function SingleProductStockIn() {
             }
             className="cursor-pointer"
           />
-          Return
+          RETURN
         </label>
       </div>
       <div className="col-span-2 mt-4 flex justify-center gap-4">
