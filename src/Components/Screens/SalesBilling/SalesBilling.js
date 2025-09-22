@@ -54,13 +54,48 @@ export default function SalesBilling() {
         updatedRows[index]["Rate"] = Number(newRate);
         setRows(updatedRows);
     };
+    const generateDummyRows = () => {
+        const dummyRows = [];
+        for (let i = 1; i <= 100; i++) {
+            dummyRows.push({
+                "Sr.No": i,
+                "Date": moment().format('ll'),
+                "IMEI NO": `DUMMY-IMEI-${1000 + i}`,
+                "Brand": "Dummy Brand",
+                "Model": `Dummy Model ${i}`,
+                "Rate": 1000 + i,
+                "Purchase Price": 500 + i,
+                "Grade": "A",
+                "Accessories": "None",
+                "QC-Remark": "Dummy data for testing"
+            });
+        }
+        return dummyRows;
+    };
+
+    // New handler function to print dummy data
+    const handlePrintDummyData = () => {
+        const dummyRows = generateDummyRows();
+        const dummyTotalAmount = dummyRows.reduce((sum, row) => sum + row["Rate"], 0);
+        const dummyCustomerName = "Dummy Customer";
+        const dummyContactNo = "9876543210";
+        const dummyCustomerGstNo = "GSTN-123456789";
+
+        generateAndSavePdf(
+            dummyCustomerName,
+            dummyContactNo,
+            dynamicHeaders,
+            dummyCustomerGstNo,
+            dummyRows,
+            dummyTotalAmount
+        );
+    };
     useEffect(() => {
         getAllImeis();
         getCustomerAllData();
     }, []);
-
     useEffect(() => {
-        if (selectedImei.length === 12) {
+        if (selectedImei.length === 15) {
             getsalesbillingAllData();
         }
     }, [selectedImei]);
@@ -104,7 +139,7 @@ export default function SalesBilling() {
         setCustomerName(customer ? customer.name : "");
     };
     const getAllImeis = () => {
-        const url = "https://3-extent-billing-backend.vercel.app/api/products?status=AVAILABLE";
+        const url = "https://3-extent-billing-backend.vercel.app/api/products?status=AVAILABLE,RETURN";
         apiCall({
             method: "GET",
             url: url,
@@ -125,7 +160,7 @@ export default function SalesBilling() {
         if (response.status === 200) {
             const productFormattedRows = response.data.map((product, index) => ({
                 "Sr.No": rows.length + index + 1,
-                "Date": moment(product.created_at).format('ll'),
+                "Date": moment(Number(product.created_at)).format('ll'),
                 "IMEI NO": product.imei_number,
                 "Brand": product?.model.brand?.name || product?.brand,
                 "Model": product?.model?.name || product?.model,
@@ -181,7 +216,7 @@ export default function SalesBilling() {
             setShowPaymentPopup(false);
             setPendingAmount(0);
             navigate("/billinghistory");
-            generateAndSavePdf(customerName, selectedContactNo, dynamicHeaders, rows, totalAmount);
+            // generateAndSavePdf(customerName, selectedContactNo, dynamicHeaders, rows, totalAmount);
 
         } else {
             const errorMsg = response?.data?.error || "Something went wrong while saving bill.";
@@ -217,9 +252,9 @@ export default function SalesBilling() {
                 rate: row["Rate"],
             })),
             paid_amount: [
-                { method: "CASH", amount: Number(cashAmount) },
-                { method: "ONLINE", amount: Number(onlineAmount) },
-                { method: "CARD", amount: Number(card) },
+                { method: "cash", amount: Number(cashAmount) },
+                { method: "online", amount: Number(onlineAmount) },
+                { method: "card", amount: Number(card) },
             ],
             payable_amount: totalAmount,
             pending_amount: pendingAmount,
@@ -262,9 +297,9 @@ export default function SalesBilling() {
                 rate: row["Rate"],
             })),
             paid_amount: [
-                { method: "CASH", amount: Number(cashAmount) },
-                { method: "ONLINE", amount: Number(onlineAmount) },
-                { method: "CARD", amount: Number(card) },
+                { method: "cash", amount: Number(cashAmount) },
+                { method: "online", amount: Number(onlineAmount) },
+                { method: "card", amount: Number(card) },
             ],
             payable_amount: totalAmount,
             pending_amount: totalAmount,
@@ -297,7 +332,6 @@ export default function SalesBilling() {
                         placeholder="Scan IMEI No"
                         value={selectedImei}
                         maxLength={15}
-                        numericOnly={true}
                         onChange={(value) => setSelectedImei(value)}
                         options={
                             selectedImei.length >= 11
@@ -310,7 +344,6 @@ export default function SalesBilling() {
                         placeholder="Select Contact No"
                         value={selectedContactNo}
                         maxLength={10}
-                        numericOnly={true}
                         onChange={handleContactNoChange}
                         options={contactNoOptions}
                     />
@@ -386,6 +419,11 @@ export default function SalesBilling() {
                         label="Draft"
                         icon="fa fa-pencil-square-o"
                         onClick={handleDraftData}
+                    />
+                    <PrimaryButtonComponent
+                        label="Print Dummy Bill"
+                        icon="fa fa-print"
+                        onClick={handlePrintDummyData}
                     />
                 </div>
             </div>
