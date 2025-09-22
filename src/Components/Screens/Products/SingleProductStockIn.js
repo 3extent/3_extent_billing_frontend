@@ -279,6 +279,7 @@ function SingleProductStockIn() {
         placeholder="IMEI"
         value={productData.imei_number}
         maxLength={15}
+        numericOnly={true}
         onChange={handleInputChange}
         inputClassName="w-[80%]"
         labelClassName="font-serif font-bold"
@@ -343,7 +344,7 @@ function SingleProductStockIn() {
             }
             className="cursor-pointer"
           />
-          Return
+          RETURN
         </label>
       </div>
       <div className="col-span-2 mt-4 flex justify-center gap-4">

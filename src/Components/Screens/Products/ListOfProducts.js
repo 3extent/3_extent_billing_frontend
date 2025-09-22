@@ -16,7 +16,7 @@ function ListOfProducts() {
     const [grade, setGrade] = useState();
     const [modelName, setModelName] = useState();
     const [brandName, setBrandName] = useState('');
-    const [status, setStatus] = useState('Available');
+    const [status, setStatus] = useState(STATUS_OPTIONS[0]);
     const [brandOptions, setBrandOptions] = useState([]);
     const [loading, setLoading] = useState(false);
     const fromDate = moment().subtract(7, 'days').format('YYYY-MM-DD');
@@ -57,7 +57,7 @@ function ListOfProducts() {
         console.log('response: ', response);
         if (response.status === 200) {
             const productFormattedRows = response.data.map((product) => ({
-                "Date": moment(Number(product.created_at)).format('ll'),
+                "Date": moment(product.created_at).format('ll'),
                 "IMEI NO": product.imei_number,
                 "Model": typeof product.model === 'object' ? product.model.name : product.model,
                 "Brand": typeof product.brand === 'object' ? product.model.brand : product.model.brand.name,
@@ -163,7 +163,7 @@ function ListOfProducts() {
         setFrom(fromDate);
         setTo(toDate);
         setSelectAllDates();
-        getProductsAllData({ from, to, status: 'Available' });
+        getProductsAllData({ from, to, status: STATUS_OPTIONS[0] });
         getSuppliersAllData();
 
     }
@@ -189,6 +189,7 @@ function ListOfProducts() {
                     inputClassName="mb-2 w-[190px]"
                     value={imeiNumber}
                     maxLength={15}
+                    numericOnly={true}
                     onChange={(e) => setIMEINumber(e.target.value)}
                 />
                 <DropdownCompoent
