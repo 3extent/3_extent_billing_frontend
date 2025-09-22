@@ -109,8 +109,8 @@ function ListOfProducts() {
         if (supplierName) {
             url += `&supplierName=${supplierName}`;
         }
-        if (status) {
-            url += `&status=${status}`
+        if (status=[]) {
+            url += `&status=${status=[]}`
         }
         if (!selectAllDates) {
             if (from) url += `&from=${moment.utc(from).valueOf()}`;
