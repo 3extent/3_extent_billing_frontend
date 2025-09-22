@@ -54,6 +54,42 @@ export default function SalesBilling() {
         updatedRows[index]["Rate"] = Number(newRate);
         setRows(updatedRows);
     };
+    const generateDummyRows = () => {
+        const dummyRows = [];
+        for (let i = 1; i <= 100; i++) {
+            dummyRows.push({
+                "Sr.No": i,
+                "Date": moment().format('ll'),
+                "IMEI NO": `DUMMY-IMEI-${1000 + i}`,
+                "Brand": "Dummy Brand",
+                "Model": `Dummy Model ${i}`,
+                "Rate": 1000 + i,
+                "Purchase Price": 500 + i,
+                "Grade": "A",
+                "Accessories": "None",
+                "QC-Remark": "Dummy data for testing"
+            });
+        }
+        return dummyRows;
+    };
+
+    // New handler function to print dummy data
+    const handlePrintDummyData = () => {
+        const dummyRows = generateDummyRows();
+        const dummyTotalAmount = dummyRows.reduce((sum, row) => sum + row["Rate"], 0);
+        const dummyCustomerName = "Dummy Customer";
+        const dummyContactNo = "9876543210";
+        const dummyCustomerGstNo = "GSTN-123456789";
+
+        generateAndSavePdf(
+            dummyCustomerName,
+            dummyContactNo,
+            dynamicHeaders,
+            dummyCustomerGstNo,
+            dummyRows,
+            dummyTotalAmount
+        );
+    };
     useEffect(() => {
         getAllImeis();
         getCustomerAllData();
@@ -383,6 +419,11 @@ export default function SalesBilling() {
                         label="Draft"
                         icon="fa fa-pencil-square-o"
                         onClick={handleDraftData}
+                    />
+                    <PrimaryButtonComponent
+                        label="Print Dummy Bill"
+                        icon="fa fa-print"
+                        onClick={handlePrintDummyData}
                     />
                 </div>
             </div>

@@ -33,95 +33,140 @@ export const exportToExcel = (data, fileName = "data.xlsx") => {
  * 6. Save the PDF as "SalesBilling.pdf".
  */
 export const generateAndSavePdf = (
-  customerName,
-  selectedContactNo,
-  dynamicHeaders,
-  rows,
-  totalAmount
+    customerName,
+    selectedContactNo,
+    dynamicHeaders,
+    customerGstNo,
+    rows,
+    totalAmount
 ) => {
-  // Create a new PDF document
-  const doc = new jsPDF();
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
 
-  // Add company name and address as header
-  doc.setFont("times", "bold");
-  doc.setFontSize(18);
-  doc.text("3_EXTENT", 105, 20, { align: "center" });
-  doc.setFont("times", "normal");
-  doc.setFontSize(10);
-  doc.text("3rd Floor, Office No. 312", 105, 26, { align: "center" });
-  doc.text("Delux Fortune Mall, Pimpri, Pune", 105, 30, { align: "center" });
-  doc.text("NR Kotak Bank Office - 411018", 105, 34, { align: "center" });
+    // Draw the header only once at the beginning
+    const renderHeader = () => {
+        // Left-side name and phone
+        doc.setFont("times", "bold");
+        doc.setFontSize(11);
+        doc.text("HRUSHIKESH TANGADKAR", 14, 18); // Top left
 
-  // Add customer details and date
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(12);
-  doc.text(`Customer Name: ${customerName}`, 14, 45);
-  doc.text(`Contact No: ${selectedContactNo}`, 14, 51);
-  doc.text(`Date: ${new Date().toLocaleDateString("en-GB")}`, 150, 51);
+        doc.setFont("times", "normal");
+        doc.setFontSize(10);
+        doc.text("+91-9876543210", 14, 24); // Below name
 
-  // Define table columns
-  const tableColumn = ["Sr", "Product Description", "IMEI No", "Grade", "Amount"];
+        // Centered business name
+        doc.setFont("times", "bold");
+        doc.setFontSize(18);
+        doc.text("3_EXTENT", pageWidth / 2, 22, { align: "center" });
 
-  // Map each row to table format
-  const tableRows = rows.map((row, index) => [
-    index + 1,
-    `${row.Brand || ""} ${row.Model || ""}`,
-    row["IMEI NO"] || "",
-    row["Grade"] || "",
-    `${Number(row["Rate"] || 0).toFixed(2)}`
-  ]);
+        // Address lines below center title
+        doc.setFont("times", "normal");
+        doc.setFontSize(10);
+        doc.text("3rd Floor, Office No. 312", pageWidth / 2, 28, { align: "center" });
+        doc.text("Delux Fortune Mall, Pimpri, Pune", pageWidth / 2, 32, { align: "center" });
+        doc.text("NR Kotak Bank Office - 411018", pageWidth / 2, 36, { align: "center" });
 
-  // Add a total row at the end
-  tableRows.push([
-    {
-      content: "TOTAL",
-      colSpan: 4,
-      styles: {
-        halign: "right",
-        fontStyle: "bold",
-        fontSize: 11,
-      },
-    },
-    {
-      content: `${Number(totalAmount).toFixed(2)}`,
-      styles: {
-        fontStyle: "bold",
-        fontSize: 11,
-        halign: "right",
-      },
-    },
-  ]);
+        // Customer Details
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(12);
+        doc.text(`Customer Name: ${customerName}`, 14, 45);
+        doc.text(`Contact No: ${selectedContactNo}`, 14, 51);
+        doc.text(`GST No: ${customerGstNo || "-"}`, 14, 57);
+        doc.text(`Date: ${new Date().toLocaleDateString("en-GB")}`, pageWidth - 14, 51, {
+            align: "right",
+        });
+    };
 
-  // Generate the table in the PDF
-  autoTable(doc, {
-    startY: 60,
-    head: [tableColumn],
-    body: tableRows,
-    styles: {
-      fontSize: 9,
-      cellPadding: 3,
-      lineColor: [0, 0, 0],
-      lineWidth: 0.3,
-    },
-    headStyles: {
-      fillColor: [220, 220, 220],
-      textColor: [0, 0, 0],
-      halign: "center",
-      fontStyle: "bold",
-    },
-    theme: "grid",
-    margin: { left: 14, right: 14 },
-  });
+    renderHeader(); // Call the header function here
 
-  // Add a thank you note below the table
-  const finalY = doc.lastAutoTable.finalY + 15;
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-  doc.text("Thank you for your purchase!", 105, finalY, { align: "center" });
+    const tableColumn = ["Sr", "Product Description", "IMEI No", "Grade", "Amount"];
 
-  // Save the PDF file
-  doc.save("SalesBilling.pdf");
+    // Create only the data rows
+    const dataRows = rows.map((row, index) => [
+        index + 1,
+        `${row.Brand || ""} ${row.Model || ""}`,
+        row["IMEI NO"] || "",
+        row["Grade"] || "",
+        `${Number(row["Rate"] || 0).toFixed(2)}`,
+    ]);
+
+    // Add TOTAL row
+    dataRows.push([
+        {
+            content: "TOTAL",
+            colSpan: 4,
+            styles: {
+                halign: "right",
+                fontStyle: "bold",
+                fontSize: 11,
+            },
+        },
+        {
+            content: `${Number(totalAmount).toFixed(2)}`,
+            styles: {
+                halign: "right",
+                fontStyle: "bold",
+                fontSize: 11,
+            },
+        },
+    ]);
+
+    // Generate table with total row
+    autoTable(doc, {
+        startY: 65, // Start the table below the header
+        head: [tableColumn],
+        body: dataRows,
+        theme: "plain", // 'plain' theme selected
+        margin: { left: 14, right: 14 },
+        styles: {
+            fontSize: 9,
+            cellPadding: 3,
+        },
+        headStyles: {
+            fillColor: [220, 220, 220],
+            textColor: [0, 0, 0],
+            halign: "center",
+            fontStyle: "bold",
+            // Removed horizontal line below header
+        },
+        // Removed horizontal lines in body
+        bodyStyles: {
+            // Only vertical lines are needed so nothing here
+        },
+        // Using 'didDrawCell' to draw only vertical lines
+        didDrawCell: (data) => {
+            // Only vertical lines for body and header
+            if (data.section === 'body' || data.section === 'head') {
+                doc.setDrawColor(0, 0, 0); // Black color
+                doc.setLineWidth(0.3);
+
+                // Draw vertical line on the right side of the cell
+                doc.line(data.cell.x + data.cell.width, data.cell.y, data.cell.x + data.cell.width, data.cell.y + data.cell.height);
+
+                // Draw vertical line on the left side of the first cell
+                if (data.column.index === 0) {
+                    doc.line(data.cell.x, data.cell.y, data.cell.x, data.cell.y + data.cell.height);
+                }
+            }
+        },
+        showHead: "everyPage",
+    });
+
+    // Add Thank You Note
+    const finalTableY = doc.lastAutoTable.finalY;
+    if (finalTableY + 10 > doc.internal.pageSize.getHeight() - 20) {
+        doc.addPage();
+    }
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.text("Thank you for your purchase!", pageWidth / 2, doc.lastAutoTable.finalY + 10, {
+        align: "center",
+    });
+
+    doc.save("SalesBilling.pdf");
 };
+
 export const handleBarcodePrint = (product) => {
   const win = window.open('', '', 'height=800,width=600');
   win.document.write(`
