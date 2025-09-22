@@ -21,6 +21,7 @@ export const apiCall = async ({ method, url, data, callback, setLoading }) => {
         if (setLoading) setLoading(false);
     }
 };
+
 export const Spinner = () => (
     <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-50 z-50">
         <div className="relative w-10 h-10">
