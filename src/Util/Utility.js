@@ -54,7 +54,7 @@ export const generateAndSavePdf = (
     // contact no
     doc.setFont("times", "normal");
     doc.setFontSize(10);
-    doc.text("+91-9876543210", 14, 24);
+    doc.text("9665856368", 14, 24);
     // company name
     doc.setFont("times", "bold");
     doc.setFontSize(18);
