@@ -5,6 +5,7 @@ import CustomTableCompoent from '../../CustomComponents/CustomTableCompoent/Cust
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
 import InputComponent from '../../CustomComponents/InputComponent/InputComponent';
 import { apiCall } from '../../../Util/AxiosUtils';
+import { handleBarcodePrint } from '../../../Util/Utility';
 function BulkOfProduct() {
     const [inputValue, setInputValue] = useState('');
     const [excelData, setExcelData] = useState([]);
@@ -12,25 +13,33 @@ function BulkOfProduct() {
     const handleAddProductData = () => {
         const bulkOfProductformatteddata = excelData.map((row) => ({
             model_name: row["Model Name"],
-            imei: row["IMEI"],
+            imei_number: row["IMEI"],
             sales_price: row["Sales Price"],
             purchase_price: row["Purchase Price"],
             grade: row["Grade"],
             engineer_name: row["Engineer Name"],
             accessories: row["Accessories"],
-            supplier_name: row["Supplier_name"],
-            qc_remark: row["QC_Remark"],
+            supplier_name: row["Supplier"],
+            qc_remark: row["QC Remark"],
         }));
         setExcelData(bulkOfProductformatteddata)
         apiCall({
             method: "POST",
-            url: "https://3-extent-billing-backend.vercel.app/api/products",
+            url: "https://3-extent-billing-backend.vercel.app/api/products/bulk",
             data: bulkOfProductformatteddata,
             callback: stockInCallback,
         });
     }
     const stockInCallback = (response) => {
+        console.log('response: ', response);
         if (response.status === 200) {
+            response?.data?.results?.successful?.map(singleElement => {
+                return handleBarcodePrint({
+                    modelName: singleElement.product.model.name,
+                    grade: singleElement.product.grade,
+                    imei_number: singleElement.product.imei_number
+                })
+            })
         } else {
             console.log("error")
         }
@@ -66,11 +75,6 @@ function BulkOfProduct() {
                     onChange={handleFileUpload}
                     inputClassName="w-full p-10"
                 />
-                {/* <PrimaryButtonComponent
-                    label="Continue"
-                    onClick={handleButtonClick}
-                    buttonClassName="mt-5 py-2 px-5 text-xl font-bold"
-                /> */}
             </div>
             {showTable && excelData.length > 0 && (
                 <div className="mt-6">

@@ -139,7 +139,7 @@ export default function SalesBilling() {
         setCustomerName(customer ? customer.name : "");
     };
     const getAllImeis = () => {
-        const url = "https://3-extent-billing-backend.vercel.app/api/products?status=AVAILABLE";
+        const url = "https://3-extent-billing-backend.vercel.app/api/products?status=AVAILABLE,RETURN";
         apiCall({
             method: "GET",
             url: url,
@@ -216,7 +216,7 @@ export default function SalesBilling() {
             setShowPaymentPopup(false);
             setPendingAmount(0);
             navigate("/billinghistory");
-            generateAndSavePdf(customerName, selectedContactNo, dynamicHeaders, rows, totalAmount);
+            // generateAndSavePdf(customerName, selectedContactNo, dynamicHeaders, rows, totalAmount);
 
         } else {
             const errorMsg = response?.data?.error || "Something went wrong while saving bill.";

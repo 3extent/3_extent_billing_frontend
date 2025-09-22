@@ -3,9 +3,7 @@ import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/Cust
 import { SINGLEBILLHISTORY_COLOUMNS } from "./Constants";
 import { apiCall } from "../../../Util/AxiosUtils";
 import { useParams } from "react-router-dom";
-import { exportToExcel } from "../../../Util/Utility";
 import moment from "moment";
-import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 export default function SingleBillHistory() {
     const { billId } = useParams();
     const [rows, setRows] = useState([]);
@@ -48,17 +46,9 @@ export default function SingleBillHistory() {
             callback: getSingleBillHistroyCallBack,
         })
     };
-    const handleExportToExcel = () => {
-        exportToExcel(rows, "SingleBillHistory.xlsx");
-    };
     return (
         <div>
-            <CustomHeaderComponent
-                name="Details of bill"
-                label="Export to Excel"
-                icon="fa fa-file-excel-o"
-                onClick={handleExportToExcel}
-            />
+            <div className="text-xl font-serif">Details of bill</div>
             <div className="my-5">
                 {customerInfo && (
                     <div className="">

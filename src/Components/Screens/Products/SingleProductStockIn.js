@@ -54,6 +54,7 @@ function SingleProductStockIn() {
         accessories: '',
         status: ''
       });
+      handleBarcodePrint({ modelName: productData.model_name, grade: productData.grade, imei_number: productData.imei_number })
       setTimeout(() => {
         navigate("/products");
       }, 2000);
@@ -144,7 +145,6 @@ function SingleProductStockIn() {
   };
   const saveProductStockIn = () => {
     if (!handleValidation()) return;
-    handleBarcodePrint({ modelName: productData.model_name, grade: productData.grade, imei_number: productData.imei_number })
     console.log('productData: ', productData);
     if (product_id) {
       editProductData();
@@ -279,6 +279,7 @@ function SingleProductStockIn() {
         placeholder="IMEI"
         value={productData.imei_number}
         maxLength={15}
+        numericOnly={true}
         onChange={handleInputChange}
         inputClassName="w-[80%]"
         labelClassName="font-serif font-bold"
@@ -343,7 +344,7 @@ function SingleProductStockIn() {
             }
             className="cursor-pointer"
           />
-          Return
+          RETURN
         </label>
       </div>
       <div className="col-span-2 mt-4 flex justify-center gap-4">

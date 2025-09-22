@@ -94,6 +94,7 @@ export default function Customer() {
                     value={contactNo}
                     onChange={(e) => setContactNumber(e.target.value)}
                     maxLength={10}
+                    numericOnly={true}
                 />
                 <PrimaryButtonComponent
                     label="Search"
