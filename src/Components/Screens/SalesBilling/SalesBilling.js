@@ -49,53 +49,19 @@ export default function SalesBilling() {
     const [selectedContactNo, setSelectedContactNo] = useState("");
     const [customers, setCustomers] = useState([]);
     const [customerName, setCustomerName] = useState("");
+    const [customerGstNo, setCustomerGstNo] = useState("");
+    const [customerAddress, setCustomerAddress] = useState("");
     const handleRateChange = (index, newRate) => {
         const updatedRows = [...rows];
         updatedRows[index]["Rate"] = Number(newRate);
         setRows(updatedRows);
-    };
-    const generateDummyRows = () => {
-        const dummyRows = [];
-        for (let i = 1; i <= 100; i++) {
-            dummyRows.push({
-                "Sr.No": i,
-                "Date": moment().format('ll'),
-                "IMEI NO": `DUMMY-IMEI-${1000 + i}`,
-                "Brand": "Dummy Brand",
-                "Model": `Dummy Model ${i}`,
-                "Rate": 1000 + i,
-                "Purchase Price": 500 + i,
-                "Grade": "A",
-                "Accessories": "None",
-                "QC-Remark": "Dummy data for testing"
-            });
-        }
-        return dummyRows;
-    };
-
-    // New handler function to print dummy data
-    const handlePrintDummyData = () => {
-        const dummyRows = generateDummyRows();
-        const dummyTotalAmount = dummyRows.reduce((sum, row) => sum + row["Rate"], 0);
-        const dummyCustomerName = "Dummy Customer";
-        const dummyContactNo = "9876543210";
-        const dummyCustomerGstNo = "GSTN-123456789";
-
-        generateAndSavePdf(
-            dummyCustomerName,
-            dummyContactNo,
-            dynamicHeaders,
-            dummyCustomerGstNo,
-            dummyRows,
-            dummyTotalAmount
-        );
     };
     useEffect(() => {
         getAllImeis();
         getCustomerAllData();
     }, []);
     useEffect(() => {
-        if (selectedImei.length === 15) {
+        if (selectedImei.length === 12) {
             getsalesbillingAllData();
         }
     }, [selectedImei]);
@@ -136,7 +102,15 @@ export default function SalesBilling() {
             return;
         }
         const customer = customers.find(customer => customer.contact_number === value);
-        setCustomerName(customer ? customer.name : "");
+        if (customer) {
+            setCustomerName(customer.name);
+            setCustomerAddress(customer.address);
+            setCustomerGstNo(customer.gst_number);
+        } else {
+            setCustomerName("");
+            setCustomerGstNo("");
+            setCustomerAddress("");
+        }
     };
     const getAllImeis = () => {
         const url = "https://3-extent-billing-backend.vercel.app/api/products?status=AVAILABLE,RETURN";
@@ -216,7 +190,15 @@ export default function SalesBilling() {
             setShowPaymentPopup(false);
             setPendingAmount(0);
             navigate("/billinghistory");
-            // generateAndSavePdf(customerName, selectedContactNo, dynamicHeaders, rows, totalAmount);
+            generateAndSavePdf(
+                customerName,
+                selectedContactNo,
+                dynamicHeaders,
+                customerAddress,
+                customerGstNo,
+                rows,
+                totalAmount
+            );
 
         } else {
             const errorMsg = response?.data?.error || "Something went wrong while saving bill.";
@@ -419,11 +401,6 @@ export default function SalesBilling() {
                         label="Draft"
                         icon="fa fa-pencil-square-o"
                         onClick={handleDraftData}
-                    />
-                    <PrimaryButtonComponent
-                        label="Print Dummy Bill"
-                        icon="fa fa-print"
-                        onClick={handlePrintDummyData}
                     />
                 </div>
             </div>
