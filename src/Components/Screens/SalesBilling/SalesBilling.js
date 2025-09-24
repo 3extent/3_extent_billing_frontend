@@ -61,7 +61,7 @@ export default function SalesBilling() {
         getCustomerAllData();
     }, []);
     useEffect(() => {
-        if (selectedImei.length === 12) {
+        if (selectedImei.length === 12 || selectedImei.length===15) {
             getsalesbillingAllData();
         }
     }, [selectedImei]);
@@ -199,7 +199,6 @@ export default function SalesBilling() {
                 rows,
                 totalAmount
             );
-
         } else {
             const errorMsg = response?.data?.error || "Something went wrong while saving bill.";
             toast.error(errorMsg, {
@@ -314,6 +313,7 @@ export default function SalesBilling() {
                         placeholder="Scan IMEI No"
                         value={selectedImei}
                         maxLength={15}
+                        numericOnly={true}
                         onChange={(value) => setSelectedImei(value)}
                         options={
                             selectedImei.length >= 11
@@ -326,6 +326,7 @@ export default function SalesBilling() {
                         placeholder="Select Contact No"
                         value={selectedContactNo}
                         maxLength={10}
+                        numericOnly={true}
                         onChange={handleContactNoChange}
                         options={contactNoOptions}
                     />

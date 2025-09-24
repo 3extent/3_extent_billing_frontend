@@ -4,6 +4,8 @@ import { SINGLEBILLHISTORY_COLOUMNS } from "./Constants";
 import { apiCall } from "../../../Util/AxiosUtils";
 import { useParams } from "react-router-dom";
 import moment from "moment";
+import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
+import { generateAndSavePdf } from "../../../Util/Utility";
 export default function SingleBillHistory() {
     const { billId } = useParams();
     const [rows, setRows] = useState([]);
@@ -20,7 +22,7 @@ export default function SingleBillHistory() {
             setCustomerInfo({
                 name: bill.customer?.name,
                 contact: bill.customer?.contact_number,
-                date: moment((bill.created_at)).format('ll')
+                date: moment((bill.product?.created_at)).format('ll')
             });
             const singleBillHistrotFormattedRows = bill.products.map((product, index) => ({
                 "Sr.No": index + 1,
@@ -30,7 +32,22 @@ export default function SingleBillHistory() {
                 "Rate": product.sales_price,
                 "QC-Remark": product.qc_remark,
                 "Grade": product.grade,
-                "Accessories": product.accessories
+                "Accessories": product.accessories,
+                "Actions": (
+                    <PrimaryButtonComponent
+                        label="print"
+                        icon="fa fa-print"
+                        buttonClassName="py-1 px-3 text-[12px] font-semibold"
+                        onClick={() => generateAndSavePdf(
+                            bill.customer?.name,
+                            bill.customer?.contact_number,
+                            bill.customer?.address ,
+                            bill.customer?.gst_number ,
+                            rows,
+                            bill.customer.payable_amount
+                        )}
+                    />
+                )
             }));
             setRows(singleBillHistrotFormattedRows);
         } else {
