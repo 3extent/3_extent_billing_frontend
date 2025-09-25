@@ -17,6 +17,7 @@ import Billinghistory from './Components/Screens/SalesBilling/Billinghistory';
 import SingleBillHistory from './Components/Screens/SalesBilling/SingleBillHistroy';
 import { ToastContainer } from 'react-toastify';
 
+
 // Protected Route Component
 const ProtectedRoute = ({ children, isAuthenticated }) => {
   if (!isAuthenticated) {
