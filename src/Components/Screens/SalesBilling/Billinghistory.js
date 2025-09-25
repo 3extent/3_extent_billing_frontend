@@ -7,6 +7,7 @@ import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCo
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
+import { generateAndSavePdf } from "../../../Util/Utility";
 function Billinghistory() {
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
@@ -34,7 +35,22 @@ function Billinghistory() {
                 "Contact Number": bill.customer.contact_number,
                 "Total Amount": bill.payable_amount,
                 "Remaining Amount": bill.pending_amount,
-                _id: bill._id
+                _id: bill._id,
+                "Actions": (
+                    <PrimaryButtonComponent
+                        label="print"
+                        icon="fa fa-print"
+                        buttonClassName="py-1 px-3 text-[12px] font-semibold"
+                        onClick={() => generateAndSavePdf(
+                            bill.customer.name,
+                            bill.customer.contact_number,
+                            bill.customer.address,
+                            bill.customer.gst_number,
+                            rows,
+                        )
+                        }
+                    />
+                )
             }));
             console.log("Formatted Billing Rows: ", billingformattedRows);
             setRows(billingformattedRows);
@@ -79,7 +95,7 @@ function Billinghistory() {
         }
     };
     const handleSearchFilter = () => {
-        getBillinghistoryAllData({ contactNo, paymentStatus, customerName, from, to,selectAllDates});
+        getBillinghistoryAllData({ contactNo, paymentStatus, customerName, from, to, selectAllDates });
     }
     const handleResetFilter = () => {
         setContactNo("");
