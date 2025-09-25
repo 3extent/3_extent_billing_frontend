@@ -35,21 +35,14 @@ export const exportToExcel = async (data, fileName = "StyledData.xlsx") => {
   titleCell.value = title;
   titleCell.font = { bold: true, name: "Times New Roman", color: { argb: "FFFAA500" }, size: 18 };
   titleCell.alignment = { vertical: "middle", horizontal: "center" };
-  titleCell.border = {
-    top: { style: "thin" },
-    left: { style: "thin" },
-    bottom: { style: "thin" },
-    right: { style: "thin" }
-  };
-
   // 3: Date row
   const dateCell = worksheet.getCell("A3");
   dateCell.value = `Date: ${new Date().toLocaleDateString()}`;
-  dateCell.font = { italic: true };
+  dateCell.font = { italic: true, color: { argb: "FFFAA500" }};
   worksheet.mergeCells(3, 1, 3, headers.length); // Merge full row for date
 
-  // 4: Empty row
-  worksheet.addRow([]);
+  // // 4: Empty row
+  // worksheet.addRow([]);
 
   // 5: Headers
   const headerRow = worksheet.addRow(headers);
@@ -71,14 +64,29 @@ export const exportToExcel = async (data, fileName = "StyledData.xlsx") => {
 
   // Auto width for columns
   worksheet.columns.forEach((col) => {
-    let maxLength = 10;
+    let maxLength = 9;
     col.eachCell({ includeEmpty: true }, (cell) => {
       const cellValue = cell.value?.toString() || "";
       maxLength = Math.max(maxLength, cellValue.length);
     });
     col.width = maxLength + 2;
   });
+//  Apply borders to all used cells
+   const totalRows = worksheet.rowCount;
+  const totalCols = headers.length;
 
+  for (let i = 1; i <= totalRows; i++) {
+    const row = worksheet.getRow(i);
+    for (let j = 1; j <= totalCols; j++) {
+      const cell = row.getCell(j);
+      cell.border = {
+        top: { style: "thick" },
+        left: { style: "thick" },
+        bottom: { style: "thick" },
+        right: { style: "thick" }
+      };
+    }
+  }
   // Generate and save Excel file
   const buffer = await workbook.xlsx.writeBuffer();
   const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
