@@ -38,7 +38,7 @@ export const exportToExcel = async (data, fileName = "StyledData.xlsx") => {
   // 3: Date row
   const dateCell = worksheet.getCell("A3");
   dateCell.value = `Date: ${new Date().toLocaleDateString()}`;
-  dateCell.font = { italic: true, color: { argb: "FFFAA500" }};
+  dateCell.font = { italic: true, color: { argb: "FFFAA500" } };
   worksheet.mergeCells(3, 1, 3, headers.length); // Merge full row for date
 
   // // 4: Empty row
@@ -71,8 +71,8 @@ export const exportToExcel = async (data, fileName = "StyledData.xlsx") => {
     });
     col.width = maxLength + 2;
   });
-//  Apply borders to all used cells
-   const totalRows = worksheet.rowCount;
+  //  Apply borders to all used cells
+  const totalRows = worksheet.rowCount;
   const totalCols = headers.length;
 
   for (let i = 1; i <= totalRows; i++) {
@@ -112,15 +112,13 @@ export const exportToExcel = async (data, fileName = "StyledData.xlsx") => {
  * 6. Save the PDF as "SalesBilling.pdf".
  */
 export const generateAndSavePdf = (
-  customerName,
-  customerContactNo,
-  // dynamicHeaders,
-  customerAddress,
-  customerGstNo,
+  name,
+  invoice_number,
+  contact_number,
+  address,
+  gst_number,
   rows = [],
-  totalAmount
-
-
+  payable_amount
 ) => {
   // Create a new PDF document
   const doc = new jsPDF();
@@ -133,15 +131,15 @@ export const generateAndSavePdf = (
   // Add company name and address as header
   const renderHeader = () => {
     // name
-    doc.setFont("times", "bold");
+    doc.setFont("Roboto", "bold");
     doc.setFontSize(11);
     doc.text("HRUSHIKESH TANGADKAR", 14, 18);
     // gst in
-    doc.setFont("times", "normal");
+    doc.setFont("Roboto", "normal");
     doc.setFontSize(11);
     doc.text("GSTIN: 27AADFZ9861FIZN", 14, 24);
-      // contact no
-    doc.setFont("times", "normal");
+    // contact no
+    doc.setFont("Roboto", "normal");
     doc.setFontSize(11);
     doc.text("9665856368", 14, 30);
 
@@ -151,7 +149,7 @@ export const generateAndSavePdf = (
     const logoX = (pageWidth - logoWidth) / 2; // center horizontally
     const logoY = 18;  // vertical position
     doc.addImage(logoImage, "PNG", logoX, logoY, logoWidth, logoHeight);
-    doc.setFont("times", "bold");
+    doc.setFont("Roboto", "bold");
     doc.setFontSize(10);
     doc.text("3RD FLOOR, OFFICE NO. 310", pageWidth / 2, 54, { align: "center" });
     doc.text("DELUX FORTUNE MALL, PIMPRI, PUNE", pageWidth / 2, 58, { align: "center" });
@@ -159,13 +157,13 @@ export const generateAndSavePdf = (
     // Setup Y position
     let y = 70;
     // Customer Name
-    doc.setFont("helvetica", "bold");
+    doc.setFont("Roboto", "bold");
     doc.setFontSize(11);
     doc.text("Name:", 14, y);
-    doc.setFont("helvetica", "normal");
-    doc.setFont("helvetica", "normal");
+    doc.setFont("Roboto", "normal");
+    doc.setFont("Roboto", "normal");
     // Remove all spaces from the name
-    const cleanedName = (customerName );
+    const cleanedName = (name);
     // Wrap the name if it's too long
     const nameLines = doc.splitTextToSize(cleanedName, 100); // width can be adjusted
     nameLines.forEach((line, i) => {
@@ -177,10 +175,10 @@ export const generateAndSavePdf = (
     });
 
     y += nameLines.length * 6;
-    doc.setFont("helvetica", "bold");
+    doc.setFont("Roboto", "bold");
     doc.text("Address:", 14, y);
-    doc.setFont("helvetica", "normal");
-    const cleanedAddress = customerAddress
+    doc.setFont("Roboto", "normal");
+    const cleanedAddress = address
       ?.replace(/\s+/g, " ")
       .replace(/[\n\r\t]+/g, "")
       .trim() || "-";
@@ -195,13 +193,17 @@ export const generateAndSavePdf = (
     });
     y += addressLines.length * 6;
     // GST No
-    doc.setFont("helvetica", "bold");
+    doc.setFont("Roboto", "bold");
     doc.text("GST No:", 14, y);
-    doc.setFont("helvetica", "normal");
-    doc.text(customerGstNo || "-", 14 + doc.getTextWidth("GST No:") + 2, y);
-    // contact no
-    doc.setFont("helvetica", "normal");
-    doc.text(`Mob No: ${customerContactNo}`, pageWidth - 16, 70, {
+    doc.setFont("Roboto", "normal");
+    doc.text(gst_number || "-", 14 + doc.getTextWidth("GST No:") + 2, y);
+    // contact no and invoice number
+    doc.setFont("Roboto", "bold");
+    doc.text(`Invoice No : ${invoice_number}`, pageWidth - 28, 70, {
+      align: "right",
+    });
+    doc.setFont("Roboto", "bold");
+    doc.text(`Mob No: ${contact_number}`, pageWidth - 16, 76, {
       align: "right",
     });
     // date
@@ -218,15 +220,27 @@ export const generateAndSavePdf = (
   renderHeader();
   drawPageBorder();
   // Define table columns
+  // const tableColumn = ["SR.NO", "PRODUCT DESCRIPTION", "IMEI NO", "GRADE", "AMOUNT"];
+  // const tableRows = rows.map((row, index) => [
+  //   index + 1,
+  //   `${row.Brand || row.model.brand.name || ""} ${row.Model || row.model.name || ""}`,
+  //   row["IMEI NO"] || row.imei_number || "",
+  //   row["Grade"] ||  row.grade||"",
+  //   `${Number(row["Rate"] || row.sales_price ||0).toFixed(2)}`
+  // ]);
   const tableColumn = ["SR.NO", "PRODUCT DESCRIPTION", "IMEI NO", "GRADE", "AMOUNT"];
-  const tableRows = rows.map((row, index) => [
-    index + 1,
-    `${row.Brand || ""} ${row.Model || ""}`,
-    row["IMEI NO"] || "",
-    row["Grade"] || "",
-    `${Number(row["Rate"] || 0).toFixed(2)}`
-  ]);
+  const tableRows = rows.map((row, index) => {
+    console.log('row: ', row);
+    return [
+      index + 1,
+      `${row.Brand || row.model.brand.name || ""} ${row.Model || row.model.name || ""}`,
+      row.imei_number || "",
+      row.grade || "",
+      Number(row.sold_at_price || 0).toFixed(2)
+    ]
+  });
   const totalRowIndex = tableRows.length;
+  //  const rupee='\u20B9';
   // Add a total row at the end
   tableRows.push([
     {
@@ -235,7 +249,7 @@ export const generateAndSavePdf = (
       styles: { halign: "right", fontStyle: "bold", fontSize: 11, },
     },
     {
-      content: `Rs ${Number(totalAmount).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`,
+      content: `${Number(payable_amount).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`,
       styles: { halign: "right", fontStyle: "bold", fontSize: 11 }
     },
   ]);
@@ -298,12 +312,27 @@ export const generateAndSavePdf = (
     doc.addPage();
     drawPageBorder();
   }
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-  doc.text("Thank you for your purchase!", pageWidth / 2, finalY, { align: "center" });
+  const bottomY = pageHeight - 40; // Bottom margin
+  // Set font for headings
+  doc.setFontSize(11);
+  doc.setFont("Roboto", "bold");
+  doc.text("TERMS AND CONDITIONS:", 14, bottomY - 20);
 
+  // Set font for the conditions
+  doc.setFontSize(10);
+  doc.setFont("Roboto", "normal");
+  doc.text("1. Products once sold will neither be returned not exchanged.", 14, bottomY - 15);
+
+  doc.setFontSize(11);
+  doc.setFont("Roboto", "bold");
+  doc.text("Receiver Signature", 14, bottomY + 10); // Left signature
+  doc.text("Authorized Signature", pageWidth - margin - 50, bottomY + 10); // Right signature
+
+  doc.setFontSize(10);
+  doc.setFont("Roboto", "normal");
+  doc.text("Thank you for your purchase!", pageWidth / 2, pageHeight - 15, { align: "center" });
   // Save the PDF file
-  doc.save(`${customerName}__Invoice.pdf`);
+  doc.save(`${name}__Invoice.pdf`);
 
 };
 export const handleBarcodePrint = (product) => {

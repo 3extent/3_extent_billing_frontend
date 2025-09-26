@@ -43,10 +43,12 @@ function Billinghistory() {
                         buttonClassName="py-1 px-3 text-[12px] font-semibold"
                         onClick={() => generateAndSavePdf(
                             bill.customer.name,
+                            bill.invoice_number,
                             bill.customer.contact_number,
                             bill.customer.address,
                             bill.customer.gst_number,
-                            rows,
+                            bill.products,
+                            bill.payable_amount
                         )
                         }
                     />

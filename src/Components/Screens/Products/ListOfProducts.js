@@ -41,7 +41,7 @@ function ListOfProducts() {
             method: 'GET',
             url,
             data: {},
-            callback: getSuppliersCallBack,
+            callback: getSuppliersCallBack, 
             setLoading: setLoading,
         });
     };

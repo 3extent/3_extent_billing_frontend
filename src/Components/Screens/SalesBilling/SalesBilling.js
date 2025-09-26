@@ -61,7 +61,7 @@ export default function SalesBilling() {
         getCustomerAllData();
     }, []);
     useEffect(() => {
-        if (selectedImei.length === 12 || selectedImei.length===15) {
+        if (selectedImei.length === 15) {
             getsalesbillingAllData();
         }
     }, [selectedImei]);
@@ -192,10 +192,11 @@ export default function SalesBilling() {
             navigate("/billinghistory");
             generateAndSavePdf(
                 customerName,
-                selectedContactNo,
-                dynamicHeaders,
+                // selectedContactNo,
+                // dynamicHeaders,
                 customerAddress,
                 customerGstNo,
+                // invoice
                 rows,
                 totalAmount
             );
