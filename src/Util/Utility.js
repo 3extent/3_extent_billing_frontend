@@ -199,7 +199,7 @@ export const generateAndSavePdf = (
     doc.text(gst_number || "-", 14 + doc.getTextWidth("GST No:") + 2, y);
     // contact no and invoice number
     doc.setFont("Roboto", "bold");
-    doc.text(`Invoice No : ${invoice_number}`, pageWidth - 28, 70, {
+    doc.text(`Invoice No : ${invoice_number}`, pageWidth - 26, 70, {
       align: "right",
     });
     doc.setFont("Roboto", "bold");
