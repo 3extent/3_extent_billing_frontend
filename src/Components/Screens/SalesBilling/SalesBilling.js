@@ -192,7 +192,7 @@ export default function SalesBilling() {
             navigate("/billinghistory");
             generateAndSavePdf(
                 customerName,
-                // selectedContactNo,
+                selectedContactNo,
                 // dynamicHeaders,
                 customerAddress,
                 customerGstNo,
