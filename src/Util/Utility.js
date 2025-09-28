@@ -1,8 +1,10 @@
 
 import ExcelJS from "exceljs";
+import * as XLSX from 'xlsx';
 import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
 import autoTable from 'jspdf-autotable';
+import { toWords } from 'number-to-words';
 // export const exportToExcel = (data, fileName = "data.xlsx") => {
 //   if (data.length === 0) {
 //     alert("No data to export!");
@@ -242,6 +244,10 @@ export const generateAndSavePdf = (
   const totalRowIndex = tableRows.length;
   //  const rupee='\u20B9';
   // Add a total row at the end
+  const capitalize = (str) => str.replace(/\b\w/g, char => char.toUpperCase());
+
+// Convert amount to words
+const amountInWords = `${capitalize(toWords(payable_amount))} Rupees Only`
   tableRows.push([
     {
       content: "TOTAL",
@@ -335,6 +341,38 @@ export const generateAndSavePdf = (
   doc.save(`${name}__Invoice.pdf`);
 
 };
+
+export const excelDownload = () => {
+  // Define headers
+  const headers = [
+    ["Model Name", "IMEI", "Purchase Price", "Sales Price", "Engineer Name", "QC Remark", "Supplier", "Accessories", "Grade"]
+  ];
+
+  // Create worksheet from headers
+  const worksheet = XLSX.utils.aoa_to_sheet(headers);
+
+  const headerRow = headers[0];
+
+  // Set column widths based on header length
+  worksheet['!cols'] = headerRow.map(header => ({
+    wch: header.length + 2 // add a bit of padding
+  }));
+
+  // Create workbook and add worksheet
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+
+  // Write workbook with styles
+  const excelBuffer = XLSX.write(workbook, {
+    bookType: "xlsx",
+    type: "array",
+  });
+
+  // Trigger file download
+  const data = new Blob([excelBuffer], { type: "application/octet-stream" });
+  saveAs(data, "Empty_Sheet.xlsx");
+};
+
 export const handleBarcodePrint = (product) => {
   const win = window.open('', '', 'height=800,width=600');
   win.document.write(`

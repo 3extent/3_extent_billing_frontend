@@ -5,7 +5,7 @@ import CustomTableCompoent from '../../CustomComponents/CustomTableCompoent/Cust
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
 import InputComponent from '../../CustomComponents/InputComponent/InputComponent';
 import { apiCall } from '../../../Util/AxiosUtils';
-import { handleBarcodePrint } from '../../../Util/Utility';
+import { excelDownload, handleBarcodePrint } from '../../../Util/Utility';
 function BulkOfProduct() {
     const [inputValue, setInputValue] = useState('');
     const [excelData, setExcelData] = useState([]);
@@ -44,6 +44,9 @@ function BulkOfProduct() {
             console.log("error")
         }
     };
+    const handleDownloadExcel=()=>{
+        excelDownload();
+    }
     const handleFileUpload = (e) => {
         const file = e.target.files[0];
         const reader = new FileReader();
@@ -81,12 +84,18 @@ function BulkOfProduct() {
                     <CustomTableCompoent headers={tableHeaders} rows={excelData} />
                 </div>
             )}
-            <div className='flex justify-center'>
+            <div className='flex justify-center gap-4'>
                 <PrimaryButtonComponent
                     label="Save"
                     icon="fa fa-save"
                     buttonClassName="mt-2 py-2 px-5 text-xl font-bold"
                     onClick={handleAddProductData}
+                />
+                 <PrimaryButtonComponent
+                    label="Download"
+                    icon="fa fa-download"
+                    buttonClassName="mt-2 py-2 px-5 text-xl font-bold"
+                    onClick={handleDownloadExcel}
                 />
             </div>
         </div>
