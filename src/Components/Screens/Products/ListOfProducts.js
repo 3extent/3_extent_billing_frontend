@@ -41,7 +41,7 @@ function ListOfProducts() {
             method: 'GET',
             url,
             data: {},
-            callback: getSuppliersCallBack, 
+            callback: getSuppliersCallBack,
             setLoading: setLoading,
         });
     };
@@ -221,13 +221,6 @@ function ListOfProducts() {
                     value={grade}
                     onChange={(e) => setGrade(e.target.value)}
                 />
-                {/* <DropdownCompoent
-                    placeholder="Select status"
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value)}
-                    options={STATUS_OPTIONS}
-                    className="w-[190px] mt-3"
-                /> */}
             </div>
             <div className='flex items-center gap-4'>
                 <DropdownCompoent

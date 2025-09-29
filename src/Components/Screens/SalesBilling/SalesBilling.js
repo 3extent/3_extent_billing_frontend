@@ -196,7 +196,6 @@ export default function SalesBilling() {
                 // dynamicHeaders,
                 customerAddress,
                 customerGstNo,
-                // invoice
                 rows,
                 totalAmount
             );
