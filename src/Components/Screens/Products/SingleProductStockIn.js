@@ -256,6 +256,7 @@ function SingleProductStockIn() {
         name="purchase_price"
         placeholder="Buying Purchase Price"
         value={productData.purchase_price}
+        numericOnly={true}
         onChange={handleInputChange}
         inputClassName="w-[80%]"
         labelClassName="font-serif font-bold"
@@ -267,6 +268,7 @@ function SingleProductStockIn() {
         name="sales_price"
         placeholder="Rate Selling Price"
         value={productData.sales_price}
+        numericOnly={true}
         onChange={handleInputChange}
         inputClassName="w-[80%]"
         labelClassName="font-serif font-bold"
