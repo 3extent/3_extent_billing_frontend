@@ -188,8 +188,8 @@ function ListOfProducts() {
                     placeholder="Enter IMEI NO"
                     inputClassName="mb-2 w-[190px]"
                     value={imeiNumber}
-                    maxLength={15}
                     numericOnly={true}
+                    maxLength={15}
                     onChange={(e) => setIMEINumber(e.target.value)}
                 />
                 <DropdownCompoent
