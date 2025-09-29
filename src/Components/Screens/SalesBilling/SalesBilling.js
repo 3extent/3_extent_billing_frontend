@@ -379,7 +379,7 @@ export default function SalesBilling() {
                     )}
                 </div>
             )}
-            <div className="h-[64vh]">
+            <div className="h-[54vh]">
                 <CustomTableCompoent
                     headers={dynamicHeaders}
                     rows={rows}
