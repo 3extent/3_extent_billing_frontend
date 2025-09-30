@@ -19,6 +19,7 @@ export default function CustomPopUpComponet({ totalAmount, cashAmount, onlineAmo
                             labelClassName="font-bold"
                             onChange={(e) => setCashAmount(e.target.value)}
                             inputClassName=" w-[150px]"
+                            numericOnly={true}
                         />
                         <InputComponent
                             label="ONLINE"
@@ -28,6 +29,7 @@ export default function CustomPopUpComponet({ totalAmount, cashAmount, onlineAmo
                             labelClassName="font-bold"
                             onChange={(e) => setOnlineAmount(e.target.value)}
                             inputClassName="w-[150px] "
+                            numericOnly={true}
                         />
                         <InputComponent
                             label="CARD"
@@ -37,6 +39,7 @@ export default function CustomPopUpComponet({ totalAmount, cashAmount, onlineAmo
                             labelClassName="font-bold"
                             onChange={(e) => setCard(e.target.value)}
                             inputClassName="w-[150px] "
+                            numericOnly={true}
                         />
                     </div>
                     <div className="my-5">

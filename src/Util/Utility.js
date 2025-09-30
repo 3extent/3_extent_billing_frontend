@@ -214,6 +214,7 @@ export const generateAndSavePdf = (
       Number(row.sold_at_price || 0).toFixed(2)
     ]
   });
+
   const totalRowIndex = tableRows.length;
   const capitalize = (str) => str.replace(/\b\w/g, char => char.toUpperCase());
   const amountInWordsRaw = toWords(payable_amount); // returns words with commas sometimes

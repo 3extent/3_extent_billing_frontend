@@ -190,14 +190,17 @@ export default function SalesBilling() {
             setShowPaymentPopup(false);
             setPendingAmount(0);
             navigate("/billinghistory");
+            console.log('response.customer?.name: ', response.customer?.name);
+            console.log('response.customer?.contact_number: ', response.customer?.contact_number);
             generateAndSavePdf(
-                customerName,
-                selectedContactNo,
-                // dynamicHeaders,
-                customerAddress,
-                customerGstNo,
-                rows,
-                totalAmount
+                response.data.billing.customer?.name,
+                response.data.billing.invoice_number,
+                response.data.billing.customer?.contact_number,
+                response.data.billing.customer?.address,
+                response.data.billing.customer?.gst_number,
+                response.data.billing.products,
+                response.data.billing.payable_amount,
+
             );
         } else {
             const errorMsg = response?.data?.error || "Something went wrong while saving bill.";
