@@ -214,6 +214,13 @@ export const generateAndSavePdf = (
       Number(row.sold_at_price || 0).toFixed(2)
     ]
   });
+  const MIN_VISIBLE_ROWS = 11;
+  if (tableRows.length < MIN_VISIBLE_ROWS) {
+    const emptyRowsNeeded = MIN_VISIBLE_ROWS - tableRows.length;
+    for (let i = 0; i < emptyRowsNeeded; i++) {
+      tableRows.push(["", "", "", "", ""]);
+    }
+  }
 
   const totalRowIndex = tableRows.length;
   const capitalize = (str) => str.replace(/\b\w/g, char => char.toUpperCase());
@@ -231,14 +238,57 @@ export const generateAndSavePdf = (
     },
     {
       content: "TOTAL",
-      styles: { halign: "right", fontStyle: "bold", fontSize: 11, },
+      styles: {
+        halign: "right", fontStyle: "bold", fontSize: 11,
+      },
     },
     {
       content: formattedAmount,
-      styles: { halign: "right", fontStyle: "bold", fontSize: 11 }
+      styles: {
+        halign: "right", fontStyle: "bold", fontSize: 11,
+      },
     },
   ]);
 
+  //  Add Terms and Signature rows to the table
+  tableRows.push([
+    {
+      content: "TERMS AND CONDITIONS:",
+      colSpan: 5,
+      styles: {
+        halign: "left", fontStyle: "bold", fontSize: 11,cellPadding:2
+      },
+    },
+  ]);
+
+  tableRows.push([
+    {
+      content: "1. Products once sold will neither be returned nor exchanged.",
+      colSpan: 5,
+      styles: {
+        halign: "left", fontStyle: "normal", fontSize: 10, cellPadding:2
+      },
+    },
+  ]);
+
+  const signatureRowIndex = tableRows.length;
+  tableRows.push([
+    {
+      content: "Receiver Signature",
+      colSpan: 2,
+      styles: {
+        halign: "left", fontStyle: "bold", fontSize: 11, cellPadding: {top: 15, left:15, bottom: 2}
+      },
+    },
+
+    {
+      content: "Authorized Signature",
+      colSpan: 3,
+      styles: {
+        halign: "right", fontStyle: "bold", fontSize: 11, cellPadding: {top: 15, right:15, bottom: 2}
+      },
+    }
+  ]);
   // Generate the table in the PDF
   let pageFinalYs = {};
   autoTable(doc, {
@@ -262,6 +312,7 @@ export const generateAndSavePdf = (
       doc.setLineWidth(0.3);
 
       const isTotalRow = section === "body" && row.index === totalRowIndex;
+      const isSignatureRow = section === "body" && row.index === signatureRowIndex;
 
       //  Draw only left & right lines (NO top/bottom)
       doc.line(cell.x, cell.y, cell.x, cell.y + cell.height); // Left
@@ -272,7 +323,9 @@ export const generateAndSavePdf = (
         doc.line(cell.x, cell.y, cell.x + cell.width, cell.y); // top
         doc.line(cell.x, cell.y + cell.height, cell.x + cell.width, cell.y + cell.height); // bottom
       }
-
+      if (isSignatureRow) {
+        doc.line(cell.x, cell.y, cell.x + cell.width, cell.y); // Top
+      }
       //  Header: top & bottom border (for visibility)
       if (section === "head") {
         doc.line(cell.x, cell.y, cell.x + cell.width, cell.y); // top
@@ -290,35 +343,8 @@ export const generateAndSavePdf = (
     doc.line(14, finalY, pageWidth - 14, finalY);
 
   });
-
-  // Add a thank you note below the table
-  const finalY = doc.lastAutoTable.finalY + 15;
-  if (finalY > pageHeight - 20) {
-    doc.addPage();
-    drawPageBorder();
-  }
-  const bottomY = pageHeight - 40; // Bottom margin
-  // Set font for headings
-  doc.setFontSize(11);
-  doc.setFont("Roboto", "bold");
-  doc.text("TERMS AND CONDITIONS:", 14, bottomY - 20);
-
-  // Set font for the conditions
-  doc.setFontSize(10);
-  doc.setFont("Roboto", "normal");
-  doc.text("1. Products once sold will neither be returned not exchanged.", 14, bottomY - 15);
-
-  doc.setFontSize(11);
-  doc.setFont("Roboto", "bold");
-  doc.text("Receiver Signature", 14, bottomY + 10); // Left signature
-  doc.text("Authorized Signature", pageWidth - margin - 50, bottomY + 10); // Right signature
-
-  doc.setFontSize(10);
-  doc.setFont("Roboto", "normal");
-  doc.text("Thank you for your purchase!", pageWidth / 2, pageHeight - 15, { align: "center" });
-  // Save the PDF file
-  doc.save(`${name}__Invoice.pdf`);
-
+  // save file
+  doc.save(`${name}_Invoice.pdf`);
 };
 
 export const excelDownload = () => {
