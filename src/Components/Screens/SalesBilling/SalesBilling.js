@@ -49,8 +49,6 @@ export default function SalesBilling() {
     const [selectedContactNo, setSelectedContactNo] = useState("");
     const [customers, setCustomers] = useState([]);
     const [customerName, setCustomerName] = useState("");
-    const [customerGstNo, setCustomerGstNo] = useState("");
-    const [customerAddress, setCustomerAddress] = useState("");
     const handleRateChange = (index, newRate) => {
         const updatedRows = [...rows];
         updatedRows[index]["Rate"] = Number(newRate);
@@ -104,12 +102,8 @@ export default function SalesBilling() {
         const customer = customers.find(customer => customer.contact_number === value);
         if (customer) {
             setCustomerName(customer.name);
-            setCustomerAddress(customer.address);
-            setCustomerGstNo(customer.gst_number);
         } else {
             setCustomerName("");
-            setCustomerGstNo("");
-            setCustomerAddress("");
         }
     };
     const getAllImeis = () => {
@@ -131,8 +125,11 @@ export default function SalesBilling() {
     };
     const getsalesbillingCallBack = (response) => {
         console.log('response: ', response);
+
         if (response.status === 200) {
+
             const productFormattedRows = response.data.map((product, index) => ({
+
                 "Sr.No": rows.length + index + 1,
                 "Date": moment(Number(product.created_at)).format('ll'),
                 "IMEI NO": product.imei_number,
@@ -144,6 +141,7 @@ export default function SalesBilling() {
                 "Accessories": product.accessories,
                 "QC-Remark": product.qc_remark
             }));
+
             console.log('productFormattedRows: ', productFormattedRows);
             const existingImeis = rows.map(row => row["IMEI NO"]);
             const newUniqueRows = productFormattedRows.filter(
@@ -361,7 +359,7 @@ export default function SalesBilling() {
                     </button>
                     {showDropdown && (
                         <div className="absolute bg-white border shadow-md mt-1 rounded w-48 z-10 max-h-48 overflow-auto">
-                            {["Purchase Price", "QC_Remark"].map((col) => (
+                            {["Purchase Price", "QC-Remark"].map((col) => (
                                 <label
                                     key={col}
                                     className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
@@ -389,24 +387,20 @@ export default function SalesBilling() {
                     editable={true}
                 />
             </div>
-            <div className="fixed bottom-5 right-5">
-                <div>
-                    <span className="font-bold gap-4 text-[22px]  flex justify-end">
-                        Total Amount : {Number(totalAmount).toLocaleString("en-IN")}
-                    </span>
-                </div>
-                <div className="flex gap-4 mt-3">
-                    <PrimaryButtonComponent
-                        label="Save"
-                        icon="fa fa-cloud-download"
-                        onClick={handleSaveData}
-                    />
-                    <PrimaryButtonComponent
-                        label="Draft"
-                        icon="fa fa-pencil-square-o"
-                        onClick={handleDraftData}
-                    />
-                </div>
+            <div className=" fixed bottom-16 right-5 font-bold gap-4 text-[22px]  flex justify-end">
+                Total Amount : {Number(totalAmount).toLocaleString("en-IN")}
+            </div>
+            <div className=" fixed bottom-5 right-5 flex gap-4 mt-3">
+                <PrimaryButtonComponent
+                    label="Save"
+                    icon="fa fa-cloud-download"
+                    onClick={handleSaveData}
+                />
+                <PrimaryButtonComponent
+                    label="Draft"
+                    icon="fa fa-pencil-square-o"
+                    onClick={handleDraftData}
+                />
             </div>
             {showPaymentPopup && (
                 <CustomPopUpComponet
