@@ -181,12 +181,13 @@ export const generateAndSavePdf = (
     doc.setFont("Roboto", "normal");
     doc.text(gst_number || "-", 14 + doc.getTextWidth("GST No:") + 2, y);
     // contact no and invoice number
+    const rightMargin = 16;
     doc.setFont("Roboto", "bold");
-    doc.text(`Invoice No : ${invoice_number}`, pageWidth - 26, 70, {
+    doc.text(`Invoice No : ${invoice_number}`, pageWidth - rightMargin, 70, {
       align: "right",
     });
-    doc.setFont("Roboto", "bold");
-    doc.text(`Mob No: ${contact_number}`, pageWidth - 16, 76, {
+    // Mobile No (below Invoice No)
+    doc.text(`Mob No: ${contact_number}`, pageWidth - rightMargin, 76, {
       align: "right",
     });
     // date
@@ -256,7 +257,7 @@ export const generateAndSavePdf = (
       content: "TERMS AND CONDITIONS:",
       colSpan: 5,
       styles: {
-        halign: "left", fontStyle: "bold", fontSize: 11,cellPadding:2
+        halign: "left", fontStyle: "bold", fontSize: 11, cellPadding: 2
       },
     },
   ]);
@@ -266,7 +267,7 @@ export const generateAndSavePdf = (
       content: "1. Products once sold will neither be returned nor exchanged.",
       colSpan: 5,
       styles: {
-        halign: "left", fontStyle: "normal", fontSize: 10, cellPadding:2
+        halign: "left", fontStyle: "normal", fontSize: 10, cellPadding: 2
       },
     },
   ]);
@@ -277,7 +278,7 @@ export const generateAndSavePdf = (
       content: "Receiver Signature",
       colSpan: 2,
       styles: {
-        halign: "left", fontStyle: "bold", fontSize: 11, cellPadding: {top: 15, left:15, bottom: 2}
+        halign: "left", fontStyle: "bold", fontSize: 11, cellPadding: { top: 15, left: 15, bottom: 2 }
       },
     },
 
@@ -285,7 +286,7 @@ export const generateAndSavePdf = (
       content: "Authorized Signature",
       colSpan: 3,
       styles: {
-        halign: "right", fontStyle: "bold", fontSize: 11, cellPadding: {top: 15, right:15, bottom: 2}
+        halign: "right", fontStyle: "bold", fontSize: 11, cellPadding: { top: 15, right: 15, bottom: 2 }
       },
     }
   ]);
