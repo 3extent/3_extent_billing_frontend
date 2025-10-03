@@ -27,7 +27,7 @@ export default function SingleBillHistory() {
                 address: bill.customer?.address,
                 gstno: bill.customer?.gst_number,
                 amount: bill.payable_amount,
-                date: moment((bill.product?.created_at)).format('ll')
+                date: moment((bill.created_at)).format('ll')
             });
             const singleBillHistrotFormattedRows = bill.products.map((product, index) => ({
                 "Sr.No": index + 1,
