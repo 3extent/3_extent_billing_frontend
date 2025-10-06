@@ -379,73 +379,93 @@ export const excelDownload = () => {
   saveAs(data, "Download.xlsx");
 };
 
-export const handleBarcodePrint = (product) => {
-  const win = window.open('', '', 'height=800,width=600');
-  win.document.write(`
-    <html>
-      <head>
-        <title>Print Barcode</title>
-        <style>
-          @page {
-            size: A4 landscape;
-            margin: 0;
-          }
-          html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            width: 100%;
-            font-family: "Courier New", Courier, monospace;
-          }
-          #barcode-wrapper {
-            position: absolute;
-            top: 5%;
-            width: 100%;
-            text-align: center;
-            font-family: sans-serif;
-          }
-          .header {
-            margin: 5px 0px;
-            font-size: 100px;
-            text-align: center;
-            font-weight: bolder;
-          }
-          .h2 {
-            margin: 0;
-            font-size: 100px;
-            text-align: left;
-            font-weight: bolder;
-          }
-          svg {
-            width: 100%;
-            height: auto;
-          }
-        </style>
-      </head>
-      <body>
-        <div id="barcode-wrapper">
-          <h1 class="header">3_EXTENT</h1>
-          <h1 class="h2">${product.modelName}</h1>
-          <h1 class="h2">Grade : ${product.grade}</h1>
-          <svg id="barcode"></svg>
-        </div>
-        <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-        <script>
-          JsBarcode("#barcode", "${product.imei_number}", {
-            format: 'CODE128',
-            lineColor: '#000',
-            width: 2,
-            height: 40,
-            displayValue: true,
-            fontSize: 30
-          });
-          window.onload = function() {
-            window.print();
-          };
-        </script>
-      </body>
-    </html>
-  `);
-  win.document.close();
-  win.focus();
+export const handleBarcodePrint = async (product) => {
+  const ensureJsBarcode = () =>
+    new Promise((resolve, reject) => {
+      if (window.JsBarcode) return resolve(window.JsBarcode);
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js';
+      s.onload = () => resolve(window.JsBarcode);
+      s.onerror = () => reject(new Error('Failed to load JsBarcode'));
+      document.head.appendChild(s);
+    });
+
+  try {
+    await ensureJsBarcode();
+
+    const container = document.createElement('div');
+    container.id = 'print-barcode-container';
+    container.style.position = 'fixed';
+    container.style.left = '0';
+    container.style.top = '0';
+    container.style.width = '100%';
+    container.style.height = '100%';
+    container.style.background = 'white';
+    container.style.zIndex = '2147483647';
+    container.style.margin = '0';
+    container.style.padding = '0';
+
+    container.innerHTML = `
+      <style>
+        @page { size: A4 landscape; margin: 0; }
+        html, body { margin: 0; padding: 0; }
+        #barcode-wrapper {
+          position: absolute;
+          top: 5%;
+          width: 100%;
+          text-align: center;
+          font-family: "Courier New", Courier, monospace;
+        }
+        .header {
+          margin: 5px 0px;
+          font-size: 100px;
+          text-align: center;
+          font-weight: bolder;
+        }
+        .h2 {
+          margin: 0;
+          font-size: 100px;
+          text-align: left;
+          font-weight: bolder;
+        }
+        svg { width: 100%; height: auto; }
+        @media screen {
+          body.noscroll { overflow: hidden; }
+        }
+      </style>
+      <div id="barcode-wrapper">
+        <h1 class="header">3_EXTENT</h1>
+        <h1 class="h2">${product.modelName}</h1>
+        <h1 class="h2">Grade : ${product.grade}</h1>
+        <svg id="barcode-inline"></svg>
+      </div>
+    `;
+
+    document.body.appendChild(container);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    window.JsBarcode('#barcode-inline', product.imei_number, {
+      format: 'CODE128',
+      lineColor: '#000',
+      width: 2,
+      height: 40,
+      displayValue: true,
+      fontSize: 30
+    });
+
+    const cleanup = () => {
+      window.removeEventListener('afterprint', cleanup);
+      if (container.parentNode) container.parentNode.removeChild(container);
+      document.body.style.overflow = prevOverflow;
+    };
+
+    window.addEventListener('afterprint', cleanup);
+
+    // Short delay to ensure DOM/styles are applied before printing
+    setTimeout(() => window.print(), 50);
+  } catch (e) {
+    console.error(e);
+    alert('Unable to print barcode. Please check your internet connection.');
+  }
 };
