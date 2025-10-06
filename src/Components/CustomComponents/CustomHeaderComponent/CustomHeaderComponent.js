@@ -1,5 +1,4 @@
 import PrimaryButtonComponent from "../PrimaryButtonComponent/PrimaryButtonComponent";
-
 export default function CustomHeaderComponent({ name, icon, label, onClick, buttonClassName = "" }) {
     return (
         <div className="flex justify-between items-center">

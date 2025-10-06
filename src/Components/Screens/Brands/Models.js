@@ -4,7 +4,7 @@ import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { MODELS_COLOUMNS } from "./Constants";
-import { apiCall } from "../../../Util/AxiosUtils";
+import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
@@ -13,12 +13,13 @@ export default function Models() {
     const [modelName, setModelName] = useState();
     const [brandName, setBrandName] = useState("");
     const [brandOptions, setBrandOptions] = useState([]);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const navigateAddModels = () => {
         navigate("/addmodels")
     }
     useEffect(() => {
-        getModelsAllData();
+        getModelsAllData({});
         getBrandsAllData();
     }, []);
     const getModelsCallBack = (response) => {
@@ -27,14 +28,27 @@ export default function Models() {
             const modelFormattedaRows = response.data.map((model, index) => ({
                 "No": index + 1,
                 "Model Name": model.name,
-                "Qty": model.qty
+                "Brand Name": model.brand.name,
+                "Action": (
+                    <div className="flex justify-end">
+                        <div
+                            title="Edit"
+                            onClick={() => navigate(`/addmodels/${model._id}`)}
+                            className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
+                        >
+                            <i className="fa fa-pencil text-gray-700 text-sm" />
+                        </div>
+                    </div>
+                ),
+
+                id: model._id
             }))
             setRows(modelFormattedaRows);
         } else {
             console.log("Error");
         }
     }
-    const getModelsAllData = () => {
+    const getModelsAllData = ({ brandName, modelName }) => {
         let url = "https://3-extent-billing-backend.vercel.app/api/models?";
         if (modelName) {
             url += `&modelName=${modelName}`
@@ -47,6 +61,7 @@ export default function Models() {
             url: url,
             data: {},
             callback: getModelsCallBack,
+            setLoading: setLoading
         })
     }
     const getBrandsAllData = () => {
@@ -72,15 +87,16 @@ export default function Models() {
         }
     }
     const handleSearchFilter = () => {
-        getModelsAllData();
+        getModelsAllData({ brandName, modelName });
     }
     const handleResetFilter = () => {
         setBrandName('');
         setModelName('');
-        getModelsAllData();
+        getModelsAllData({});
     }
     return (
         <div>
+            {loading && <Spinner />}
             <CustomHeaderComponent
                 name="Models"
                 label="Add Models"
@@ -91,7 +107,7 @@ export default function Models() {
             />
             <div className="flex items-center gap-4">
                 <CustomDropdownInputComponent
-                    dropdownClassName="w-full mt-1"
+                    dropdownClassName="w-[190px] mt-1"
                     placeholder="Enter a brand"
                     value={brandName}
                     onChange={(value) => setBrandName(value)}
@@ -100,25 +116,29 @@ export default function Models() {
                 <InputComponent
                     type="text"
                     placeholder="Enter Models Name"
-                    inputClassName="w-[full] mb-5"
+                    inputClassName="w-[190px] mb-5"
                     value={modelName}
                     onChange={(e) => setModelName(e.target.value)}
                 />
                 <PrimaryButtonComponent
                     label="Search"
-                    buttonClassName="mt-1 py-1 px-5 text-xl font-bold"
+                    icon="fa fa-search"
+                    buttonClassName="mt-1 py-1 px-5"
                     onClick={handleSearchFilter}
                 />
                 <PrimaryButtonComponent
                     label="Reset"
-                    buttonClassName="mt-1 py-1 px-5 text-xl font-bold"
+                    icon="fa fa-refresh"
+                    buttonClassName="mt-1 py-1 px-5"
                     onClick={handleResetFilter}
                 />
             </div>
-            <CustomTableCompoent
-                headers={MODELS_COLOUMNS}
-                rows={rows}
-            />
+            <div className="h-[64vh]">
+                <CustomTableCompoent
+                    headers={MODELS_COLOUMNS}
+                    rows={rows}
+                />
+            </div>
         </div>
     );
 }
