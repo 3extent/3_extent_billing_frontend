@@ -109,7 +109,7 @@ export default function Customer() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <div className="h-[64vh]">
+            <div className="h-[75vh]">
                 <CustomTableCompoent
                     headers={CUSTOMER_COLOUMS}
                     rows={rows}
