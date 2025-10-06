@@ -188,8 +188,8 @@ function ListOfProducts() {
                     placeholder="Enter IMEI NO"
                     inputClassName="mb-2 w-[190px]"
                     value={imeiNumber}
-                    maxLength={15}
                     numericOnly={true}
+                    maxLength={15}
                     onChange={(e) => setIMEINumber(e.target.value)}
                 />
                 <DropdownCompoent
@@ -221,15 +221,15 @@ function ListOfProducts() {
                     value={grade}
                     onChange={(e) => setGrade(e.target.value)}
                 />
+            </div>
+            <div className='flex items-center gap-4'>
                 <DropdownCompoent
                     placeholder="Select status"
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
                     options={STATUS_OPTIONS}
-                    className="w-[190px] mt-3"
+                    className="w-[190px]"
                 />
-            </div>
-            <div className='flex items-center gap-4'>
                 <label className='flex items-center gap-2 text-sm'>
                     <input
                         type="checkbox"
@@ -263,7 +263,7 @@ function ListOfProducts() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <div className="h-[64vh]">
+            <div className="h-[60vh]">
                 <CustomTableCompoent
                     headers={PRODUCT_COLOUMNS}
                     rows={rows}

@@ -8,10 +8,17 @@ import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { generateAndSavePdf } from "../../../Util/Utility";
+import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
 function Billinghistory() {
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false)
+    const [showPaymentPopup, setShowPaymentPopup] = useState(false);
+    const [cashAmount, setCashAmount] = useState("");
+    const [onlineAmount, setOnlineAmount] = useState("");
+    const [card, setCard] = useState("");
+    const [selectedBill, setSelectedBill] = useState(null);
+    const [pendingAmount, setPendingAmount] = useState(0);
     const [customerName, setCustomerName] = useState("");
     const [contactNo, setContactNo] = useState("");
     const [paymentStatus, setPaymentStatus] = useState("");
@@ -25,31 +32,59 @@ function Billinghistory() {
         setTo(to);
         getBillinghistoryAllData({ from, to });
     }, []);
+    useEffect(() => {
+    if (!selectedBill) return;
+
+    const cash = Number(cashAmount || 0);
+    const online = Number(onlineAmount || 0);
+    const cardAmt = Number(card || 0);
+
+    const paidTotal = cash + online + cardAmt;
+    const pending = selectedBill.pending_amount - paidTotal;
+    setPendingAmount(pending);
+}, [cashAmount, card, onlineAmount, selectedBill]);
     const getBilllinghistoryCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
             const billingformattedRows = response.data.map((bill, index) => ({
                 "Bill id": index + 1,
-                "Date": moment(bill.createdAt).format('ll'),
+                "Date": moment(bill.created_at).format('ll'),
                 "Customer Name": bill.customer.name,
                 "Contact Number": bill.customer.contact_number,
                 "Total Amount": bill.payable_amount,
                 "Remaining Amount": bill.pending_amount,
+                "Profit":bill.profit,
                 _id: bill._id,
                 "Actions": (
-                    <PrimaryButtonComponent
-                        label="print"
-                        icon="fa fa-print"
-                        buttonClassName="py-1 px-3 text-[12px] font-semibold"
-                        onClick={() => generateAndSavePdf(
-                            bill.customer.name,
-                            bill.customer.contact_number,
-                            bill.customer.address,
-                            bill.customer.gst_number,
-                            rows,
-                        )
-                        }
-                    />
+                    <div className="flex items-center justify-end gap-2">
+                        <div>
+                            <PrimaryButtonComponent
+                                label="Pay"
+                                buttonClassName="py-1 px-3 text-[12px] font-semibold"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handlepaymentMethod(bill);
+                                }}
+                            />
+                        </div>
+                        <PrimaryButtonComponent
+                            label="print"
+                            icon="fa fa-print"
+                            buttonClassName="py-1 px-3 text-[12px] font-semibold"
+                            onClick={(e) => {
+                                e.stopPropagation(); 
+                                generateAndSavePdf(
+                                    bill.customer.name,
+                                    bill.invoice_number,
+                                    bill.customer.contact_number,
+                                    bill.customer.address,
+                                    bill.customer.gst_number,
+                                    bill.products,
+                                    bill.payable_amount
+                                );
+                            }}
+                        />
+                    </div>
                 )
             }));
             console.log("Formatted Billing Rows: ", billingformattedRows);
@@ -94,6 +129,33 @@ function Billinghistory() {
             navigate(`/singleBillHistory/${row._id}`);
         }
     };
+    const handlepaymentMethod = (bill) => {
+        setSelectedBill(bill);
+        setPendingAmount(bill.pending_amount);
+        setShowPaymentPopup(true);
+    };
+    const handleCancelPopup = () => {
+        setCashAmount("");
+        setOnlineAmount("");
+        setCard("");
+        setShowPaymentPopup(false);
+    };
+    const handlePrintButton = () => {
+        generateAndSavePdf(
+            selectedBill.customer.name,
+            selectedBill.invoice_number,
+            selectedBill.customer.contact_number,
+            selectedBill.customer.address,
+            selectedBill.customer.gst_number,
+            selectedBill.products,
+            selectedBill.payable_amount
+        );
+        setShowPaymentPopup(false);
+        setCashAmount("");
+        setOnlineAmount("");
+        setCard("");
+    };
+
     const handleSearchFilter = () => {
         getBillinghistoryAllData({ contactNo, paymentStatus, customerName, from, to, selectAllDates });
     }
@@ -177,6 +239,20 @@ function Billinghistory() {
                     onRowClick={handleRowClick}
                 />
             </div>
+            {showPaymentPopup && selectedBill && (
+                <CustomPopUpComponet
+                    totalAmount={selectedBill.pending_amount}
+                    cashAmount={cashAmount}
+                    onlineAmount={onlineAmount}
+                    card={card}
+                    pendingAmount={pendingAmount}
+                    setCashAmount={setCashAmount}
+                    setOnlineAmount={setOnlineAmount}
+                    setCard={setCard}
+                    handleCancelButton={handleCancelPopup}
+                    handlePrintButton={handlePrintButton}
+                />
+            )}
         </div>
     )
 }

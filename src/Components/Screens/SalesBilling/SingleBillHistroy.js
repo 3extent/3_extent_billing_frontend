@@ -9,6 +9,7 @@ import { generateAndSavePdf } from "../../../Util/Utility";
 export default function SingleBillHistory() {
     const { billId } = useParams();
     const [rows, setRows] = useState([]);
+    const [singleBill, setSingleBill] = useState([])
     const [customerInfo, setCustomerInfo] = useState();
     useEffect(() => {
         if (billId) {
@@ -22,7 +23,11 @@ export default function SingleBillHistory() {
             setCustomerInfo({
                 name: bill.customer?.name,
                 contact: bill.customer?.contact_number,
-                date: moment((bill.product?.created_at)).format('ll')
+                invoice: bill.invoice_number,
+                address: bill.customer?.address,
+                gstno: bill.customer?.gst_number,
+                amount: bill.payable_amount,
+                date: moment((bill.created_at)).format('ll')
             });
             const singleBillHistrotFormattedRows = bill.products.map((product, index) => ({
                 "Sr.No": index + 1,
@@ -33,26 +38,23 @@ export default function SingleBillHistory() {
                 "QC-Remark": product.qc_remark,
                 "Grade": product.grade,
                 "Accessories": product.accessories,
-                "Actions": (
-                    <PrimaryButtonComponent
-                        label="print"
-                        icon="fa fa-print"
-                        buttonClassName="py-1 px-3 text-[12px] font-semibold"
-                        onClick={() => generateAndSavePdf(
-                            bill.customer?.name,
-                            bill.customer?.contact_number,
-                            bill.customer?.address ,
-                            bill.customer?.gst_number ,
-                            rows,
-                            bill.customer.payable_amount
-                        )}
-                    />
-                )
             }));
+            setSingleBill(bill);
             setRows(singleBillHistrotFormattedRows);
         } else {
             console.log("Error");
         }
+    }
+    const handleGenaratePdf = () => {
+        generateAndSavePdf(
+            customerInfo.name,
+            customerInfo.invoice,
+            customerInfo.contact,
+            customerInfo.address,
+            customerInfo.gstno,
+            singleBill.products,
+            customerInfo.amount,
+        );
     }
     const getSingleBillHistroyAllData = (id) => {
         let url = `https://3-extent-billing-backend.vercel.app/api/billings/${id}`;
@@ -65,7 +67,17 @@ export default function SingleBillHistory() {
     };
     return (
         <div>
-            <div className="text-xl font-serif">Details of bill</div>
+            <div className="flex justify-between items-center">
+                <div className="text-xl font-serif">Details of bill</div>
+                <div>
+                    <PrimaryButtonComponent
+                        label="print"
+                        icon="fa fa-print"
+                        buttonClassName="py-1 px-3 text-[12px] font-semibold"
+                        onClick={handleGenaratePdf}
+                    />
+                </div>
+            </div>
             <div className="my-5">
                 {customerInfo && (
                     <div className="">
@@ -88,6 +100,5 @@ export default function SingleBillHistory() {
                 />
             </div>
         </div>
-
     );
 }

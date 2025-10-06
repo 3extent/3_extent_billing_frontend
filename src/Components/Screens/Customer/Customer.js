@@ -93,8 +93,8 @@ export default function Customer() {
                     inputClassName="w-[190px]"
                     value={contactNo}
                     onChange={(e) => setContactNumber(e.target.value)}
-                    maxLength={10}
                     numericOnly={true}
+                    maxLength={10}
                 />
                 <PrimaryButtonComponent
                     label="Search"
