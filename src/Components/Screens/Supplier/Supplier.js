@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { SUPPLIER_COLUMNS } from "./Constants";
-import { apiCall } from "../../../Util/AxiosUtils";
+import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
@@ -11,11 +11,12 @@ function Supplier() {
     const navigate = useNavigate();
     const [supplierName, setSupplierName] = useState();
     const [contactNo, setContactNo] = useState();
+    const [loading, setLoading] = useState(false);
     const navigateAddSupplier = () => {
         navigate("/addsupplier")
     }
     useEffect(() => {
-        getSupplierAllData();
+        getSupplierAllData({});
     }, []);
     const getSupplierCallBack = (response) => {
         console.log('response: ', response);
@@ -26,14 +27,27 @@ function Supplier() {
                 "GST No": supplier.gst_number,
                 "State": supplier.state,
                 "Balance": supplier.balance,
-                "Supplier Type": supplier.type
+                "Supplier Type": supplier.type,
+                "Action": (
+                    <div className="flex justify-end">
+                        <div
+                            title="Edit"
+                            onClick={() => navigate(`/addsupplier/${supplier._id}`)}
+                            className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
+                        >
+                            <i className="fa fa-pencil text-gray-700 text-sm" />
+                        </div>
+                    </div>
+                ),
+
+                id: supplier._id
             }));
             setRows(supplierFormattedRows);
         } else {
             console.log("Error");
         }
     }
-    const getSupplierAllData = () => {
+    const getSupplierAllData = ({ supplierName, contactNo }) => {
         let url = "https://3-extent-billing-backend.vercel.app/api/users?role=SUPPLIER"
         if (supplierName) {
             url += `&name=${supplierName}`
@@ -45,18 +59,20 @@ function Supplier() {
             url: url,
             data: {},
             callback: getSupplierCallBack,
+            setLoading: setLoading
         })
     }
     const handleSearchFilter = () => {
-        getSupplierAllData();
+        getSupplierAllData({ supplierName, contactNo });
     }
     const handleResetFilter = () => {
         setSupplierName('');
         setContactNo('');
-        getSupplierAllData();
+        getSupplierAllData({});
     }
     return (
         <div className="w-full">
+            {loading && <Spinner />}
             <CustomHeaderComponent
                 name="List of Supplier Information"
                 icon="fa fa-plus-circle"
@@ -71,28 +87,36 @@ function Supplier() {
                     placeholder="Suppiler Name"
                     value={supplierName}
                     onChange={(e) => setSupplierName(e.target.value)}
+                    inputClassName="w-[190px]"
                 />
                 <InputComponent
-                    type="number"
+                    type="text"
                     placeholder="Contact No"
                     value={contactNo}
                     onChange={(e) => setContactNo(e.target.value)}
+                    inputClassName="w-[190px]"
+                    maxLength={10}
+                    numericOnly={true}
                 />
                 <PrimaryButtonComponent
                     label="Search"
-                    buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
+                    icon="fa fa-search"
+                    buttonClassName="mt-5 py-1 px-5"
                     onClick={handleSearchFilter}
                 />
                 <PrimaryButtonComponent
                     label="Reset"
-                    buttonClassName="mt-5 py-1 px-5 text-xl font-bold"
+                    icon="fa fa-refresh"
+                    buttonClassName="mt-5 py-1 px-5"
                     onClick={handleResetFilter}
                 />
             </div>
-            <CustomTableCompoent
-                headers={SUPPLIER_COLUMNS}
-                rows={rows}
-            />
+            <div className="h-[64vh]">
+                <CustomTableCompoent
+                    headers={SUPPLIER_COLUMNS}
+                    rows={rows}
+                />
+            </div>
         </div>
     );
 }

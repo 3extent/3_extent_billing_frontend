@@ -3,45 +3,96 @@ import React, { useEffect, useState } from 'react';
 import InputComponent from '../../CustomComponents/InputComponent/InputComponent';
 import CustomTableCompoent from '../../CustomComponents/CustomTableCompoent/CustomTableCompoent';
 import DropdownCompoent from '../../CustomComponents/DropdownCompoent/DropdownCompoent';
-import { PRODUCT_COLOUMNS } from './Constants';
-import { apiCall } from '../../../Util/AxiosUtils';
+import { PRODUCT_COLOUMNS, STATUS_OPTIONS } from './Constants';
+import { apiCall, Spinner } from '../../../Util/AxiosUtils';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
+import { exportToExcel, handleBarcodePrint } from '../../../Util/Utility';
+import moment from 'moment';
+import { useNavigate } from 'react-router-dom';
+import CustomDropdownInputComponent from '../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent';
 function ListOfProducts() {
-    // const getTodayDate = () => new Date().toISOString().split("T")[0];
     const [rows, setRows] = useState([]);
     const [imeiNumber, setIMEINumber] = useState();
     const [grade, setGrade] = useState();
     const [modelName, setModelName] = useState();
     const [brandName, setBrandName] = useState('');
+    const [status, setStatus] = useState(STATUS_OPTIONS[0]);
     const [brandOptions, setBrandOptions] = useState([]);
-    const [date, setDate] = useState(() => {
-        const today = new Date();
-        return today.toISOString().split("T")[0];
-    });
-    // const [date, setDate] = useState(getTodayDate);
+    const [loading, setLoading] = useState(false);
+    const fromDate = moment().subtract(7, 'days').format('YYYY-MM-DD');
+    const toDate = moment().format('YYYY-MM-DD');
+    const [from, setFrom] = useState(fromDate);
+    const [to, setTo] = useState(toDate);
+    const [supplierName, setSupplierName] = useState('');
+    const [supplierOptions, setSupplierOptions] = useState([]);
+
+    const [selectAllDates, setSelectAllDates] = useState(false);
+    const navigate = useNavigate();
     useEffect(() => {
-        getProductsAllData();
+        setFrom(fromDate);
+        setTo(toDate);
+        getProductsAllData({ from, to, status });
         getBrandsAllData();
+        getSuppliersAllData();
     }, []);
+    const getSuppliersAllData = () => {
+        let url = "https://3-extent-billing-backend.vercel.app/api/users?role=SUPPLIER";
+        apiCall({
+            method: 'GET',
+            url,
+            data: {},
+            callback: getSuppliersCallBack,
+            setLoading: setLoading,
+        });
+    };
+    const getSuppliersCallBack = (response) => {
+        if (response.status === 200) {
+            const suppliers = response.data.map(supplier => supplier.name);
+            setSupplierOptions(suppliers);
+        } else {
+            console.log("Error fetching suppliers");
+        }
+    };
     const getProductsCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
             const productFormattedRows = response.data.map((product) => ({
-                "date": new Date(product.date).getTime(),
+                "Date": moment(product.created_at).format('ll'),
                 "IMEI NO": product.imei_number,
-                "Product Name": typeof product.model === 'object' ? product.model.name : product.model,
-                "Brand Name": typeof product.brand === 'object' ? product.model.brand : product.model.brand.name,
+                "Model": typeof product.model === 'object' ? product.model.name : product.model,
+                "Brand": typeof product.brand === 'object' ? product.model.brand : product.model.brand.name,
+                "Supplier": typeof product.supplier === 'object' ? product.supplier.name : product.supplier || '-',
                 "Sales Price": product.sales_price,
                 "Purchase Price": product.purchase_price,
                 "Grade": product.grade,
-                "Barcode": product.barcode
-            }))
+                id: product._id,
+                "Actions": (
+                    <div className='flex items-center justify-end gap-2'>
+                        <div className='flex justify-end'>
+                            <div
+                                title="Edit"
+                                onClick={() => navigate(`/stockin/${product._id}`)}
+                                className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
+                            >
+                                <i className="fa fa-pencil text-gray-700 text-sm" />
+                            </div>
+                        </div>
+                        <PrimaryButtonComponent
+                            label="Barcode"
+                            icon="fa fa-print"
+                            buttonClassName="py-1 px-3 text-[12px] font-semibold"
+                            onClick={() => handleBarcodePrint({ modelName: product.model.name, grade: product.grade, imei_number: product.imei_number })}
+                        />
+
+                    </div>
+                )
+            }));
             setRows(productFormattedRows);
         } else {
             console.log("Error");
         }
     }
-    const getProductsAllData = () => {
+    const getProductsAllData = ({ imeiNumber, grade, modelName, brandName, supplierName, status, from, to, selectAllDates }) => {
         let url = 'https://3-extent-billing-backend.vercel.app/api/products?';
         if (imeiNumber) {
             url += `&imei_number=${imeiNumber}`
@@ -49,21 +100,28 @@ function ListOfProducts() {
         if (grade) {
             url += `&grade=${grade}`
         }
-        // else if (date) {
-        //     const timestamp = new Date(date).getTime();
-        //     url += `&createdAt=${timestamp}`
-        // }
         if (modelName) {
             url += `&modelName=${modelName}`
         }
         if (brandName) {
             url += `&brandName=${brandName}`
         }
+        if (supplierName) {
+            url += `&supplierName=${supplierName}`;
+        }
+        if (status) {
+            url += `&status=${status}`
+        }
+        if (!selectAllDates) {
+            if (from) url += `&from=${moment.utc(from).valueOf()}`;
+            if (to) url += `&to=${moment.utc(to).endOf('day').valueOf()}`;
+        }
         apiCall({
             method: 'GET',
             url: url,
             data: {},
             callback: getProductsCallBack,
+            setLoading: setLoading
         })
     }
     const getBrandsAllData = () => {
@@ -73,6 +131,7 @@ function ListOfProducts() {
             url: url,
             data: {},
             callback: getBrandsCallBack,
+            setLoading: setLoading
         })
     };
     const getBrandsCallBack = (response) => {
@@ -85,72 +144,132 @@ function ListOfProducts() {
         }
     }
     const handleSearchFilter = () => {
-        getProductsAllData();
+        getProductsAllData({ imeiNumber, grade, modelName, brandName, supplierName, status, from, to, selectAllDates });
     }
+    const handleDateChange = (value, setDate) => {
+        const today = moment().format('YYYY-MM-DD');
+        if (value > today) {
+            setDate(today);
+        } else {
+            setDate(value);
+        }
+    };
     const handleResetFilter = () => {
-        //  setDate(getTodayDate());
         setModelName('');
         setGrade('');
         setIMEINumber('');
         setBrandName('');
-        getProductsAllData();
+        setStatus();
+        setFrom(fromDate);
+        setTo(toDate);
+        setSelectAllDates();
+        getProductsAllData({ from, to, status: STATUS_OPTIONS[0] });
+        getSuppliersAllData();
+
     }
+    const handleExportToExcel = () => {
+        exportToExcel(rows, "ProductList.xlsx");
+    };
     return (
         <div className='w-full'>
-            <div className='text-xl font-serif'>List Of Products</div>
+            {loading && <Spinner />}
+            <div className='flex justify-between items-center mb-4'>
+                <div className='text-xl font-serif'>List Of Products</div>
+                <PrimaryButtonComponent
+                    label="Export to Excel"
+                    icon="fa fa-file-excel-o"
+                    buttonClassName="py-1 px-5 text-sm font-bold"
+                    onClick={handleExportToExcel}
+                />
+            </div>
             <div className='flex items-center gap-4'>
                 <InputComponent
-                    type="Date"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    inputClassName="mb-5"
+                    type="text"
+                    placeholder="Enter IMEI NO"
+                    inputClassName="mb-2 w-[190px]"
+                    value={imeiNumber}
+                    numericOnly={true}
+                    maxLength={15}
+                    onChange={(e) => setIMEINumber(e.target.value)}
                 />
                 <DropdownCompoent
                     placeholder="Select Brands"
                     value={brandName}
-                    onChange={(value) => setBrandName(value)}
+                    onChange={(e) => setBrandName(e.target.value)}
                     options={brandOptions}
+                    className="mt-3 w-[190px]"
+                />
+                <CustomDropdownInputComponent
+                    dropdownClassName="w-[190px] mt-3"
+                    placeholder="Select Supplier"
+                    value={supplierName}
+                    onChange={(value) => setSupplierName(value)}
+                    options={supplierOptions}
+
                 />
                 <InputComponent
                     type="text"
                     placeholder="Enter Models Name"
-                    inputClassName="mb-5"
+                    inputClassName="mb-2 w-[190px]"
                     value={modelName}
                     onChange={(e) => setModelName(e.target.value)}
                 />
-                <InputComponent
-                    type="number"
-                    placeholder="Enter IMEI NO"
-                    inputClassName="mb-5"
-                    value={imeiNumber}
-                    onChange={(e) => setIMEINumber(e.target.value)}
-                />
-                <InputComponent
+                < InputComponent
                     type="text"
                     placeholder="Enter Grade"
-                    inputClassName="mb-5"
+                    inputClassName="mb-2 w-[190px]"
                     value={grade}
                     onChange={(e) => setGrade(e.target.value)}
                 />
             </div>
-            <div className='flex justify-end mb-2'>
+            <div className='flex items-center gap-4'>
+                <DropdownCompoent
+                    placeholder="Select status"
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
+                    options={STATUS_OPTIONS}
+                    className="w-[190px]"
+                />
+                <label className='flex items-center gap-2 text-sm'>
+                    <input
+                        type="checkbox"
+                        checked={selectAllDates}
+                        onChange={(e) => setSelectAllDates(e.target.checked)}
+                    />
+                    All Data
+                </label>
+                <InputComponent
+                    type="date"
+                    inputClassName="w-[190px] mb-5"
+                    value={from}
+                    onChange={(e) => handleDateChange(e.target.value, setFrom)}
+                    disabled={selectAllDates}
+                />
+                <InputComponent
+                    type="date"
+                    inputClassName="w-[190px] mb-5"
+                    value={to}
+                    onChange={(e) => handleDateChange(e.target.value, setTo)}
+                    disabled={selectAllDates}
+                />
                 <PrimaryButtonComponent
                     label="Search"
-                    buttonClassName=" py-1 px-5 text-xl font-bold"
+                    icon="fa fa-search"
                     onClick={handleSearchFilter}
                 />
                 <PrimaryButtonComponent
                     label="Reset"
-                    buttonClassName="ml-5 py-1 px-5 text-xl font-bold"
+                    icon="fa fa-refresh"
                     onClick={handleResetFilter}
                 />
             </div>
-            <div>
+            <div className="h-[60vh]">
                 <CustomTableCompoent
                     headers={PRODUCT_COLOUMNS}
                     rows={rows}
                 />
             </div>
+
         </div>
     );
 }

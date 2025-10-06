@@ -4,20 +4,52 @@ import * as XLSX from 'xlsx';
 import CustomTableCompoent from '../../CustomComponents/CustomTableCompoent/CustomTableCompoent';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
 import InputComponent from '../../CustomComponents/InputComponent/InputComponent';
-
+import { apiCall } from '../../../Util/AxiosUtils';
+import { excelDownload, handleBarcodePrint } from '../../../Util/Utility';
 function BulkOfProduct() {
     const [inputValue, setInputValue] = useState('');
     const [excelData, setExcelData] = useState([]);
     const [showTable, setShowTable] = useState(false);
-
-    const handleInputChange = (e) => {
-        setInputValue(e.target.value);
+    const handleAddProductData = () => {
+        const bulkOfProductformatteddata = excelData.map((row) => ({
+            model_name: row["Model Name"],
+            imei_number: row["IMEI"],
+            sales_price: row["Sales Price"],
+            purchase_price: row["Purchase Price"],
+            grade: row["Grade"],
+            engineer_name: row["Engineer Name"],
+            accessories: row["Accessories"],
+            supplier_name: row["Supplier"],
+            qc_remark: row["QC Remark"],
+        }));
+        setExcelData(bulkOfProductformatteddata)
+        apiCall({
+            method: "POST",
+            url: "https://3-extent-billing-backend.vercel.app/api/products/bulk",
+            data: bulkOfProductformatteddata,
+            callback: stockInCallback,
+        });
+    }
+    const stockInCallback = (response) => {
+        console.log('response: ', response);
+        if (response.status === 200) {
+            response?.data?.results?.successful?.map(singleElement => {
+                return handleBarcodePrint({
+                    modelName: singleElement.product.model.name,
+                    grade: singleElement.product.grade,
+                    imei_number: singleElement.product.imei_number
+                })
+            })
+        } else {
+            console.log("error")
+        }
     };
-
+    const handleDownloadExcel=()=>{
+        excelDownload();
+    }
     const handleFileUpload = (e) => {
         const file = e.target.files[0];
         const reader = new FileReader();
-
         reader.onload = (evt) => {
             const data = evt.target.result;
             const workbook = XLSX.read(data, { type: 'binary' });
@@ -25,34 +57,26 @@ function BulkOfProduct() {
             const worksheet = workbook.Sheets[sheetName];
             const jsonData = XLSX.utils.sheet_to_json(worksheet);
             setExcelData(jsonData);
-            setShowTable(false);
+            setShowTable(true);
             console.log('Imported Excel Data:', jsonData);
         };
-
         reader.readAsBinaryString(file);
     };
-
-    const handleButtonClick = () => {
-        console.log('Input value:', inputValue);
-        console.log('Excel data:', excelData);
-        setShowTable(true);
-    };
+    // const handleButtonClick = () => {
+    //     console.log('Input value:', inputValue);
+    //     console.log('Excel data:', excelData);
+    //     setShowTable(true);
+    // };
     const tableHeaders = excelData.length > 0 ? Object.keys(excelData[0]) : [];
-
     return (
         <div className="w-full">
-            <div className='flex  justify-center items-center w-full gap-7'>
+            <div className='flex gap-10 items-center'>
                 <InputComponent
                     label="Upload Excel File"
                     type="file"
                     accept=".xlsx, .xls"
                     onChange={handleFileUpload}
-                    inputClassName="w-[80%] p-10"
-                />
-                <PrimaryButtonComponent
-                    label="Continue"
-                    onClick={handleButtonClick}
-                    buttonClassName="text-xl font-bold py-2 px-5 w-[20%]"
+                    inputClassName="w-full p-10"
                 />
             </div>
             {showTable && excelData.length > 0 && (
@@ -60,8 +84,21 @@ function BulkOfProduct() {
                     <CustomTableCompoent headers={tableHeaders} rows={excelData} />
                 </div>
             )}
+            <div className='flex justify-center gap-4'>
+                <PrimaryButtonComponent
+                    label="Save"
+                    icon="fa fa-save"
+                    buttonClassName="mt-2 py-2 px-5 text-xl font-bold"
+                    onClick={handleAddProductData}
+                />
+                 <PrimaryButtonComponent
+                    label="Download"
+                    icon="fa fa-download"
+                    buttonClassName="mt-2 py-2 px-5 text-xl font-bold"
+                    onClick={handleDownloadExcel}
+                />
+            </div>
         </div>
     );
 }
-
 export default BulkOfProduct;
