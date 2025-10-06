@@ -68,7 +68,7 @@ function Billinghistory() {
                             />
                         </div>
                         <PrimaryButtonComponent
-                            label="print"
+                            label="Print"
                             icon="fa fa-print"
                             buttonClassName="py-1 px-3 text-[12px] font-semibold"
                             onClick={(e) => {
