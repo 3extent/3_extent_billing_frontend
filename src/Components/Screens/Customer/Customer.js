@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
-import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
-import { CUSTOMER_COLOUMS, CUSTOMER_TYPE_OPTIONS } from "./Constants";
-import { apiCall } from "../../../Util/AxiosUtils";
+import { CUSTOMER_COLOUMS } from "./Constants";
+import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
@@ -11,13 +10,13 @@ export default function Customer() {
     const navigate = useNavigate();
     const [customerName, setCustomerName] = useState();
     const [contactNo, setContactNumber] = useState();
-    const [customerType, setCustomerType] = useState();
+    const [loading, setLoading] = useState(false);
     const navigateAddCustomer = () => {
         navigate("/addcustomer")
     }
     const [rows, setRows] = useState([]);
     useEffect(() => {
-        getCustomerAllData();
+        getCustomerAllData({});
     }, []);
     const getCustomerCallBack = (response) => {
         console.log('response: ', response);
@@ -25,43 +24,54 @@ export default function Customer() {
             const customerFormttedRows = response.data.map((customer) => ({
                 "Customer Name": customer.name,
                 "Contact No": customer.contact_number,
-                "Customer Type": customer.type,
                 "Address": customer.address,
-                "state": customer.state,
+                "State": customer.state,
                 "GST No": customer.gst_number,
+                "PAN No": customer.pan_number,
+                "Action": (
+                    <div className="flex justify-end">
+                        <div
+                            title="Edit"
+                            onClick={() => navigate(`/addcustomer/${customer._id}`)}
+                            className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
+                        >
+                            <i className="fa fa-pencil text-gray-700 text-sm" />
+                        </div>
+                    </div>
+                ),
+                id: customer._id
             }))
             setRows(customerFormttedRows);
         } else {
             console.log("Error");
         }
     }
-    const getCustomerAllData = () => {
+    const getCustomerAllData = ({ customerName, contactNo }) => {
         let url = 'https://3-extent-billing-backend.vercel.app/api/users?role=CUSTOMER';
         if (customerName) {
             url += `&name=${customerName}`
         } if (contactNo) {
             url += `&contact_number=${contactNo}`
-        } if (customerType) {
-            url += `&type=${customerType}`
         }
         apiCall({
             method: 'GET',
             url: url,
             data: {},
             callback: getCustomerCallBack,
+            setLoading: setLoading
         })
     }
     const handleSearchFilter = () => {
-        getCustomerAllData();
+        getCustomerAllData({ customerName, contactNo });
     }
     const handleResetFilter = () => {
         setContactNumber('');
         setCustomerName('');
-        setCustomerType('');
-        getCustomerAllData();
+        getCustomerAllData({});
     }
     return (
         <div className="w-full">
+            {loading && <Spinner />}
             <CustomHeaderComponent
                 name="List Of Customer Information"
                 label="Add Customer"
@@ -69,39 +79,37 @@ export default function Customer() {
                 onClick={navigateAddCustomer}
                 buttonClassName="py-1 px-3 text-sm font-bold"
             />
-            <div className="flex items-center gap-4 ">
+            <div className="flex items-center gap-4 mb-5">
                 <InputComponent
                     type="text"
                     placeholder="Customer Name"
-                    inputClassName="mb-5"
+                    inputClassName="w-[190px]"
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                 />
                 <InputComponent
-                    type="number"
+                    type="text"
                     placeholder="Contact No"
-                    inputClassName="mb-5"
+                    inputClassName="w-[190px]"
                     value={contactNo}
                     onChange={(e) => setContactNumber(e.target.value)}
-                />
-                <DropdownCompoent
-                    options={CUSTOMER_TYPE_OPTIONS}
-                    placeholder="Select Customer Type"
-                    value={customerType}
-                    onChange={(value) => setCustomerType(value)}
+                    numericOnly={true}
+                    maxLength={10}
                 />
                 <PrimaryButtonComponent
                     label="Search"
-                    buttonClassName=" py-1 px-5 text-xl font-bold"
+                    icon="fa fa-search"
+                    buttonClassName="mt-5 py-1 px-5"
                     onClick={handleSearchFilter}
                 />
                 <PrimaryButtonComponent
                     label="Reset"
-                    buttonClassName=" py-1 px-5 text-xl font-bold"
+                    icon="fa fa-refresh"
+                    buttonClassName="mt-5 py-1 px-5"
                     onClick={handleResetFilter}
                 />
             </div>
-            <div>
+            <div className="h-[64vh]">
                 <CustomTableCompoent
                     headers={CUSTOMER_COLOUMS}
                     rows={rows}

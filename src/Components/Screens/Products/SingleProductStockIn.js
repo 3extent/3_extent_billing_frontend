@@ -2,73 +2,79 @@ import React, { useEffect, useState, useRef } from 'react';
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
-import { ACCESSORIES_OPTIONS, GRADE_OPTIONS, SUPPLIER_OPTIONS } from './Constants';
+import { ACCESSORIES_OPTIONS, GRADE_OPTIONS, STATUS_OPTIONS, } from './Constants';
 import CustomDropdownInputComponent from '../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent';
-import { apiCall } from '../../../Util/AxiosUtils';
-import Barcode from 'react-barcode';
-import JsBarcode from 'jsbarcode';
-
-
+import { apiCall, Spinner } from '../../../Util/AxiosUtils';
+import { handleBarcodePrint } from '../../../Util/Utility';
+import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 function SingleProductStockIn() {
-  const barcodeRef = useRef();
-  const printAreaRef = useRef();
   const [modelOptions, setModelOptions] = useState([]);
-  const [modelName, setModelName] = useState("");
+  const [loading, setLoading] = useState(false)
+  const [supplierNameOptions, setSupplierNameOPtions] = useState([]);
+  const { product_id } = useParams();
+  const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
   const [productData, setProductData] = useState({
-    model: '',
+    model_name: '',
     imei_number: '',
     sales_price: '',
     purchase_price: '',
     grade: '',
     engineer_name: '',
     accessories: '',
-    supplier: '',
-    qcRemark: '',
-    createdAt: '',
+    supplier_name: '',
+    qc_remark: '',
+    status: STATUS_OPTIONS[0] || ''
   });
   const handleInputChange = (event) => {
     const { name, value } = event.target;
+    setErrors((prev) => ({ ...prev, [name]: "" }));
     setProductData({ ...productData, [name]: value });
   };
-  // const stockInCallback = (response) => {
-  //     printBarcode({ modelName: productData.model, grade: productData.grade, imei: productData.imei_number })
-  //     if (response.status === 200) {
-  //         setProductData({
-  //             model: '',
-  //             createdAt: '',
-  //             grade: '',
-  //             purchase_price: '',
-  //             sales_price: '',
-  //             imei_number: '',
-  //             engineer_name: '',
-  //             qcRemark: '',
-  //             supplier: '',
-  //             accessories: '',
-  //         });
-  //     } else {
-  //         console.log("error")
-  //     }
-  // };
-
-
-  useEffect(() => {
-    getModelsAllData();
-  }, []);
-
-  useEffect(() => {
-    if (productData.imei_number && barcodeRef.current) {
-      JsBarcode(barcodeRef.current, productData.imei_number, {
-        format: 'CODE128',
-        lineColor: '#000',
-        width: 2,           // Narrower bars for compact layout
-        height: 100,         // Shorter height to fit within page bounds
-        displayValue: true, // Shows the IMEI below the barcode
-        fontSize: 20,       // Adjust font size for readability
-        margin: 10,         // Adds padding around the barcode
+  const handleModelProductData = (value) => {
+    setErrors(prev => ({ ...prev, model_name: "" }));
+    setProductData(productData => ({ ...productData, model_name: value }));
+  };
+  const stockInCallback = (response) => {
+    if (response.status === 200) {
+      toast.success("Stock added successfully!", {
+        position: "top-center",
+        autoClose: 2000,
+      });
+      setProductData({
+        model_name: '',
+        grade: '',
+        purchase_price: '',
+        sales_price: '',
+        imei_number: '',
+        engineer_name: '',
+        qc_remark: '',
+        supplier_name: '',
+        accessories: '',
+        status: ''
+      });
+      handleBarcodePrint({ modelName: productData.model_name, grade: productData.grade, imei_number: productData.imei_number })
+      setTimeout(() => {
+        navigate("/products");
+      }, 2000);
+    } else {
+      const errorMsg = response?.data?.error || "Failed to add stock!";
+      toast.error(errorMsg, {
+        position: "top-center",
+        autoClose: 2000,
       });
     }
-  }, [productData.imei_number]);
-
+  };
+  useEffect(() => {
+    getModelsAllData();
+    getSupplierAllData();
+  }, []);
+  useEffect(() => {
+    if (product_id) {
+      getProductData();
+    }
+  }, [product_id]);
   const getModelsAllData = () => {
     let url = "https://3-extent-billing-backend.vercel.app/api/models";
     apiCall({
@@ -84,114 +90,153 @@ function SingleProductStockIn() {
       const models = response.data.map(model => model.name);
       setModelOptions(models);
       console.log('models: ', models);
-      if (!modelName) {
-        setModelName("");
-      }
     } else {
       console.log("Error");
     }
   }
-  const addProductStockIn = () => {
-    handlePrint({ modelName: modelName, grade: productData.grade, imei_number: productData.imei_number })
-    // apiCall({
-    //     method: "POST",
-    //     url: "https://3-extent-billing-backend.vercel.app/api/products",
-    //     data: { products: [productData] },
-    //     callback: stockInCallback
-    // });
+  const deleteCallback = (response) => {
+    if (response.status === 200) {
+      toast.success("Product deleted successfully!", {
+        position: "top-center",
+        autoClose: 2000,
+      });
+      navigate("/products");
+    } else {
+      const errorMsg = response?.data?.error || "Failed to delete product!";
+      toast.error(errorMsg, {
+        position: "top-center",
+        autoClose: 2000,
+      });
+    }
   }
-
-  const handlePrint = (product) => {
-    const win = window.open('', '', 'height=800,width=600');
-    win.document.write(`
-    <html>
-      <head>
-        <title>Print Barcode</title>
-        <style>
-          @page {
-            size: A4 landscape;
-            margin: 0;
-          }
-          html, body {
-            margin: 0;
-            padding: 0px 5px;
-            height: 100vh;
-            width: 100vw;
-          }
-          #barcode-wrapper {
-            position: absolute;
-            top: 5%;
-            width: 100%;
-            text-align: center;
-            font-family: sans-serif;
-          }
-          h1 {
-            margin: 5px 0px;
-            font-size: 100px;
-            text-align: center;
-            font-weight: bolder;
-          }
-          h2 {
-            margin: 0;
-            font-size: 85px;
-            text-align: left;
-            font-weight: bolder;
-          }
-          svg {
-            width: 100%;
-            height: auto;
-          }
-        </style>
-      </head>
-      <body>
-        <div id="barcode-wrapper">
-          <h1>3_EXTENT</h1>
-          <h2>${product.modelName}</h2>
-          <h2>Grade : ${product.grade}</h2>
-          <svg id="barcode"></svg>
-        </div>
-        <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-        <script>
-          JsBarcode("#barcode", "${product.imei_number}", {
-            format: 'CODE128',
-            lineColor: '#000',
-            width: 2,
-            height: 50,
-            displayValue: true,
-            fontSize: 25
-          });
-          window.onload = function() {
-            window.print();
-          };
-        </script>
-      </body>
-    </html>
-  `);
-    win.document.close();
-    win.focus();
+  const deleteProduct = () => {
+    apiCall({
+      method: "DELETE",
+      url: `https://3-extent-billing-backend.vercel.app/api/products/${product_id}`,
+      data: {},
+      callback: deleteCallback,
+      setLoading: setLoading
+    })
+  }
+  const handleValidation = () => {
+    const newErrors = {};
+    if (!productData.model_name.trim())
+      newErrors.model_name = "Please select Model Name";
+    if (!productData.imei_number.trim())
+      newErrors.imei_number = "Please enter IMEI Number";
+    if (!productData.purchase_price.trim() || isNaN(productData.purchase_price))
+      newErrors.purchase_price = "Please enter valid Purchase Price";
+    if (!productData.sales_price.trim() || isNaN(productData.sales_price))
+      newErrors.sales_price = "Please enter valid Sales Price";
+    if (!productData.grade.trim())
+      newErrors.grade = "Please select Grade";
+    if (!productData.engineer_name.trim())
+      newErrors.engineer_name = "Please enter Engineer Name";
+    if (!productData.accessories.trim())
+      newErrors.accessories = "Please select Accessories";
+    if (!productData.supplier_name.trim())
+      newErrors.supplier_name = "Please select Supplier Name";
+    if (!productData.status.trim())
+      newErrors.status = "Please select Status";
+    if (!productData.qc_remark.trim())
+      newErrors.qc_remark = "Please enter a QC Remark";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
+  const saveProductStockIn = () => {
+    if (!handleValidation()) return;
+    console.log('productData: ', productData);
+    if (product_id) {
+      editProductData();
+    } else {
+      addProductData();
+    }
+  }
+  const getSupplierCallBack = (response) => {
+    console.log('response: ', response);
+    if (response.status === 200) {
+      const suppliers = response.data.map(Supplier => Supplier.name);
+      setSupplierNameOPtions(suppliers);
+    } else {
+      console.log("Error");
+    }
+  }
+  const getSupplierAllData = () => {
+    let url = "https://3-extent-billing-backend.vercel.app/api/users?role=SUPPLIER";
+    apiCall({
+      method: 'GET',
+      url: url,
+      data: {},
+      callback: getSupplierCallBack,
+    })
+  }
+  const saveProductCallback = (response) => {
+    if (response.status === 200) {
+      toast.success("Stock updated successfully!", {
+        position: "top-center",
+        autoClose: 2000,
+      });
+      setTimeout(() => navigate("/products"), 2000);
+    } else {
+      const errorMsg = response?.data?.error || "Failed to update stock!";
+      toast.error(errorMsg, {
+        position: "top-center",
+        autoClose: 2000,
+      });
 
-
+    }
+  };
+  const addProductData = () => {
+    apiCall({
+      method: "POST",
+      url: "https://3-extent-billing-backend.vercel.app/api/products",
+      data: productData,
+      callback: stockInCallback,
+      setLoading: setLoading
+    });
+  }
+  const editProductData = () => {
+    apiCall({
+      method: "PUT",
+      url: `https://3-extent-billing-backend.vercel.app/api/products/${product_id}`,
+      data: productData,
+      callback: saveProductCallback,
+      setLoading: setLoading,
+    });
+  }
+  const getProductCallback = (response) => {
+    if (response.status === 200) {
+      setProductData({
+        model_name: response.data.model.name, imei_number: response.data.imei_number,
+        sales_price: response.data.sales_price, purchase_price: response.data.purchase_price,
+        grade: response.data.grade, engineer_name: response.data.engineer_name, accessories: response.data.accessories,
+        supplier_name: response.data.supplier.name, qc_remark: response.data.qc_remark, status: response.data.status
+      });
+    } else {
+      console.log("Failed to fetch product data.");
+    }
+  };
+  const getProductData = () => {
+    apiCall({
+      method: 'GET',
+      url: `https://3-extent-billing-backend.vercel.app/api/products/${product_id}`,
+      data: {},
+      callback: getProductCallback,
+      setLoading: setLoading,
+    });
+  }
   return (
     <div className="grid grid-cols-2 gap-x-5 gap-y-2">
+      {loading && <Spinner />}
       <CustomDropdownInputComponent
         name="Model Name"
         dropdownClassName="w-[80%]"
         placeholder="Enter Model Name"
-        value={modelName}
-        onChange={(value) => setModelName(value)}
+        value={productData.model_name}
+        onChange={handleModelProductData}
         options={modelOptions}
         labelClassName="font-serif font-bold"
-      />
-      <InputComponent
-        label="Date"
-        type="date"
-        name="createdAt"
-        placeholder="Enter your Date"
-        value={productData.createdAt}
-        onChange={handleInputChange}
-        inputClassName="w-[80%]"
-        labelClassName="font-serif font-bold"
+        error={errors.model_name}
       />
       <DropdownCompoent
         label="Grade"
@@ -202,66 +247,79 @@ function SingleProductStockIn() {
         onChange={handleInputChange}
         className="w-[80%]"
         labelClassName="font-serif font-bold"
+        error={errors.grade}
+
       />
       <InputComponent
         label="Purchase Price"
-        type="number"
+        type="text"
         name="purchase_price"
         placeholder="Buying Purchase Price"
         value={productData.purchase_price}
+        numericOnly={true}
         onChange={handleInputChange}
         inputClassName="w-[80%]"
         labelClassName="font-serif font-bold"
+        error={errors.purchase_price}
       />
       <InputComponent
         label="Sales Price"
-        type="number"
+        type="text"
         name="sales_price"
         placeholder="Rate Selling Price"
         value={productData.sales_price}
+        numericOnly={true}
         onChange={handleInputChange}
         inputClassName="w-[80%]"
         labelClassName="font-serif font-bold"
+        error={errors.sales_price}
       />
       <InputComponent
         label="IMEI"
-        type="number"
+        type="text"
         name="imei_number"
         placeholder="IMEI"
         value={productData.imei_number}
+        maxLength={15}
+        numericOnly={true}
         onChange={handleInputChange}
         inputClassName="w-[80%]"
         labelClassName="font-serif font-bold"
+        error={errors.imei_number}
+
       />
       <InputComponent
-        label="Engineer Name"
+        label="Enginner Name "
         type="text"
         name="engineer_name"
-        placeholder="Engineer Name"
+        placeholder="Enginner Name"
         value={productData.engineer_name}
         onChange={handleInputChange}
         inputClassName="w-[80%]"
         labelClassName="font-serif font-bold"
+        error={errors.engineer_name}
       />
       <InputComponent
         label="QC Remark"
         type="text"
-        name="qcRemark"
+        name="qc_remark"
         placeholder="QC Remark"
         inputClassName="w-[80%]"
         labelClassName="font-serif font-bold"
-        value={productData.qcRemark}
+        value={productData.qc_remark}
         onChange={handleInputChange}
+        error={errors.qc_remark}
       />
       <DropdownCompoent
         label="Supplier"
-        name="supplier"
-        options={SUPPLIER_OPTIONS}
+        name="supplier_name"
+        options={supplierNameOptions}
         placeholder="Select Supplier"
-        value={productData.supplier}
+        value={productData.supplier_name}
         onChange={handleInputChange}
         className="w-[80%]"
         labelClassName="font-serif font-bold"
+        error={errors.supplier_name}
       />
       <DropdownCompoent
         label="Accessories"
@@ -272,15 +330,39 @@ function SingleProductStockIn() {
         onChange={handleInputChange}
         className="w-[80%]"
         labelClassName="font-serif font-bold"
+        error={errors.accessories}
       />
-      <div className="col-span-2 mt-4 flex justify-center">
+      <div className="mt-4 flex flex-col">
+        <label className="font-serif font-bold mb-1">Status</label>
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={productData.status === 'RETURN'}
+            onChange={(e) =>
+              setProductData((productData) => ({
+                ...productData,
+                status: e.target.checked ? 'RETURN' : ''
+              }))
+            }
+            className="cursor-pointer"
+          />
+          RETURN
+        </label>
+      </div>
+      <div className="col-span-2 mt-4 flex justify-center gap-4">
         <PrimaryButtonComponent
           label="Save"
           icon="fa fa-save"
-          buttonClassName="mt-2 py-1 px-5 text-xl font-bold"
-          onClick={addProductStockIn}
-
+          onClick={saveProductStockIn}
         />
+        {product_id && (
+          <PrimaryButtonComponent
+            label="Delete"
+            icon="fa fa-trash"
+            buttonClassName="border border-red-500 !text-red-500 bg-transparent hover:bg-red-500 hover:text-white"
+            onClick={deleteProduct}
+          />
+        )}
       </div>
     </div>
   );
