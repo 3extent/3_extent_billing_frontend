@@ -34,8 +34,8 @@ export default function AddModels() {
         const { name, value } = event.target;
         const uppercasedValue = value.toUpperCase();
         setModelData({ ...modelData, [name]: uppercasedValue });
-        setErrors((prevError) => ({
-            ...prevError,
+        setErrors((errors) => ({
+            ...errors,
             [name]: "",
         }));
     };
@@ -49,10 +49,9 @@ export default function AddModels() {
         const newErrors = {};
         if (!modelData.brand_name.trim()) newErrors.brand_name = "Please enter Brand Name";
         if (!modelData.name.trim()) newErrors.name = "Please enter Model Name";
-        if (ramOptions.length === 0) newErrors.RAM = "Please enter RAM";
         if (storageOptions.length === 0) newErrors.storage = "Please enter Storage";
         if (Object.keys(newErrors).length > 0) {
-            setErrors((prevErrors) => ({ ...prevErrors, ...newErrors }));
+            setErrors((errors) => ({ ...errors, ...newErrors }));
             return;
         }
         const combinations = [];
@@ -75,8 +74,8 @@ export default function AddModels() {
         const value = JSON.parse(event.target.value);
         if (event.target.checked) {
             setSelectedCombinations((possibleCombinations) => [...possibleCombinations, value]);
-            setErrors((prevErrors) => ({
-                ...prevErrors,
+            setErrors((errors) => ({
+                ...errors,
                 combination: ""
             }));
 
@@ -90,11 +89,12 @@ export default function AddModels() {
         if (!modelData.brand_name.trim()) newErrors.brand_name = "Please enter Brand Name";
         if (!modelData.name.trim()) newErrors.name = "Please enter Model Name";
         if (!model_id) {
-            if (!modelData.RAM.trim()) newErrors.RAM = "Please enter RAM";
             if (!modelData.storage.trim()) newErrors.storage = "Please enter Storage";
-            if (selectedCombinations.length === 0)
-                newErrors.combination = "Please select at least one RAM/Storage combination";
+            if (modelData.RAM.trim() && selectedCombinations.length === 0) {
+                newErrors.combination = "Please select at least one combination";
+            }
         }
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -169,13 +169,16 @@ export default function AddModels() {
         }
     };
     const addModelData = () => {
+        const ramStorageData = modelData.RAM.trim()
+            ? selectedCombinations
+            : modelData.storage.split(",").map(storage => ({ ram: "", storage: storage.trim() }));
         apiCall({
             method: "POST",
             url: "https://3-extent-billing-backend.vercel.app/api/models",
             data: {
                 brand_name: modelData.brand_name,
                 name: modelData.name,
-                ramStorage: selectedCombinations
+                ramStorage: ramStorageData
             },
             callback: addModelCallback,
             setLoading: setLoading
@@ -225,7 +228,7 @@ export default function AddModels() {
 
                         onChange={(value) => {
                             setModelData({ ...modelData, brand_name: value });
-                            setErrors((prev) => ({ ...prev, brand_name: "" }));
+                            setErrors((errors) => ({ ...errors, brand_name: "" }));
                         }}
                         error={errors.brand_name}
                     />
@@ -274,13 +277,15 @@ export default function AddModels() {
                             />
                         </div>
                     </div>
-                    <div className="flex justify-center mt-5">
-                        <PrimaryButtonComponent
-                            label="Show Combination"
-                            buttonClassName="mt-2 py-1 px-5 text-sm font-blod"
-                            onClick={handleShowCombinations}
-                        />
-                    </div>
+                    {modelData.RAM.trim() && (
+                        <div className="flex justify-center mt-5">
+                            <PrimaryButtonComponent
+                                label="Show Combination"
+                                buttonClassName="mt-2 py-1 px-5 text-sm font-blod"
+                                onClick={handleShowCombinations}
+                            />
+                        </div>
+                    )}
                     {showData && (
                         <div className="mt-4">
                             <h3 className="text-lg font-semibold">Possible Combinations (RAM/Storage):</h3>
