@@ -29,7 +29,7 @@ export default function CustomDropdownInputComponent({ name, dropdownClassName =
                 type="text"
                 value={inputValue}
                 onChange={handleChange}
-                onFocus={() => setShowDropdown(true)}
+                onFocus={() => setShowDropdown(true)}   
                 onBlur={() => setTimeout(() => setShowDropdown(false), 100)}
                 placeholder={placeholder}
                 maxLength={maxLength}
