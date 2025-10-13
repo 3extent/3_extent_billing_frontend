@@ -6,11 +6,17 @@ import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponen
 import InputComponent from '../../CustomComponents/InputComponent/InputComponent';
 import { apiCall } from '../../../Util/AxiosUtils';
 import { excelDownload, handleBarcodePrint } from '../../../Util/Utility';
+import { toast } from 'react-toastify';
 function BulkOfProduct() {
-    const [inputValue, setInputValue] = useState('');
     const [excelData, setExcelData] = useState([]);
     const [showTable, setShowTable] = useState(false);
+    const [error, setError] = useState('');
     const handleAddProductData = () => {
+        if (excelData.length === 0) {
+            setError("Please upload an Excel file.");
+            return;
+        }
+        setError("");
         const bulkOfProductformatteddata = excelData.map((row) => ({
             model_name: row["Model Name"],
             imei_number: row["IMEI"],
@@ -41,14 +47,19 @@ function BulkOfProduct() {
                 })
             })
         } else {
-            console.log("error")
+            const errorMsg = response?.data?.error || "Failed to upload file";
+            toast.error(errorMsg, {
+                position: "top-center",
+                autoClose: 2000,
+            });
         }
     };
-    const handleDownloadExcel=()=>{
+    const handleDownloadExcel = () => {
         excelDownload();
     }
     const handleFileUpload = (e) => {
         const file = e.target.files[0];
+        if (!file) return;
         const reader = new FileReader();
         reader.onload = (evt) => {
             const data = evt.target.result;
@@ -56,45 +67,45 @@ function BulkOfProduct() {
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
             const jsonData = XLSX.utils.sheet_to_json(worksheet);
-            setExcelData(jsonData);
-            setShowTable(true);
-            console.log('Imported Excel Data:', jsonData);
+            if (jsonData.length > 0) {
+                setError('');
+                setExcelData(jsonData);
+                setShowTable(true);
+                console.log('Imported Excel Data:', jsonData);
+            }
         };
         reader.readAsBinaryString(file);
     };
-    // const handleButtonClick = () => {
-    //     console.log('Input value:', inputValue);
-    //     console.log('Excel data:', excelData);
-    //     setShowTable(true);
-    // };
     const tableHeaders = excelData.length > 0 ? Object.keys(excelData[0]) : [];
     return (
         <div className="w-full">
-            <div className='flex gap-10 items-center'>
+            <div className=' gap-10 items-center'>
+                {error && (
+                    <div className="text-red-600 text-sm ">{error}</div>
+                )}
                 <InputComponent
                     label="Upload Excel File"
                     type="file"
                     accept=".xlsx, .xls"
                     onChange={handleFileUpload}
-                    inputClassName="w-full p-10"
+                    inputClassName="w-[30%] p-10"
                 />
+
             </div>
             {showTable && excelData.length > 0 && (
                 <div className="mt-6">
                     <CustomTableCompoent headers={tableHeaders} rows={excelData} />
                 </div>
             )}
-            <div className='flex justify-center gap-4'>
+            <div className='flex justify-center gap-4 mt-4'>
                 <PrimaryButtonComponent
                     label="Save"
                     icon="fa fa-save"
-                    buttonClassName="mt-2 py-2 px-5 text-xl font-bold"
                     onClick={handleAddProductData}
                 />
-                 <PrimaryButtonComponent
+                <PrimaryButtonComponent
                     label="Download"
                     icon="fa fa-download"
-                    buttonClassName="mt-2 py-2 px-5 text-xl font-bold"
                     onClick={handleDownloadExcel}
                 />
             </div>
