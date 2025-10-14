@@ -270,6 +270,7 @@ export default function SalesBilling() {
             setOnlineAmount("");
             setCard("");
             setPendingAmount(0);
+            navigate("/billinghistory");
         } else {
             const errorMsg = response?.data?.error || "Something went wrong while saving draft.";
             toast.error(errorMsg, {
