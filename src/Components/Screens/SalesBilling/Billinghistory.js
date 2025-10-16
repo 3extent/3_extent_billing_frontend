@@ -148,16 +148,61 @@ function Billinghistory() {
         setCard("");
         setShowPaymentPopup(false);
     };
+    const handlePaymentUpdateCallback = (response) => {
+        if (response.status === 200) {
+            generateAndSavePdf(
+                selectedBill.customer.name,
+                selectedBill.invoice_number,
+                selectedBill.customer.contact_number,
+                selectedBill.customer.address,
+                selectedBill.customer.gst_number,
+                selectedBill.products,
+                selectedBill.payable_amount
+            );
+            handleCancelPopup();
+            getBillinghistoryAllData({
+                contactNo,
+                paymentStatus,
+                customerName,
+                from,
+                to,
+                selectAllDates,
+                imeiNumber
+            });
+        }
+    };
+
     const handlePrintButton = () => {
-        generateAndSavePdf(
-            selectedBill.customer.name,
-            selectedBill.invoice_number,
-            selectedBill.customer.contact_number,
-            selectedBill.customer.address,
-            selectedBill.customer.gst_number,
-            selectedBill.products,
-            selectedBill.payable_amount
-        );
+        if (!selectedBill) return;
+        const cash = Number(cashAmount || 0);
+        const online = Number(onlineAmount || 0);
+        const cardAmt = Number(card || 0);
+        const paidTotal = cash + online + cardAmt;
+        const updatedPayment = {
+            payable_amount: selectedBill.pending_amount,
+            paid_amount: [
+                { method: "cash", amount: cash },
+                { method: "online", amount: online },
+                { method: "card", amount: cardAmt },
+            ],
+            pending_amount: selectedBill.pending_amount - paidTotal,
+        };
+        apiCall({
+            method: 'PUT',
+            url: `https://3-extent-billing-backend.vercel.app/api/billings/${selectedBill._id}`,
+            data: updatedPayment,
+            callback: handlePaymentUpdateCallback,
+            setLoading: setLoading,
+        });
+        // generateAndSavePdf(
+        //     selectedBill.customer.name,
+        //     selectedBill.invoice_number,
+        //     selectedBill.customer.contact_number,
+        //     selectedBill.customer.address,
+        //     selectedBill.customer.gst_number,
+        //     selectedBill.products,
+        //     selectedBill.payable_amount
+        // );
         setShowPaymentPopup(false);
         setCashAmount("");
         setOnlineAmount("");
@@ -175,7 +220,7 @@ function Billinghistory() {
         setFrom(fromDate);
         setTo(toDate);
         setSelectAllDates(false);
-        getBillinghistoryAllData({ from, to});
+        getBillinghistoryAllData({ from, to });
     }
     return (
         <div>
