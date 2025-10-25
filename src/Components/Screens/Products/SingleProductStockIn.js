@@ -138,8 +138,6 @@ function SingleProductStockIn() {
       newErrors.supplier_name = "Please select Supplier Name";
     if (!productData.status.trim())
       newErrors.status = "Please select Status";
-    if (!productData.qc_remark.trim())
-      newErrors.qc_remark = "Please enter a QC Remark";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -308,7 +306,6 @@ function SingleProductStockIn() {
         labelClassName="font-serif font-bold"
         value={productData.qc_remark}
         onChange={handleInputChange}
-        error={errors.qc_remark}
       />
       <DropdownCompoent
         label="Supplier"
