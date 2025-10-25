@@ -71,7 +71,7 @@ export default function SingleBillHistory() {
                 <div className="text-xl font-serif">Details of bill</div>
                 <div>
                     <PrimaryButtonComponent
-                        label="print"
+                        label="Print"
                         icon="fa fa-print"
                         buttonClassName="py-1 px-3 text-[12px] font-semibold"
                         onClick={handleGenaratePdf}

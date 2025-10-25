@@ -162,7 +162,7 @@ function ListOfProducts() {
         setStatus();
         setFrom(fromDate);
         setTo(toDate);
-        setSelectAllDates();
+        setSelectAllDates(false);
         getProductsAllData({ from, to, status: STATUS_OPTIONS[0] });
         getSuppliersAllData();
 

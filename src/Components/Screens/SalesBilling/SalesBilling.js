@@ -125,11 +125,19 @@ export default function SalesBilling() {
     };
     const getsalesbillingCallBack = (response) => {
         console.log('response: ', response);
-
         if (response.status === 200) {
-
+            const filteredData = response.data.filter(
+                (product) => product.status === "AVAILABLE" || product.status === "RETURN"
+            );
+            if (filteredData.length === 0) {
+                toast.warn("Product is already sold.", {
+                    position: "top-center",
+                    autoClose: 2000,
+                });
+                setSelectedImei("");
+                return;
+            }
             const productFormattedRows = response.data.map((product, index) => ({
-
                 "Sr.No": rows.length + index + 1,
                 "Date": moment(Number(product.created_at)).format('ll'),
                 "IMEI NO": product.imei_number,
@@ -139,9 +147,9 @@ export default function SalesBilling() {
                 "Purchase Price": product.purchase_price,
                 "Grade": product.grade,
                 "Accessories": product.accessories,
-                "QC-Remark": product.qc_remark
+                "QC-Remark": product.qc_remark,
+                "Status": product.status
             }));
-
             console.log('productFormattedRows: ', productFormattedRows);
             const existingImeis = rows.map(row => row["IMEI NO"]);
             const newUniqueRows = productFormattedRows.filter(
@@ -262,6 +270,7 @@ export default function SalesBilling() {
             setOnlineAmount("");
             setCard("");
             setPendingAmount(0);
+            navigate("/billinghistory");
         } else {
             const errorMsg = response?.data?.error || "Something went wrong while saving draft.";
             toast.error(errorMsg, {

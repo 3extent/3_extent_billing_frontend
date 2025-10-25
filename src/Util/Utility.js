@@ -104,6 +104,9 @@ export const generateAndSavePdf = (
   rows = [],
   payable_amount
 ) => {
+  const now = new Date();
+  const pad = (n) => n.toString().padStart(2, "0");
+  const timestamp = `${now.getFullYear()}.${pad(now.getMonth() + 1)}.${pad(now.getDate())}_${pad(now.getHours())}.${pad(now.getMinutes())}.${pad(now.getSeconds())}`;
   // Create a new PDF document
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
@@ -191,9 +194,12 @@ export const generateAndSavePdf = (
       align: "right",
     });
     // date
-    doc.text(`${new Date().toLocaleDateString("en-GB")}`, pageWidth - 14, 18, {
-      align: "right",
-    });
+     doc.text(
+      now.toLocaleDateString("en-GB"),
+      pageWidth - 14,
+      18,
+      { align: "right" }
+    );
   }
   const drawPageBorder = () => {
     doc.setDrawColor(0);
@@ -345,7 +351,7 @@ export const generateAndSavePdf = (
 
   });
   // save file
-  doc.save(`${name}_Invoice.pdf`);
+  doc.save(`${name}_Invoice_${timestamp}.pdf`);
 };
 
 export const excelDownload = () => {
