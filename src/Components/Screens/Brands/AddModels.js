@@ -301,7 +301,7 @@ export default function AddModels() {
 
                                             />
                                             <label htmlFor={`combo-${index}`} className="ml-2">
-                                                {combo.ram ? `${combo.ram}/${combo.storage}GB` : `${combo.storage}GB`}
+                                                {combo.ram ? `${combo.ram}/${combo.storage}GB` :  `${combo.storage}GB`}
 
                                             </label>
                                         </li>
@@ -318,17 +318,15 @@ export default function AddModels() {
                     )}
                 </>
             )}
-            <div className="flex justify-center mt-3">
+            <div className="flex justify-center mt-10 gap-5">
                 <PrimaryButtonComponent
                     label="Back"
                     icon="fa fa-arrow-left"
-                    buttonClassName="mt-2 py-1 px-5 mr-10 text-xl font-bold"
                     onClick={handleBack}
                 />
                 <PrimaryButtonComponent
                     label="Submit"
                     icon="fa fa-bookmark-o"
-                    buttonClassName="mt-2 py-1 px-5 text-xl font-bold"
                     onClick={saveModel}
                 />
             </div>

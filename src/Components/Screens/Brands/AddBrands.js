@@ -131,17 +131,15 @@ export default function AddBrands() {
                 value={brandData.name}
                 onChange={handleInputChange}
             />
-            <div className="flex mt-2 gap-4">
+            <div className="flex mt-10 gap-5">
                 <PrimaryButtonComponent
                     label="Back"
-                    icon="fa fa-arrow-left"
-                    buttonClassName="mt-2 py-1 px-5 mr-10 text-xl font-bold"
+                    icon="fa fa-arrow-left"        
                     onClick={handleBack}
                 />
                 <PrimaryButtonComponent
                     label="Submit"
                     icon="fa fa-bookmark-o"
-                    buttonClassName="mt-2 py-1 px-5 text-xl font-bold"
                     onClick={addBrand}
                 />
             </div>
