@@ -357,7 +357,7 @@ export const generateAndSavePdf = (
 export const excelDownload = () => {
   // Define headers
   const headers = [
-    ["Model Name", "IMEI", "Purchase Price", "Sales Price", "Engineer Name", "QC Remark", "Supplier", "Accessories", "Grade"]
+    ["Brand Name","Model Name", "IMEI", "Purchase Price", "Sales Price", "Engineer Name", "QC Remark", "Supplier", "Accessories", "Grade"]
   ];
 
   // Create worksheet from headers
