@@ -10,12 +10,14 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 function SingleProductStockIn() {
   const [modelOptions, setModelOptions] = useState([]);
+  const [brandOptions, setBrandOptions] = useState([]);
   const [loading, setLoading] = useState(false)
   const [supplierNameOptions, setSupplierNameOPtions] = useState([]);
   const { product_id } = useParams();
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
   const [productData, setProductData] = useState({
+    brand_name: '',
     model_name: '',
     imei_number: '',
     sales_price: '',
@@ -36,6 +38,10 @@ function SingleProductStockIn() {
     setErrors(prev => ({ ...prev, model_name: "" }));
     setProductData(productData => ({ ...productData, model_name: value }));
   };
+  const handleBrandProductData = (value) => {
+    setErrors(prev => ({ ...prev, brand_name: "" }));
+    setProductData(productData => ({ ...productData, brand_name: value }));
+  };
   const stockInCallback = (response) => {
     if (response.status === 200) {
       toast.success("Stock added successfully!", {
@@ -43,6 +49,7 @@ function SingleProductStockIn() {
         autoClose: 2000,
       });
       setProductData({
+        brand_name: '',
         model_name: '',
         grade: '',
         purchase_price: '',
@@ -68,6 +75,7 @@ function SingleProductStockIn() {
   };
   useEffect(() => {
     getModelsAllData();
+    getBrandsAllData();
     getSupplierAllData();
   }, []);
   useEffect(() => {
@@ -90,6 +98,25 @@ function SingleProductStockIn() {
       const models = response.data.map(model => model.name);
       setModelOptions(models);
       console.log('models: ', models);
+    } else {
+      console.log("Error");
+    }
+  }
+  const getBrandsAllData = () => {
+    let url = "https://3-extent-billing-backend.vercel.app/api/brands";
+    apiCall({
+      method: 'GET',
+      url: url,
+      data: {},
+      callback: getBrandsCallBack,
+    })
+  }
+  const getBrandsCallBack = (response) => {
+    console.log('response: ', response);
+    if (response.status === 200) {
+      const brands = response.data.map(brand => brand.name);
+      setBrandOptions(brands);
+      console.log('brands: ', brands);
     } else {
       console.log("Error");
     }
@@ -120,6 +147,8 @@ function SingleProductStockIn() {
   }
   const handleValidation = () => {
     const newErrors = {};
+    if (!productData.brand_name.trim())
+      newErrors.brand_name = "Please select Brand Name";
     if (!productData.model_name.trim())
       newErrors.model_name = "Please select Model Name";
     if (!productData.imei_number.trim())
@@ -138,8 +167,6 @@ function SingleProductStockIn() {
       newErrors.supplier_name = "Please select Supplier Name";
     if (!productData.status.trim())
       newErrors.status = "Please select Status";
-    if (!productData.qc_remark.trim())
-      newErrors.qc_remark = "Please enter a QC Remark";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -207,7 +234,7 @@ function SingleProductStockIn() {
   const getProductCallback = (response) => {
     if (response.status === 200) {
       setProductData({
-        model_name: response.data.model.name, imei_number: response.data.imei_number,
+        brand_name:response.data.model.brand.name, model_name: response.data.model.name, imei_number: response.data.imei_number,
         sales_price: response.data.sales_price, purchase_price: response.data.purchase_price,
         grade: response.data.grade, engineer_name: response.data.engineer_name, accessories: response.data.accessories,
         supplier_name: response.data.supplier.name, qc_remark: response.data.qc_remark, status: response.data.status
@@ -226,8 +253,18 @@ function SingleProductStockIn() {
     });
   }
   return (
-    <div className="grid grid-cols-2 gap-x-5 gap-y-2">
+    <div className="grid grid-cols-3 mt-2 gap-x-5 gap-y-1">
       {loading && <Spinner />}
+      <CustomDropdownInputComponent
+        name="Brand Name"
+        dropdownClassName="w-[80%]"
+        placeholder="Enter Brand Name"
+        value={productData.brand_name}
+        onChange={handleBrandProductData}
+        options={brandOptions}
+        labelClassName="font-serif font-bold"
+        error={errors.brand_name}
+      />
       <CustomDropdownInputComponent
         name="Model Name"
         dropdownClassName="w-[80%]"
@@ -332,8 +369,8 @@ function SingleProductStockIn() {
         labelClassName="font-serif font-bold"
         error={errors.accessories}
       />
-      <div className="mt-4 flex flex-col">
-        <label className="font-serif font-bold mb-1">Status</label>
+      <div className="flex flex-col">
+        <label className="font-serif font-bold ">Status</label>
         <label className="flex items-center gap-2 cursor-pointer">
           <input
             type="checkbox"
@@ -349,7 +386,7 @@ function SingleProductStockIn() {
           RETURN
         </label>
       </div>
-      <div className="col-span-2 mt-4 flex justify-center gap-4">
+      <div className="col-span-3 mt-5 flex justify-center gap-4">
         <PrimaryButtonComponent
           label="Save"
           icon="fa fa-save"

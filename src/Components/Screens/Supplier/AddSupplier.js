@@ -232,7 +232,18 @@ function AddSupplier() {
                     maxLength={15}
                 />
             </div>
-            <div className="mt-4 flex justify-center">
+            <div className="mt-10 gap-5 flex justify-center">
+                <PrimaryButtonComponent
+                    label="Back"
+                    icon="fa fa-arrow-left"
+                    onClick={handleBack}
+                />
+                <PrimaryButtonComponent
+                    label="Back"
+                    icon="fa fa-arrow-left"
+                    buttonClassName="mt-2 py-1 px-5 mr-10 text-xl font-bold"
+                    onClick={handleBack}
+                />
                 <PrimaryButtonComponent
                     label="Back"
                     icon="fa fa-arrow-left"
@@ -242,7 +253,6 @@ function AddSupplier() {
                 <PrimaryButtonComponent
                     label="Submit"
                     icon="fa fa-save"
-                    buttonClassName="mt-2 py-1 px-5 text-xl font-bold"
                     onClick={saveSupplier}
                 />
             </div>

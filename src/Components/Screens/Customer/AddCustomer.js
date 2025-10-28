@@ -217,7 +217,18 @@ function AddCustomer() {
                     maxLength={10}
                 />
             </div>
-            <div className="mt-4 flex justify-center">
+            <div className="mt-10 flex justify-center gap-5">
+                <PrimaryButtonComponent
+                    label="Back"
+                    icon="fa fa-arrow-left"
+                    onClick={handleBack}
+                />
+                <PrimaryButtonComponent
+                    label="Back"
+                    icon="fa fa-arrow-left"
+                    buttonClassName="mt-2 py-1 px-5 mr-10 text-xl font-bold"
+                    onClick={handleBack}
+                />
                 <PrimaryButtonComponent
                     label="Back"
                     icon="fa fa-arrow-left"
@@ -227,7 +238,6 @@ function AddCustomer() {
                 <PrimaryButtonComponent
                     label="Save"
                     icon="fa fa-save"
-                    buttonClassName="mt-2 py-1 px-5 text-xl font-bold"
                     onClick={addCustomer}
                 />
             </div>

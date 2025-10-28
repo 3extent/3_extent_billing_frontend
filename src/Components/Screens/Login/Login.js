@@ -7,7 +7,7 @@ import { apiCall, Spinner } from '../../../Util/AxiosUtils';
 
 export default function Login({ onLoginSuccess }) {
     const navigate = useNavigate();
-    const[loading,setLoading]=useState(false);
+    const [loading, setLoading] = useState(false);
     const [loginFormData, setLoginFormData] = useState({
         contact_number: "",
         password: ""
@@ -38,12 +38,12 @@ export default function Login({ onLoginSuccess }) {
             url: 'https://3-extent-billing-backend.vercel.app/api/users/login',
             data: loginFormData,
             callback: getLoginCallBack,
-            setLoading:setLoading
+            setLoading: setLoading
         })
     };
     return (
         <div className="w-[100%] h-screen flex">
-            {loading && <Spinner/>}
+            {loading && <Spinner />}
             <div className="w-[50%] h-[100%]">
                 <img className="w-full h-full object-cover" src={billingimage} />
             </div>
@@ -54,7 +54,7 @@ export default function Login({ onLoginSuccess }) {
                     <div className="space-y-4">
                         <InputComponent
                             label="Mobile Number"
-                            type="number"
+                            type="text"
                             name="contact_number"
                             placeholder="Enter your mobile number"
                             inputClassName="w-full"
