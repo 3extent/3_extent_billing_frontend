@@ -18,7 +18,8 @@ function BulkOfProduct() {
         }
         setError("");
         const bulkOfProductformatteddata = excelData.map((row) => ({
-            model_name: row["Model Name"],
+            brand_name:row["Brand Name"] ? row["Brand Name"].trim().toUpperCase(): "",
+            model_name: row["Model Name"]? row["Model Name"].trim().toUpperCase(): "",
             imei_number: row["IMEI"],
             sales_price: row["Sales Price"],
             purchase_price: row["Purchase Price"],

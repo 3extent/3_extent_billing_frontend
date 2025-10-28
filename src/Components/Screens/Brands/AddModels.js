@@ -301,7 +301,7 @@ export default function AddModels() {
 
                                             />
                                             <label htmlFor={`combo-${index}`} className="ml-2">
-                                                {combo.ram ? `${combo.ram}/${combo.storage}GB` :  `${combo.storage}GB`}
+                                                {combo.ram ? `${combo.ram}/${combo.storage}GB` : `${combo.storage}GB`}
 
                                             </label>
                                         </li>
