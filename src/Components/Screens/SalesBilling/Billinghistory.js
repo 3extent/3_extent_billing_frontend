@@ -21,6 +21,7 @@ function Billinghistory() {
     const [pendingAmount, setPendingAmount] = useState(0);
     const [customerName, setCustomerName] = useState("");
     const [contactNo, setContactNo] = useState("");
+    const [imeiNumber, setIMEINumber] = useState("");
     const [paymentStatus, setPaymentStatus] = useState("");
     const fromDate = moment().subtract(7, 'days').format('YYYY-MM-DD');
     const toDate = moment().format('YYYY-MM-DD');
@@ -33,16 +34,16 @@ function Billinghistory() {
         getBillinghistoryAllData({ from, to });
     }, []);
     useEffect(() => {
-    if (!selectedBill) return;
+        if (!selectedBill) return;
 
-    const cash = Number(cashAmount || 0);
-    const online = Number(onlineAmount || 0);
-    const cardAmt = Number(card || 0);
+        const cash = Number(cashAmount || 0);
+        const online = Number(onlineAmount || 0);
+        const cardAmt = Number(card || 0);
 
-    const paidTotal = cash + online + cardAmt;
-    const pending = selectedBill.pending_amount - paidTotal;
-    setPendingAmount(pending);
-}, [cashAmount, card, onlineAmount, selectedBill]);
+        const paidTotal = cash + online + cardAmt;
+        const pending = selectedBill.pending_amount - paidTotal;
+        setPendingAmount(pending);
+    }, [cashAmount, card, onlineAmount, selectedBill]);
     const getBilllinghistoryCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
@@ -53,7 +54,7 @@ function Billinghistory() {
                 "Contact Number": bill.customer.contact_number,
                 "Total Amount": bill.payable_amount,
                 "Remaining Amount": bill.pending_amount,
-                "Profit":bill.profit,
+                "Profit": bill.profit,
                 _id: bill._id,
                 "Actions": (
                     <div className="flex items-center justify-end gap-2">
@@ -65,14 +66,15 @@ function Billinghistory() {
                                     e.stopPropagation();
                                     handlepaymentMethod(bill);
                                 }}
+                                disabled={Number(bill.pending_amount) === 0}
                             />
                         </div>
                         <PrimaryButtonComponent
-                            label="print"
+                            label="Print"
                             icon="fa fa-print"
                             buttonClassName="py-1 px-3 text-[12px] font-semibold"
                             onClick={(e) => {
-                                e.stopPropagation(); 
+                                e.stopPropagation();
                                 generateAndSavePdf(
                                     bill.customer.name,
                                     bill.invoice_number,
@@ -93,7 +95,7 @@ function Billinghistory() {
             console.log("Error");
         }
     }
-    const getBillinghistoryAllData = ({ contactNo, paymentStatus, customerName, from, to, selectAllDates }) => {
+    const getBillinghistoryAllData = ({ contactNo, paymentStatus, customerName, from, to, selectAllDates, imeiNumber }) => {
         let url = "https://3-extent-billing-backend.vercel.app/api/billings?";
         if (customerName) {
             url += `&customer_name=${customerName}`
@@ -103,6 +105,9 @@ function Billinghistory() {
         }
         if (paymentStatus) {
             url += `&status=${paymentStatus}`
+        }
+        if (imeiNumber) {
+            url += `&imei_number=${imeiNumber}`
         }
         if (!selectAllDates) {
             if (from) url += `&from=${moment.utc(from).valueOf(from)}`;
@@ -130,6 +135,9 @@ function Billinghistory() {
         }
     };
     const handlepaymentMethod = (bill) => {
+        if (Number(bill.pending_amount) === 0) {
+            return;
+        }
         setSelectedBill(bill);
         setPendingAmount(bill.pending_amount);
         setShowPaymentPopup(true);
@@ -140,16 +148,61 @@ function Billinghistory() {
         setCard("");
         setShowPaymentPopup(false);
     };
+    const handlePaymentUpdateCallback = (response) => {
+        if (response.status === 200) {
+            generateAndSavePdf(
+                selectedBill.customer.name,
+                selectedBill.invoice_number,
+                selectedBill.customer.contact_number,
+                selectedBill.customer.address,
+                selectedBill.customer.gst_number,
+                selectedBill.products,
+                selectedBill.payable_amount
+            );
+            handleCancelPopup();
+            getBillinghistoryAllData({
+                contactNo,
+                paymentStatus,
+                customerName,
+                from,
+                to,
+                selectAllDates,
+                imeiNumber
+            });
+        }
+    };
+
     const handlePrintButton = () => {
-        generateAndSavePdf(
-            selectedBill.customer.name,
-            selectedBill.invoice_number,
-            selectedBill.customer.contact_number,
-            selectedBill.customer.address,
-            selectedBill.customer.gst_number,
-            selectedBill.products,
-            selectedBill.payable_amount
-        );
+        if (!selectedBill) return;
+        const cash = Number(cashAmount || 0);
+        const online = Number(onlineAmount || 0);
+        const cardAmt = Number(card || 0);
+        const paidTotal = cash + online + cardAmt;
+        const updatedPayment = {
+            payable_amount: selectedBill.pending_amount,
+            paid_amount: [
+                { method: "cash", amount: cash },
+                { method: "online", amount: online },
+                { method: "card", amount: cardAmt },
+            ],
+            pending_amount: selectedBill.pending_amount - paidTotal,
+        };
+        apiCall({
+            method: 'PUT',
+            url: `https://3-extent-billing-backend.vercel.app/api/billings/${selectedBill._id}`,
+            data: updatedPayment,
+            callback: handlePaymentUpdateCallback,
+            setLoading: setLoading,
+        });
+        // generateAndSavePdf(
+        //     selectedBill.customer.name,
+        //     selectedBill.invoice_number,
+        //     selectedBill.customer.contact_number,
+        //     selectedBill.customer.address,
+        //     selectedBill.customer.gst_number,
+        //     selectedBill.products,
+        //     selectedBill.payable_amount
+        // );
         setShowPaymentPopup(false);
         setCashAmount("");
         setOnlineAmount("");
@@ -157,16 +210,17 @@ function Billinghistory() {
     };
 
     const handleSearchFilter = () => {
-        getBillinghistoryAllData({ contactNo, paymentStatus, customerName, from, to, selectAllDates });
+        getBillinghistoryAllData({ contactNo, paymentStatus, customerName, from, to, selectAllDates, imeiNumber });
     }
     const handleResetFilter = () => {
         setContactNo("");
         setCustomerName("");
         setPaymentStatus("");
+        setIMEINumber("");
         setFrom(fromDate);
         setTo(toDate);
-        setSelectAllDates(selectAllDates);
-        getBillinghistoryAllData({ from, to, selectAllDates });
+        setSelectAllDates(false);
+        getBillinghistoryAllData({ from, to });
     }
     return (
         <div>
@@ -176,14 +230,14 @@ function Billinghistory() {
                 <InputComponent
                     type="text"
                     placeholder="Customer Name"
-                    inputClassName="w-[190px] mb-5"
+                    inputClassName="w-[190px] mb-2"
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                 />
                 <InputComponent
                     type="text"
                     placeholder="Contact No"
-                    inputClassName="w-[180px] mb-5"
+                    inputClassName="w-[180px] mb-2"
                     value={contactNo}
                     maxLength={10}
                     onChange={(e) => setContactNo(e.target.value)}
@@ -193,12 +247,12 @@ function Billinghistory() {
                     value={paymentStatus}
                     onChange={(e) => setPaymentStatus(e.target.value)}
                     options={PAYMENTSTATUS_OPTIONS}
-                    className="w-[180px]"
+                    className="w-[180px] mt-3"
                 />
                 <InputComponent
                     type="date"
                     placeholder="Start Date"
-                    inputClassName="w-[190px] mb-5"
+                    inputClassName="w-[190px] mb-2"
                     value={from}
                     onChange={(e) => handleDateChange(e.target.value, setFrom)}
                     disabled={selectAllDates}
@@ -206,7 +260,7 @@ function Billinghistory() {
                 <InputComponent
                     type="date"
                     placeholder="End Date"
-                    inputClassName="w-[190px] mb-5"
+                    inputClassName="w-[190px] mb-2"
                     value={to}
                     onChange={(e) => handleDateChange(e.target.value, setTo)}
                     disabled={selectAllDates}
@@ -220,7 +274,16 @@ function Billinghistory() {
                     All Data
                 </label>
             </div>
-            <div className='flex justify-end mb-2 gap-4'>
+            <div className='flex items-center gap-4'>
+                <InputComponent
+                    type="text"
+                    placeholder="IMEI NO"
+                    inputClassName="mb-5 w-[190px] "
+                    value={imeiNumber}
+                    numericOnly={true}
+                    maxLength={15}
+                    onChange={(e) => setIMEINumber(e.target.value)}
+                />
                 <PrimaryButtonComponent
                     label="Search"
                     icon="fa fa-search"
@@ -232,7 +295,7 @@ function Billinghistory() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <div className="h-[64vh]">
+            <div className="h-[60vh]">
                 <CustomTableCompoent
                     headers={BILLINGHISTORY_COLOUMNS}
                     rows={rows}

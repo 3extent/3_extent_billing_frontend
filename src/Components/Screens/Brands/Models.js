@@ -133,7 +133,7 @@ export default function Models() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <div className="h-[64vh]">
+            <div className="h-[75vh]">
                 <CustomTableCompoent
                     headers={MODELS_COLOUMNS}
                     rows={rows}
