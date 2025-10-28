@@ -245,6 +245,12 @@ function AddSupplier() {
                     onClick={handleBack}
                 />
                 <PrimaryButtonComponent
+                    label="Back"
+                    icon="fa fa-arrow-left"
+                    buttonClassName="mt-2 py-1 px-5 mr-10 text-xl font-bold"
+                    onClick={handleBack}
+                />
+                <PrimaryButtonComponent
                     label="Submit"
                     icon="fa fa-save"
                     onClick={saveSupplier}

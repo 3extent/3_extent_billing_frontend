@@ -345,6 +345,7 @@ function SingleProductStockIn() {
         labelClassName="font-serif font-bold"
         value={productData.qc_remark}
         onChange={handleInputChange}
+        error={errors.qc_remark}
       />
       <DropdownCompoent
         label="Supplier"
