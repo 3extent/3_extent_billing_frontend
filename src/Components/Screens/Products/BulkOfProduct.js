@@ -18,18 +18,17 @@ function BulkOfProduct() {
         }
         setError("");
         const bulkOfProductformatteddata = excelData.map((row) => ({
-            brand_name:row["Brand Name"] ? row["Brand Name"].trim().toUpperCase(): "",
-            model_name: row["Model Name"]? row["Model Name"].trim().toUpperCase(): "",
+            brand_name: row["Brand Name"] ? row["Brand Name"].trim().toUpperCase() : "",
+            model_name: row["Model Name"] ? row["Model Name"].trim().toUpperCase() : "",
             imei_number: row["IMEI"],
             sales_price: row["Sales Price"],
             purchase_price: row["Purchase Price"],
             grade: row["Grade"],
             engineer_name: row["Engineer Name"],
-            accessories: row["Accessories"],
-            supplier_name: row["Supplier"],
+            accessories: row["Accessories"] ? row["Accessories"].trim().toUpperCase() : "",
+            supplier_name: row["Supplier"] ? row["Supplier"].trim().toUpperCase() : "",
             qc_remark: row["QC Remark"],
         }));
-        setExcelData(bulkOfProductformatteddata)
         apiCall({
             method: "POST",
             url: "https://3-extent-billing-backend.vercel.app/api/products/bulk",
@@ -47,6 +46,8 @@ function BulkOfProduct() {
                     imei_number: singleElement.product.imei_number
                 })
             })
+
+            handleResetData();
         } else {
             const errorMsg = response?.data?.error || "Failed to upload file";
             toast.error(errorMsg, {
@@ -57,6 +58,13 @@ function BulkOfProduct() {
     };
     const handleDownloadExcel = () => {
         excelDownload();
+    }
+    const handleResetData = () => {
+        setExcelData([]);
+        setShowTable(false);
+        setError('');
+        const fileInput = document.querySelector('input[type="file"]');
+        if (fileInput) fileInput.value = '';
     }
     const handleFileUpload = (e) => {
         const file = e.target.files[0];
@@ -80,7 +88,7 @@ function BulkOfProduct() {
     const tableHeaders = excelData.length > 0 ? Object.keys(excelData[0]) : [];
     return (
         <div className="w-full">
-            <div className=' gap-10 items-center'>
+            <div className='flex gap-10 items-center'>
                 {error && (
                     <div className="text-red-600 text-sm ">{error}</div>
                 )}
@@ -89,7 +97,13 @@ function BulkOfProduct() {
                     type="file"
                     accept=".xlsx, .xls"
                     onChange={handleFileUpload}
-                    inputClassName="w-[30%] p-10"
+                    inputClassName="w-[100%] p-10"
+                />
+                <PrimaryButtonComponent
+                    label="Reset"
+                    icon="fa fa-refresh"
+                    buttonClassName="mt-5"
+                    onClick={handleResetData}
                 />
 
             </div>
@@ -98,7 +112,7 @@ function BulkOfProduct() {
                     <CustomTableCompoent headers={tableHeaders} rows={excelData} />
                 </div>
             )}
-            <div className='flex justify-center gap-4 mt-4'>
+            <div className='flex justify-center gap-4 mt-10'>
                 <PrimaryButtonComponent
                     label="Save"
                     icon="fa fa-save"
