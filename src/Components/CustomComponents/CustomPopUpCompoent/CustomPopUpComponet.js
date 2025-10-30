@@ -1,10 +1,11 @@
 import InputComponent from "../InputComponent/InputComponent";
 import PrimaryButtonComponent from "../PrimaryButtonComponent/PrimaryButtonComponent";
-export default function CustomPopUpComponet({ totalAmount, cashAmount, onlineAmount, card, pendingAmount, handleCancelButton, handlePrintButton, setCashAmount, setOnlineAmount, setCard }) {
+export default function CustomPopUpComponet({ totalAmount, cashAmount, onlineAmount, card, pendingAmount, handleCancelButton, handlePrintButton, setCashAmount, setOnlineAmount, setCard, handleSaveButton, mode = "billingHistory" }) {
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
             <div className="bg-white shadow-lg w-[40%] rounded-[10px]">
-                <div className="text-lg py-5 font-bold  pl-7 bg-slate-900 text-white font-serif rounded-t-[10px]">Payment Method</div>
+                <div className="text-lg py-5 font-bold  pl-7 bg-slate-900 text-white font-serif rounded-t-[10px]">
+                     Payment Method</div>
                 <div className="pb-5">
                     <div className="my-5">
                         <span className="font-bold gap-4 ml-7 text-[18px]">
@@ -53,11 +54,19 @@ export default function CustomPopUpComponet({ totalAmount, cashAmount, onlineAmo
                             buttonClassName="border border-black !text-black bg-transparent hover:bg-black hover:!text-white "
                             onClick={handleCancelButton}
                         />
-                        <PrimaryButtonComponent
-                            label="Print"
-                            buttonClassName="py-1 px-3 text-sm font-bold "
-                            onClick={handlePrintButton}
-                        />
+                        {mode === "saleBilling" ? (
+                            <PrimaryButtonComponent
+                                label="Print"
+                                buttonClassName="py-1 px-3 text-sm font-bold "
+                                onClick={handlePrintButton}
+                            />
+                        ) : (
+                            <PrimaryButtonComponent
+                                label="save"
+                                buttonClassName="py-1 px-3 text-sm font-bold "
+                                onClick={handleSaveButton}
+                            />
+                        )}
                     </div>
                 </div>
             </div>

@@ -150,15 +150,15 @@ function Billinghistory() {
     };
     const handlePaymentUpdateCallback = (response) => {
         if (response.status === 200) {
-            generateAndSavePdf(
-                selectedBill.customer.name,
-                selectedBill.invoice_number,
-                selectedBill.customer.contact_number,
-                selectedBill.customer.address,
-                selectedBill.customer.gst_number,
-                selectedBill.products,
-                selectedBill.payable_amount
-            );
+            // generateAndSavePdf(
+            //     selectedBill.customer.name,
+            //     selectedBill.invoice_number,
+            //     selectedBill.customer.contact_number,
+            //     selectedBill.customer.address,
+            //     selectedBill.customer.gst_number,
+            //     selectedBill.products,
+            //     selectedBill.payable_amount
+            // );
             handleCancelPopup();
             getBillinghistoryAllData({
                 contactNo,
@@ -172,7 +172,7 @@ function Billinghistory() {
         }
     };
 
-    const handlePrintButton = () => {
+    const handleSaveButton = () => {
         if (!selectedBill) return;
         const cash = Number(cashAmount || 0);
         const online = Number(onlineAmount || 0);
@@ -304,6 +304,7 @@ function Billinghistory() {
             </div>
             {showPaymentPopup && selectedBill && (
                 <CustomPopUpComponet
+                    mode="billingHistory"
                     totalAmount={selectedBill.pending_amount}
                     cashAmount={cashAmount}
                     onlineAmount={onlineAmount}
@@ -313,7 +314,7 @@ function Billinghistory() {
                     setOnlineAmount={setOnlineAmount}
                     setCard={setCard}
                     handleCancelButton={handleCancelPopup}
-                    handlePrintButton={handlePrintButton}
+                    handleSaveButton={handleSaveButton}
                 />
             )}
         </div>
