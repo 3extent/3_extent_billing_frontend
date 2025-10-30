@@ -58,7 +58,7 @@ function Billinghistory() {
                 _id: bill._id,
                 "Actions": (
                     <div className="flex items-center justify-end gap-2">
-                        <div>
+                        {Number(bill.pending_amount) > 0 && (
                             <PrimaryButtonComponent
                                 label="Pay"
                                 buttonClassName="py-1 px-3 text-[12px] font-semibold"
@@ -68,7 +68,7 @@ function Billinghistory() {
                                 }}
                                 disabled={Number(bill.pending_amount) === 0}
                             />
-                        </div>
+                        )}
                         <PrimaryButtonComponent
                             label="Print"
                             icon="fa fa-print"
@@ -194,15 +194,6 @@ function Billinghistory() {
             callback: handlePaymentUpdateCallback,
             setLoading: setLoading,
         });
-        // generateAndSavePdf(
-        //     selectedBill.customer.name,
-        //     selectedBill.invoice_number,
-        //     selectedBill.customer.contact_number,
-        //     selectedBill.customer.address,
-        //     selectedBill.customer.gst_number,
-        //     selectedBill.products,
-        //     selectedBill.payable_amount
-        // );
         setShowPaymentPopup(false);
         setCashAmount("");
         setOnlineAmount("");
