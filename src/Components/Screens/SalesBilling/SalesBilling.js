@@ -24,6 +24,9 @@ export default function SalesBilling() {
         );
     });
     const navigate = useNavigate();
+    const handlenavigatedraftBill=()=>{
+        navigate("/draftbillhistroy")
+    }
     const navigateBillingHistory = () => {
         navigate("/billinghistory")
     }
@@ -270,7 +273,7 @@ export default function SalesBilling() {
             setOnlineAmount("");
             setCard("");
             setPendingAmount(0);
-            navigate("/billinghistory");
+            navigate("/draftbillhistroy");
         } else {
             const errorMsg = response?.data?.error || "Something went wrong while saving draft.";
             toast.error(errorMsg, {
@@ -309,12 +312,22 @@ export default function SalesBilling() {
     return (
         <div>
             {loading && <Spinner />}
-            <CustomHeaderComponent
-                name="Sales Billing"
-                label="Billing History"
-                icon="fa fa-history"
-                onClick={navigateBillingHistory}
-            />
+            <div>
+                <CustomHeaderComponent
+                    name="Sales Billing"
+                    label="Billing History"
+                    icon="fa fa-history"
+                    onClick={navigateBillingHistory}
+                />
+                <div>
+                    <PrimaryButtonComponent
+                        label="Draft Bill"
+                        icon="fa fa-pencil-square-o"
+                        buttonClassName="py-1 px-3 text-[12px] font-semibold"
+                        onClick={handlenavigatedraftBill}
+                    />
+                </div>
+            </div>
             <div className="flex justify-between items-center ">
                 <div className="flex items-center gap-3">
                     <CustomDropdownInputComponent
