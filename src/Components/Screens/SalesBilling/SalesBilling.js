@@ -34,14 +34,27 @@ export default function SalesBilling() {
     const [card, setCard] = useState("");
     const [totalAmount, setTotalAmount] = useState(0);
     const [pendingAmount, setPendingAmount] = useState(0);
+    const toggleableColumns = ["Purchase Price", "QC-Remark"];
     const toggleColumn = (columnName) => {
+        if (!toggleableColumns.includes(columnName)) return;
         if (dynamicHeaders.includes(columnName)) {
             setDynamicHeaders(dynamicHeaders.filter(col => col !== columnName));
             setHiddenColumns([...hiddenColumns, columnName]);
         } else {
-            setDynamicHeaders([...dynamicHeaders, columnName]);
+            let newHeaders = [...dynamicHeaders];
+            if (columnName === "Purchase Price") {
+                const rateIndex = newHeaders.indexOf("Rate");
+                if (rateIndex !== -1) newHeaders.splice(rateIndex + 1, 0, "Purchase Price");
+                else newHeaders.push("Purchase Price");
+            }
+            else if (columnName === "QC-Remark") {
+                const accessoriesIndex = newHeaders.indexOf("Accessories");
+                if (accessoriesIndex !== -1) newHeaders.splice(accessoriesIndex + 1, 0, "QC-Remark");
+                else newHeaders.push("QC-Remark");
+            }
+            setDynamicHeaders(newHeaders);
             setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
-        }
+        };
     };
     const [imeiOptions, setImeiOptions] = useState([]);
     const [selectedImei, setSelectedImei] = useState("");
@@ -413,6 +426,7 @@ export default function SalesBilling() {
             </div>
             {showPaymentPopup && (
                 <CustomPopUpComponet
+                    mode="saleBilling"
                     totalAmount={totalAmount}
                     cashAmount={cashAmount}
                     onlineAmount={onlineAmount}
