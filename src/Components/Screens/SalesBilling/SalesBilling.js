@@ -47,11 +47,7 @@ export default function SalesBilling() {
                 if (rateIndex !== -1) newHeaders.splice(rateIndex + 1, 0, "Purchase Price");
                 else newHeaders.push("Purchase Price");
             }
-            else if (columnName === "QC-Remark") {
-                const accessoriesIndex = newHeaders.indexOf("Accessories");
-                if (accessoriesIndex !== -1) newHeaders.splice(accessoriesIndex + 1, 0, "QC-Remark");
-                else newHeaders.push("QC-Remark");
-            }
+            else newHeaders.push("QC-Remark");
             setDynamicHeaders(newHeaders);
             setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
         };
