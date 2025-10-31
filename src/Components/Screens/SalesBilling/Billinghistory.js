@@ -35,7 +35,6 @@ function Billinghistory() {
     }, []);
     useEffect(() => {
         if (!selectedBill) return;
-
         const cash = Number(cashAmount || 0);
         const online = Number(onlineAmount || 0);
         const cardAmt = Number(card || 0);
@@ -58,7 +57,7 @@ function Billinghistory() {
                 _id: bill._id,
                 "Actions": (
                     <div className="flex items-center justify-end gap-2">
-                        <div>
+                        {Number(bill.pending_amount) > 0 && (
                             <PrimaryButtonComponent
                                 label="Pay"
                                 buttonClassName="py-1 px-3 text-[12px] font-semibold"
@@ -68,7 +67,7 @@ function Billinghistory() {
                                 }}
                                 disabled={Number(bill.pending_amount) === 0}
                             />
-                        </div>
+                        )}
                         <PrimaryButtonComponent
                             label="Print"
                             icon="fa fa-print"
@@ -150,15 +149,6 @@ function Billinghistory() {
     };
     const handlePaymentUpdateCallback = (response) => {
         if (response.status === 200) {
-            generateAndSavePdf(
-                selectedBill.customer.name,
-                selectedBill.invoice_number,
-                selectedBill.customer.contact_number,
-                selectedBill.customer.address,
-                selectedBill.customer.gst_number,
-                selectedBill.products,
-                selectedBill.payable_amount
-            );
             handleCancelPopup();
             getBillinghistoryAllData({
                 contactNo,
@@ -172,7 +162,7 @@ function Billinghistory() {
         }
     };
 
-    const handlePrintButton = () => {
+    const handleSaveButton = () => {
         if (!selectedBill) return;
         const cash = Number(cashAmount || 0);
         const online = Number(onlineAmount || 0);
@@ -194,15 +184,6 @@ function Billinghistory() {
             callback: handlePaymentUpdateCallback,
             setLoading: setLoading,
         });
-        // generateAndSavePdf(
-        //     selectedBill.customer.name,
-        //     selectedBill.invoice_number,
-        //     selectedBill.customer.contact_number,
-        //     selectedBill.customer.address,
-        //     selectedBill.customer.gst_number,
-        //     selectedBill.products,
-        //     selectedBill.payable_amount
-        // );
         setShowPaymentPopup(false);
         setCashAmount("");
         setOnlineAmount("");
@@ -313,7 +294,7 @@ function Billinghistory() {
                     setOnlineAmount={setOnlineAmount}
                     setCard={setCard}
                     handleCancelButton={handleCancelPopup}
-                    handlePrintButton={handlePrintButton}
+                    handleSaveButton={handleSaveButton}
                 />
             )}
         </div>
