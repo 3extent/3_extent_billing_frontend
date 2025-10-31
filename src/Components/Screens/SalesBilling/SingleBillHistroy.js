@@ -67,7 +67,7 @@ export default function SingleBillHistory() {
         })
     };
     const handleNavigateBillHistroy = () => {
-        navigate("/billinghistory");
+        navigate(-1);
     }
     return (
         <div>
