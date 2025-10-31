@@ -35,7 +35,6 @@ function Billinghistory() {
     }, []);
     useEffect(() => {
         if (!selectedBill) return;
-
         const cash = Number(cashAmount || 0);
         const online = Number(onlineAmount || 0);
         const cardAmt = Number(card || 0);
@@ -150,15 +149,6 @@ function Billinghistory() {
     };
     const handlePaymentUpdateCallback = (response) => {
         if (response.status === 200) {
-            generateAndSavePdf(
-                selectedBill.customer.name,
-                selectedBill.invoice_number,
-                selectedBill.customer.contact_number,
-                selectedBill.customer.address,
-                selectedBill.customer.gst_number,
-                selectedBill.products,
-                selectedBill.payable_amount
-            );
             handleCancelPopup();
             getBillinghistoryAllData({
                 contactNo,
@@ -172,7 +162,7 @@ function Billinghistory() {
         }
     };
 
-    const handlePrintButton = () => {
+    const handleSaveButton = () => {
         if (!selectedBill) return;
         const cash = Number(cashAmount || 0);
         const online = Number(onlineAmount || 0);
@@ -304,7 +294,7 @@ function Billinghistory() {
                     setOnlineAmount={setOnlineAmount}
                     setCard={setCard}
                     handleCancelButton={handleCancelPopup}
-                    handlePrintButton={handlePrintButton}
+                    handleSaveButton={handleSaveButton}
                 />
             )}
         </div>

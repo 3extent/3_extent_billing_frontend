@@ -422,6 +422,7 @@ export default function SalesBilling() {
             </div>
             {showPaymentPopup && (
                 <CustomPopUpComponet
+                    isbillingHistory={true}
                     totalAmount={totalAmount}
                     cashAmount={cashAmount}
                     onlineAmount={onlineAmount}
