@@ -35,7 +35,6 @@ function Billinghistory() {
     }, []);
     useEffect(() => {
         if (!selectedBill) return;
-
         const cash = Number(cashAmount || 0);
         const online = Number(onlineAmount || 0);
         const cardAmt = Number(card || 0);
@@ -150,15 +149,6 @@ function Billinghistory() {
     };
     const handlePaymentUpdateCallback = (response) => {
         if (response.status === 200) {
-            // generateAndSavePdf(
-            //     selectedBill.customer.name,
-            //     selectedBill.invoice_number,
-            //     selectedBill.customer.contact_number,
-            //     selectedBill.customer.address,
-            //     selectedBill.customer.gst_number,
-            //     selectedBill.products,
-            //     selectedBill.payable_amount
-            // );
             handleCancelPopup();
             getBillinghistoryAllData({
                 contactNo,
@@ -194,15 +184,6 @@ function Billinghistory() {
             callback: handlePaymentUpdateCallback,
             setLoading: setLoading,
         });
-        // generateAndSavePdf(
-        //     selectedBill.customer.name,
-        //     selectedBill.invoice_number,
-        //     selectedBill.customer.contact_number,
-        //     selectedBill.customer.address,
-        //     selectedBill.customer.gst_number,
-        //     selectedBill.products,
-        //     selectedBill.payable_amount
-        // );
         setShowPaymentPopup(false);
         setCashAmount("");
         setOnlineAmount("");
@@ -304,7 +285,6 @@ function Billinghistory() {
             </div>
             {showPaymentPopup && selectedBill && (
                 <CustomPopUpComponet
-                    mode="billingHistory"
                     totalAmount={selectedBill.pending_amount}
                     cashAmount={cashAmount}
                     onlineAmount={onlineAmount}
