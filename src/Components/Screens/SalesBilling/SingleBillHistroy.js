@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import { SINGLEBILLHISTORY_COLOUMNS } from "./Constants";
 import { apiCall } from "../../../Util/AxiosUtils";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { generateAndSavePdf } from "../../../Util/Utility";
 export default function SingleBillHistory() {
     const { billId } = useParams();
+    const navigate = useNavigate();
     const [rows, setRows] = useState([]);
     const [singleBill, setSingleBill] = useState([])
     const [customerInfo, setCustomerInfo] = useState();
@@ -65,11 +66,20 @@ export default function SingleBillHistory() {
             callback: getSingleBillHistroyCallBack,
         })
     };
+    const handleNavigateBillHistroy = () => {
+        navigate(-1);
+    }
     return (
         <div>
             <div className="flex justify-between items-center">
                 <div className="text-xl font-serif">Details of bill</div>
-                <div>
+                <div className="flex gap-4">
+                    <PrimaryButtonComponent
+                        label="Back"
+                        icon="fa fa-arrow-left"
+                        buttonClassName="py-1 px-3 text-[12px] font-semibold"
+                        onClick={handleNavigateBillHistroy}
+                    />
                     <PrimaryButtonComponent
                         label="Print"
                         icon="fa fa-print"
