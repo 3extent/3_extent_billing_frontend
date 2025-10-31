@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
@@ -24,7 +23,7 @@ export default function SalesBilling() {
         );
     });
     const navigate = useNavigate();
-    const handlenavigatedraftBill=()=>{
+    const handlenavigatedraftBill = () => {
         navigate("/draftbillhistroy")
     }
     const navigateBillingHistory = () => {
@@ -321,16 +320,17 @@ export default function SalesBilling() {
     return (
         <div>
             {loading && <Spinner />}
-            <div>
-                <CustomHeaderComponent
-                    name="Sales Billing"
-                    label="Billing History"
-                    icon="fa fa-history"
-                    onClick={navigateBillingHistory}
-                />
-                <div>
+            <div className="flex justify-between items-center">
+                <div className="text-xl font-serif">Sales Billing</div>
+                <div className="flex gap-4">
                     <PrimaryButtonComponent
-                        label="Draft Bill"
+                        label="Billing History"
+                        icon="fa fa-history"
+                        buttonClassName="py-1 px-3 text-[12px] font-semibold"
+                        onClick={navigateBillingHistory}
+                    />
+                    <PrimaryButtonComponent
+                        label="Drafted Bill"
                         icon="fa fa-pencil-square-o"
                         buttonClassName="py-1 px-3 text-[12px] font-semibold"
                         onClick={handlenavigatedraftBill}
