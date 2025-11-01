@@ -430,7 +430,6 @@ export const handleBarcodePrint = (product) => {
       </head>
       <body>
         <div id="barcode-wrapper">
-          <h1 class="header">3_EXTENT</h1>
           <h1 class="h2">${product.modelName}</h1>
           <h1 class="h2">Grade : ${product.grade}</h1>
           <svg id="barcode"></svg>
