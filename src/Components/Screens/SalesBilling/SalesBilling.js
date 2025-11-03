@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
@@ -24,6 +23,9 @@ export default function SalesBilling() {
         );
     });
     const navigate = useNavigate();
+    const handlenavigatedraftBill = () => {
+        navigate("/draftbillhistroy")
+    }
     const navigateBillingHistory = () => {
         navigate("/billinghistory")
     }
@@ -302,7 +304,7 @@ export default function SalesBilling() {
             setOnlineAmount("");
             setCard("");
             setPendingAmount(0);
-            navigate("/billinghistory");
+            navigate("/draftbillhistroy");
         } else {
             const errorMsg = response?.data?.error || "Something went wrong while saving draft.";
             toast.error(errorMsg, {
@@ -338,15 +340,35 @@ export default function SalesBilling() {
     const handleExportToExcel = () => {
         exportToExcel(rows, "salesbillingData.xlsx");
     };
+    const navigateAddCustomer=()=>{
+        navigate("/addcustomer")
+    }
     return (
         <div>
             {loading && <Spinner />}
-            <CustomHeaderComponent
-                name="Sales Billing"
-                label="Billing History"
-                icon="fa fa-history"
-                onClick={navigateBillingHistory}
-            />
+            <div className="flex justify-between items-center">
+                <div className="text-xl font-serif">Sales Billing</div>
+                <div className="flex gap-4">
+                     <PrimaryButtonComponent
+                        label="Add Customer"
+                        icon="fa fa-plus"
+                        buttonClassName="py-1 px-3 text-[12px] font-semibold"
+                        onClick={navigateAddCustomer}
+                    />
+                    <PrimaryButtonComponent
+                        label="Billing History"
+                        icon="fa fa-history"
+                        buttonClassName="py-1 px-3 text-[12px] font-semibold"
+                        onClick={navigateBillingHistory}
+                    />
+                    <PrimaryButtonComponent
+                        label="Drafted Bill"
+                        icon="fa fa-pencil-square-o"
+                        buttonClassName="py-1 px-3 text-[12px] font-semibold"
+                        onClick={handlenavigatedraftBill}
+                    />
+                </div>
+            </div>
             <div className="flex justify-between items-center ">
                 <div className="flex items-center gap-3">
                     <CustomDropdownInputComponent

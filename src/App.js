@@ -16,6 +16,8 @@ import AddCustomer from './Components/Screens/Customer/AddCustomer';
 import Billinghistory from './Components/Screens/SalesBilling/Billinghistory';
 import SingleBillHistory from './Components/Screens/SalesBilling/SingleBillHistroy';
 import { ToastContainer } from 'react-toastify';
+import DraftBillHistroy from './Components/Screens/SalesBilling/DraftBillHistroy';
+import SingleDraftBillHistory from './Components/Screens/SalesBilling/SingleDraftBillHistroy';
 
 
 // Protected Route Component
@@ -128,7 +130,14 @@ function App() {
                 <Billinghistory />
               </ProtectedRoute>
             } />
+            <Route path="/draftbillhistroy" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <DraftBillHistroy />
+              </ProtectedRoute>
+            } />
+           
             <Route path="/singleBillHistory/:billId" element={<SingleBillHistory />} />
+            <Route path="/singleDraftBillHistroy/:draftBillId" element={<SingleDraftBillHistory />} />
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
