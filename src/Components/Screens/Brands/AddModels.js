@@ -54,6 +54,11 @@ export default function AddModels() {
             setErrors((errors) => ({ ...errors, ...newErrors }));
             return;
         }
+        if (ramOptions.length === 1 && storageOptions.length === 1) {
+            setSelectedCombinations([{ ram: ramOptions[0], storage: storageOptions[0] }]);
+            setShowData(false);
+            return;
+        }
         const combinations = [];
         if (ramOptions.length && storageOptions.length) {
             ramOptions.forEach((ram) => {
@@ -64,7 +69,7 @@ export default function AddModels() {
         }
         if (!ramOptions.length && storageOptions.length) {
             storageOptions.forEach((storage) => {
-                combinations.push({ ram: '', storage });
+                combinations.push({ storage });
             });
         }
         setPossibleCombinations(combinations);
@@ -99,6 +104,13 @@ export default function AddModels() {
         return Object.keys(newErrors).length === 0;
     };
     const saveModel = () => {
+        if (modelData.RAM.trim()) {
+            const ramOptions = modelData.RAM.split(",").map(ram => ram.trim());
+            const storageOptions = modelData.storage.split(",").map(s => s.trim());
+            if (ramOptions.length === 1 && storageOptions.length === 1) {
+                setSelectedCombinations([{ ram: ramOptions[0], storage: storageOptions[0] }]);
+            }
+        }
         if (!handleValidation()) return;
         if (model_id) {
             editModelData();
@@ -277,7 +289,7 @@ export default function AddModels() {
                             />
                         </div>
                     </div>
-                    {modelData.RAM.trim() && (
+                    {modelData.RAM.trim() && modelData.RAM.split(",").length > 1 && (
                         <div className="flex justify-center mt-5">
                             <PrimaryButtonComponent
                                 label="Show Combination"
@@ -318,15 +330,17 @@ export default function AddModels() {
                     )}
                 </>
             )}
-            <div className="flex justify-center mt-10 gap-5">
+            <div className="flex justify-center mt-3">
                 <PrimaryButtonComponent
                     label="Back"
                     icon="fa fa-arrow-left"
+                    buttonClassName="mt-2 py-1 px-5 mr-10 text-xl font-bold"
                     onClick={handleBack}
                 />
                 <PrimaryButtonComponent
                     label="Submit"
                     icon="fa fa-bookmark-o"
+                    buttonClassName="mt-2 py-1 px-5 text-xl font-bold"
                     onClick={saveModel}
                 />
             </div>
