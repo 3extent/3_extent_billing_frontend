@@ -17,6 +17,7 @@ function AddCustomer() {
     }, [customer_id])
     const [customerData, setCustomerData] = useState({
         name: "",
+        shop_name: "",
         address: "",
         state: "",
         contact_number: "",
@@ -39,6 +40,7 @@ function AddCustomer() {
             });
             setCustomerData({
                 name: "",
+                shop_name: "",
                 address: "",
                 state: "",
                 contact_number: "",
@@ -86,6 +88,10 @@ function AddCustomer() {
         if (!customerData.address.trim()) {
             newErrors.address = "Address is required";
         }
+        if (!customerData.shop_name.trim()) {
+            newErrors.shop_name = "Shop name is required";
+        }
+
         if (!customerData.state.trim()) {
             newErrors.state = "State is required";
         }
@@ -126,6 +132,7 @@ function AddCustomer() {
         if (response.status === 200) {
             setCustomerData({
                 name: response.data.name, address: response.data.address,
+                shop_name: response.data.shop_name || "",
                 state: response.data.state, contact_number: response.data.contact_number, gst_number: response.data.gst_number,
                 pan_number: response.data.pan_number,
             });
@@ -216,6 +223,17 @@ function AddCustomer() {
                     onChange={handleInputChange}
                     maxLength={10}
                 />
+                <InputComponent
+                    label="Shop Name"
+                    type="text"
+                    name="shop_name"
+                    placeholder="Shop Name"
+                    inputClassName="w-[80%]"
+                    labelClassName="font-serif font-bold"
+                    value={customerData.shop_name}
+                    onChange={handleInputChange}
+                />
+
             </div>
             <div className="mt-10 flex justify-center gap-5">
                 <PrimaryButtonComponent
