@@ -36,9 +36,16 @@ export default function SalesBilling() {
     const [pendingAmount, setPendingAmount] = useState(0);
     const toggleableColumns = ["Purchase Price", "QC-Remark"];
     const handleDeleteRow = (imeiNumber) => {
-        console.log("Deleting IMEI:", imeiNumber);
-        setRows(currentRows => currentRows.filter(row => row["IMEI NO"] !== imeiNumber));
+        setRows((currentRows) => {
+            const updatedRows = [...currentRows];
+            const index = updatedRows.findIndex(row => row["IMEI NO"] === imeiNumber);
+            if (index !== -1) {
+                updatedRows.splice(index, 1);
+            }
+            return updatedRows;
+        });
     };
+
     const toggleColumn = (columnName) => {
         if (!toggleableColumns.includes(columnName)) return;
         if (dynamicHeaders.includes(columnName)) {
@@ -162,16 +169,17 @@ export default function SalesBilling() {
                 "Accessories": product.accessories,
                 "QC-Remark": product.qc_remark,
                 "Status": product.status,
-                "Actions": (
-                    <div className='flex items-center gap-2'>
-                        <PrimaryButtonComponent
-                            label="Delete"
-                            icon="fa fa-trash"
-                            buttonClassName="py-1 px-3 text-[12px] font-semibold"
+                "Action": (
+                    <div className="flex justify-end">
+                        <div
+                            title="delete"
                             onClick={() => handleDeleteRow(product.imei_number)}
-                        />
+                            className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
+                        >
+                            <i className="fa fa-trash text-gray-700 text-sm" />
+                        </div>
                     </div>
-                )
+                ),
 
             }));
             console.log('productFormattedRows: ', productFormattedRows);
