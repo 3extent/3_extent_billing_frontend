@@ -10,7 +10,7 @@ export default function AddModels() {
     const { model_id } = useParams();
     const handleBack = () => {
         navigate(-1);
-    }; 
+    };
     useEffect(() => {
         getBrandsAllData();
     }, [])
