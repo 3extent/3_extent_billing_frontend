@@ -35,6 +35,10 @@ export default function SalesBilling() {
     const [totalAmount, setTotalAmount] = useState(0);
     const [pendingAmount, setPendingAmount] = useState(0);
     const toggleableColumns = ["Purchase Price", "QC-Remark"];
+    const handleDeleteRow = (imeiNumber) => {
+        console.log("Deleting IMEI:", imeiNumber);
+        setRows(currentRows => currentRows.filter(row => row["IMEI NO"] !== imeiNumber));
+    };
     const toggleColumn = (columnName) => {
         if (!toggleableColumns.includes(columnName)) return;
         if (dynamicHeaders.includes(columnName)) {
@@ -157,7 +161,18 @@ export default function SalesBilling() {
                 "Grade": product.grade,
                 "Accessories": product.accessories,
                 "QC-Remark": product.qc_remark,
-                "Status": product.status
+                "Status": product.status,
+                "Actions": (
+                    <div className='flex items-center gap-2'>
+                        <PrimaryButtonComponent
+                            label="Delete"
+                            icon="fa fa-trash"
+                            buttonClassName="py-1 px-3 text-[12px] font-semibold"
+                            onClick={() => handleDeleteRow(product.imei_number)}
+                        />
+                    </div>
+                )
+
             }));
             console.log('productFormattedRows: ', productFormattedRows);
             const existingImeis = rows.map(row => row["IMEI NO"]);
