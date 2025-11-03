@@ -6,7 +6,10 @@ import moment from "moment";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { generateAndSavePdf } from "../../../Util/Utility";
 import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 export default function DraftBillHistroy() {
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(false)
     const [showPaymentPopup, setShowPaymentPopup] = useState(false);
     const [cashAmount, setCashAmount] = useState("");
@@ -28,14 +31,55 @@ export default function DraftBillHistroy() {
         const pending = selectedBill.pending_amount - paidTotal;
         setPendingAmount(pending);
     }, [cashAmount, card, onlineAmount, selectedBill]);
-
     const handleCancelPopup = () => {
         setCashAmount("");
         setOnlineAmount("");
         setCard("");
         setShowPaymentPopup(false);
     };
-
+    const handlePaymentUpdateCallback = (response) => {
+        if (response.status === 200) {
+            toast.success("Payment updated and bill generated successfully!", {
+                position: "top-center",
+                autoClose: 2000,
+            });
+            handleCancelPopup();
+            getDraftBillHistory();
+        }
+    };
+    const handlePrintButton = () => {
+        if (!selectedBill) return;
+        const cash = Number(cashAmount || 0);
+        const online = Number(onlineAmount || 0);
+        const cardAmt = Number(card || 0);
+        const paidTotal = cash + online + cardAmt;
+        const updatedPayment = {
+            payable_amount: selectedBill.pending_amount,
+            paid_amount: [
+                { method: "cash", amount: cash },
+                { method: "online", amount: online },
+                { method: "card", amount: cardAmt },
+            ],
+            pending_amount: selectedBill.pending_amount - paidTotal,
+            status: "GENERATED",
+        };
+        apiCall({
+            method: 'PUT',
+            url: `https://3-extent-billing-backend.vercel.app/api/billings/${selectedBill._id}`,
+            data: updatedPayment,
+            callback: handlePaymentUpdateCallback,
+            setLoading: setLoading,
+        });
+        setShowPaymentPopup(false);
+        setCashAmount("");
+        setOnlineAmount("");
+        setCard("");
+    }
+     const handleRowClick = (row) => {
+            if (row._id) {
+                navigate(`/singleDraftBillHistroy/${row._id}`);
+            }
+        };
     const getDraftBillHistory = () => {
         let url = `https://3-extent-billing-backend.vercel.app/api/billings?status=DRAFTED`;
         apiCall({
@@ -56,18 +100,6 @@ export default function DraftBillHistroy() {
                         status: "DRAFTED",
                         "Actions": (
                             <div className="flex items-center justify-end gap-2">
-                                <div 
-                                    title="Edit"
-                                    className="h-8 w-8  flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
-                                >
-                                    <i className="fa fa-pencil text-gray-700 text-sm" />
-                                </div>
-                                <div
-                                    title="delete"
-                                    className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
-                                >
-                                    <i className="fa fa-trash-o text-gray-700 text-sm" />
-                                </div>
                                 <div>
                                     {Number(bill.pending_amount) > 0 && (
                                         <PrimaryButtonComponent
@@ -100,7 +132,6 @@ export default function DraftBillHistroy() {
                                 />
                             </div>
                         )
-
                     }));
                     setRows(draftFormattedRows);
                 } else {
@@ -115,9 +146,8 @@ export default function DraftBillHistroy() {
             setSelectedBill(bill);
             setPendingAmount(bill.pending_amount);
             setShowPaymentPopup(true);
-        };
+        };   
     };
-
     return (
         <div>
             {loading && <Spinner />}
@@ -126,6 +156,7 @@ export default function DraftBillHistroy() {
                 <CustomTableCompoent
                     headers={BILLINGHISTORY_COLOUMNS}
                     rows={rows}
+                    onRowClick={handleRowClick}
                 />
             </div>
             {showPaymentPopup && selectedBill && (
@@ -140,7 +171,7 @@ export default function DraftBillHistroy() {
                     setCard={setCard}
                     handleCancelButton={handleCancelPopup}
                     isbillingHistory={true}
-                // handlePrintButton={handlePrintButton}
+                    handlePrintButton={handlePrintButton}
                 />
             )}
         </div>
