@@ -317,12 +317,21 @@ export default function SalesBilling() {
     const handleExportToExcel = () => {
         exportToExcel(rows, "salesbillingData.xlsx");
     };
+    const navigateAddCustomer=()=>{
+        navigate("/addcustomer")
+    }
     return (
         <div>
             {loading && <Spinner />}
             <div className="flex justify-between items-center">
                 <div className="text-xl font-serif">Sales Billing</div>
                 <div className="flex gap-4">
+                     <PrimaryButtonComponent
+                        label="Add Customer"
+                        icon="fa fa-plus"
+                        buttonClassName="py-1 px-3 text-[12px] font-semibold"
+                        onClick={navigateAddCustomer}
+                    />
                     <PrimaryButtonComponent
                         label="Billing History"
                         icon="fa fa-history"
