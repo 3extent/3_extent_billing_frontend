@@ -42,6 +42,7 @@ function SingleProductStockIn() {
     setErrors(prev => ({ ...prev, brand_name: "" }));
     setProductData(productData => ({ ...productData, brand_name: value }));
   };
+  
   const stockInCallback = (response) => {
     if (response.status === 200) {
       toast.success("Stock added successfully!", {
