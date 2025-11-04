@@ -49,7 +49,7 @@ function Supplier() {
         }
     }
     const getSupplierAllData = ({ supplierName, contactNo }) => {
-          let url = `${API_URLS.SUPPLIER}?role=SUPPLIER`;
+          let url = `${API_URLS.USERS}?role=SUPPLIER`;
         if (supplierName) {
             url += `&name=${supplierName}`
         } if (contactNo) {

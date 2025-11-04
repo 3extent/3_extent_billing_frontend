@@ -7,13 +7,13 @@ import { toast } from "react-toastify";
 import { API_URLS } from "../../../Util/AppConst";
 function AddSupplier() {
     const navigate = useNavigate();
-    const { suppiler_id } = useParams();
+    const { supplier_id } = useParams();
     const handleBack = () => {
         navigate(-1);
     };
     useEffect(() => {
         getSupplierData();
-    }, [suppiler_id])
+    }, [supplier_id])
     const [supplierData, setSupplierData] = useState({
         name: "",
         firm_name: "",
@@ -86,7 +86,7 @@ function AddSupplier() {
         if (!handleValidation()) {
             return;
         }
-        if (suppiler_id) {
+        if (supplier_id) {
             editSupplierData();
         } else {
             addSupplierData();
@@ -111,7 +111,7 @@ function AddSupplier() {
     const addSupplierData = (() => {
         apiCall({
             method: "POST",
-            url: API_URLS.SUPPLIER,
+            url: API_URLS.USERS,
             data: supplierData,
             callback: addSupplierCallback,
             setLoading: setLoading,
@@ -120,7 +120,7 @@ function AddSupplier() {
     const editSupplierData = () => {
         apiCall({
             method: "PUT",
-            url: `${API_URLS.SUPPLIER}/${suppiler_id}`,
+            url: `${API_URLS.USERS}/${supplier_id}`,
             data: supplierData,
             callback: saveCallback,
             setLoading: setLoading,
@@ -140,7 +140,7 @@ function AddSupplier() {
     const getSupplierData = () => {
         apiCall({
             method: "GET",
-            url: `${API_URLS.SUPPLIER}/${suppiler_id}`,
+            url: `${API_URLS.USERS}/${supplier_id}`,
             data: {},
             callback: getSupplierDataCallback,
             setLoading: setLoading
@@ -149,7 +149,7 @@ function AddSupplier() {
     return (
         <div className="w-full">
             {loading && <Spinner />}
-            <div className='text-xl font-serif mb-4'>{suppiler_id ? "Edit Supplier" : "Add Supplier"}</div>
+            <div className='text-xl font-serif mb-4'>{supplier_id ? "Edit Supplier" : "Add Supplier"}</div>
             <div className="grid grid-cols-2 gap-x-5 gap-y-2">
                 <InputComponent
                     label="Supplier Name"

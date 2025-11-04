@@ -98,7 +98,7 @@ export default function SalesBilling() {
         setTotalAmount(total);
     }, [rows]);
     const getCustomerAllData = () => {
-        let url=`${API_URLS.CUSTOMER}?role=CUSTOMER`
+        let url=`${API_URLS.USERS}?role=CUSTOMER`
         apiCall({
             method: 'GET',
             url: url,

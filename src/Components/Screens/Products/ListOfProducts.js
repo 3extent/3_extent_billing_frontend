@@ -37,7 +37,7 @@ function ListOfProducts() {
         getSuppliersAllData();
     }, []);
     const getSuppliersAllData = () => {
-        let url = `${API_URLS.SUPPLIER}?role=SUPPLIER`;
+        let url = `${API_URLS.USERS}?role=SUPPLIER`;
         apiCall({
             method: 'GET',
             url,

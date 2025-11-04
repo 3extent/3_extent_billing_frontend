@@ -48,7 +48,7 @@ export default function Customer() {
         }
     }
     const getCustomerAllData = ({ customerName, contactNo }) => {
-         let url = `${API_URLS.CUSTOMER}?role=CUSTOMER`;
+         let url = `${API_URLS.USERS}?role=CUSTOMER`;
         if (customerName) {
             url += `&name=${customerName}`
         } if (contactNo) {

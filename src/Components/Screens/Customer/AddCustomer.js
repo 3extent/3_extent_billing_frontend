@@ -115,7 +115,7 @@ function AddCustomer() {
     const addCustomerData = () => {
         apiCall({
             method: "POST",
-            url: API_URLS.CUSTOMER,
+            url: API_URLS.USERS,
             data: customerData,
             callback: addCustomerCallback,
             setLoading: setLoading
@@ -125,7 +125,7 @@ function AddCustomer() {
     const editCustomerData = () => {
         apiCall({
             method: "PUT",
-            url: `${API_URLS.CUSTOMER}/${customer_id}`,
+            url: `${API_URLS.USERS}/${customer_id}`,
             data: customerData,
             callback: saveCallback,
             setLoading: setLoading,
@@ -147,7 +147,7 @@ function AddCustomer() {
     const getCustomerData = () => {
         apiCall({
             method: "GET",
-            url: `${API_URLS.CUSTOMER}/${customer_id}`,
+            url: `${API_URLS.USERS}/${customer_id}`,
             data: {},
             callback: getCustomerDataCallback,
             setLoading: setLoading

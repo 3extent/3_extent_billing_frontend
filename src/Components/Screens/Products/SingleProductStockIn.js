@@ -190,7 +190,7 @@ function SingleProductStockIn() {
   const getSupplierAllData = () => {
     apiCall({
       method: 'GET',
-      url: `${API_URLS.CUSTOMER}?role=SUPPLIER`,
+      url: `${API_URLS.USERS}?role=SUPPLIER`,
       data: {},
       callback: getSupplierCallBack,
     })
