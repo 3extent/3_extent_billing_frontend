@@ -45,10 +45,9 @@ export default function SingleDraftBillHistory() {
         }
     }
     const getSingleBillHistroyAllData = (id) => {
-        let url = `${API_URLS.BILLING}/${id}`;
         apiCall({
             method: 'GET',
-            url: url,
+            url: `${API_URLS.BILLING}/${id}`,
             data: {},
             callback: getSingleDraftBillHistroyCallBack,
         })

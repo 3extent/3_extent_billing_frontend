@@ -59,10 +59,9 @@ export default function SingleBillHistory() {
         );
     }
     const getSingleBillHistroyAllData = (id) => {
-        let url = `${API_URLS.BILLING}/${id}`;
         apiCall({
             method: 'GET',
-            url: url,
+            url: `${API_URLS.BILLING}/${id}`,
             data: {},
             callback: getSingleBillHistroyCallBack,
         })

@@ -98,10 +98,9 @@ export default function SalesBilling() {
         setTotalAmount(total);
     }, [rows]);
     const getCustomerAllData = () => {
-        let url=`${API_URLS.USERS}?role=CUSTOMER`
         apiCall({
             method: 'GET',
-            url: url,
+            url: `${API_URLS.USERS}?role=CUSTOMER`,
             data: {},
             callback: getCustomersCallback,
             setLoading: setLoading

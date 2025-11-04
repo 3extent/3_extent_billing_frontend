@@ -50,7 +50,7 @@ export default function Models() {
         }
     }
     const getModelsAllData = ({ brandName, modelName }) => {
-         let url =  API_URLS.MODEL;
+         let url =  `${API_URLS.MODEL}?`;
         if (modelName) {
             url += `&modelName=${modelName}`
         }
@@ -66,10 +66,9 @@ export default function Models() {
         })
     }
     const getBrandsAllData = () => {
-        let url =  API_URLS.BRANDS;
         apiCall({
             method: 'GET',
-            url: url,
+            url:  API_URLS.BRANDS,
             data: {},
             callback: getBrandsCallBack,
         })

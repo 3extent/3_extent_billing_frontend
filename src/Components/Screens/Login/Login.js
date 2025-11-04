@@ -34,10 +34,9 @@ export default function Login({ onLoginSuccess }) {
         }
     }
     const handleLogin = () => {
-         let url =  API_URLS.LOGIN;
         apiCall({
             method: 'POST',
-            url: url,
+            url: API_URLS.LOGIN,
             data: loginFormData,
             callback: getLoginCallBack,
             setLoading: setLoading

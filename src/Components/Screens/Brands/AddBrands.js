@@ -81,10 +81,9 @@ export default function AddBrands() {
         };
     }
     const addBrandData = () => {
-        let url = API_URLS.BRANDS;
         apiCall({
             method: "POST",
-            url: url,
+            url: API_URLS.BRANDS,
             data: brandData,
             callback: addBrandCallback,
             setLoading: setLoading,

@@ -16,7 +16,9 @@ export default function AddModels() {
         getBrandsAllData();
     }, [])
     useEffect(() => {
-        getModelData();
+        if (model_id) {
+            getModelData();
+        }
     }, [model_id]);
     const [brandOptions, setBrandOptions] = useState([]);
     const [possibleCombinations, setPossibleCombinations] = useState([]);
@@ -147,10 +149,9 @@ export default function AddModels() {
         }
     };
     const getBrandsAllData = () => {
-        let url = API_URLS.BRANDS;
         apiCall({
             method: 'GET',
-            url: url,
+            url: API_URLS.BRANDS,
             data: {},
             callback: getBrandsCallBack,
         })
@@ -185,10 +186,9 @@ export default function AddModels() {
         const ramStorageData = modelData.RAM.trim()
             ? selectedCombinations
             : modelData.storage.split(",").map(storage => ({ ram: "", storage: storage.trim() }));
-        let url = API_URLS.MODEL;
         apiCall({
             method: "POST",
-            url: url,
+            url: API_URLS.MODEL,
             data: {
                 brand_name: modelData.brand_name,
                 name: modelData.name,
@@ -332,17 +332,15 @@ export default function AddModels() {
                     )}
                 </>
             )}
-            <div className="flex justify-center mt-3">
+            <div className="flex justify-center mt-10 gap-5">
                 <PrimaryButtonComponent
                     label="Back"
                     icon="fa fa-arrow-left"
-                    buttonClassName="mt-2 py-1 px-5 mr-10 text-xl font-bold"
                     onClick={handleBack}
                 />
                 <PrimaryButtonComponent
                     label="Submit"
                     icon="fa fa-bookmark-o"
-                    buttonClassName="mt-2 py-1 px-5 text-xl font-bold"
                     onClick={saveModel}
                 />
             </div>
