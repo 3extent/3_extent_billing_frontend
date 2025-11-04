@@ -25,6 +25,7 @@ export default function Customer() {
             const customerFormttedRows = response.data.map((customer) => ({
                 "Customer Name": customer.name,
                 "Contact No": customer.contact_number,
+                "Firm Name": customer.firm_name,
                 "Address": customer.address,
                 "State": customer.state,
                 "GST No": customer.gst_number,
@@ -48,7 +49,7 @@ export default function Customer() {
         }
     }
     const getCustomerAllData = ({ customerName, contactNo }) => {
-         let url = `${API_URLS.USERS}?role=CUSTOMER`;
+        let url = `${API_URLS.USERS}?role=CUSTOMER`;
         if (customerName) {
             url += `&name=${customerName}`
         } if (contactNo) {
