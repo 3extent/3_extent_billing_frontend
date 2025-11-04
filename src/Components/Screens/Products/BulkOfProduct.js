@@ -109,7 +109,7 @@ function BulkOfProduct() {
 
             </div>
             {showTable && excelData.length > 0 && (
-                <div className="mt-6">
+                <div className="mt-6  border border-gray-200 rounded max-h-[60vh] overflow-y-auto">
                     <CustomTableCompoent headers={tableHeaders} rows={excelData} />
                 </div>
             )}
