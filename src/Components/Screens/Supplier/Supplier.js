@@ -6,6 +6,7 @@ import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
+import { API_URLS } from "../../../Util/AppConst";
 function Supplier() {
     const [rows, setRows] = useState([]);
     const navigate = useNavigate();
@@ -48,7 +49,7 @@ function Supplier() {
         }
     }
     const getSupplierAllData = ({ supplierName, contactNo }) => {
-        let url = "https://3-extent-billing-backend.vercel.app/api/users?role=SUPPLIER"
+          let url = `${API_URLS.SUPPLIER}?role=SUPPLIER`;
         if (supplierName) {
             url += `&name=${supplierName}`
         } if (contactNo) {

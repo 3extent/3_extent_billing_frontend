@@ -4,6 +4,7 @@ import InputComponent from "../../CustomComponents/InputComponent/InputComponent
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { API_URLS } from "../../../Util/AppConst";
 function AddCustomer() {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -52,7 +53,7 @@ function AddCustomer() {
                 role: "CUSTOMER",
             });
             setTimeout(() => {
-                navigate(-1);
+                navigate("/customer");
             }, 2000);
         } else {
             const errorMsg = response?.data?.error || "Failed to add customer";
@@ -61,7 +62,7 @@ function AddCustomer() {
                 autoClose: 2000,
             });
             setTimeout(() => {
-                navigate(-1);
+                navigate("/customer");
             }, 2000);
         }
     };
@@ -71,7 +72,7 @@ function AddCustomer() {
                 position: "top-center",
                 autoClose: 2000,
             });
-            navigate(-1);
+            navigate("/customer");
         } else {
             const errorMsg = response?.data?.error || "Failed to update customer";
             toast.error(errorMsg, {
@@ -114,7 +115,7 @@ function AddCustomer() {
     const addCustomerData = () => {
         apiCall({
             method: "POST",
-            url: "https://3-extent-billing-backend.vercel.app/api/users",
+            url: API_URLS.CUSTOMER,
             data: customerData,
             callback: addCustomerCallback,
             setLoading: setLoading
@@ -124,7 +125,7 @@ function AddCustomer() {
     const editCustomerData = () => {
         apiCall({
             method: "PUT",
-            url: `https://3-extent-billing-backend.vercel.app/api/users/${customer_id}`,
+            url: `${API_URLS.CUSTOMER}/${customer_id}`,
             data: customerData,
             callback: saveCallback,
             setLoading: setLoading,
@@ -146,7 +147,7 @@ function AddCustomer() {
     const getCustomerData = () => {
         apiCall({
             method: "GET",
-            url: `https://3-extent-billing-backend.vercel.app/api/users/${customer_id}`,
+            url: `${API_URLS.CUSTOMER}/${customer_id}`,
             data: {},
             callback: getCustomerDataCallback,
             setLoading: setLoading

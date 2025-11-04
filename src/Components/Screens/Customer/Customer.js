@@ -6,6 +6,7 @@ import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
+import { API_URLS } from "../../../Util/AppConst";
 export default function Customer() {
     const navigate = useNavigate();
     const [customerName, setCustomerName] = useState();
@@ -47,7 +48,7 @@ export default function Customer() {
         }
     }
     const getCustomerAllData = ({ customerName, contactNo }) => {
-        let url = 'https://3-extent-billing-backend.vercel.app/api/users?role=CUSTOMER';
+         let url = `${API_URLS.CUSTOMER}?role=CUSTOMER`;
         if (customerName) {
             url += `&name=${customerName}`
         } if (contactNo) {

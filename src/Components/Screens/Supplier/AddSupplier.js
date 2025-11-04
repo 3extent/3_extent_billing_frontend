@@ -4,6 +4,7 @@ import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponen
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { API_URLS } from "../../../Util/AppConst";
 function AddSupplier() {
     const navigate = useNavigate();
     const { suppiler_id } = useParams();
@@ -110,7 +111,7 @@ function AddSupplier() {
     const addSupplierData = (() => {
         apiCall({
             method: "POST",
-            url: "https://3-extent-billing-backend.vercel.app/api/users",
+            url: API_URLS.SUPPLIER,
             data: supplierData,
             callback: addSupplierCallback,
             setLoading: setLoading,
@@ -119,7 +120,7 @@ function AddSupplier() {
     const editSupplierData = () => {
         apiCall({
             method: "PUT",
-            url: `https://3-extent-billing-backend.vercel.app/api/users/${suppiler_id}`,
+            url: `${API_URLS.SUPPLIER}/${suppiler_id}`,
             data: supplierData,
             callback: saveCallback,
             setLoading: setLoading,
@@ -139,7 +140,7 @@ function AddSupplier() {
     const getSupplierData = () => {
         apiCall({
             method: "GET",
-            url: `https://3-extent-billing-backend.vercel.app/api/users/${suppiler_id}`,
+            url: `${API_URLS.SUPPLIER}/${suppiler_id}`,
             data: {},
             callback: getSupplierDataCallback,
             setLoading: setLoading
