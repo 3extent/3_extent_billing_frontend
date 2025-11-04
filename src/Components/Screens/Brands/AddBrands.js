@@ -5,6 +5,7 @@ import InputComponent from "../../CustomComponents/InputComponent/InputComponent
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { API_URLS } from "../../../Util/AppConst";
 export default function AddBrands() {
     const navigate = useNavigate();
     const { brand_id } = useParams();
@@ -80,9 +81,10 @@ export default function AddBrands() {
         };
     }
     const addBrandData = () => {
+        let url = API_URLS.BRANDS;
         apiCall({
             method: "POST",
-            url: "https://3-extent-billing-backend.vercel.app/api/brands",
+            url: url,
             data: brandData,
             callback: addBrandCallback,
             setLoading: setLoading,
@@ -91,7 +93,7 @@ export default function AddBrands() {
     const editBrandData = () => {
         apiCall({
             method: "PUT",
-            url: `https://3-extent-billing-backend.vercel.app/api/brands/${brand_id}`,
+            url: `${API_URLS.BRANDS}/${brand_id}`,
             data: brandData,
             callback: submitCallback,
             setLoading: setLoading
@@ -100,7 +102,7 @@ export default function AddBrands() {
     const getBrandData = () => {
         apiCall({
             method: "GET",
-            url: `https://3-extent-billing-backend.vercel.app/api/brands/${brand_id}`,
+            url: `${API_URLS.BRANDS}/${brand_id}`,
             data: {},
             callback: (response) => {
                 if (response.status === 200) {
@@ -134,7 +136,7 @@ export default function AddBrands() {
             <div className="flex mt-10 gap-5">
                 <PrimaryButtonComponent
                     label="Back"
-                    icon="fa fa-arrow-left"        
+                    icon="fa fa-arrow-left"
                     onClick={handleBack}
                 />
                 <PrimaryButtonComponent

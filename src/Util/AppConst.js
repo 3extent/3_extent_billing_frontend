@@ -3,8 +3,9 @@ export const API_URLS = {
   BRANDS: `${BASE_URL}/brands`,
   MODEL: `${BASE_URL}/models?`,
   LOGIN: `${BASE_URL}/users/login`,
-  CUSTOMER: `${BASE_URL}/users`,
+  CUSTOMERS: `${BASE_URL}/users`,
   SUPPLIER: `${BASE_URL}/users`,
   PRODUCTS: `${BASE_URL}/products`,
+  BILLING: `${BASE_URL}/billings`,
 
 };

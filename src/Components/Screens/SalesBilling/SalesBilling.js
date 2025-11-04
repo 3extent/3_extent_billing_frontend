@@ -10,6 +10,7 @@ import { exportToExcel, generateAndSavePdf } from "../../../Util/Utility";
 import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
 import moment from "moment";
 import { toast } from "react-toastify";
+import { API_URLS } from "../../../Util/AppConst";
 export default function SalesBilling() {
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -97,7 +98,7 @@ export default function SalesBilling() {
         setTotalAmount(total);
     }, [rows]);
     const getCustomerAllData = () => {
-        const url = 'https://3-extent-billing-backend.vercel.app/api/users?role=CUSTOMER';
+        let url=`${API_URLS.CUSTOMER}?role=CUSTOMER`
         apiCall({
             method: 'GET',
             url: url,
@@ -129,7 +130,7 @@ export default function SalesBilling() {
         }
     };
     const getAllImeis = () => {
-        const url = "https://3-extent-billing-backend.vercel.app/api/products?status=AVAILABLE,RETURN";
+        let url = `${API_URLS.PRODUCTS}?status=AVAILABLE,RETURN`;
         apiCall({
             method: "GET",
             url: url,
@@ -200,7 +201,7 @@ export default function SalesBilling() {
         }
     }
     const getsalesbillingAllData = () => {
-        let url = 'https://3-extent-billing-backend.vercel.app/api/products?';
+        let url = `${API_URLS.PRODUCTS}?` ;
         if (selectedImei) {
             url += `&imei_number=${selectedImei}`
         }
@@ -285,7 +286,7 @@ export default function SalesBilling() {
         };
         apiCall({
             method: 'POST',
-            url: 'https://3-extent-billing-backend.vercel.app/api/billings',
+            url: API_URLS.BILLING,
             data: billsData,
             callback: billsCallback,
         })
@@ -332,7 +333,7 @@ export default function SalesBilling() {
         };
         apiCall({
             method: 'POST',
-            url: 'https://3-extent-billing-backend.vercel.app/api/billings',
+            url: API_URLS.BILLING,
             data: billsData,
             callback: draftCallback,
         })

@@ -45,7 +45,7 @@ function Brands() {
         }
     }
     const getBrandsAllData = ({ brandName }) => {
-        let url =  API_URLS.BRANDS;
+        let url = API_URLS.BRANDS;
         if (brandName) {
             url += `?name=${brandName}`
         }
