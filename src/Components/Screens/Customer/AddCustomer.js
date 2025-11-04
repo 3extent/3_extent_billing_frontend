@@ -53,7 +53,7 @@ function AddCustomer() {
                 role: "CUSTOMER",
             });
             setTimeout(() => {
-                navigate("/customer");
+                navigate(-1);
             }, 2000);
         } else {
             const errorMsg = response?.data?.error || "Failed to add customer";
@@ -62,7 +62,7 @@ function AddCustomer() {
                 autoClose: 2000,
             });
             setTimeout(() => {
-                navigate("/customer");
+                navigate(-1);
             }, 2000);
         }
     };
@@ -72,7 +72,7 @@ function AddCustomer() {
                 position: "top-center",
                 autoClose: 2000,
             });
-            navigate("/customer");
+            navigate(-1);
         } else {
             const errorMsg = response?.data?.error || "Failed to update customer";
             toast.error(errorMsg, {
