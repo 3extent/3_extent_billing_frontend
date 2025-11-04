@@ -7,6 +7,7 @@ import InputComponent from '../../CustomComponents/InputComponent/InputComponent
 import { apiCall } from '../../../Util/AxiosUtils';
 import { excelDownload, handleBarcodePrint } from '../../../Util/Utility';
 import { toast } from 'react-toastify';
+import { API_URLS } from '../../../Util/AppConst';
 function BulkOfProduct() {
     const [excelData, setExcelData] = useState([]);
     const [showTable, setShowTable] = useState(false);
@@ -31,7 +32,7 @@ function BulkOfProduct() {
         }));
         apiCall({
             method: "POST",
-            url: "https://3-extent-billing-backend.vercel.app/api/products/bulk",
+            url: `${API_URLS.PRODUCTS}/bulk`,
             data: bulkOfProductformatteddata,
             callback: stockInCallback,
         });

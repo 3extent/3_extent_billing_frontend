@@ -8,6 +8,7 @@ import { apiCall, Spinner } from '../../../Util/AxiosUtils';
 import { handleBarcodePrint } from '../../../Util/Utility';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { API_URLS } from '../../../Util/AppConst';
 function SingleProductStockIn() {
   const [modelOptions, setModelOptions] = useState([]);
   const [brandOptions, setBrandOptions] = useState([]);
@@ -84,10 +85,9 @@ function SingleProductStockIn() {
     }
   }, [product_id]);
   const getModelsAllData = () => {
-    let url = "https://3-extent-billing-backend.vercel.app/api/models";
     apiCall({
       method: 'GET',
-      url: url,
+      url: API_URLS.MODEL,
       data: {},
       callback: getModelsCallBack,
     })
@@ -103,10 +103,9 @@ function SingleProductStockIn() {
     }
   }
   const getBrandsAllData = () => {
-    let url = "https://3-extent-billing-backend.vercel.app/api/brands";
     apiCall({
       method: 'GET',
-      url: url,
+      url: API_URLS.BRANDS,
       data: {},
       callback: getBrandsCallBack,
     })
@@ -139,7 +138,7 @@ function SingleProductStockIn() {
   const deleteProduct = () => {
     apiCall({
       method: "DELETE",
-      url: `https://3-extent-billing-backend.vercel.app/api/products/${product_id}`,
+      url: `${API_URLS.PRODUCTS}/${product_id}`,
       data: {},
       callback: deleteCallback,
       setLoading: setLoading
@@ -189,10 +188,9 @@ function SingleProductStockIn() {
     }
   }
   const getSupplierAllData = () => {
-    let url = "https://3-extent-billing-backend.vercel.app/api/users?role=SUPPLIER";
     apiCall({
       method: 'GET',
-      url: url,
+      url: `${API_URLS.USERS}?role=SUPPLIER`,
       data: {},
       callback: getSupplierCallBack,
     })
@@ -216,7 +214,7 @@ function SingleProductStockIn() {
   const addProductData = () => {
     apiCall({
       method: "POST",
-      url: "https://3-extent-billing-backend.vercel.app/api/products",
+      url: API_URLS.PRODUCTS,
       data: productData,
       callback: stockInCallback,
       setLoading: setLoading
@@ -225,7 +223,7 @@ function SingleProductStockIn() {
   const editProductData = () => {
     apiCall({
       method: "PUT",
-      url: `https://3-extent-billing-backend.vercel.app/api/products/${product_id}`,
+      url: `${API_URLS.PRODUCTS}/${product_id}`,
       data: productData,
       callback: saveProductCallback,
       setLoading: setLoading,
@@ -234,7 +232,7 @@ function SingleProductStockIn() {
   const getProductCallback = (response) => {
     if (response.status === 200) {
       setProductData({
-        brand_name:response.data.model.brand.name, model_name: response.data.model.name, imei_number: response.data.imei_number,
+        brand_name: response.data.model.brand.name, model_name: response.data.model.name, imei_number: response.data.imei_number,
         sales_price: response.data.sales_price, purchase_price: response.data.purchase_price,
         grade: response.data.grade, engineer_name: response.data.engineer_name, accessories: response.data.accessories,
         supplier_name: response.data.supplier.name, qc_remark: response.data.qc_remark, status: response.data.status
@@ -246,7 +244,7 @@ function SingleProductStockIn() {
   const getProductData = () => {
     apiCall({
       method: 'GET',
-      url: `https://3-extent-billing-backend.vercel.app/api/products/${product_id}`,
+      url: `${API_URLS.PRODUCTS}/${product_id}`,
       data: {},
       callback: getProductCallback,
       setLoading: setLoading,
