@@ -5,6 +5,7 @@ import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponen
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate, useParams, } from "react-router-dom";
 import { toast } from "react-toastify";
+import { API_URLS } from "../../../Util/AppConst";
 export default function AddModels() {
     const navigate = useNavigate();
     const { model_id } = useParams();
@@ -146,7 +147,7 @@ export default function AddModels() {
         }
     };
     const getBrandsAllData = () => {
-        let url = "https://3-extent-billing-backend.vercel.app/api/brands";
+         let url =  API_URLS.BRANDS;
         apiCall({
             method: 'GET',
             url: url,
