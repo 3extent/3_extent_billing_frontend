@@ -147,7 +147,7 @@ export default function AddModels() {
         }
     };
     const getBrandsAllData = () => {
-         let url =  API_URLS.BRANDS;
+        let url = API_URLS.BRANDS;
         apiCall({
             method: 'GET',
             url: url,
@@ -185,9 +185,10 @@ export default function AddModels() {
         const ramStorageData = modelData.RAM.trim()
             ? selectedCombinations
             : modelData.storage.split(",").map(storage => ({ ram: "", storage: storage.trim() }));
+        let url = API_URLS.MODEL;
         apiCall({
             method: "POST",
-            url: "https://3-extent-billing-backend.vercel.app/api/models",
+            url: url,
             data: {
                 brand_name: modelData.brand_name,
                 name: modelData.name,
@@ -200,7 +201,7 @@ export default function AddModels() {
     const editModelData = () => {
         apiCall({
             method: "PUT",
-            url: `https://3-extent-billing-backend.vercel.app/api/models/${model_id}`,
+            url: `${API_URLS.MODEL}/${model_id}`,
             data: {
                 brand_name: modelData.brand_name,
                 name: modelData.name,
@@ -212,7 +213,7 @@ export default function AddModels() {
     const getModelData = () => {
         apiCall({
             method: "GET",
-            url: `https://3-extent-billing-backend.vercel.app/api/models/${model_id}`,
+            url: `${API_URLS.MODEL}/${model_id}`,
             data: {},
             callback: (response) => {
                 setLoading(false);

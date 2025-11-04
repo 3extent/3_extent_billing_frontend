@@ -6,6 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { generateAndSavePdf } from "../../../Util/Utility";
+import { API_URLS } from "../../../Util/AppConst";
 export default function SingleBillHistory() {
     const { billId } = useParams();
     const navigate = useNavigate();
@@ -58,7 +59,7 @@ export default function SingleBillHistory() {
         );
     }
     const getSingleBillHistroyAllData = (id) => {
-        let url = `https://3-extent-billing-backend.vercel.app/api/billings/${id}`;
+        let url = `${API_URLS.BILLING}/${id}`;
         apiCall({
             method: 'GET',
             url: url,

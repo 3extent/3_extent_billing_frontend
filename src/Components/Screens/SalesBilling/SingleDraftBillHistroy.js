@@ -5,6 +5,7 @@ import moment from "moment";
 import { apiCall } from "../../../Util/AxiosUtils";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
+import { API_URLS } from "../../../Util/AppConst";
 export default function SingleDraftBillHistory() {
     const { draftBillId } = useParams();
     const navigate = useNavigate();
@@ -44,7 +45,7 @@ export default function SingleDraftBillHistory() {
         }
     }
     const getSingleBillHistroyAllData = (id) => {
-        let url = `https://3-extent-billing-backend.vercel.app/api/billings/${id}`;
+        let url = `${API_URLS.BILLING}/${id}`;
         apiCall({
             method: 'GET',
             url: url,
