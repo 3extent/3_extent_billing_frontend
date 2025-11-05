@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { SINGLEBILLHISTORY_COLOUMNS } from "./Constants";
 import { useEffect, useState } from "react";
 import moment from "moment";
-import { apiCall } from "../../../Util/AxiosUtils";
+import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import { API_URLS } from "../../../Util/AppConst";
@@ -11,6 +11,7 @@ export default function SingleDraftBillHistory() {
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
     const [customerInfo, setCustomerInfo] = useState();
+    const [loading, setLoading] = useState(false);
     useEffect(() => {
         if (draftBillId) {
             getSingleBillHistroyAllData(draftBillId);
@@ -50,6 +51,7 @@ export default function SingleDraftBillHistory() {
             url: `${API_URLS.BILLING}/${id}`,
             data: {},
             callback: getSingleDraftBillHistroyCallBack,
+            setLoading: setLoading
         })
     };
     const handleNavigateDraftedBillHistroy = () => {
@@ -57,6 +59,7 @@ export default function SingleDraftBillHistory() {
     }
     return (
         <div>
+            {loading && <Spinner />}
             <div className="flex justify-between items-center">
                 <div className="text-xl font-serif">Details Of Drafted Bill</div>
                 <div className="flex gap-4">
