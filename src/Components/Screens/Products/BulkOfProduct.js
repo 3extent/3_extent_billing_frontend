@@ -5,7 +5,7 @@ import CustomTableCompoent from '../../CustomComponents/CustomTableCompoent/Cust
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
 import InputComponent from '../../CustomComponents/InputComponent/InputComponent';
 import { apiCall } from '../../../Util/AxiosUtils';
-import { excelDownload, handleBarcodePrint } from '../../../Util/Utility';
+import { handleBarcodePrint } from '../../../Util/Utility';
 import { toast } from 'react-toastify';
 import { API_URLS } from '../../../Util/AppConst';
 function BulkOfProduct() {
@@ -57,9 +57,6 @@ function BulkOfProduct() {
             });
         }
     };
-    const handleDownloadExcel = () => {
-        excelDownload();
-    }
     const handleResetData = () => {
         setExcelData([]);
         setShowTable(false);
@@ -109,21 +106,18 @@ function BulkOfProduct() {
 
             </div>
             {showTable && excelData.length > 0 && (
-                <div className="mt-6  border border-gray-200 rounded max-h-[60vh] overflow-y-auto">
+                <div className=" mt-6 h-[44vh]">
                     <CustomTableCompoent headers={tableHeaders} rows={excelData} />
                 </div>
             )}
             <div className='flex justify-center gap-4 mt-10'>
-                <PrimaryButtonComponent
-                    label="Save"
-                    icon="fa fa-save"
-                    onClick={handleAddProductData}
-                />
-                <PrimaryButtonComponent
-                    label="Download"
-                    icon="fa fa-download"
-                    onClick={handleDownloadExcel}
-                />
+                {excelData.length > 0 && (
+                    <PrimaryButtonComponent
+                        label="Save"
+                        icon="fa fa-save"
+                        onClick={handleAddProductData}
+                    />
+                )}
             </div>
         </div>
     );
