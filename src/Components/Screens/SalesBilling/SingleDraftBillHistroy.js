@@ -23,7 +23,11 @@ export default function SingleDraftBillHistory() {
             if (index !== -1) {
                 updatedRows.splice(index, 1);
             }
-            return updatedRows;
+            const newRows = updatedRows.map((row, index) => ({
+                ...row,
+                "Sr.No": index + 1,
+            }));
+            return newRows;
         });
     };
 
