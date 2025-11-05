@@ -37,6 +37,7 @@ export default function SingleBillHistory() {
                 "Brand": product.model.brand?.name,
                 "Model": product.model?.name,
                 "Rate": product.sales_price,
+                "Purchase Price": product.purchase_price,
                 "QC-Remark": product.qc_remark,
                 "Grade": product.grade,
                 "Accessories": product.accessories,
