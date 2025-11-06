@@ -13,9 +13,6 @@ function StockIn() {
     const handleInputChange = (event) => {
         setStockType(event.target.value);
     };
-    const handleDownloadExcel = () => {
-        excelDownload();
-    }
     return (
         <div className='w-full p-4'>
             <div className="flex justify-between items-center mb-4">
@@ -24,7 +21,7 @@ function StockIn() {
                     <CustomHeaderComponent
                         label="Sample file"
                         icon="fa fa-download"
-                        onClick={handleDownloadExcel}
+                        onClick={excelDownload}
                         buttonClassName="py-1 px-3 text-sm font-bold"
                     />
                 )}
