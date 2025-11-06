@@ -83,7 +83,13 @@ function ListOfProducts() {
                             label="Barcode"
                             icon="fa fa-print"
                             buttonClassName="py-1 px-3 text-[12px] font-semibold"
-                            onClick={() => handleBarcodePrint({ modelName: product.model.name, grade: product.grade, imei_number: product.imei_number })}
+                            onClick={
+                                // () => handleBarcodePrint([{ modelName: product.model.name, grade: product.grade, imei_number: product.imei_number }])
+                                () => handleBarcodePrint([
+                                    { imei_number: "123456789012345", Brand: "Apple", modelName: "iPhone 12", grade: "A" },
+                                    { imei_number: "987654321098765", Brand: "Samsung", modelName: "S21", grade: "B" },
+                                ])
+                            }
                         />
 
                     </div>

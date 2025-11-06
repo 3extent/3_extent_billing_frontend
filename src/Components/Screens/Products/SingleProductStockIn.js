@@ -62,7 +62,7 @@ function SingleProductStockIn() {
         accessories: '',
         status: ''
       });
-      handleBarcodePrint({ modelName: productData.model_name, grade: productData.grade, imei_number: productData.imei_number })
+      handleBarcodePrint([{ modelName: productData.model_name, grade: productData.grade, imei_number: productData.imei_number }])
       setTimeout(() => {
         navigate("/products");
       }, 2000);

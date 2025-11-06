@@ -1,4 +1,4 @@
-const BASE_URL = "https://3-extent-billing-backend-dev.vercel.app/api";
+const BASE_URL = "http://localhost:5000/api";
 export const API_URLS = {
   BRANDS: `${BASE_URL}/brands`,
   MODEL: `${BASE_URL}/models`,
@@ -6,5 +6,4 @@ export const API_URLS = {
   USERS: `${BASE_URL}/users`,
   PRODUCTS: `${BASE_URL}/products`,
   BILLING: `${BASE_URL}/billings`,
-
 };

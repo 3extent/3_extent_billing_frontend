@@ -13,7 +13,7 @@ export const exportToExcel = async (data, fileName = "StyledData.xlsx") => {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet("Sheet1");
   const headers = Object.keys(data[0]).filter(
-    (header) => !["id", "Supplier", "Actions","Action"].includes(header)
+    (header) => !["id", "Supplier", "Actions", "Action"].includes(header)
   );
   // 1 & 2: Merged title rows
   const title = "3 EXTENT";
@@ -194,7 +194,7 @@ export const generateAndSavePdf = (
       align: "right",
     });
     // date
-     doc.text(
+    doc.text(
       now.toLocaleDateString("en-GB"),
       pageWidth - 14,
       18,
@@ -357,7 +357,7 @@ export const generateAndSavePdf = (
 export const excelDownload = () => {
   // Define headers
   const headers = [
-    ["Brand Name","Model Name", "IMEI", "Purchase Price", "Sales Price", "Engineer Name", "QC Remark", "Supplier", "Accessories", "Grade"]
+    ["Brand Name", "Model Name", "IMEI", "Purchase Price", "Sales Price", "Engineer Name", "QC Remark", "Supplier", "Accessories", "Grade"]
   ];
 
   // Create worksheet from headers
@@ -387,6 +387,8 @@ export const excelDownload = () => {
 
 export const handleBarcodePrint = (product) => {
   const win = window.open('', '', 'height=800,width=600');
+  const safeData = JSON.stringify(product);
+
   win.document.write(`
     <html>
       <head>
@@ -436,17 +438,41 @@ export const handleBarcodePrint = (product) => {
         </div>
         <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
         <script>
-          JsBarcode("#barcode", "${product.imei_number}", {
-            format: 'CODE128',
-            lineColor: '#000',
-            width: 2,
-            height: 40,
-            displayValue: true,
-            fontSize: 30
-          });
-          window.onload = function() {
-            window.print();
-          };
+          (function(){
+            try {
+              var data = ${safeData};
+              var container = document.getElementById('barcodes');
+              data.forEach(function(item, idx){
+                // Support either flat or nested model fields
+                var code = String(item.imei_number || item.imei || item.code || '');
+                if (!code) return;
+                var modelName = item.modelName || (item.model && item.model.name) || '';
+                var brandName = (item.Brand || (item.model && item.model.brand && item.model.brand.name)) || '';
+                var grade = item.grade || '';
+
+                var wrapper = document.createElement('div');
+                wrapper.className = 'item';
+                var svgId = 'bc_' + idx;
+                wrapper.innerHTML = '<p class="title">' + (brandName ? (brandName + ' ') : '') + (modelName || '') + '</p>' +
+                  (grade ? ('<p class="meta">Grade: ' + grade + '</p>') : '') +
+                  '<svg id="' + svgId + '"></svg>';
+                container.appendChild(wrapper);
+                JsBarcode('#' + svgId, code, {
+                  format: 'CODE128',
+                  lineColor: '#000',
+                  width: 2,
+                  height: 60,
+                  displayValue: true,
+                  fontSize: 12,
+                  textMargin: 2,
+                });
+              });
+              window.onload = function(){ window.print(); };
+            } catch (e) {
+              console.error(e);
+              alert('Failed to render barcodes');
+            }
+          })();
         </script>
       </body>
     </html>
