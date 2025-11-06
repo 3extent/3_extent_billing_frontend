@@ -45,7 +45,11 @@ export default function SalesBilling() {
             if (index !== -1) {
                 updatedRows.splice(index, 1);
             }
-            return updatedRows;
+            const newRows = updatedRows.map((row, index) => ({
+                ...row,
+                "Sr.No": index + 1,
+            }));
+            return newRows;
         });
     };
 
@@ -200,7 +204,7 @@ export default function SalesBilling() {
         }
     }
     const getsalesbillingAllData = () => {
-        let url = `${API_URLS.PRODUCTS}?` ;
+        let url = `${API_URLS.PRODUCTS}?`;
         if (selectedImei) {
             url += `&imei_number=${selectedImei}`
         }
@@ -341,7 +345,7 @@ export default function SalesBilling() {
     const handleExportToExcel = () => {
         exportToExcel(rows, "salesbillingData.xlsx");
     };
-    const navigateAddCustomer=()=>{
+    const navigateAddCustomer = () => {
         navigate("/addcustomer")
     }
     return (
@@ -350,7 +354,7 @@ export default function SalesBilling() {
             <div className="flex justify-between items-center">
                 <div className="text-xl font-serif">Sales Billing</div>
                 <div className="flex gap-4">
-                     <PrimaryButtonComponent
+                    <PrimaryButtonComponent
                         label="Add Customer"
                         icon="fa fa-plus"
                         buttonClassName="py-1 px-3 text-[12px] font-semibold"
