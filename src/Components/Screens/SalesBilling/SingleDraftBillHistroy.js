@@ -17,6 +17,21 @@ export default function SingleDraftBillHistory() {
             getSingleBillHistroyAllData(draftBillId);
         }
     }, [draftBillId]);
+    const handleDeleteRow = (imeiNumber) => {
+        setRows((currentRows) => {
+            const updatedRows = [...currentRows];
+            const index = updatedRows.findIndex(row => row["IMEI NO"] === imeiNumber);
+            if (index !== -1) {
+                updatedRows.splice(index, 1);
+            }
+            const newRows = updatedRows.map((row, index) => ({
+                ...row,
+                "Sr.No": index + 1,
+            }));
+            return newRows;
+        });
+    };
+
     const getSingleDraftBillHistroyCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
@@ -39,6 +54,17 @@ export default function SingleDraftBillHistory() {
                 "QC-Remark": product.qc_remark,
                 "Grade": product.grade,
                 "Accessories": product.accessories,
+                "Action": (
+                    <div className="flex justify-end">
+                        <div
+                            title="delete"
+                            onClick={() => handleDeleteRow(product.imei_number)}
+                            className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
+                        >
+                            <i className="fa fa-trash text-gray-700 text-sm" />
+                        </div>
+                    </div>
+                ),
             }));
             setRows(singleBillHistrotFormattedRows);
         } else {
