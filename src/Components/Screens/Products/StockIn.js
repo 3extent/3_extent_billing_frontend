@@ -20,7 +20,7 @@ function StockIn() {
         <div className='w-full p-4'>
             <div className="flex justify-between items-center mb-4">
                 <div className='text-xl font-serif'>{product_id ? "Edit Product" : "Add Product"}</div>
-                {!product_id && (
+                {!product_id && stockType !== 'Single Product' && (
                     <CustomHeaderComponent
                         label="Sample file"
                         icon="fa fa-download"
