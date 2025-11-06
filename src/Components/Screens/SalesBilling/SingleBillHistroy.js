@@ -37,7 +37,8 @@ export default function SingleBillHistory() {
                 "IMEI NO": product.imei_number,
                 "Brand": product.model.brand?.name,
                 "Model": product.model?.name,
-                "Rate": product.sales_price,
+                "Rate": product.sold_at_price,
+                "Sale Price": product.sales_price,
                 "Purchase Price": product.purchase_price,
                 "QC-Remark": product.qc_remark,
                 "Grade": product.grade,
@@ -74,7 +75,7 @@ export default function SingleBillHistory() {
     }
     return (
         <div>
-             {loading && <Spinner />}
+            {loading && <Spinner />}
             <div className="flex justify-between items-center">
                 <div className="text-xl font-serif">Details of bill</div>
                 <div className="flex gap-4">
