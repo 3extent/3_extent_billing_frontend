@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import { SINGLEBILLHISTORY_COLOUMNS } from "./Constants";
-import { apiCall } from "../../../Util/AxiosUtils";
+import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
@@ -13,6 +13,7 @@ export default function SingleBillHistory() {
     const [rows, setRows] = useState([]);
     const [singleBill, setSingleBill] = useState([])
     const [customerInfo, setCustomerInfo] = useState();
+    const [loading, setLoading] = useState(false);
     useEffect(() => {
         if (billId) {
             getSingleBillHistroyAllData(billId);
@@ -65,6 +66,7 @@ export default function SingleBillHistory() {
             url: `${API_URLS.BILLING}/${id}`,
             data: {},
             callback: getSingleBillHistroyCallBack,
+            setLoading: setLoading
         })
     };
     const handleNavigateBillHistroy = () => {
@@ -72,6 +74,7 @@ export default function SingleBillHistory() {
     }
     return (
         <div>
+             {loading && <Spinner />}
             <div className="flex justify-between items-center">
                 <div className="text-xl font-serif">Details of bill</div>
                 <div className="flex gap-4">
