@@ -288,6 +288,7 @@ export default function SalesBilling() {
             url: API_URLS.BILLING,
             data: billsData,
             callback: billsCallback,
+            setLoading:setLoading
         })
     };
     const draftCallback = (response) => {
