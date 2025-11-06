@@ -55,6 +55,7 @@ function Billinghistory() {
                 "Total Amount": bill.payable_amount,
                 "Remaining Amount": bill.pending_amount,
                 "Profit": bill.profit,
+                "Total Products": bill.products.length,
                 _id: bill._id,
                 "Actions": (
                     <div className="flex items-center justify-end gap-2">
@@ -96,7 +97,7 @@ function Billinghistory() {
         }
     }
     const getBillinghistoryAllData = ({ contactNo, paymentStatus, customerName, from, to, selectAllDates, imeiNumber }) => {
-        let url =`${API_URLS.BILLING}?` ;
+        let url = `${API_URLS.BILLING}?`;
         if (customerName) {
             url += `&customer_name=${customerName}`
         }

@@ -5,6 +5,8 @@ import SingleProductStockIn from './SingleProductStockIn';
 import BulkOfProduct from "./BulkOfProduct";
 import { STOCK_TYPE_OPTIONS } from './Constants';
 import { useParams } from 'react-router-dom';
+import { excelDownload } from '../../../Util/Utility';
+import CustomHeaderComponent from '../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent';
 function StockIn() {
     const [stockType, setStockType] = useState('Single Product');
     const { product_id } = useParams();
@@ -13,7 +15,18 @@ function StockIn() {
     };
     return (
         <div className='w-full p-4'>
-            <div className='text-xl font-serif mb-4'>{product_id ? "Edit Product" : "Add Product"}</div>
+            <div className="flex justify-between items-center mb-4">
+                <div className='text-xl font-serif'>{product_id ? "Edit Product" : "Add Product"}</div>
+                {!product_id && stockType !== 'Single Product' && (
+                    <CustomHeaderComponent
+                        label="Sample file"
+                        icon="fa fa-download"
+                        onClick={excelDownload}
+                        buttonClassName="py-1 px-3 text-sm font-bold"
+                    />
+                )}
+            </div>
+
             {!product_id && (
                 <div className="w-full mb-4">
                     <div className="w-[40%]">
