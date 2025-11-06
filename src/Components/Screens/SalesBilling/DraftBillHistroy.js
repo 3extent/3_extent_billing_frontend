@@ -138,7 +138,8 @@ export default function DraftBillHistroy() {
                 } else {
                     console.log("Error fetching draft bills");
                 }
-            }
+            },
+            setLoading: setLoading
         });
         const handlepaymentMethod = (bill) => {
             if (Number(bill.pending_amount) === 0) {

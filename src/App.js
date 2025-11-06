@@ -18,6 +18,9 @@ import SingleBillHistory from './Components/Screens/SalesBilling/SingleBillHistr
 import { ToastContainer } from 'react-toastify';
 import DraftBillHistroy from './Components/Screens/SalesBilling/DraftBillHistroy';
 import SingleDraftBillHistory from './Components/Screens/SalesBilling/SingleDraftBillHistroy';
+import PrivacyPolicy from './Components/Screens/Policies/PrivacyPolicy';
+import TermAndCondition from './Components/Screens/Policies/TermAndCondition';
+
 
 
 // Protected Route Component
@@ -69,6 +72,23 @@ function App() {
                 <Login onLoginSuccess={() => updateAuthState(true)} />
               </PublicRoute>
             } />
+            <Route
+              path="/termAndCondition"
+              element={
+                <PublicRoute>
+                  <TermAndCondition />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="privacyPolicy"
+              element={
+                <PublicRoute>
+                  <PrivacyPolicy />
+                </PublicRoute>
+              }
+            />
+
             <Route path="/salesbilling" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <SalesBilling />
@@ -109,7 +129,7 @@ function App() {
                 <AddBrands />
               </ProtectedRoute>
             } />
-           
+
             <Route path="/addmodels/:model_id?" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <AddModels />
@@ -135,7 +155,6 @@ function App() {
                 <DraftBillHistroy />
               </ProtectedRoute>
             } />
-           
             <Route path="/singleBillHistory/:billId" element={<SingleBillHistory />} />
             <Route path="/singleDraftBillHistroy/:draftBillId" element={<SingleDraftBillHistory />} />
 
