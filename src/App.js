@@ -18,8 +18,9 @@ import SingleBillHistory from './Components/Screens/SalesBilling/SingleBillHistr
 import { ToastContainer } from 'react-toastify';
 import DraftBillHistroy from './Components/Screens/SalesBilling/DraftBillHistroy';
 import SingleDraftBillHistory from './Components/Screens/SalesBilling/SingleDraftBillHistroy';
-import TermAndCondition from './Components/Screens/Privacy/TermAndCondition';
-import Privacy from './Components/Screens/Privacy/Privacy';
+import PrivacyPolicy from './Components/Screens/Policies/PrivacyPolicy';
+import TermAndCondition from './Components/Screens/Policies/TermAndCondition';
+
 
 
 // Protected Route Component
@@ -80,10 +81,10 @@ function App() {
               }
             />
             <Route
-              path="/privacy"
+              path="privacyPolicy"
               element={
                 <PublicRoute>
-                  <Privacy />
+                  <PrivacyPolicy />
                 </PublicRoute>
               }
             />
