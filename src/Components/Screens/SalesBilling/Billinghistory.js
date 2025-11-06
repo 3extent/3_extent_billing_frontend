@@ -55,7 +55,7 @@ function Billinghistory() {
                 "Total Amount": bill.payable_amount,
                 "Remaining Amount": bill.pending_amount,
                 "Profit": bill.profit,
-                "Total Product": bill.products.length,
+                "Total Products": bill.products.length,
                 _id: bill._id,
                 "Actions": (
                     <div className="flex items-center justify-end gap-2">
