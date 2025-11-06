@@ -41,24 +41,46 @@ function BulkOfProduct() {
     }
     const stockInCallback = (response) => {
         console.log('response: ', response);
-        if (response.status === 200) {
-            response?.data?.results?.successful?.map(singleElement => {
-                return handleBarcodePrint({
+        const data = response?.data;
+        if (data?.results) {
+            const failed = data.results.failed || [];
+            const successful = data.results.successful || [];
+            failed.forEach(item => {
+                toast.error(item.error || "Unknown error", {
+                    position: "top-center",
+                    autoClose: 2000,
+                });
+            });
+            successful.forEach(singleElement => {
+                handleBarcodePrint({
                     modelName: singleElement.product.model.name,
                     grade: singleElement.product.grade,
                     imei_number: singleElement.product.imei_number
-                })
-            })
+                });
+            });
 
+            if (successful.length > 0) {
+                toast.success(`${successful.length} products added successfully!`, {
+                    position: "top-center",
+                    autoClose: 2000,
+                });
+            }
             handleResetData();
+            if (failed.length > 0 && successful.length === 0) {
+                toast.error("All products failed to upload!", {
+                    position: "top-center",
+                    autoClose: 2000,
+                });
+            }
         } else {
-            const errorMsg = response?.data?.error || "Failed to upload file";
+            const errorMsg = data?.error || "Failed to upload file";
             toast.error(errorMsg, {
                 position: "top-center",
                 autoClose: 2000,
             });
         }
     };
+
     const handleResetData = () => {
         setExcelData([]);
         setShowTable(false);
