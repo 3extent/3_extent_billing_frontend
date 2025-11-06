@@ -13,7 +13,7 @@ export const exportToExcel = async (data, fileName = "StyledData.xlsx") => {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet("Sheet1");
   const headers = Object.keys(data[0]).filter(
-    (header) => !["id", "Supplier", "Actions"].includes(header)
+    (header) => !["id", "Supplier", "Actions","Action"].includes(header)
   );
   // 1 & 2: Merged title rows
   const title = "3 EXTENT";
