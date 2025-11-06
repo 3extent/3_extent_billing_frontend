@@ -4,13 +4,14 @@ import * as XLSX from 'xlsx';
 import CustomTableCompoent from '../../CustomComponents/CustomTableCompoent/CustomTableCompoent';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
 import InputComponent from '../../CustomComponents/InputComponent/InputComponent';
-import { apiCall } from '../../../Util/AxiosUtils';
+import { apiCall, Spinner } from '../../../Util/AxiosUtils';
 import { handleBarcodePrint } from '../../../Util/Utility';
 import { toast } from 'react-toastify';
 import { API_URLS } from '../../../Util/AppConst';
 function BulkOfProduct() {
     const [excelData, setExcelData] = useState([]);
     const [showTable, setShowTable] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const handleAddProductData = () => {
         if (excelData.length === 0) {
@@ -35,6 +36,7 @@ function BulkOfProduct() {
             url: `${API_URLS.PRODUCTS}/bulk`,
             data: bulkOfProductformatteddata,
             callback: stockInCallback,
+            setLoading: setLoading,
         });
     }
     const stockInCallback = (response) => {
@@ -67,6 +69,7 @@ function BulkOfProduct() {
     const handleFileUpload = (e) => {
         const file = e.target.files[0];
         if (!file) return;
+        setLoading(true);
         const reader = new FileReader();
         reader.onload = (evt) => {
             const data = evt.target.result;
@@ -80,12 +83,14 @@ function BulkOfProduct() {
                 setShowTable(true);
                 console.log('Imported Excel Data:', jsonData);
             }
+            setLoading(false);
         };
         reader.readAsBinaryString(file);
     };
     const tableHeaders = excelData.length > 0 ? Object.keys(excelData[0]) : [];
     return (
         <div className="w-full">
+            {loading && <Spinner />}
             <div className='flex gap-10 items-center'>
                 {error && (
                     <div className="text-red-600 text-sm ">{error}</div>
