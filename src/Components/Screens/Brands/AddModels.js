@@ -107,9 +107,11 @@ export default function AddModels() {
         return Object.keys(newErrors).length === 0;
     };
     const saveModel = () => {
-        if (modelData.RAM.trim()) {
-            const ramOptions = modelData.RAM.split(",").map(ram => ram.trim());
-            const storageOptions = modelData.storage.split(",").map(s => s.trim());
+        const RAM = modelData.RAM || "";
+        const storage = modelData.storage || "";
+        if (RAM.trim()) {
+            const ramOptions = RAM.split(",").map(ram => ram.trim());
+            const storageOptions = storage.split(",").map(s => s.trim());
             if (ramOptions.length === 1 && storageOptions.length === 1) {
                 setSelectedCombinations([{ ram: ramOptions[0], storage: storageOptions[0] }]);
             }
