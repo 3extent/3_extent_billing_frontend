@@ -424,7 +424,6 @@ export const handleBarcodePrint = (products) => {
             display: flex;
             flex-direction: column;
             justify-content: center;
-            align-items: center;
             padding: 20px;
             box-sizing: border-box;
             page-break-after: always;
@@ -436,7 +435,7 @@ export const handleBarcodePrint = (products) => {
           .h2 {
             margin: 0;
             font-size: 100px;
-            text-align: center;
+            text-align: left;
             font-weight: bolder;
           }
           svg {
@@ -510,7 +509,7 @@ export const handleMultipleBarcodesPrint = (products = []) => {
           .title { margin: 0 0 4px 0; font-size: 14px; font-weight: 700; }
           .meta { margin: 0 0 6px 0; font-size: 12px; font-weight: 600; }
           svg { width: 100%; height: 70px; }
-          .value { text-align: center; font-size: 12px; margin-top: 2px; }
+          .value { text-align: left; font-size: 12px; margin-top: 2px; }
         </style>
       </head>
       <body>
