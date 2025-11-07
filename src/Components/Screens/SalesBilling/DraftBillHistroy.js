@@ -62,7 +62,6 @@ export default function DraftBillHistroy() {
                 { method: "card", amount: cardAmt },
             ],
             pending_amount: selectedBill.pending_amount - paidTotal,
-            status: "GENERATED",
         };
         apiCall({
             method: 'PUT',
@@ -97,6 +96,7 @@ export default function DraftBillHistroy() {
                         "Total Amount": bill.payable_amount,
                         "Remaining Amount": bill.pending_amount,
                         "Profit": bill.profit,
+                        "Total Products":bill.products.length,
                         _id: bill._id,
                         status: "DRAFTED",
                         "Actions": (
