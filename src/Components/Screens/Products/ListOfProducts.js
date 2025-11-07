@@ -83,7 +83,9 @@ function ListOfProducts() {
                             label="Barcode"
                             icon="fa fa-print"
                             buttonClassName="py-1 px-3 text-[12px] font-semibold"
-                            onClick={() => handleBarcodePrint({ modelName: product.model.name, grade: product.grade, imei_number: product.imei_number })}
+                            onClick={
+                                () => handleBarcodePrint([{ modelName: product.model.name, grade: product.grade, imei_number: product.imei_number }])
+                            }
                         />
 
                     </div>

@@ -6,5 +6,4 @@ export const API_URLS = {
   USERS: `${BASE_URL}/users`,
   PRODUCTS: `${BASE_URL}/products`,
   BILLING: `${BASE_URL}/billings`,
-
 };
