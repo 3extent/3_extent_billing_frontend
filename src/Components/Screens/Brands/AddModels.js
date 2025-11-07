@@ -109,7 +109,7 @@ export default function AddModels() {
     const saveModel = () => {
         const RAM = modelData.RAM || "";
         const storage = modelData.storage || "";
-        if (RAM.trim()) {
+        if (RAM) {
             const ramOptions = RAM.split(",").map(ram => ram.trim());
             const storageOptions = storage.split(",").map(s => s.trim());
             if (ramOptions.length === 1 && storageOptions.length === 1) {
