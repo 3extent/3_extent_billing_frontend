@@ -118,6 +118,7 @@ export default function SingleDraftBillHistory() {
                 <CustomTableCompoent
                     headers={SINGLEBILLHISTORY_COLOUMNS}
                     rows={rows}
+                    editable={true}
                 />
             </div>
         </div>
