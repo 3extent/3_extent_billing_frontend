@@ -47,7 +47,7 @@ function BulkOfProduct() {
             const successful = data.results.successful || [];
             failed.forEach(item => {
                 toast.error(item.error || "Unknown error", {
-                    position: "top-center",
+                    position: "top-right",
                     autoClose: 2000,
                 });
             });
@@ -68,14 +68,14 @@ function BulkOfProduct() {
             handleResetData();
             if (failed.length > 0 && successful.length === 0) {
                 toast.error("All products failed to upload!", {
-                    position: "top-center",
+                    position: "top-right",
                     autoClose: 2000,
                 });
             }
         } else {
             const errorMsg = data?.error || "Failed to upload file";
             toast.error(errorMsg, {
-                position: "top-center",
+                position: "top-right",
                 autoClose: 2000,
             });
         }
