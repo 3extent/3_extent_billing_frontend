@@ -8,6 +8,7 @@ import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
+import { API_URLS } from "../../../Util/AppConst";
 export default function Models() {
     const [rows, setRows] = useState([]);
     const [modelName, setModelName] = useState();
@@ -49,7 +50,7 @@ export default function Models() {
         }
     }
     const getModelsAllData = ({ brandName, modelName }) => {
-        let url = "https://3-extent-billing-backend.vercel.app/api/models?";
+         let url =  `${API_URLS.MODEL}?`;
         if (modelName) {
             url += `&modelName=${modelName}`
         }
@@ -65,10 +66,9 @@ export default function Models() {
         })
     }
     const getBrandsAllData = () => {
-        let url = "https://3-extent-billing-backend.vercel.app/api/brands";
         apiCall({
             method: 'GET',
-            url: url,
+            url:  API_URLS.BRANDS,
             data: {},
             callback: getBrandsCallBack,
         })

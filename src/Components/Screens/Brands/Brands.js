@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
+import { API_URLS } from "../../../Util/AppConst";
 function Brands() {
     const [rows, setRows] = useState([]);
     const [brandName, setBrandName] = useState('');
@@ -44,7 +45,7 @@ function Brands() {
         }
     }
     const getBrandsAllData = ({ brandName }) => {
-        let url = "https://3-extent-billing-backend.vercel.app/api/brands";
+        let url = API_URLS.BRANDS;
         if (brandName) {
             url += `?name=${brandName}`
         }

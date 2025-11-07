@@ -1,17 +1,19 @@
 import { useEffect, useState } from "react";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import { SINGLEBILLHISTORY_COLOUMNS } from "./Constants";
-import { apiCall } from "../../../Util/AxiosUtils";
+import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { generateAndSavePdf } from "../../../Util/Utility";
+import { API_URLS } from "../../../Util/AppConst";
 export default function SingleBillHistory() {
     const { billId } = useParams();
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
     const [singleBill, setSingleBill] = useState([])
     const [customerInfo, setCustomerInfo] = useState();
+    const [loading, setLoading] = useState(false);
     useEffect(() => {
         if (billId) {
             getSingleBillHistroyAllData(billId);
@@ -35,7 +37,9 @@ export default function SingleBillHistory() {
                 "IMEI NO": product.imei_number,
                 "Brand": product.model.brand?.name,
                 "Model": product.model?.name,
-                "Rate": product.sales_price,
+                "Rate": product.sold_at_price,
+                "Sale Price": product.sales_price,
+                "Purchase Price": product.purchase_price,
                 "QC-Remark": product.qc_remark,
                 "Grade": product.grade,
                 "Accessories": product.accessories,
@@ -58,12 +62,12 @@ export default function SingleBillHistory() {
         );
     }
     const getSingleBillHistroyAllData = (id) => {
-        let url = `https://3-extent-billing-backend.vercel.app/api/billings/${id}`;
         apiCall({
             method: 'GET',
-            url: url,
+            url: `${API_URLS.BILLING}/${id}`,
             data: {},
             callback: getSingleBillHistroyCallBack,
+            setLoading: setLoading
         })
     };
     const handleNavigateBillHistroy = () => {
@@ -71,6 +75,7 @@ export default function SingleBillHistory() {
     }
     return (
         <div>
+            {loading && <Spinner />}
             <div className="flex justify-between items-center">
                 <div className="text-xl font-serif">Details of bill</div>
                 <div className="flex gap-4">

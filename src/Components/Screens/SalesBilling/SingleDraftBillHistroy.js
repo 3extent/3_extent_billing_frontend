@@ -2,19 +2,36 @@ import { useNavigate, useParams } from "react-router-dom";
 import { SINGLEBILLHISTORY_COLOUMNS } from "./Constants";
 import { useEffect, useState } from "react";
 import moment from "moment";
-import { apiCall } from "../../../Util/AxiosUtils";
+import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
+import { API_URLS } from "../../../Util/AppConst";
 export default function SingleDraftBillHistory() {
     const { draftBillId } = useParams();
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
     const [customerInfo, setCustomerInfo] = useState();
+    const [loading, setLoading] = useState(false);
     useEffect(() => {
         if (draftBillId) {
             getSingleBillHistroyAllData(draftBillId);
         }
     }, [draftBillId]);
+    const handleDeleteRow = (imeiNumber) => {
+        setRows((currentRows) => {
+            const updatedRows = [...currentRows];
+            const index = updatedRows.findIndex(row => row["IMEI NO"] === imeiNumber);
+            if (index !== -1) {
+                updatedRows.splice(index, 1);
+            }
+            const newRows = updatedRows.map((row, index) => ({
+                ...row,
+                "Sr.No": index + 1,
+            }));
+            return newRows;
+        });
+    };
+
     const getSingleDraftBillHistroyCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
@@ -37,6 +54,17 @@ export default function SingleDraftBillHistory() {
                 "QC-Remark": product.qc_remark,
                 "Grade": product.grade,
                 "Accessories": product.accessories,
+                "Action": (
+                    <div className="flex justify-end">
+                        <div
+                            title="delete"
+                            onClick={() => handleDeleteRow(product.imei_number)}
+                            className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
+                        >
+                            <i className="fa fa-trash text-gray-700 text-sm" />
+                        </div>
+                    </div>
+                ),
             }));
             setRows(singleBillHistrotFormattedRows);
         } else {
@@ -44,12 +72,12 @@ export default function SingleDraftBillHistory() {
         }
     }
     const getSingleBillHistroyAllData = (id) => {
-        let url = `https://3-extent-billing-backend.vercel.app/api/billings/${id}`;
         apiCall({
             method: 'GET',
-            url: url,
+            url: `${API_URLS.BILLING}/${id}`,
             data: {},
             callback: getSingleDraftBillHistroyCallBack,
+            setLoading: setLoading
         })
     };
     const handleNavigateDraftedBillHistroy = () => {
@@ -57,6 +85,7 @@ export default function SingleDraftBillHistory() {
     }
     return (
         <div>
+            {loading && <Spinner />}
             <div className="flex justify-between items-center">
                 <div className="text-xl font-serif">Details Of Drafted Bill</div>
                 <div className="flex gap-4">

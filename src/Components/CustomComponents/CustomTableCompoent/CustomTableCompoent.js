@@ -10,7 +10,7 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
         setTableRows(rows);
     }, [rows]);
     return (
-        <div className={`w-full  relative ${maxHeight} hide-horizontal-scrollbar`}>
+        <div className={`w-full  relative ${maxHeight} overflow-x-auto`}>
             {Rows ? (
                 <div className="border border-slate-800">
                     <table className="table-fixed w-full ">

@@ -5,6 +5,7 @@ import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponen
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate, useParams, } from "react-router-dom";
 import { toast } from "react-toastify";
+import { API_URLS } from "../../../Util/AppConst";
 export default function AddModels() {
     const navigate = useNavigate();
     const { model_id } = useParams();
@@ -15,7 +16,9 @@ export default function AddModels() {
         getBrandsAllData();
     }, [])
     useEffect(() => {
-        getModelData();
+        if (model_id) {
+            getModelData();
+        }
     }, [model_id]);
     const [brandOptions, setBrandOptions] = useState([]);
     const [possibleCombinations, setPossibleCombinations] = useState([]);
@@ -104,9 +107,11 @@ export default function AddModels() {
         return Object.keys(newErrors).length === 0;
     };
     const saveModel = () => {
-        if (modelData.RAM.trim()) {
-            const ramOptions = modelData.RAM.split(",").map(ram => ram.trim());
-            const storageOptions = modelData.storage.split(",").map(s => s.trim());
+        const RAM = modelData.RAM || "";
+        const storage = modelData.storage || "";
+        if (RAM || storage) {
+            const ramOptions = RAM.split(",").map(ram => ram.trim());
+            const storageOptions = storage.split(",").map(s => s.trim());
             if (ramOptions.length === 1 && storageOptions.length === 1) {
                 setSelectedCombinations([{ ram: ramOptions[0], storage: storageOptions[0] }]);
             }
@@ -146,10 +151,9 @@ export default function AddModels() {
         }
     };
     const getBrandsAllData = () => {
-        let url = "https://3-extent-billing-backend.vercel.app/api/brands";
         apiCall({
             method: 'GET',
-            url: url,
+            url: API_URLS.BRANDS,
             data: {},
             callback: getBrandsCallBack,
         })
@@ -186,7 +190,7 @@ export default function AddModels() {
             : modelData.storage.split(",").map(storage => ({ ram: "", storage: storage.trim() }));
         apiCall({
             method: "POST",
-            url: "https://3-extent-billing-backend.vercel.app/api/models",
+            url: API_URLS.MODEL,
             data: {
                 brand_name: modelData.brand_name,
                 name: modelData.name,
@@ -199,7 +203,7 @@ export default function AddModels() {
     const editModelData = () => {
         apiCall({
             method: "PUT",
-            url: `https://3-extent-billing-backend.vercel.app/api/models/${model_id}`,
+            url: `${API_URLS.MODEL}/${model_id}`,
             data: {
                 brand_name: modelData.brand_name,
                 name: modelData.name,
@@ -211,7 +215,7 @@ export default function AddModels() {
     const getModelData = () => {
         apiCall({
             method: "GET",
-            url: `https://3-extent-billing-backend.vercel.app/api/models/${model_id}`,
+            url: `${API_URLS.MODEL}/${model_id}`,
             data: {},
             callback: (response) => {
                 setLoading(false);
@@ -330,17 +334,15 @@ export default function AddModels() {
                     )}
                 </>
             )}
-            <div className="flex justify-center mt-3">
+            <div className="flex justify-center mt-10 gap-5">
                 <PrimaryButtonComponent
                     label="Back"
                     icon="fa fa-arrow-left"
-                    buttonClassName="mt-2 py-1 px-5 mr-10 text-xl font-bold"
                     onClick={handleBack}
                 />
                 <PrimaryButtonComponent
                     label="Submit"
                     icon="fa fa-bookmark-o"
-                    buttonClassName="mt-2 py-1 px-5 text-xl font-bold"
                     onClick={saveModel}
                 />
             </div>

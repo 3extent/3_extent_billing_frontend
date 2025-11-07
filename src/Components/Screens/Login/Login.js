@@ -4,6 +4,7 @@ import InputComponent from "../../CustomComponents/InputComponent/InputComponent
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { useState } from 'react';
 import { apiCall, Spinner } from '../../../Util/AxiosUtils';
+import { API_URLS } from '../../../Util/AppConst';
 
 export default function Login({ onLoginSuccess }) {
     const navigate = useNavigate();
@@ -35,7 +36,7 @@ export default function Login({ onLoginSuccess }) {
     const handleLogin = () => {
         apiCall({
             method: 'POST',
-            url: 'https://3-extent-billing-backend.vercel.app/api/users/login',
+            url: API_URLS.LOGIN,
             data: loginFormData,
             callback: getLoginCallBack,
             setLoading: setLoading

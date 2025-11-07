@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { generateAndSavePdf } from "../../../Util/Utility";
 import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
+import { API_URLS } from "../../../Util/AppConst";
 function Billinghistory() {
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
@@ -54,6 +55,7 @@ function Billinghistory() {
                 "Total Amount": bill.payable_amount,
                 "Remaining Amount": bill.pending_amount,
                 "Profit": bill.profit,
+                "Total Products": bill.products.length,
                 _id: bill._id,
                 "Actions": (
                     <div className="flex items-center justify-end gap-2">
@@ -95,7 +97,7 @@ function Billinghistory() {
         }
     }
     const getBillinghistoryAllData = ({ contactNo, paymentStatus, customerName, from, to, selectAllDates, imeiNumber }) => {
-        let url = "https://3-extent-billing-backend.vercel.app/api/billings?";
+        let url = `${API_URLS.BILLING}?`;
         if (customerName) {
             url += `&customer_name=${customerName}`
         }
@@ -179,7 +181,7 @@ function Billinghistory() {
         };
         apiCall({
             method: 'PUT',
-            url: `https://3-extent-billing-backend.vercel.app/api/billings/${selectedBill._id}`,
+            url: `${API_URLS.BILLING}/${selectedBill._id}`,
             data: updatedPayment,
             callback: handlePaymentUpdateCallback,
             setLoading: setLoading,

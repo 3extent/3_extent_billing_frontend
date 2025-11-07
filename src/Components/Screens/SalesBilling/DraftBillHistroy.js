@@ -8,6 +8,7 @@ import { generateAndSavePdf } from "../../../Util/Utility";
 import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { API_URLS } from "../../../Util/AppConst";
 export default function DraftBillHistroy() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false)
@@ -65,7 +66,7 @@ export default function DraftBillHistroy() {
         };
         apiCall({
             method: 'PUT',
-            url: `https://3-extent-billing-backend.vercel.app/api/billings/${selectedBill._id}`,
+            url: `${API_URLS.BILLING}/${selectedBill._id}`,
             data: updatedPayment,
             callback: handlePaymentUpdateCallback,
             setLoading: setLoading,
@@ -75,13 +76,13 @@ export default function DraftBillHistroy() {
         setOnlineAmount("");
         setCard("");
     }
-     const handleRowClick = (row) => {
-            if (row._id) {
-                navigate(`/singleDraftBillHistroy/${row._id}`);
-            }
-        };
+    const handleRowClick = (row) => {
+        if (row._id) {
+            navigate(`/singleDraftBillHistroy/${row._id}`);
+        }
+    };
     const getDraftBillHistory = () => {
-        let url = `https://3-extent-billing-backend.vercel.app/api/billings?status=DRAFTED`;
+        let url = `${API_URLS.BILLING}?status=DRAFTED`;
         apiCall({
             method: 'GET',
             url: url,
@@ -137,7 +138,8 @@ export default function DraftBillHistroy() {
                 } else {
                     console.log("Error fetching draft bills");
                 }
-            }
+            },
+            setLoading: setLoading
         });
         const handlepaymentMethod = (bill) => {
             if (Number(bill.pending_amount) === 0) {
@@ -146,7 +148,7 @@ export default function DraftBillHistroy() {
             setSelectedBill(bill);
             setPendingAmount(bill.pending_amount);
             setShowPaymentPopup(true);
-        };   
+        };
     };
     return (
         <div>

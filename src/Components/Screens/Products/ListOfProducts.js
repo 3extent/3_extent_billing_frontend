@@ -10,6 +10,7 @@ import { exportToExcel, handleBarcodePrint } from '../../../Util/Utility';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
 import CustomDropdownInputComponent from '../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent';
+import { API_URLS } from '../../../Util/AppConst';
 function ListOfProducts() {
     const [rows, setRows] = useState([]);
     const [imeiNumber, setIMEINumber] = useState();
@@ -36,7 +37,7 @@ function ListOfProducts() {
         getSuppliersAllData();
     }, []);
     const getSuppliersAllData = () => {
-        let url = "https://3-extent-billing-backend.vercel.app/api/users?role=SUPPLIER";
+        let url = `${API_URLS.USERS}?role=SUPPLIER`;
         apiCall({
             method: 'GET',
             url,
@@ -82,7 +83,9 @@ function ListOfProducts() {
                             label="Barcode"
                             icon="fa fa-print"
                             buttonClassName="py-1 px-3 text-[12px] font-semibold"
-                            onClick={() => handleBarcodePrint({ modelName: product.model.name, grade: product.grade, imei_number: product.imei_number })}
+                            onClick={
+                                () => handleBarcodePrint([{ modelName: product.model.name, grade: product.grade, imei_number: product.imei_number }])
+                            }
                         />
 
                     </div>
@@ -94,7 +97,7 @@ function ListOfProducts() {
         }
     }
     const getProductsAllData = ({ imeiNumber, grade, modelName, brandName, supplierName, status, from, to, selectAllDates }) => {
-        let url = 'https://3-extent-billing-backend.vercel.app/api/products?';
+        let url = `${API_URLS.PRODUCTS}?`;
         if (imeiNumber) {
             url += `&imei_number=${imeiNumber}`
         }
@@ -126,7 +129,7 @@ function ListOfProducts() {
         })
     }
     const getBrandsAllData = () => {
-        let url = "https://3-extent-billing-backend.vercel.app/api/brands";
+        let url = API_URLS.BRANDS;
         apiCall({
             method: 'GET',
             url: url,
