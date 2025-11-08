@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { SUPPLIER_COLUMNS } from "./Constants";
@@ -10,16 +10,13 @@ import { API_URLS } from "../../../Util/AppConst";
 function Supplier() {
     const [rows, setRows] = useState([]);
     const navigate = useNavigate();
-    const [supplierName, setSupplierName] = useState();
-    const [contactNo, setContactNo] = useState();
+    const [supplierName, setSupplierName] = useState('');
+    const [contactNo, setContactNo] = useState('');
     const [loading, setLoading] = useState(false);
     const navigateAddSupplier = () => {
         navigate("/addsupplier")
     }
-    useEffect(() => {
-        getSupplierAllData({});
-    }, []);
-    const getSupplierCallBack = (response) => {
+    const getSupplierCallBack = useCallback((response) => {
         console.log('response: ', response);
         if (response.status === 200) {
             const supplierFormattedRows = response.data.map((supplier) => ({
@@ -47,12 +44,13 @@ function Supplier() {
         } else {
             console.log("Error");
         }
-    }
-    const getSupplierAllData = ({ supplierName, contactNo }) => {
-          let url = `${API_URLS.USERS}?role=SUPPLIER`;
+    }, [navigate]);
+    const getSupplierAllData = useCallback(({ supplierName, contactNo }) => {
+        let url = `${API_URLS.USERS}?role=SUPPLIER`;
         if (supplierName) {
             url += `&name=${supplierName}`
-        } if (contactNo) {
+        }
+        if (contactNo) {
             url += `&contact_number=${contactNo}`
         }
         apiCall({
@@ -62,7 +60,10 @@ function Supplier() {
             callback: getSupplierCallBack,
             setLoading: setLoading
         })
-    }
+    }, [getSupplierCallBack]);
+    useEffect(() => {
+        getSupplierAllData({});
+    }, [getSupplierAllData]);
     const handleSearchFilter = () => {
         getSupplierAllData({ supplierName, contactNo });
     }
@@ -85,7 +86,7 @@ function Supplier() {
             <div className="flex items-center gap-4 mb-5">
                 <InputComponent
                     type="text"
-                    placeholder="Suppiler Name"
+                    placeholder="Supplier Name"
                     value={supplierName}
                     onChange={(e) => setSupplierName(e.target.value)}
                     inputClassName="w-[190px]"
