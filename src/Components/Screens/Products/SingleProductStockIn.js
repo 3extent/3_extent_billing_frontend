@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
@@ -43,7 +43,7 @@ function SingleProductStockIn() {
     setErrors(prev => ({ ...prev, brand_name: "" }));
     setProductData(productData => ({ ...productData, brand_name: value }));
   };
-  
+
   const stockInCallback = (response) => {
     if (response.status === 200) {
       toast.success("Stock added successfully!", {
@@ -75,24 +75,6 @@ function SingleProductStockIn() {
       });
     }
   };
-  useEffect(() => {
-    getModelsAllData();
-    getBrandsAllData();
-    getSupplierAllData();
-  }, []);
-  useEffect(() => {
-    if (product_id) {
-      getProductData();
-    }
-  }, [product_id]);
-  const getModelsAllData = () => {
-    apiCall({
-      method: 'GET',
-      url: API_URLS.MODEL,
-      data: {},
-      callback: getModelsCallBack,
-    })
-  }
   const getModelsCallBack = (response) => {
     console.log('response: ', response);
     if (response.status === 200) {
@@ -103,14 +85,14 @@ function SingleProductStockIn() {
       console.log("Error");
     }
   }
-  const getBrandsAllData = () => {
+  const getModelsAllData = useCallback(() => {
     apiCall({
       method: 'GET',
-      url: API_URLS.BRANDS,
+      url: API_URLS.MODEL,
       data: {},
-      callback: getBrandsCallBack,
+      callback: getModelsCallBack,
     })
-  }
+  }, []);
   const getBrandsCallBack = (response) => {
     console.log('response: ', response);
     if (response.status === 200) {
@@ -121,6 +103,14 @@ function SingleProductStockIn() {
       console.log("Error");
     }
   }
+  const getBrandsAllData = useCallback(() => {
+    apiCall({
+      method: 'GET',
+      url: API_URLS.BRANDS,
+      data: {},
+      callback: getBrandsCallBack,
+    })
+  }, []);
   const deleteCallback = (response) => {
     if (response.status === 200) {
       toast.success("Product deleted successfully!", {
@@ -136,6 +126,7 @@ function SingleProductStockIn() {
       });
     }
   }
+  
   const deleteProduct = () => {
     apiCall({
       method: "DELETE",
@@ -145,6 +136,7 @@ function SingleProductStockIn() {
       setLoading: setLoading
     })
   }
+
   const handleValidation = () => {
     const newErrors = {};
     if (!productData.brand_name.trim())
@@ -188,14 +180,14 @@ function SingleProductStockIn() {
       console.log("Error");
     }
   }
-  const getSupplierAllData = () => {
+  const getSupplierAllData = useCallback(() => {
     apiCall({
       method: 'GET',
       url: `${API_URLS.USERS}?role=SUPPLIER`,
       data: {},
       callback: getSupplierCallBack,
     })
-  }
+  }, []);
   const saveProductCallback = (response) => {
     if (response.status === 200) {
       toast.success("Stock updated successfully!", {
@@ -242,7 +234,7 @@ function SingleProductStockIn() {
       console.log("Failed to fetch product data.");
     }
   };
-  const getProductData = () => {
+  const getProductData = useCallback(() => {
     apiCall({
       method: 'GET',
       url: `${API_URLS.PRODUCTS}/${product_id}`,
@@ -250,7 +242,17 @@ function SingleProductStockIn() {
       callback: getProductCallback,
       setLoading: setLoading,
     });
-  }
+  }, [product_id]);
+  useEffect(() => {
+    getModelsAllData();
+    getBrandsAllData();
+    getSupplierAllData();
+  }, [getModelsAllData, getBrandsAllData, getSupplierAllData]);
+  useEffect(() => {
+    if (product_id) {
+      getProductData();
+    }
+  }, [product_id, getProductData]);
   return (
     <div className="grid grid-cols-3 mt-2 gap-x-5 gap-y-1">
       {loading && <Spinner />}
