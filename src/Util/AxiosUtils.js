@@ -11,11 +11,6 @@ export const apiCall = async ({ method, url, data, callback, setLoading }) => {
         console.log("ERROR:", error);
         if (error.response) {
             callback(error.response);
-        } else {
-            callback({
-                status: 500,
-                data: { error: "Network or server error occurred" }
-            });
         }
     } finally {
         if (setLoading) setLoading(false);
