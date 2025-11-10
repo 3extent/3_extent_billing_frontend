@@ -20,7 +20,7 @@ function ListOfProducts() {
     const [status, setStatus] = useState(STATUS_OPTIONS[0]);
     const [brandOptions, setBrandOptions] = useState([]);
     const [loading, setLoading] = useState(false);
-    const fromDate = moment().subtract(7, 'days').format('YYYY-MM-DD');
+    const fromDate = moment().subtract( 'days').format('YYYY-MM-DD');
     const toDate = moment().format('YYYY-MM-DD');
     const [from, setFrom] = useState(fromDate);
     const [to, setTo] = useState(toDate);
@@ -83,7 +83,9 @@ function ListOfProducts() {
                             label="Barcode"
                             icon="fa fa-print"
                             buttonClassName="py-1 px-3 text-[12px] font-semibold"
-                            onClick={() => handleBarcodePrint({ modelName: product.model.name, grade: product.grade, imei_number: product.imei_number })}
+                            onClick={
+                                () => handleBarcodePrint([{ modelName: product.model.name, grade: product.grade, imei_number: product.imei_number }])
+                            }
                         />
 
                     </div>

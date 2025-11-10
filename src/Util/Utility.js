@@ -13,7 +13,7 @@ export const exportToExcel = async (data, fileName = "StyledData.xlsx") => {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet("Sheet1");
   const headers = Object.keys(data[0]).filter(
-    (header) => !["id", "Supplier", "Actions","Action"].includes(header)
+    (header) => !["id", "Supplier", "Actions", "Action"].includes(header)
   );
   // 1 & 2: Merged title rows
   const title = "3 EXTENT";
@@ -194,7 +194,7 @@ export const generateAndSavePdf = (
       align: "right",
     });
     // date
-     doc.text(
+    doc.text(
       now.toLocaleDateString("en-GB"),
       pageWidth - 14,
       18,
@@ -357,7 +357,7 @@ export const generateAndSavePdf = (
 export const excelDownload = () => {
   // Define headers
   const headers = [
-    ["Brand Name","Model Name", "IMEI", "Purchase Price", "Sales Price", "Engineer Name", "QC Remark", "Supplier", "Accessories", "Grade"]
+    ["Brand Name", "Model Name", "IMEI", "Purchase Price", "Sales Price", "Engineer Name", "QC Remark", "Supplier", "Accessories", "Grade"]
   ];
 
   // Create worksheet from headers
@@ -385,12 +385,24 @@ export const excelDownload = () => {
   saveAs(data, "Download.xlsx");
 };
 
-export const handleBarcodePrint = (product) => {
-  const win = window.open('', '', 'height=800,width=600');
+export const handleBarcodePrint = (products) => {
+  console.log("products", products);
+  
+  // Ensure products is an array
+  const productsArray = Array.isArray(products) ? products : [products];
+  
+  if (productsArray.length === 0) {
+    alert("No barcodes to print!");
+    return;
+  }
+
+  const win = window.open('', '', 'height=900,width=1200');
+  const safeData = JSON.stringify(productsArray);
+
   win.document.write(`
     <html>
       <head>
-        <title>Print Barcode</title>
+        <title>Print Barcodes</title>
         <style>
           @page {
             size: A4 landscape;
@@ -399,22 +411,26 @@ export const handleBarcodePrint = (product) => {
           html, body {
             margin: 0;
             padding: 0;
-            height: 100%;
             width: 100%;
+            height: 100%;
             font-family: "Courier New", Courier, monospace;
           }
-          #barcode-wrapper {
-            position: absolute;
-            top: 5%;
-            width: 100%;
-            text-align: center;
-            font-family: sans-serif;
+          .grid {
+            display: block;
           }
-          .header {
-            margin: 5px 0px;
-            font-size: 100px;
-            text-align: center;
-            font-weight: bolder;
+          .item {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+            page-break-after: always;
+            page-break-inside: avoid;
+          }
+          .item:last-child {
+            page-break-after: auto;
           }
           .h2 {
             margin: 0;
@@ -429,24 +445,111 @@ export const handleBarcodePrint = (product) => {
         </style>
       </head>
       <body>
-        <div id="barcode-wrapper">
-          <h1 class="h2">${product.modelName}</h1>
-          <h1 class="h2">Grade : ${product.grade}</h1>
-          <svg id="barcode"></svg>
-        </div>
+        <div class="grid" id="barcodes"></div>
         <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
         <script>
-          JsBarcode("#barcode", "${product.imei_number}", {
-            format: 'CODE128',
-            lineColor: '#000',
-            width: 2,
-            height: 40,
-            displayValue: true,
-            fontSize: 30
-          });
-          window.onload = function() {
-            window.print();
-          };
+          (function(){
+            try {
+              var data = ${safeData};
+              var container = document.getElementById('barcodes');
+              data.forEach(function(item, idx){
+                var code = String(item.imei_number || item.imei || item.code || '');
+                if (!code) return;
+                var modelName = item.modelName || (item.model && item.model.name) || '';
+                var grade = item.grade || '';
+
+                var wrapper = document.createElement('div');
+                wrapper.className = 'item';
+                var svgId = 'bc_' + idx;
+                wrapper.innerHTML = '<h1 class="h2">' + (modelName || '') + '</h1>' +
+                  '<h1 class="h2">Grade : ' + (grade || '') + '</h1>' +
+                  '<svg id="' + svgId + '"></svg>';
+                container.appendChild(wrapper);
+                JsBarcode('#' + svgId, code, {
+                  format: 'CODE128',
+                  lineColor: '#000',
+                  width: 2,
+                  height: 40,
+                  displayValue: true,
+                  fontSize: 30
+                });
+              });
+              window.onload = function() {
+                window.print();
+              };
+            } catch (e) {
+              console.error(e);
+              alert('Failed to render barcodes');
+            }
+          })();
+        </script>
+      </body>
+    </html>
+  `);
+  win.document.close();
+  win.focus();
+};
+
+export const handleMultipleBarcodesPrint = (products = []) => {
+  if (!Array.isArray(products) || products.length === 0) {
+    alert("No barcodes to print!");
+    return;
+  }
+  const win = window.open('', '', 'height=900,width=1200');
+  const safeData = JSON.stringify(products);
+  win.document.write(`
+    <html>
+      <head>
+        <title>Print Barcodes</title>
+        <style>
+          @page { size: A4; margin: 10mm; }
+          html, body { margin: 0; padding: 0; width: 100%; height: 100%; font-family: Arial, Helvetica, sans-serif; }
+          .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; align-items: start; }
+          .item { border: 1px dashed #ccc; padding: 8px; page-break-inside: avoid; }
+          .title { margin: 0 0 4px 0; font-size: 14px; font-weight: 700; }
+          .meta { margin: 0 0 6px 0; font-size: 12px; font-weight: 600; }
+          svg { width: 100%; height: 70px; }
+          .value { text-align: left; font-size: 12px; margin-top: 2px; }
+        </style>
+      </head>
+      <body>
+        <div class="grid" id="barcodes"></div>
+        <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+        <script>
+          (function(){
+            try {
+              var data = ${safeData};
+              var container = document.getElementById('barcodes');
+              data.forEach(function(item, idx){
+                var code = String(item.imei_number || item.imei || item.code || '');
+                if (!code) return;
+                var modelName = item.modelName || (item.model && item.model.name) || '';
+                var brandName = (item.Brand || (item.model && item.model.brand && item.model.brand.name)) || '';
+                var grade = item.grade || '';
+
+                var wrapper = document.createElement('div');
+                wrapper.className = 'item';
+                var svgId = 'bc_' + idx;
+                wrapper.innerHTML = '<p class="title">' + (brandName ? (brandName + ' ') : '') + (modelName || '') + '</p>' +
+                  (grade ? ('<p class="meta">Grade: ' + grade + '</p>') : '') +
+                  '<svg id="' + svgId + '"></svg>';
+                container.appendChild(wrapper);
+                JsBarcode('#' + svgId, code, {
+                  format: 'CODE128',
+                  lineColor: '#000',
+                  width: 2,
+                  height: 60,
+                  displayValue: true,
+                  fontSize: 12,
+                  textMargin: 2,
+                });
+              });
+              window.onload = function(){ window.print(); };
+            } catch (e) {
+              console.error(e);
+              alert('Failed to render barcodes');
+            }
+          })();
         </script>
       </body>
     </html>
