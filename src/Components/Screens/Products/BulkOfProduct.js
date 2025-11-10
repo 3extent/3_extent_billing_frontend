@@ -41,12 +41,14 @@ function BulkOfProduct() {
     }
     const stockInCallback = (response) => {
         console.log('response: ', response);
-        if (response.status === 200 || response.status === 207) {
-            let barcodeArray = response?.data?.results?.successful?.map(singleElement => {
+        if (response.status === 200) {
+            let barcodeArray = response?.data?.products?.map(singleElement => {
+
+                console.log('singleElement: ', singleElement);
                 return {
-                    modelName: singleElement.product.model.name,
-                    grade: singleElement.product.grade,
-                    imei_number: singleElement.product.imei_number
+                    modelName: singleElement.model.name,
+                    grade: singleElement.grade,
+                    imei_number: singleElement.imei_number
                 }
             })
             handleBarcodePrint(barcodeArray)
