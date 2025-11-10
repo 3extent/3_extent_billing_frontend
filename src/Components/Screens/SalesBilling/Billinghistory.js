@@ -17,6 +17,7 @@ function Billinghistory() {
     const [showPaymentPopup, setShowPaymentPopup] = useState(false);
     const [cashAmount, setCashAmount] = useState("");
     const [onlineAmount, setOnlineAmount] = useState("");
+     const [totalProfit, setTotalProfit] = useState(0);
     const [card, setCard] = useState("");
     const [selectedBill, setSelectedBill] = useState(null);
     const [pendingAmount, setPendingAmount] = useState(0);
@@ -24,7 +25,7 @@ function Billinghistory() {
     const [contactNo, setContactNo] = useState("");
     const [imeiNumber, setIMEINumber] = useState("");
     const [paymentStatus, setPaymentStatus] = useState("");
-    const fromDate = moment().subtract(7, 'days').format('YYYY-MM-DD');
+    const fromDate = moment().subtract( 'days').format('YYYY-MM-DD');
     const toDate = moment().format('YYYY-MM-DD');
     const [from, setFrom] = useState(fromDate);
     const [to, setTo] = useState(toDate);
@@ -47,7 +48,7 @@ function Billinghistory() {
     const getBilllinghistoryCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
-            const billingformattedRows = response.data.map((bill, index) => ({
+            const billingformattedRows = response.data.billings.map((bill, index) => ({
                 "Bill id": index + 1,
                 "Date": moment(bill.created_at).format('ll'),
                 "Customer Name": bill.customer.name,
@@ -90,6 +91,7 @@ function Billinghistory() {
                     </div>
                 )
             }));
+            setTotalProfit(response.data.totalProfit)
             console.log("Formatted Billing Rows: ", billingformattedRows);
             setRows(billingformattedRows);
         } else {
@@ -284,6 +286,9 @@ function Billinghistory() {
                     rows={rows}
                     onRowClick={handleRowClick}
                 />
+            </div>
+            <div className=" fixed bottom right-12 font-bold gap-4 text-[22px] flex justify-end">
+                Total Profit: {Number(totalProfit).toLocaleString("en-IN")}
             </div>
             {showPaymentPopup && selectedBill && (
                 <CustomPopUpComponet
