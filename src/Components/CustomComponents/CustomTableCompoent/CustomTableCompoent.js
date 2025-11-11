@@ -62,7 +62,11 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
                                 <tr>
                                     {tableHeaders.map((header, index) => (
                                         <td key={index} className="px-4 py-2 border-t border-gray-400">
-                                            {totalRow[header] !== undefined && totalRow[header] !== null ? totalRow[header] : " "}
+                                            {["Total Amount", "Remaining Amount", "Profit", "Total Products"].includes(header)
+                                                ? totalRow[header]
+                                                : header === "Bill id"
+                                                    ? "Total"
+                                                    : ""}
                                         </td>
                                     ))}
                                 </tr>

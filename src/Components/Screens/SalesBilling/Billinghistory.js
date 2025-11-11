@@ -17,7 +17,6 @@ function Billinghistory() {
     const [showPaymentPopup, setShowPaymentPopup] = useState(false);
     const [cashAmount, setCashAmount] = useState("");
     const [onlineAmount, setOnlineAmount] = useState("");
-    const [totalProfit, setTotalProfit] = useState(0);
     const [card, setCard] = useState("");
     const [selectedBill, setSelectedBill] = useState(null);
     const [pendingAmount, setPendingAmount] = useState(0);
@@ -92,12 +91,16 @@ function Billinghistory() {
                 )
             }));
             billingformattedRows.push({
-                "Bill id": "Total",
-                "Total Amount": response.data.totalAmount,
-                "Remaining Amount": response.data.totalRemaining,
-                "Profit": response.data.totalProfit,
-                "Total Products": response.data.totalProducts,
                 _id: "total",
+                "Bill id": "Total",
+                "Date": "",
+                "Customer Name": "",
+                "Contact Number": "",
+                "Total Amount": response.data.totalAmount?.toLocaleString("en-IN") || 0,
+                "Remaining Amount": response.data.totalRemaining?.toLocaleString("en-IN") || 0,
+                "Profit": response.data.totalProfit?.toLocaleString("en-IN") || 0,
+                "Total Products": response.data.totalProducts || 0,
+                "Actions": ""
             });
             setRows(billingformattedRows);
         } else {
