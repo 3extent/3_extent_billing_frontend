@@ -102,8 +102,10 @@ export const generateAndSavePdf = (
   address,
   gst_number,
   rows = [],
-  payable_amount
+  payable_amount,
+  firm_name
 ) => {
+  console.log("Firm Name:", firm_name);
   const now = new Date();
   const pad = (n) => n.toString().padStart(2, "0");
   const timestamp = `${now.getFullYear()}.${pad(now.getMonth() + 1)}.${pad(now.getDate())}_${pad(now.getHours())}.${pad(now.getMinutes())}.${pad(now.getSeconds())}`;
@@ -183,6 +185,15 @@ export const generateAndSavePdf = (
     doc.text("GST No:", 14, y);
     doc.setFont("Roboto", "normal");
     doc.text(gst_number || "-", 14 + doc.getTextWidth("GST No:") + 2, y);
+    y += 6;
+
+
+    doc.setFont("Roboto", "bold");
+    doc.text("Firm Name:", 14, y);
+    doc.setFont("Roboto", "normal");
+    // doc.text(firm_name || "-", 14 + doc.getTextWidth("Firm Name:") + 2, y);
+    doc.text(firm_name ? firm_name : "-", 14 + doc.getTextWidth("Firm Name:") + 2, y);
+
     // contact no and invoice number
     const rightMargin = 16;
     doc.setFont("Roboto", "bold");
@@ -387,10 +398,10 @@ export const excelDownload = () => {
 
 export const handleBarcodePrint = (products) => {
   console.log("products", products);
-  
+
   // Ensure products is an array
   const productsArray = Array.isArray(products) ? products : [products];
-  
+
   if (productsArray.length === 0) {
     alert("No barcodes to print!");
     return;

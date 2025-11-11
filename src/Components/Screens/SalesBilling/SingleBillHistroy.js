@@ -11,7 +11,7 @@ export default function SingleBillHistory() {
     const { billId } = useParams();
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
-    const [singleBill, setSingleBill] = useState([])
+    const [singleBill, setSingleBill] = useState([])    
     const [customerInfo, setCustomerInfo] = useState();
     const [loading, setLoading] = useState(false);
     useEffect(() => {
@@ -29,6 +29,7 @@ export default function SingleBillHistory() {
                 invoice: bill.invoice_number,
                 address: bill.customer?.address,
                 gstno: bill.customer?.gst_number,
+                firmname: bill.customer?.firm_name,
                 amount: bill.payable_amount,
                 date: moment((bill.created_at)).format('ll')
             });
@@ -59,6 +60,7 @@ export default function SingleBillHistory() {
             customerInfo.gstno,
             singleBill.products,
             customerInfo.amount,
+            customerInfo.firmname
         );
     }
     const getSingleBillHistroyAllData = (id) => {
@@ -99,6 +101,10 @@ export default function SingleBillHistory() {
                         <div className="text-[16px] font-semibold">
                             Customer Name :<span className="font-normal text-[14px]">{customerInfo.name}</span>
                         </div>
+                        <div className="text-[16px] font-semibold">
+                            Firm Name :<span className="font-normal text-[14px]">{customerInfo.firmname || "-"}</span>
+                        </div>
+
                         <div className="text-[16px] font-semibold">
                             Contact Number : <span className="font-normal text-[14px]">{customerInfo.contact}</span>
                         </div>
