@@ -191,8 +191,7 @@ export const generateAndSavePdf = (
     doc.setFont("Roboto", "bold");
     doc.text("Firm Name:", 14, y);
     doc.setFont("Roboto", "normal");
-    // doc.text(firm_name || "-", 14 + doc.getTextWidth("Firm Name:") + 2, y);
-    doc.text(firm_name ? firm_name : "-", 14 + doc.getTextWidth("Firm Name:") + 2, y);
+    doc.text(firm_name || "-", 14 + doc.getTextWidth("Firm Name:") + 2, y);
 
     // contact no and invoice number
     const rightMargin = 16;
@@ -310,7 +309,7 @@ export const generateAndSavePdf = (
   // Generate the table in the PDF
   let pageFinalYs = {};
   autoTable(doc, {
-    startY: 92,
+    startY: 96,
     head: [tableColumn],
     body: tableRows,
     theme: "plain",
