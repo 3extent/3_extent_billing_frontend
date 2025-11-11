@@ -9,6 +9,9 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
     useEffect(() => {
         setTableRows(rows);
     }, [rows]);
+    const normalRows = tableRows.filter(row => row._id !== "total");
+    const totalRow = tableRows.find(row => row._id === "total");
+
     return (
         <div className={`w-full  relative ${maxHeight} overflow-x-auto`}>
             {Rows ? (
@@ -26,7 +29,7 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
                             </tr>
                         </thead>
                         <tbody >
-                            {rows.map((row, rowIndex) => (
+                            {normalRows.map((row, rowIndex) => (
                                 <tr key={rowIndex}
                                     className={`border-b border-slate-300 text-left text-[12px] ${onRowClick ? "cursor-pointer hover:bg-slate-100" : ""
                                         }`}
@@ -54,6 +57,17 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
                                 </tr>
                             ))}
                         </tbody>
+                        {totalRow && (
+                            <tfoot className="sticky bottom-0 bg-gray-200 font-bold z-10">
+                                <tr>
+                                    {tableHeaders.map((header, index) => (
+                                        <td key={index} className="px-4 py-2 border-t border-gray-400">
+                                            {totalRow[header] !== undefined && totalRow[header] !== null ? totalRow[header] : " "}
+                                        </td>
+                                    ))}
+                                </tr>
+                            </tfoot>
+                        )}
                     </table>
                 </div>
             ) : (
