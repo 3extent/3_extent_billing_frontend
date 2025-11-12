@@ -51,6 +51,7 @@ function Billinghistory() {
                 "Bill id": index + 1,
                 "Date": moment(bill.created_at).format('ll'),
                 "Customer Name": bill.customer.name,
+                "Firm Name": bill.customer?.firm_name || "-",
                 "Contact Number": bill.customer.contact_number,
                 "Total Amount": bill.payable_amount,
                 "Remaining Amount": bill.pending_amount,
@@ -83,8 +84,10 @@ function Billinghistory() {
                                     bill.customer.address,
                                     bill.customer.gst_number,
                                     bill.products,
-                                    bill.payable_amount
+                                    bill.payable_amount,
+                                    bill.customer?.firm_name
                                 );
+                                
                             }}
                         />
                     </div>
