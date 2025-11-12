@@ -58,10 +58,10 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
                             ))}
                         </tbody>
                         {totalRow && (
-                            <tfoot className="sticky bottom-0 bg-gray-200 font-bold z-10">
-                                <tr>
+                            <tfoot className="sticky bottom-0 bg-slate-50 z-10 font-serif">
+                                <tr className="text-[14px]">
                                     {tableHeaders.map((header, index) => (
-                                        <td key={index} className="px-4 py-2 border-t border-gray-400">
+                                        <td key={index} className="px-4 py-2  border-t border-gray-400">
                                             {["Total Amount", "Remaining Amount", "Profit", "Total Products"].includes(header)
                                                 ? totalRow[header]
                                                 : header === "Bill id"
