@@ -64,7 +64,7 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
                     No Records Found
                 </div>
             )}
-            {totalRow && (
+            {totalRow && normalRows.length > 0 && (
                 <div className={`mt-5 sticky bottom-0 font-extrabold text-[20px] z-20 
             ${totalRow["Profit"] > 0 ? "bg-green-200" : totalRow["Profit"] < 0 ? "bg-red-200" : "bg-white"}`}
                 >
