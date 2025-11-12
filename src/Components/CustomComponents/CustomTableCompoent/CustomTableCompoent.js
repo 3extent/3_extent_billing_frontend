@@ -9,6 +9,9 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
     useEffect(() => {
         setTableRows(rows);
     }, [rows]);
+    const normalRows = tableRows.filter(row => row._id !== "total");
+    const totalRow = tableRows.find(row => row._id === "total");
+
     return (
         <div className={`w-full  relative ${maxHeight} overflow-x-auto`}>
             {Rows ? (
@@ -26,7 +29,7 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
                             </tr>
                         </thead>
                         <tbody >
-                            {rows.map((row, rowIndex) => (
+                            {normalRows.map((row, rowIndex) => (
                                 <tr key={rowIndex}
                                     className={`border-b border-slate-300 text-left text-[12px] ${onRowClick ? "cursor-pointer hover:bg-slate-100" : ""
                                         }`}
@@ -59,6 +62,32 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
             ) : (
                 <div className="flex items-center justify-center h-full w-full text-red-600 font-bold text-[25px] text-center">
                     No Records Found
+                </div>
+            )}
+            {totalRow && (
+                <div className={`mt-5 sticky bottom-0 font-extrabold text-[20px] z-20 
+            ${totalRow["Profit"] > 0 ? "bg-green-200" : totalRow["Profit"] < 0 ? "bg-red-200" : "bg-white"}`}
+                >
+                    <div className="overflow-x-auto">
+                        <table className="table-fixed w-full">
+                            <tbody>
+                                <tr>
+                                    {tableHeaders.map((header, index) => (
+                                        <td
+                                            key={index}
+                                            className="px-4 py-2 text-left "
+                                        >
+                                            {header === "Bill id"
+                                                ? "Total"
+                                                : ["Total Amount", "Remaining Amount", "Profit", "Total Products"].includes(header)
+                                                    ? totalRow[header].toLocaleString()
+                                                    : ""}
+                                        </td>
+                                    ))}
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             )}
         </div>
