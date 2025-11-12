@@ -98,7 +98,7 @@ function Billinghistory() {
                 "Contact Number": "",
                 "Total Amount": response.data.totalAmount?.toLocaleString("en-IN") || 0,
                 "Remaining Amount": response.data.totalRemaining?.toLocaleString("en-IN") || 0,
-                "Profit": response.data.totalProfit?.toLocaleString("en-IN") || 0,
+                "Profit": response.data.totalProfit,
                 "Total Products": response.data.totalProducts || 0,
                 "Actions": ""
             });

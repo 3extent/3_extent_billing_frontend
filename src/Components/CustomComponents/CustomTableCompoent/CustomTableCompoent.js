@@ -57,26 +57,37 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
                                 </tr>
                             ))}
                         </tbody>
-                        {totalRow && (
-                            <tfoot className="sticky bottom-0 bg-slate-50 z-10 font-serif">
-                                <tr className="text-[14px]">
-                                    {tableHeaders.map((header, index) => (
-                                        <td key={index} className="px-4 py-2  border-t border-gray-400">
-                                            {["Total Amount", "Remaining Amount", "Profit", "Total Products"].includes(header)
-                                                ? totalRow[header]
-                                                : header === "Bill id"
-                                                    ? "Total"
-                                                    : ""}
-                                        </td>
-                                    ))}
-                                </tr>
-                            </tfoot>
-                        )}
                     </table>
                 </div>
             ) : (
                 <div className="flex items-center justify-center h-full w-full text-red-600 font-bold text-[25px] text-center">
                     No Records Found
+                </div>
+            )}
+            {totalRow && (
+                <div className={`mt-5 sticky bottom-0 font-extrabold text-[20px] z-20 
+            ${totalRow["Profit"] > 0 ? "bg-green-200" : totalRow["Profit"] < 0 ? "bg-red-200" : "bg-white"}`}
+                >
+                    <div className="overflow-x-auto">
+                        <table className="table-fixed w-full">
+                            <tbody>
+                                <tr>
+                                    {tableHeaders.map((header, index) => (
+                                        <td
+                                            key={index}
+                                            className="px-4 py-2 text-left "
+                                        >
+                                            {header === "Bill id"
+                                                ? "Total"
+                                                : ["Total Amount", "Remaining Amount", "Profit", "Total Products"].includes(header)
+                                                    ? totalRow[header].toLocaleString()
+                                                    : ""}
+                                        </td>
+                                    ))}
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             )}
         </div>
