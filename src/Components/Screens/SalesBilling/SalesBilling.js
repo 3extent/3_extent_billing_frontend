@@ -244,6 +244,7 @@ export default function SalesBilling() {
                 response.data.billing.customer?.gst_number,
                 response.data.billing.products,
                 response.data.billing.payable_amount,
+                response.data.billing.customer?.firm_name,
 
             );
         } else {
@@ -292,7 +293,7 @@ export default function SalesBilling() {
             url: API_URLS.BILLING,
             data: billsData,
             callback: billsCallback,
-            setLoading:setLoading
+            setLoading: setLoading
         })
     };
     const draftCallback = (response) => {
