@@ -92,8 +92,8 @@ export default function DraftBillHistroy() {
                     const draftFormattedRows = response.data.map((bill, index) => ({
                         "Bill id": index + 1,
                         "Date": moment(bill.created_at).format('ll'),
-                        "Customer Name": bill.customer.name,
-                        "Contact Number": bill.customer.contact_number,
+                        "Customer Name": bill.customer?.name,
+                        "Contact Number": bill.customer?.contact_number,
                         "Total Amount": bill.payable_amount,
                         "Remaining Amount": bill.pending_amount,
                         "Profit": bill.profit,
