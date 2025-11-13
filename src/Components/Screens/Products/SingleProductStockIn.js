@@ -126,7 +126,7 @@ function SingleProductStockIn() {
       });
     }
   }
-  
+
   const deleteProduct = () => {
     apiCall({
       method: "DELETE",
@@ -392,7 +392,7 @@ function SingleProductStockIn() {
           icon="fa fa-save"
           onClick={saveProductStockIn}
         />
-        {product_id && (
+        {product_id && productData.status !== 'SOLD' && (
           <PrimaryButtonComponent
             label="Delete"
             icon="fa fa-trash"
