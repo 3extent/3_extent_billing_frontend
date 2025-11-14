@@ -108,14 +108,11 @@ export default function SingleDraftBillHistory() {
             return newRows;
         });
     };
-
     const getSingleDraftBillHistroyCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
             const bill = response.data;
             setCustomerInfo({
-                // name: bill.customer?.name,
-                // contact: bill.customer?.contact_number,
                 invoice: bill.invoice_number,
                 address: bill.customer?.address,
                 gstno: bill.customer?.gst_number,
@@ -188,44 +185,68 @@ export default function SingleDraftBillHistory() {
         }
         setShowPaymentPopup(true);
     }
+    const billsCallback = (response) => {
+        console.log("response: ", response);
+        if (response.status === 200) {
+            toast.success("Bill saved successfully!", {
+                position: "top-center",
+                autoClose: 2000,
+            });
+            setRows([]);
+            setSelectedImei("");
+            setCustomerName("");
+            setSelectedContactNo("");
+            setOnlineAmount("");
+            setCashAmount("");
+            setCard("");
+            setShowPaymentPopup(false);
+            setPendingAmount(0);
+            navigate("/billinghistory");
+            generateAndSavePdf(
+                response.data.billing.customer?.name,
+                response.data.billing.invoice_number,
+                response.data.billing.customer?.contact_number,
+                response.data.billing.customer?.address,
+                response.data.billing.customer?.gst_number,
+                response.data.billing.products,
+                response.data.billing.payable_amount,
+                response.data.billing.customer?.firm_name,
+
+            );
+        } else {
+            const errorMsg = response?.data?.error || "Something went wrong while saving bill.";
+            toast.error(errorMsg, {
+                position: "top-center",
+                autoClose: 3000,
+            });
+            setShowPaymentPopup(false);
+        }
+    };
     const handlePrintButton = () => {
         if (!draftBillId) return;
-
-        const cash = Number(cashAmount || 0);
-        const online = Number(onlineAmount || 0);
-        const cardAmt = Number(card || 0);
-        const paidTotal = cash + online + cardAmt;
-
-        const updatedPayment = {
+        const billsData = {
+            customer_name: customerName,
+            contact_number: selectedContactNo,
+            products: rows.map((row) => ({
+                imei_number: row["IMEI NO"],
+                rate: row["Rate"],
+            })),
             paid_amount: [
-                { method: "cash", amount: cash },
-                { method: "online", amount: online },
-                { method: "card", amount: cardAmt },
+                { method: "cash", amount: Number(cashAmount) },
+                { method: "online", amount: Number(onlineAmount) },
+                { method: "card", amount: Number(card) },
             ],
             payable_amount: totalAmount,
-            pending_amount: totalAmount - paidTotal,
+            pending_amount: pendingAmount,
         };
-
         apiCall({
-            method: "PUT",
+            method: 'PUT',
             url: `${API_URLS.BILLING}/${draftBillId}`,
-            data: updatedPayment,
-            callback: (response) => {
-                if (response.status === 200) {
-                    toast.success("Payment updated successfully!", {
-                        position: "top-center",
-                        autoClose: 2000,
-                    });
-                    handleCancelPopup();
-                    getSingleBillHistroyAllData(draftBillId);
-                    navigate("/billinghistory");
-                }
-            },
-            setLoading: setLoading,
-        });
+            data: billsData,
+            callback: billsCallback,
+            setLoading: setLoading
+        })
     };
-
-
     const draftCallback = (response) => {
         if (response.status === 200) {
             toast.success("Draft saved successfully!", {
@@ -250,6 +271,7 @@ export default function SingleDraftBillHistory() {
         }
     }
     const handleDraftData = () => {
+        if (!draftBillId) return;
         const billsData = {
             customer_name: customerName,
             contact_number: selectedContactNo,
@@ -267,13 +289,12 @@ export default function SingleDraftBillHistory() {
             status: "DRAFTED"
         };
         apiCall({
-            method: 'POST',
-            url: API_URLS.BILLING,
+            method: 'PUT',
+            url: `${API_URLS.BILLING}/${draftBillId}`,
             data: billsData,
             callback: draftCallback,
         })
     };
-
     const addRow = (imei) => {
         apiCall({
             method: "GET",
@@ -338,12 +359,6 @@ export default function SingleDraftBillHistory() {
             <div className="mt-2">
                 {customerInfo && (
                     <div className="">
-                        {/* <div className="text-[16px] font-semibold">
-                            Customer Name :<span className="font-normal text-[14px]">{customerInfo.name}</span>
-                        </div>
-                        <div className="text-[16px] font-semibold">
-                            Contact Number : <span className="font-normal text-[14px]">{customerInfo.contact}</span>
-                        </div> */}
                         <div className="text-[16px] font-semibold">
                             Date: <span className="font-normal text-[14px]">{customerInfo.date}</span>
                         </div>

@@ -53,9 +53,9 @@ function Billinghistory({ isDraft = false }) {
             const billingformattedRows = response.data.billings.map((bill, index) => ({
                 "Bill id": index + 1,
                 "Date": moment(bill.created_at).format('ll'),
-                "Customer Name": bill.customer.name,
+                "Customer Name": bill.customer?.name,
                 "Firm Name": bill.customer?.firm_name || "-",
-                "Contact Number": bill.customer.contact_number,
+                "Contact Number": bill.customer?.contact_number,
                 "Total Amount": bill.payable_amount,
                 "Remaining Amount": bill.pending_amount,
                 "Profit": bill.profit,
@@ -90,12 +90,14 @@ function Billinghistory({ isDraft = false }) {
                                     bill.payable_amount,
                                     bill.customer?.firm_name
                                 );
-                                
+
                             }}
                         />
                     </div>
                 )
             }));
+            console.log('billingformattedRows: ', billingformattedRows);
+
             billingformattedRows.push({
                 _id: "total",
                 "Bill id": "Total",
@@ -200,7 +202,7 @@ function Billinghistory({ isDraft = false }) {
         };
         apiCall({
             method: 'PUT',
-            url: `${API_URLS.BILLING}/${selectedBill._id}`,
+            url: `${API_URLS.BILLING}/payment/${selectedBill._id}`,
             data: updatedPayment,
             callback: handlePaymentUpdateCallback,
             setLoading: setLoading,
@@ -304,6 +306,7 @@ function Billinghistory({ isDraft = false }) {
                     headers={BILLINGHISTORY_COLOUMNS}
                     rows={rows}
                     onRowClick={handleRowClick}
+                    showTotalRow={!isDraft}
                 />
             </div>
             {showPaymentPopup && selectedBill && (
@@ -318,7 +321,7 @@ function Billinghistory({ isDraft = false }) {
                     setCard={setCard}
                     handleCancelButton={handleCancelPopup}
                     handleSaveButton={handleSavePayment}
-                    isbillingHistory={!isDraft}
+                    isbillingHistory={isDraft}
                     handlePrintButton={isDraft ? handleSavePayment : handleSavePayment}
                 />
             )}
