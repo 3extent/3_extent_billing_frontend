@@ -14,7 +14,7 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
 
     return (
         <div className={`w-full  relative ${maxHeight} overflow-x-auto`}>
-            {Rows ? (
+            {normalRows.length > 0 ? (
                 <div className="border border-slate-800">
                     <table className="table-fixed w-full ">
                         <thead className=" sticky top-0 bg-slate-800 text-white text-sm font-semibold">
