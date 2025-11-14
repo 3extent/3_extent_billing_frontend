@@ -347,6 +347,9 @@ export default function SalesBilling() {
         exportToExcel(rows, "salesbillingData.xlsx");
     };
     const navigateAddCustomer = () => {
+        if (rows.length > 0) {
+            handleDraftData();
+        }
         navigate("/addcustomer")
     }
     return (

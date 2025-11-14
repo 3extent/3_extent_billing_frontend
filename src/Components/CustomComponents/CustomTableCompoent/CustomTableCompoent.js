@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-export default function CustomTableCompoent({ headers, rows, onRateChange, maxHeight = "h-full", onRowClick, editable = false }) {
+export default function CustomTableCompoent({ headers, rows, onRateChange, maxHeight = "h-full", onRowClick, editable = false,showTotalRow = false  }) {
     const [tableHeaders, setTableHeaders] = useState(headers)
     const [tableRows, setTableRows] = useState(rows)
     const Rows = tableRows && tableRows.length > 0;
@@ -64,7 +64,7 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
                     No Records Found
                 </div>
             )}
-            {totalRow && normalRows.length > 0 && (
+            {showTotalRow && totalRow && normalRows.length > 0 && (
                 <div className={`mt-5 sticky bottom-0 font-extrabold text-[20px] z-20 
             ${totalRow["Profit"] > 0 ? "bg-green-200" : totalRow["Profit"] < 0 ? "bg-red-200" : "bg-white"}`}
                 >
