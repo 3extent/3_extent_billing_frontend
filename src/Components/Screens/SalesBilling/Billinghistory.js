@@ -29,6 +29,7 @@ function Billinghistory() {
     const [from, setFrom] = useState(fromDate);
     const [to, setTo] = useState(toDate);
     const [selectAllDates, setSelectAllDates] = useState(false);
+    const [showTotalRow, setShowTotalRow] = useState(false);
     useEffect(() => {
         setFrom(from);
         setTo(to);
@@ -44,15 +45,16 @@ function Billinghistory() {
         const pending = selectedBill.pending_amount - paidTotal;
         setPendingAmount(pending);
     }, [cashAmount, card, onlineAmount, selectedBill]);
+
     const getBilllinghistoryCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
             const billingformattedRows = response.data.billings.map((bill, index) => ({
                 "Bill id": index + 1,
                 "Date": moment(bill.created_at).format('ll'),
-                "Customer Name": bill.customer.name,
+                "Customer Name": bill.customer?.name,
                 "Firm Name": bill.customer?.firm_name || "-",
-                "Contact Number": bill.customer.contact_number,
+                "Contact Number": bill.customer?.contact_number,
                 "Total Amount": bill.payable_amount,
                 "Remaining Amount": bill.pending_amount,
                 "Profit": bill.profit,
@@ -87,7 +89,7 @@ function Billinghistory() {
                                     bill.payable_amount,
                                     bill.customer?.firm_name
                                 );
-                                
+
                             }}
                         />
                     </div>
@@ -292,13 +294,25 @@ function Billinghistory() {
                     onClick={handleResetFilter}
                 />
             </div>
+
             <div className="h-[60vh]">
                 <CustomTableCompoent
                     headers={BILLINGHISTORY_COLOUMNS}
                     rows={rows}
                     onRowClick={handleRowClick}
+                    showTotalRow={showTotalRow}
                 />
             </div>
+            <div className="flex justify-end">
+                <button
+                    className="rounded-full"
+                    onClick={() => setShowTotalRow(!showTotalRow)}
+                >
+                    <i className="fa fa-circle-o" aria-hidden="true"></i>
+                </button>
+            </div>
+
+
             {showPaymentPopup && selectedBill && (
                 <CustomPopUpComponet
                     totalAmount={selectedBill.pending_amount}
