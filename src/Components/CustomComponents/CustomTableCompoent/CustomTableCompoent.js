@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-export default function CustomTableCompoent({ headers, rows, onRateChange, maxHeight = "h-full", onRowClick, editable = false }) {
+export default function CustomTableCompoent({ headers, rows, onRateChange, maxHeight = "h-full", onRowClick, editable = false, showTotalRow = false }) {
     const [tableHeaders, setTableHeaders] = useState(headers)
     const [tableRows, setTableRows] = useState(rows)
     const Rows = tableRows && tableRows.length > 0;
@@ -80,6 +80,30 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
                                             {header === "Bill id"
                                                 ? "Total"
                                                 : ["Total Amount", "Remaining Amount", "Profit", "Total Products"].includes(header)
+                                                    ? totalRow[header].toLocaleString()
+                                                    : ""}
+                                        </td>
+                                    ))}
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            )}
+            {totalRow && normalRows.length > 0 && showTotalRow && (
+                <div className="mt-5 sticky bottom-0  font-extrabold text-[20px] z-20 bg-green-200">
+                    <div className="overflow-x-auto">
+                        <table className="table-fixed w-full">
+                            <tbody>
+                                <tr>
+                                    {tableHeaders.map((header, index) => (
+                                        <td
+                                            key={index}
+                                            className="px-4 py-2 text-left "
+                                        >
+                                            {header === "Sr.No"
+                                                ? "Total"
+                                                : ["Purchase Price", "Sale Price", "Rate"].includes(header)
                                                     ? totalRow[header].toLocaleString()
                                                     : ""}
                                         </td>

@@ -11,9 +11,10 @@ export default function SingleBillHistory() {
     const { billId } = useParams();
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
-    const [singleBill, setSingleBill] = useState([])    
+    const [singleBill, setSingleBill] = useState([])
     const [customerInfo, setCustomerInfo] = useState();
     const [loading, setLoading] = useState(false);
+    const [showTotalRow, setShowTotalRow] = useState(false);
     useEffect(() => {
         if (billId) {
             getSingleBillHistroyAllData(billId);
@@ -45,6 +46,19 @@ export default function SingleBillHistory() {
                 "Grade": product.grade,
                 "Accessories": product.accessories,
             }));
+            singleBillHistrotFormattedRows.push({
+                _id: "total",
+                "Sr.No": "Total",
+                "IMEI NO": "",
+                Brand: "",
+                Model: "",
+                "Rate": response.data.totalRate?.toLocaleString("en-IN") || 0,
+                "Sale Price": response.data.totalSalePrice?.toLocaleString("en-IN") || 0,
+                "Purchase Price": response.data.totalPurchasePrice?.toLocaleString("en-IN") || 0,
+                "QC-Remark": "",
+                Grade: "",
+                Accessories: "",
+            });
             setSingleBill(bill);
             setRows(singleBillHistrotFormattedRows);
         } else {
@@ -118,7 +132,16 @@ export default function SingleBillHistory() {
                 <CustomTableCompoent
                     headers={SINGLEBILLHISTORY_COLOUMNS}
                     rows={rows}
+                    showTotalRow={showTotalRow}
                 />
+            </div>
+            <div className="flex justify-end">
+                <button
+                    className="rounded-full"
+                    onClick={() => setShowTotalRow(!showTotalRow)}
+                >
+                    <i className="fa fa-circle-o" aria-hidden="true"></i>
+                </button>
             </div>
         </div>
     );

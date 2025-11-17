@@ -50,9 +50,9 @@ function Billinghistory() {
             const billingformattedRows = response.data.billings.map((bill, index) => ({
                 "Bill id": index + 1,
                 "Date": moment(bill.created_at).format('ll'),
-                "Customer Name": bill.customer.name,
+                "Customer Name": bill.customer?.name,
                 "Firm Name": bill.customer?.firm_name || "-",
-                "Contact Number": bill.customer.contact_number,
+                "Contact Number": bill.customer?.contact_number,
                 "Total Amount": bill.payable_amount,
                 "Remaining Amount": bill.pending_amount,
                 "Profit": bill.profit,
@@ -87,7 +87,7 @@ function Billinghistory() {
                                     bill.payable_amount,
                                     bill.customer?.firm_name
                                 );
-                                
+
                             }}
                         />
                     </div>
