@@ -126,7 +126,7 @@ export default function SingleDraftBillHistory() {
                 "IMEI NO": product.imei_number,
                 "Brand": product.model.brand?.name,
                 "Model": product.model?.name,
-                "Rate": product.sales_price,
+                "Rate": product.sold_at_price || product.sales_price,
                 "Sale Price": product.sales_price,
                 "Purchase Price": product.purchase_price,
                 "QC-Remark": product.qc_remark,

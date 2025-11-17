@@ -180,6 +180,7 @@ function Billinghistory({ isDraft = false }) {
                 position: "top-center",
                 autoClose: 2000,
             });
+            navigate("/billinghistory")
             handleCancelPopup();
             getBillData();
         }
