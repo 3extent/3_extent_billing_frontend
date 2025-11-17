@@ -204,7 +204,7 @@ export default function SalesBilling() {
         }
     }
     const getsalesbillingAllData = () => {
-        let url = `${API_URLS.PRODUCTS}?`;
+        let url = `${API_URLS.PRODUCTS}?status=AVAILABLE,RETURN`;
         if (selectedImei) {
             url += `&imei_number=${selectedImei}`
         }
@@ -244,7 +244,6 @@ export default function SalesBilling() {
                 response.data.billing.customer?.gst_number,
                 response.data.billing.products,
                 response.data.billing.payable_amount,
-                response.data.billing.customer?.firm_name,
 
             );
         } else {
