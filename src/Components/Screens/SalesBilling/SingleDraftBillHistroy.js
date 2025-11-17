@@ -1,5 +1,4 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { SINGLEBILLHISTORY_COLOUMNS } from "./Constants";
 import { useEffect, useState } from "react";
 import moment from "moment";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
@@ -11,6 +10,7 @@ import { toast } from "react-toastify";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
 import { generateAndSavePdf } from "../../../Util/Utility";
+import { SINGLEDRAFTBILLHISTORY_COLOUMNS } from "./Constants";
 export default function SingleDraftBillHistory() {
     const { draftBillId } = useParams();
     const navigate = useNavigate();
@@ -399,7 +399,7 @@ export default function SingleDraftBillHistory() {
             </div>
             <div className="h-[64vh]">
                 <CustomTableCompoent
-                    headers={SINGLEBILLHISTORY_COLOUMNS}
+                    headers={SINGLEDRAFTBILLHISTORY_COLOUMNS}
                     rows={rows}
                     onRateChange={handleRateChange}
                     editable={true}
