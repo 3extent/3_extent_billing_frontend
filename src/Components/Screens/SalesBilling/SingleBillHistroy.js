@@ -5,13 +5,13 @@ import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
-import { generateAndSavePdf } from "../../../Util/Utility";
+import { exportToExcel, generateAndSavePdf } from "../../../Util/Utility";
 import { API_URLS } from "../../../Util/AppConst";
 export default function SingleBillHistory() {
     const { billId } = useParams();
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
-    const [singleBill, setSingleBill] = useState([])    
+    const [singleBill, setSingleBill] = useState([])
     const [customerInfo, setCustomerInfo] = useState();
     const [loading, setLoading] = useState(false);
     useEffect(() => {
@@ -75,6 +75,9 @@ export default function SingleBillHistory() {
     const handleNavigateBillHistroy = () => {
         navigate(-1);
     }
+    const handleExportToExcel = () => {
+        exportToExcel(rows, "billData.xlsx", customerInfo);
+    };
     return (
         <div>
             {loading && <Spinner />}
@@ -92,6 +95,12 @@ export default function SingleBillHistory() {
                         icon="fa fa-print"
                         buttonClassName="py-1 px-3 text-[12px] font-semibold"
                         onClick={handleGenaratePdf}
+                    />
+                    <PrimaryButtonComponent
+                        label="Export to Excel"
+                        icon="fa fa-file-excel-o"
+                        onClick={handleExportToExcel}
+
                     />
                 </div>
             </div>
