@@ -76,7 +76,7 @@ export default function SingleBillHistory() {
         navigate(-1);
     }
     const handleExportToExcel = () => {
-        exportToExcel(rows, "billData.xlsx");
+        exportToExcel(rows, "billData.xlsx", customerInfo);
     };
     return (
         <div>
