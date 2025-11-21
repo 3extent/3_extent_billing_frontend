@@ -21,17 +21,17 @@ export const exportToExcel = async (data, fileName = "StyledData.xlsx", customer
   titleCell.value = "3 EXTENT";
   titleCell.font = { bold: true, name: "Times New Roman", color: { argb: "FFFAA500" }, size: 18 };
   titleCell.alignment = { vertical: "middle", horizontal: "center" };
-   rowIndex += 2
+  rowIndex += 2
   // customer info
   if (customerInfo) {
-     worksheet.mergeCells(rowIndex, 1, rowIndex + 3, headers.length);
+    worksheet.mergeCells(rowIndex, 1, rowIndex + 3, headers.length);
     const customerCell = worksheet.getCell(`A${rowIndex}`);
 
     customerCell.value =
       `Customer Name: ${customerInfo?.name || ""}\n` +
       `Contact Number: ${customerInfo?.contact || ""}\n` +
       `Firm Name: ${customerInfo?.firmname || ""}\n` +
-       `Date: ${customerInfo?.date || ""}`;
+      `Date: ${customerInfo?.date || ""}`;
 
     customerCell.font = { bold: false, size: 12 };
     customerCell.alignment = {
@@ -86,7 +86,7 @@ export const exportToExcel = async (data, fileName = "StyledData.xlsx", customer
 
   for (let i = totalCols; i <= totalRows; i++) {
     const row = worksheet.getRow(i);
-      row.eachCell((cell) => {
+    row.eachCell((cell) => {
       cell.border = {
         top: { style: "medium" },
         left: { style: "medium" },
@@ -255,7 +255,7 @@ export const generateAndSavePdf = (
       Number(row.sold_at_price || 0).toFixed(2)
     ]
   });
-  const MIN_VISIBLE_ROWS = 11;
+  const MIN_VISIBLE_ROWS = 10;
   if (tableRows.length < MIN_VISIBLE_ROWS) {
     const emptyRowsNeeded = MIN_VISIBLE_ROWS - tableRows.length;
     for (let i = 0; i < emptyRowsNeeded; i++) {
@@ -269,6 +269,9 @@ export const generateAndSavePdf = (
   const amountInWordsClean = amountInWordsRaw.replace(/,/g, ""); // remove commas
   const amountInWords = `${capitalize(amountInWordsClean)} Only`;
   const formattedAmount = `Rs ${Number(payable_amount).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
+  // const formattedSgst = `Rs ${Number(sgstAmount).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
+  // const formattedCgst = `Rs ${Number(cgstAmount).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
+  // const formattedNetTotal = `Rs ${Number(netTotalAmount).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
   tableRows.push([
     {
       content: `Amount(In Words): ${amountInWords}`,
@@ -280,14 +283,44 @@ export const generateAndSavePdf = (
     {
       content: "TOTAL",
       styles: {
-        halign: "right", fontStyle: "bold", fontSize: 11,
+        halign: "right", fontStyle: "bold", fontSize: 11, lineWidth: { bottom: 0.2 }, lineColor: { bottom: 0 },
       },
     },
     {
       content: formattedAmount,
       styles: {
-        halign: "right", fontStyle: "bold", fontSize: 11,
+        halign: "right", fontStyle: "bold", fontSize: 11, lineWidth: { bottom: 0.2 },
+        lineColor: { bottom: 0 }
       },
+    },
+  ]);
+  tableRows.push([
+    { content: "", colSpan: 3, styles: { halign: "left" } },
+    { content: "SGST", styles: { halign: "right", fontStyle: "normal", fontSize: 9 } },
+    { content: "0", styles: { halign: "right", fontStyle: "normal", fontSize: 9 } },
+  ]);
+
+  // ROW 3 → CGST
+  tableRows.push([
+    { content: "", colSpan: 3, styles: { halign: "left" } },
+    { content: "CGST", styles: { halign: "right", fontStyle: "normal", fontSize: 9 } },
+    { content: "0", styles: { halign: "right", fontStyle: "normal", fontSize: 9 } },
+  ]);
+
+  // ROW 4 → Net Total
+  tableRows.push([
+    { content: "", colSpan: 3, styles: { halign: "left" } },
+    {
+      content: "Net Total", styles: {
+        halign: "right", fontStyle: "bold", fontSize: 11, lineWidth: { top: 0.2 },
+        lineColor: { top: 0 }
+      }
+    },
+    {
+      content: "0", styles: {
+        halign: "right", fontStyle: "bold", fontSize: 11, lineWidth: { top: 0.2 },
+        lineColor: { top: 0 }
+      }
     },
   ]);
 
@@ -353,6 +386,7 @@ export const generateAndSavePdf = (
       doc.setLineWidth(0.3);
 
       const isTotalRow = section === "body" && row.index === totalRowIndex;
+      const isNetTotalRow = section === "body" && row.index === totalRowIndex + 3;
       const isSignatureRow = section === "body" && row.index === signatureRowIndex;
 
       //  Draw only left & right lines (NO top/bottom)
@@ -362,7 +396,11 @@ export const generateAndSavePdf = (
       //  TOTAL row: top & bottom border
       if (isTotalRow) {
         doc.line(cell.x, cell.y, cell.x + cell.width, cell.y); // top
-        doc.line(cell.x, cell.y + cell.height, cell.x + cell.width, cell.y + cell.height); // bottom
+        // doc.line(cell.x, cell.y + cell.height, cell.x + cell.width, cell.y + cell.height); // bottom
+      }
+      // NET Total: bottom border
+      if (isNetTotalRow) {
+        doc.line(cell.x, cell.y + cell.height, cell.x + cell.width, cell.y + cell.height);
       }
       if (isSignatureRow) {
         doc.line(cell.x, cell.y, cell.x + cell.width, cell.y); // Top
