@@ -290,7 +290,7 @@ export default function SingleDraftBillHistory() {
     };
     const saveDraftCallback = (response) => {
         if (response.status === 200) {
-            toast.success("saved successfully!", {
+            toast.success("Saved successfully!", {
                 position: "top-center",
                 autoClose: 2000,
             });
