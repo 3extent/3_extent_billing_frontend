@@ -295,7 +295,7 @@ export default function SalesBilling() {
             setLoading: setLoading
         })
     };
-    const draftCallback = (response) => {
+    const draftCallback = (response, navigateAfterSave = true) => {
         if (response.status === 200) {
             toast.success("Draft saved successfully!", {
                 position: "top-center",
@@ -309,7 +309,7 @@ export default function SalesBilling() {
             setOnlineAmount("");
             setCard("");
             setPendingAmount(0);
-            navigate("/draftbillhistroy");
+            if (navigateAfterSave) navigate("/draftbillhistroy");
         } else {
             const errorMsg = response?.data?.error || "Something went wrong while saving draft.";
             toast.error(errorMsg, {
@@ -318,7 +318,7 @@ export default function SalesBilling() {
             });
         }
     }
-    const handleDraftData = () => {
+    const handleDraftData = (navigateAfterSave = true) => {
         const billsData = {
             customer_name: customerName,
             contact_number: selectedContactNo,
@@ -339,18 +339,16 @@ export default function SalesBilling() {
             method: 'POST',
             url: API_URLS.BILLING,
             data: billsData,
-            callback: draftCallback,
+            callback: (response) => draftCallback(response, navigateAfterSave)
         })
     };
     const handleExportToExcel = () => {
         exportToExcel(rows, "salesbillingData.xlsx");
     };
     const navigateAddCustomer = () => {
-        if (rows.length > 0) {
-            handleDraftData();
-        }
-        navigate("/addcustomer")
-    }
+        if (rows.length > 0) handleDraftData(false);
+        navigate("/addcustomer");
+    };
     return (
         <div>
             {loading && <Spinner />}
