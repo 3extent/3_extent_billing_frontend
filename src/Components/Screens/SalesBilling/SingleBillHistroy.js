@@ -23,7 +23,7 @@ export default function SingleBillHistory() {
     const getSingleBillHistroyCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
-            const bill = response.data;
+            const bill = response.data.billing;
             setCustomerInfo({
                 name: bill.customer?.name,
                 contact: bill.customer?.contact_number,
@@ -53,7 +53,7 @@ export default function SingleBillHistory() {
                 Brand: "",
                 Model: "",
                 "Rate": response.data.totalRate?.toLocaleString("en-IN") || 0,
-                "Sale Price": response.data.totalSalePrice?.toLocaleString("en-IN") || 0,
+                "Sale Price": response.data.totalSalesPrice?.toLocaleString("en-IN") || 0,
                 "Purchase Price": response.data.totalPurchasePrice?.toLocaleString("en-IN") || 0,
                 "QC-Remark": "",
                 Grade: "",
