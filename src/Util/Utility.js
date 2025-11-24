@@ -127,7 +127,8 @@ export const generateAndSavePdf = (
   gst_number,
   rows = [],
   payable_amount,
-  firm_name
+  firm_name,
+  netTotal,
 ) => {
   console.log("Firm Name:", firm_name);
   const now = new Date();
@@ -269,7 +270,7 @@ export const generateAndSavePdf = (
   const amountInWordsClean = amountInWordsRaw.replace(/,/g, ""); // remove commas
   const amountInWords = `${capitalize(amountInWordsClean)} Only`;
   const formattedAmount = `Rs ${Number(payable_amount).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
-  // const formattedNetTotal = `Rs ${Number(netTotalAmount).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
+   const formattedNetTotal = `Rs ${Number(netTotal).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
   tableRows.push([
     {
       content: `Amount(In Words): ${amountInWords}`,
@@ -315,7 +316,7 @@ export const generateAndSavePdf = (
       }
     },
     {
-      content: "0", styles: {
+      content: formattedNetTotal, styles: {
         halign: "right", fontStyle: "bold", fontSize: 11, lineWidth: { top: 0.2 },
         lineColor: { top: 0 }
       }

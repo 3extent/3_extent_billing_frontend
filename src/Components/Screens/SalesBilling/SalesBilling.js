@@ -247,6 +247,7 @@ export default function SalesBilling() {
                 response.data.billing.customer?.gst_number,
                 response.data.billing.products,
                 response.data.billing.payable_amount,
+                response.data.billing.netTotal
 
             );
         } else {

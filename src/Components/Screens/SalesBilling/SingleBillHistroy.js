@@ -22,7 +22,7 @@ export default function SingleBillHistory() {
     const getSingleBillHistroyCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
-            const bill = response.data;
+            const bill = response.data.billing;
             setCustomerInfo({
                 name: bill.customer?.name,
                 contact: bill.customer?.contact_number,
@@ -41,6 +41,7 @@ export default function SingleBillHistory() {
                 "Rate": product.sold_at_price,
                 "Sale Price": product.sales_price,
                 "Purchase Price": product.purchase_price,
+                "GST Purchase Price": product.gst_purchase_price,
                 "QC-Remark": product.qc_remark,
                 "Grade": product.grade,
                 "Accessories": product.accessories,
@@ -60,7 +61,8 @@ export default function SingleBillHistory() {
             customerInfo.gstno,
             singleBill.products,
             customerInfo.amount,
-            customerInfo.firmname
+            customerInfo.firmname,
+            singleBill.netTotal
         );
     }
     const getSingleBillHistroyAllData = (id) => {
