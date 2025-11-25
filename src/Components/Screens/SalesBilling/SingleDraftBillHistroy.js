@@ -111,7 +111,7 @@ export default function SingleDraftBillHistory() {
     const getSingleDraftBillHistroyCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
-            const bill = response.data;
+            const bill = response.data.billing;
             setCustomerInfo({
                 invoice: bill.invoice_number,
                 address: bill.customer?.address,
