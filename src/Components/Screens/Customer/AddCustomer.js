@@ -53,7 +53,7 @@ function AddCustomer() {
                 role: "CUSTOMER",
             });
             setTimeout(() => {
-                navigate("/customer");
+                navigate(-1);
             }, 2000);
         } else {
             const errorMsg = response?.data?.error || "Failed to add customer";
@@ -61,9 +61,6 @@ function AddCustomer() {
                 position: "top-center",
                 autoClose: 2000,
             });
-            // setTimeout(() => {
-            //     navigate(-1);
-            // }, 2000);
         }
     };
     const saveCallback = (response) => {
