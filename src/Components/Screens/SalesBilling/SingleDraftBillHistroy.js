@@ -111,7 +111,7 @@ export default function SingleDraftBillHistory() {
     const getSingleDraftBillHistroyCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
-            const bill = response.data;
+            const bill = response.data.billing;
             setCustomerInfo({
                 invoice: bill.invoice_number,
                 address: bill.customer?.address,
@@ -176,8 +176,16 @@ export default function SingleDraftBillHistory() {
         }
     };
     const handleSaveData = () => {
-        handledraftSavetData();
+        if (totalAmount <= 0) {
+            toast.warning("Please add products before proceeding to payment.", {
+                position: "top-center",
+                autoClose: 2000,
+            });
+            return;
+        }
+        handledraftSaveData();
     }
+    
     const billsCallback = (response) => {
         console.log("response: ", response);
         if (response.status === 200) {
@@ -303,7 +311,7 @@ export default function SingleDraftBillHistory() {
             });
         }
     }
-    const handledraftSavetData = () => {
+    const handledraftSaveData = () => {
         if (!draftBillId) return;
         const billsData = {
             customer_name: customerName,
