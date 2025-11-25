@@ -66,8 +66,8 @@ export default function SalesBilling() {
                 if (rateIndex !== -1) newHeaders.splice(rateIndex + 1, 0, "Purchase Price");
                 else newHeaders.push("Purchase Price");
             }
-            else 
-            newHeaders.push(columnName);
+            else
+                newHeaders.push(columnName);
             setDynamicHeaders(newHeaders);
             setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
         };
@@ -247,7 +247,7 @@ export default function SalesBilling() {
                 response.data.billing.customer?.gst_number,
                 response.data.billing.products,
                 response.data.billing.payable_amount,
-                response.data.billing.netTotal
+                response.data.netTotal
 
             );
         } else {

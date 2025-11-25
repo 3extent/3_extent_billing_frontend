@@ -29,6 +29,7 @@ export default function SingleDraftBillHistory() {
     const [totalAmount, setTotalAmount] = useState(0);
     const [pendingAmount, setPendingAmount] = useState(0);
     const [loading, setLoading] = useState(false);
+    const [netTotal, setNetTotal] = useState(0)
     useEffect(() => {
         if (draftBillId) {
             getAllImeis();
@@ -111,7 +112,7 @@ export default function SingleDraftBillHistory() {
     const getSingleDraftBillHistroyCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
-            const bill = response.data;
+            const bill = response.data.billing;
             setCustomerInfo({
                 invoice: bill.invoice_number,
                 address: bill.customer?.address,
@@ -144,6 +145,7 @@ export default function SingleDraftBillHistory() {
                     </div>
                 ),
             }));
+            setNetTotal(response.data.netTotal)
             setRows(singleBillHistrotFormattedRows);
         } else {
             console.log("Error");
@@ -211,7 +213,7 @@ export default function SingleDraftBillHistory() {
                 response.data.billing.products,
                 response.data.billing.payable_amount,
                 response.data.billing.customer?.firm_name,
-
+                netTotal,
             );
         } else {
             const errorMsg = response?.data?.error || "Something went wrong while saving bill.";

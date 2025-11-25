@@ -14,6 +14,7 @@ export default function SingleBillHistory() {
     const [singleBill, setSingleBill] = useState([])
     const [customerInfo, setCustomerInfo] = useState();
     const [loading, setLoading] = useState(false);
+    const [netTotal, setNetTotal] = useState(0);
     useEffect(() => {
         if (billId) {
             getSingleBillHistroyAllData(billId);
@@ -46,6 +47,7 @@ export default function SingleBillHistory() {
                 "Grade": product.grade,
                 "Accessories": product.accessories,
             }));
+            setNetTotal(response.data.netTotal)
             setSingleBill(bill);
             setRows(singleBillHistrotFormattedRows);
         } else {
@@ -62,7 +64,7 @@ export default function SingleBillHistory() {
             singleBill.products,
             customerInfo.amount,
             customerInfo.firmname,
-            singleBill.netTotal
+            netTotal,
         );
     }
     const getSingleBillHistroyAllData = (id) => {
@@ -102,7 +104,6 @@ export default function SingleBillHistory() {
                         label="Export to Excel"
                         icon="fa fa-file-excel-o"
                         onClick={handleExportToExcel}
-
                     />
                 </div>
             </div>

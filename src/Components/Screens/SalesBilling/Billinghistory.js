@@ -30,6 +30,7 @@ function Billinghistory({ isDraft = false }) {
     const [from, setFrom] = useState(fromDate);
     const [to, setTo] = useState(toDate);
     const [selectAllDates, setSelectAllDates] = useState(false);
+    const [netTotal, setNetTotal] = useState(0);
     useEffect(() => {
         getBillData();
     }, [isDraft]);
@@ -89,7 +90,7 @@ function Billinghistory({ isDraft = false }) {
                                     bill.products,
                                     bill.payable_amount,
                                     bill.customer?.firm_name,
-                                    bill.netTotal
+                                    netTotal,
                                 );
 
                             }}
@@ -111,6 +112,7 @@ function Billinghistory({ isDraft = false }) {
                 "Total Products": response.data.totalProducts || 0,
                 "Actions": ""
             });
+            setNetTotal(response.data.netTotal)
             setRows(billingformattedRows);
         } else {
             console.log("Error");
