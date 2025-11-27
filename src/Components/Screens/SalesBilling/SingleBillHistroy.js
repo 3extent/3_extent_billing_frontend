@@ -31,7 +31,7 @@ export default function SingleBillHistory() {
                 gstno: bill.customer?.gst_number,
                 firmname: bill.customer?.firm_name,
                 amount: bill.payable_amount,
-                nettotal: bill.net_total,
+                netTotal: bill.net_total,
                 date: moment((bill.created_at)).format('ll')
             });
             const singleBillHistrotFormattedRows = bill.products.map((product, index) => ({
@@ -63,7 +63,7 @@ export default function SingleBillHistory() {
             singleBill.products,
             customerInfo.amount,
             customerInfo.firmname,
-            customerInfo.nettotal,
+            customerInfo.netTotal,
         );
     }
     const getSingleBillHistroyAllData = (id) => {
