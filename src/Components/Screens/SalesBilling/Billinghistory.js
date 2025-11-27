@@ -48,6 +48,33 @@ function Billinghistory({ isDraft = false }) {
         const pending = selectedBill.pending_amount - paidTotal;
         setPendingAmount(pending);
     }, [cashAmount, card, onlineAmount, selectedBill]);
+    const handleDeleteBillCallback = (response) => {
+        if (response.status === 200) {
+            toast.success("Bill deleted successfully!", {
+                position: "top-center",
+                autoClose: 2000,
+            });
+            getBillData();
+        } else {
+            const errorMsg = response?.data?.error || "Failed to delete bill";
+            toast.error(errorMsg, {
+                position: "top-center",
+                autoClose: 2000,
+            });
+        }
+    };
+    const handleDeleteBill = (billId) => {
+        if (!billId) return;
+
+        apiCall({
+            method: "DELETE",
+            url: `${API_URLS.BILLING}/${billId}`,
+            data: {},
+            setLoading: setLoading,
+            callback: handleDeleteBillCallback,
+        });
+    };
+
     const getBillCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
@@ -64,6 +91,17 @@ function Billinghistory({ isDraft = false }) {
                 _id: bill._id,
                 "Actions": (
                     <div className="flex items-center justify-end gap-2">
+                        <div
+                            title="delete"
+                            className="flex items-center justify-center rounded-full bg-gray-300 hover:bg-gray-400 cursor-pointer w-10 h-10 min-w-[40px] min-h-[40px]"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteBill(bill._id);
+                            }}
+                        >
+                            <i className="fa fa-trash text-gray-700 text-lg" />
+                        </div>
+
                         {Number(bill.pending_amount) > 0 && (
                             <PrimaryButtonComponent
                                 label="Pay"
@@ -94,6 +132,7 @@ function Billinghistory({ isDraft = false }) {
                                 );
                             }}
                         />
+
                     </div>
                 )
             }));
