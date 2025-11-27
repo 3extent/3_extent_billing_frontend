@@ -111,7 +111,7 @@ export default function SingleDraftBillHistory() {
     const getSingleDraftBillHistroyCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
-            const bill = response.data;
+            const bill = response.data.billing;
             setCustomerInfo({
                 invoice: bill.invoice_number,
                 address: bill.customer?.address,
@@ -211,7 +211,7 @@ export default function SingleDraftBillHistory() {
                 response.data.billing.products,
                 response.data.billing.payable_amount,
                 response.data.billing.customer?.firm_name,
-
+                response.data.billing.net_total,
             );
         } else {
             const errorMsg = response?.data?.error || "Something went wrong while saving bill.";

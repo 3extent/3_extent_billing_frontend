@@ -22,7 +22,7 @@ export default function SingleBillHistory() {
     const getSingleBillHistroyCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
-            const bill = response.data;
+            const bill = response.data.billing;
             setCustomerInfo({
                 name: bill.customer?.name,
                 contact: bill.customer?.contact_number,
@@ -31,6 +31,7 @@ export default function SingleBillHistory() {
                 gstno: bill.customer?.gst_number,
                 firmname: bill.customer?.firm_name,
                 amount: bill.payable_amount,
+                netTotal: bill.net_total,
                 date: moment((bill.created_at)).format('ll')
             });
             const singleBillHistrotFormattedRows = bill.products.map((product, index) => ({
@@ -41,6 +42,7 @@ export default function SingleBillHistory() {
                 "Rate": product.sold_at_price,
                 "Sale Price": product.sales_price,
                 "Purchase Price": product.purchase_price,
+                "GST Purchase Price": product.gst_purchase_price,
                 "QC-Remark": product.qc_remark,
                 "Grade": product.grade,
                 "Accessories": product.accessories,
@@ -60,7 +62,8 @@ export default function SingleBillHistory() {
             customerInfo.gstno,
             singleBill.products,
             customerInfo.amount,
-            customerInfo.firmname
+            customerInfo.firmname,
+            customerInfo.netTotal,
         );
     }
     const getSingleBillHistroyAllData = (id) => {
@@ -100,7 +103,6 @@ export default function SingleBillHistory() {
                         label="Export to Excel"
                         icon="fa fa-file-excel-o"
                         onClick={handleExportToExcel}
-
                     />
                 </div>
             </div>
