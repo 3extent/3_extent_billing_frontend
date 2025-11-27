@@ -29,7 +29,6 @@ export default function SingleDraftBillHistory() {
     const [totalAmount, setTotalAmount] = useState(0);
     const [pendingAmount, setPendingAmount] = useState(0);
     const [loading, setLoading] = useState(false);
-    const [netTotal, setNetTotal] = useState(0)
     useEffect(() => {
         if (draftBillId) {
             getAllImeis();
@@ -145,7 +144,6 @@ export default function SingleDraftBillHistory() {
                     </div>
                 ),
             }));
-            setNetTotal(response.data.netTotal)
             setRows(singleBillHistrotFormattedRows);
         } else {
             console.log("Error");
