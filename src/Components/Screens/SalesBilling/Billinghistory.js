@@ -30,6 +30,7 @@ function Billinghistory({ isDraft = false }) {
     const [from, setFrom] = useState(fromDate);
     const [to, setTo] = useState(toDate);
     const [selectAllDates, setSelectAllDates] = useState(false);
+    const [showTotalRow, setShowTotalRow] = useState(false);
     useEffect(() => {
         getBillData();
     }, [isDraft]);
@@ -126,9 +127,9 @@ function Billinghistory({ isDraft = false }) {
                                     bill.customer.gst_number,
                                     bill.products,
                                     bill.payable_amount,
-                                    bill.customer?.firm_name
+                                    bill.customer?.firm_name,
+                                    bill.net_total,
                                 );
-
                             }}
                         />
 
@@ -136,19 +137,20 @@ function Billinghistory({ isDraft = false }) {
                 )
             }));
             console.log('billingformattedRows: ', billingformattedRows);
-
-            billingformattedRows.push({
-                _id: "total",
-                "Bill id": "Total",
-                "Date": "",
-                "Customer Name": "",
-                "Contact Number": "",
-                "Total Amount": response.data.totalAmount?.toLocaleString("en-IN") || 0,
-                "Remaining Amount": response.data.totalRemaining?.toLocaleString("en-IN") || 0,
-                "Profit": response.data.totalProfit,
-                "Total Products": response.data.totalProducts || 0,
-                "Actions": ""
-            });
+            if (!isDraft) {
+                billingformattedRows.push({
+                    _id: "total",
+                    "Bill id": "Total",
+                    "Date": "",
+                    "Customer Name": "",
+                    "Contact Number": "",
+                    "Total Amount": response.data.totalAmount?.toLocaleString("en-IN") || 0,
+                    "Remaining Amount": response.data.totalRemaining?.toLocaleString("en-IN") || 0,
+                    "Profit": response.data.totalProfit,
+                    "Total Products": response.data.totalProducts || 0,
+                    "Actions": ""
+                });
+            }
             setRows(billingformattedRows);
         } else {
             console.log("Error");
@@ -346,9 +348,18 @@ function Billinghistory({ isDraft = false }) {
                     headers={BILLINGHISTORY_COLOUMNS}
                     rows={rows}
                     onRowClick={handleRowClick}
-                    showTotalRow={!isDraft}
+                    showTotalRow={!isDraft && showTotalRow}
                 />
             </div>
+            {!isDraft && (
+                <div className="flex justify-end">
+                    <button className="rounded-full" onClick={() => setShowTotalRow(!showTotalRow)}>
+                        <i className="fa fa-circle-o" aria-hidden="true"></i>
+                    </button>
+                </div>
+            )}
+
+
             {showPaymentPopup && selectedBill && (
                 <CustomPopUpComponet
                     totalAmount={selectedBill.pending_amount}
