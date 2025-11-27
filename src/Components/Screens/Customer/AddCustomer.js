@@ -61,9 +61,6 @@ function AddCustomer() {
                 position: "top-center",
                 autoClose: 2000,
             });
-            setTimeout(() => {
-                navigate(-1);
-            }, 2000);
         }
     };
     const saveCallback = (response) => {
