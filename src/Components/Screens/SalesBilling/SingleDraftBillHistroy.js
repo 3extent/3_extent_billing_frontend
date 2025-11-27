@@ -183,8 +183,9 @@ export default function SingleDraftBillHistory() {
             });
             return;
         }
-        setShowPaymentPopup(true);
+        handledraftSaveData();
     }
+    
     const billsCallback = (response) => {
         console.log("response: ", response);
         if (response.status === 200) {
@@ -293,6 +294,46 @@ export default function SingleDraftBillHistory() {
             url: `${API_URLS.BILLING}/${draftBillId}`,
             data: billsData,
             callback: draftCallback,
+        })
+    };
+    const saveDraftCallback = (response) => {
+        if (response.status === 200) {
+            toast.success("Saved successfully!", {
+                position: "top-center",
+                autoClose: 2000,
+            });
+            setShowPaymentPopup(true);
+        } else {
+            const errorMsg = response?.data?.error || "Something went wrong while saving draft.";
+            toast.error(errorMsg, {
+                position: "top-center",
+                autoClose: 3000,
+            });
+        }
+    }
+    const handledraftSaveData = () => {
+        if (!draftBillId) return;
+        const billsData = {
+            customer_name: customerName,
+            contact_number: selectedContactNo,
+            products: rows.map((row) => ({
+                imei_number: row["IMEI NO"],
+                rate: row["Rate"],
+            })),
+            paid_amount: [
+                { method: "cash", amount: Number(cashAmount) },
+                { method: "online", amount: Number(onlineAmount) },
+                { method: "card", amount: Number(card) },
+            ],
+            payable_amount: totalAmount,
+            pending_amount: totalAmount,
+            status: "DRAFTED"
+        };
+        apiCall({
+            method: 'PUT',
+            url: `${API_URLS.BILLING}/${draftBillId}`,
+            data: billsData,
+            callback: saveDraftCallback,
         })
     };
     const addRow = (imei) => {
