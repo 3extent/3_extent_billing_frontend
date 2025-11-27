@@ -47,33 +47,33 @@ function Billinghistory({ isDraft = false }) {
         const pending = selectedBill.pending_amount - paidTotal;
         setPendingAmount(pending);
     }, [cashAmount, card, onlineAmount, selectedBill]);
+    const handleDeleteBillCallback = (response) => {
+        if (response.status === 200) {
+            toast.success("Bill deleted successfully!", {
+                position: "top-center",
+                autoClose: 2000,
+            });
+            getBillData();
+        } else {
+            const errorMsg = response?.data?.error || "Failed to delete billr";
+            toast.error(errorMsg, {
+                position: "top-center",
+                autoClose: 2000,
+            });
+        }
+    };
     const handleDeleteBill = (billId) => {
         if (!billId) return;
-
-        const deleteCallback = (response) => {
-            console.log("Delete response:", response);
-            if (response.status === 200) {
-                toast.success("Bill deleted successfully!", {
-                    position: "top-center",
-                    autoClose: 2000,
-                });
-                getBillData();
-            } else {
-                toast.error("Failed to delete bill", {
-                    position: "top-center",
-                    autoClose: 2000,
-                });
-            }
-        };
 
         apiCall({
             method: "DELETE",
             url: `${API_URLS.BILLING}/${billId}`,
             data: {},
-            callback: deleteCallback,
             setLoading: setLoading,
+            callback: handleDeleteBillCallback,
         });
     };
+
     const getBillCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
