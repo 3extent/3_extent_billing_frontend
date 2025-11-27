@@ -10,7 +10,8 @@ import moment from "moment";
 import { generateAndSavePdf } from "../../../Util/Utility";
 import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
 import { API_URLS } from "../../../Util/AppConst";
-function Billinghistory() {
+import { toast } from "react-toastify";
+function Billinghistory({ isDraft = false }) {
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false)
@@ -31,22 +32,23 @@ function Billinghistory() {
     const [selectAllDates, setSelectAllDates] = useState(false);
     const [showTotalRow, setShowTotalRow] = useState(false);
     useEffect(() => {
+        getBillData();
+    }, [isDraft]);
+    useEffect(() => {
         setFrom(from);
         setTo(to);
-        getBillinghistoryAllData({ from, to });
+        getBillData({ from, to });
     }, []);
     useEffect(() => {
         if (!selectedBill) return;
         const cash = Number(cashAmount || 0);
         const online = Number(onlineAmount || 0);
         const cardAmt = Number(card || 0);
-
         const paidTotal = cash + online + cardAmt;
         const pending = selectedBill.pending_amount - paidTotal;
         setPendingAmount(pending);
     }, [cashAmount, card, onlineAmount, selectedBill]);
-
-    const getBilllinghistoryCallBack = (response) => {
+    const getBillCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
             const billingformattedRows = response.data.billings.map((bill, index) => ({
@@ -87,54 +89,60 @@ function Billinghistory() {
                                     bill.customer.gst_number,
                                     bill.products,
                                     bill.payable_amount,
-                                    bill.customer?.firm_name
+                                    bill.customer?.firm_name,
+                                    bill.net_total,
                                 );
-
                             }}
                         />
                     </div>
                 )
             }));
-            billingformattedRows.push({
-                _id: "total",
-                "Bill id": "Total",
-                "Date": "",
-                "Customer Name": "",
-                "Contact Number": "",
-                "Total Amount": response.data.totalAmount?.toLocaleString("en-IN") || 0,
-                "Remaining Amount": response.data.totalRemaining?.toLocaleString("en-IN") || 0,
-                "Profit": response.data.totalProfit,
-                "Total Products": response.data.totalProducts || 0,
-                "Actions": ""
-            });
+            console.log('billingformattedRows: ', billingformattedRows);
+            if (!isDraft) {
+                billingformattedRows.push({
+                    _id: "total",
+                    "Bill id": "Total",
+                    "Date": "",
+                    "Customer Name": "",
+                    "Contact Number": "",
+                    "Total Amount": response.data.totalAmount?.toLocaleString("en-IN") || 0,
+                    "Remaining Amount": response.data.totalRemaining?.toLocaleString("en-IN") || 0,
+                    "Profit": response.data.totalProfit,
+                    "Total Products": response.data.totalProducts || 0,
+                    "Actions": ""
+                });
+            }
             setRows(billingformattedRows);
         } else {
             console.log("Error");
         }
     }
-    const getBillinghistoryAllData = ({ contactNo, paymentStatus, customerName, from, to, selectAllDates, imeiNumber }) => {
+    const getBillData = () => {
         let url = `${API_URLS.BILLING}?`;
-        if (customerName) {
-            url += `&customer_name=${customerName}`
-        }
-        if (contactNo) {
-            url += `&contact_number=${contactNo}`
-        }
-        if (paymentStatus) {
-            url += `&status=${paymentStatus}`
-        }
-        if (imeiNumber) {
-            url += `&imei_number=${imeiNumber}`
-        }
-        if (!selectAllDates) {
-            if (from) url += `&from=${moment.utc(from).valueOf(from)}`;
-            if (to) url += `&to=${moment.utc(to).endOf('day').valueOf(to)}`;
+        if (isDraft) url += `status=DRAFTED`;
+        else {
+            if (customerName) {
+                url += `&customer_name=${customerName}`
+            }
+            if (contactNo) {
+                url += `&contact_number=${contactNo}`
+            }
+            if (paymentStatus) {
+                url += `&status=${paymentStatus}`
+            }
+            if (imeiNumber) {
+                url += `&imei_number=${imeiNumber}`
+            }
+            if (!selectAllDates) {
+                if (from) url += `&from=${moment.utc(from).valueOf(from)}`;
+                if (to) url += `&to=${moment.utc(to).endOf('day').valueOf(to)}`;
+            }
         }
         apiCall({
             method: 'GET',
             url: url,
             data: {},
-            callback: getBilllinghistoryCallBack,
+            callback: getBillCallBack,
             setLoading: setLoading
         })
     }
@@ -148,7 +156,10 @@ function Billinghistory() {
     };
     const handleRowClick = (row) => {
         if (row._id) {
-            navigate(`/singleBillHistory/${row._id}`);
+            const path = isDraft
+                ? `/singleDraftBillHistroy/${row._id}`
+                : `/singleBillHistory/${row._id}`;
+            navigate(path);
         }
     };
     const handlepaymentMethod = (bill) => {
@@ -167,20 +178,17 @@ function Billinghistory() {
     };
     const handlePaymentUpdateCallback = (response) => {
         if (response.status === 200) {
-            handleCancelPopup();
-            getBillinghistoryAllData({
-                contactNo,
-                paymentStatus,
-                customerName,
-                from,
-                to,
-                selectAllDates,
-                imeiNumber
+            toast.success("Payment updated successfully!", {
+                position: "top-center",
+                autoClose: 2000,
             });
+            navigate("/billinghistory")
+            handleCancelPopup();
+            getBillData();
         }
     };
 
-    const handleSaveButton = () => {
+    const handleSavePayment = () => {
         if (!selectedBill) return;
         const cash = Number(cashAmount || 0);
         const online = Number(onlineAmount || 0);
@@ -197,7 +205,7 @@ function Billinghistory() {
         };
         apiCall({
             method: 'PUT',
-            url: `${API_URLS.BILLING}/${selectedBill._id}`,
+            url: `${API_URLS.BILLING}/payment/${selectedBill._id}`,
             data: updatedPayment,
             callback: handlePaymentUpdateCallback,
             setLoading: setLoading,
@@ -207,10 +215,8 @@ function Billinghistory() {
         setOnlineAmount("");
         setCard("");
     };
+    const handleSearchFilter = () => getBillData({ contactNo, paymentStatus, customerName, from, to, selectAllDates, imeiNumber });
 
-    const handleSearchFilter = () => {
-        getBillinghistoryAllData({ contactNo, paymentStatus, customerName, from, to, selectAllDates, imeiNumber });
-    }
     const handleResetFilter = () => {
         setContactNo("");
         setCustomerName("");
@@ -219,98 +225,100 @@ function Billinghistory() {
         setFrom(fromDate);
         setTo(toDate);
         setSelectAllDates(false);
-        getBillinghistoryAllData({ from, to });
+        getBillData({ from, to });
     }
     return (
         <div>
             {loading && <Spinner />}
-            <div className="text-xl font-serif">Billing History</div>
-            <div className="flex items-center gap-4 ">
-                <InputComponent
-                    type="text"
-                    placeholder="Customer Name"
-                    inputClassName="w-[190px] mb-2"
-                    value={customerName}
-                    onChange={(e) => setCustomerName(e.target.value)}
-                />
-                <InputComponent
-                    type="text"
-                    placeholder="Contact No"
-                    inputClassName="w-[180px] mb-2"
-                    value={contactNo}
-                    maxLength={10}
-                    onChange={(e) => setContactNo(e.target.value)}
-                />
-                <DropdownCompoent
-                    placeholder="Select status"
-                    value={paymentStatus}
-                    onChange={(e) => setPaymentStatus(e.target.value)}
-                    options={PAYMENTSTATUS_OPTIONS}
-                    className="w-[180px] mt-3"
-                />
-                <InputComponent
-                    type="date"
-                    placeholder="Start Date"
-                    inputClassName="w-[190px] mb-2"
-                    value={from}
-                    onChange={(e) => handleDateChange(e.target.value, setFrom)}
-                    disabled={selectAllDates}
-                />
-                <InputComponent
-                    type="date"
-                    placeholder="End Date"
-                    inputClassName="w-[190px] mb-2"
-                    value={to}
-                    onChange={(e) => handleDateChange(e.target.value, setTo)}
-                    disabled={selectAllDates}
-                />
-                <label className='flex items-center gap-2 text-sm'>
-                    <input
-                        type="checkbox"
-                        checked={selectAllDates}
-                        onChange={(e) => setSelectAllDates(e.target.checked)}
-                    />
-                    All Data
-                </label>
-            </div>
-            <div className='flex items-center gap-4'>
-                <InputComponent
-                    type="text"
-                    placeholder="IMEI NO"
-                    inputClassName="mb-5 w-[190px] "
-                    value={imeiNumber}
-                    numericOnly={true}
-                    maxLength={15}
-                    onChange={(e) => setIMEINumber(e.target.value)}
-                />
-                <PrimaryButtonComponent
-                    label="Search"
-                    icon="fa fa-search"
-                    onClick={handleSearchFilter}
-                />
-                <PrimaryButtonComponent
-                    label="Reset"
-                    icon="fa fa-refresh"
-                    onClick={handleResetFilter}
-                />
-            </div>
-
+            <div className="text-xl font-serif">{isDraft ? "Drafted Bill History" : "Billing History"}</div>
+            {!isDraft && (
+                <>
+                    <div className="flex items-center gap-4 ">
+                        <InputComponent
+                            type="text"
+                            placeholder="Customer Name"
+                            inputClassName="w-[190px] mb-2"
+                            value={customerName}
+                            onChange={(e) => setCustomerName(e.target.value)}
+                        />
+                        <InputComponent
+                            type="text"
+                            placeholder="Contact No"
+                            inputClassName="w-[180px] mb-2"
+                            value={contactNo}
+                            maxLength={10}
+                            onChange={(e) => setContactNo(e.target.value)}
+                        />
+                        <DropdownCompoent
+                            placeholder="Select status"
+                            value={paymentStatus}
+                            onChange={(e) => setPaymentStatus(e.target.value)}
+                            options={PAYMENTSTATUS_OPTIONS}
+                            className="w-[180px] mt-3"
+                        />
+                        <InputComponent
+                            type="date"
+                            placeholder="Start Date"
+                            inputClassName="w-[190px] mb-2"
+                            value={from}
+                            onChange={(e) => handleDateChange(e.target.value, setFrom)}
+                            disabled={selectAllDates}
+                        />
+                        <InputComponent
+                            type="date"
+                            placeholder="End Date"
+                            inputClassName="w-[190px] mb-2"
+                            value={to}
+                            onChange={(e) => handleDateChange(e.target.value, setTo)}
+                            disabled={selectAllDates}
+                        />
+                        <label className='flex items-center gap-2 text-sm'>
+                            <input
+                                type="checkbox"
+                                checked={selectAllDates}
+                                onChange={(e) => setSelectAllDates(e.target.checked)}
+                            />
+                            All Data
+                        </label>
+                    </div>
+                    <div className='flex items-center gap-4'>
+                        <InputComponent
+                            type="text"
+                            placeholder="IMEI NO"
+                            inputClassName="mb-5 w-[190px] "
+                            value={imeiNumber}
+                            numericOnly={true}
+                            maxLength={15}
+                            onChange={(e) => setIMEINumber(e.target.value)}
+                        />
+                        <PrimaryButtonComponent
+                            label="Search"
+                            icon="fa fa-search"
+                            onClick={handleSearchFilter}
+                        />
+                        <PrimaryButtonComponent
+                            label="Reset"
+                            icon="fa fa-refresh"
+                            onClick={handleResetFilter}
+                        />
+                    </div>
+                </>
+            )}
             <div className="h-[60vh]">
                 <CustomTableCompoent
                     headers={BILLINGHISTORY_COLOUMNS}
                     rows={rows}
                     onRowClick={handleRowClick}
-                    showTotalRow={showTotalRow}
+                    showTotalRow={!isDraft && showTotalRow}
                 />
             </div>
-            <div className="flex justify-end">
-                <button
-                    className="rounded-full"
-                    onClick={() => setShowTotalRow(!showTotalRow)}
-                >
-                    <i className="fa fa-circle-o" aria-hidden="true"></i>
-                </button>
-            </div>
+            {!isDraft && (
+                <div className="flex justify-end">
+                    <button className="rounded-full" onClick={() => setShowTotalRow(!showTotalRow)}>
+                        <i className="fa fa-circle-o" aria-hidden="true"></i>
+                    </button>
+                </div>
+            )}
 
 
             {showPaymentPopup && selectedBill && (
@@ -324,7 +332,9 @@ function Billinghistory() {
                     setOnlineAmount={setOnlineAmount}
                     setCard={setCard}
                     handleCancelButton={handleCancelPopup}
-                    handleSaveButton={handleSaveButton}
+                    handleSaveButton={handleSavePayment}
+                    isbillingHistory={isDraft}
+                    handlePrintButton={isDraft ? handleSavePayment : handleSavePayment}
                 />
             )}
         </div>

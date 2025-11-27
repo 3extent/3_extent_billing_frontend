@@ -5,15 +5,16 @@ import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
-import { generateAndSavePdf } from "../../../Util/Utility";
+import { exportToExcel, generateAndSavePdf } from "../../../Util/Utility";
 import { API_URLS } from "../../../Util/AppConst";
 export default function SingleBillHistory() {
     const { billId } = useParams();
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
-    const [singleBill, setSingleBill] = useState([])    
+    const [singleBill, setSingleBill] = useState([])
     const [customerInfo, setCustomerInfo] = useState();
     const [loading, setLoading] = useState(false);
+    const [showTotalRow, setShowTotalRow] = useState(false);
     useEffect(() => {
         if (billId) {
             getSingleBillHistroyAllData(billId);
@@ -22,7 +23,7 @@ export default function SingleBillHistory() {
     const getSingleBillHistroyCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
-            const bill = response.data;
+            const bill = response.data.billing;
             setCustomerInfo({
                 name: bill.customer?.name,
                 contact: bill.customer?.contact_number,
@@ -31,6 +32,7 @@ export default function SingleBillHistory() {
                 gstno: bill.customer?.gst_number,
                 firmname: bill.customer?.firm_name,
                 amount: bill.payable_amount,
+                netTotal: bill.net_total,
                 date: moment((bill.created_at)).format('ll')
             });
             const singleBillHistrotFormattedRows = bill.products.map((product, index) => ({
@@ -41,10 +43,24 @@ export default function SingleBillHistory() {
                 "Rate": product.sold_at_price,
                 "Sale Price": product.sales_price,
                 "Purchase Price": product.purchase_price,
+                "GST Purchase Price": product.gst_purchase_price,
                 "QC-Remark": product.qc_remark,
                 "Grade": product.grade,
                 "Accessories": product.accessories,
             }));
+            singleBillHistrotFormattedRows.push({
+                _id: "total",
+                "Sr.No": "Total",
+                "IMEI NO": "",
+                Brand: "",
+                Model: "",
+                "Rate": response.data.totalRate?.toLocaleString("en-IN") || 0,
+                "Sale Price": response.data.totalSalesPrice?.toLocaleString("en-IN") || 0,
+                "Purchase Price": response.data.totalPurchasePrice?.toLocaleString("en-IN") || 0,
+                "QC-Remark": "",
+                Grade: "",
+                Accessories: "",
+            });
             setSingleBill(bill);
             setRows(singleBillHistrotFormattedRows);
         } else {
@@ -60,7 +76,8 @@ export default function SingleBillHistory() {
             customerInfo.gstno,
             singleBill.products,
             customerInfo.amount,
-            customerInfo.firmname
+            customerInfo.firmname,
+            customerInfo.netTotal,
         );
     }
     const getSingleBillHistroyAllData = (id) => {
@@ -75,6 +92,9 @@ export default function SingleBillHistory() {
     const handleNavigateBillHistroy = () => {
         navigate(-1);
     }
+    const handleExportToExcel = () => {
+        exportToExcel(rows, "billData.xlsx", customerInfo);
+    };
     return (
         <div>
             {loading && <Spinner />}
@@ -92,6 +112,11 @@ export default function SingleBillHistory() {
                         icon="fa fa-print"
                         buttonClassName="py-1 px-3 text-[12px] font-semibold"
                         onClick={handleGenaratePdf}
+                    />
+                    <PrimaryButtonComponent
+                        label="Export to Excel"
+                        icon="fa fa-file-excel-o"
+                        onClick={handleExportToExcel}
                     />
                 </div>
             </div>
@@ -118,7 +143,16 @@ export default function SingleBillHistory() {
                 <CustomTableCompoent
                     headers={SINGLEBILLHISTORY_COLOUMNS}
                     rows={rows}
+                    showTotalRow={showTotalRow}
                 />
+            </div>
+            <div className="flex justify-end">
+                <button
+                    className="rounded-full"
+                    onClick={() => setShowTotalRow(!showTotalRow)}
+                >
+                    <i className="fa fa-circle-o" aria-hidden="true"></i>
+                </button>
             </div>
         </div>
     );
