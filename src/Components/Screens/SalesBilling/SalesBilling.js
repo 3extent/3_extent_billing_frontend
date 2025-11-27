@@ -246,8 +246,8 @@ export default function SalesBilling() {
                 response.data.billing.customer?.address,
                 response.data.billing.customer?.gst_number,
                 response.data.billing.products,
-                response.data.billing.customer?.firm_name,
                 response.data.billing.payable_amount,
+                response.data.billing.customer?.firm_name,
                 response.data.billing.net_total
             );
         } else {
