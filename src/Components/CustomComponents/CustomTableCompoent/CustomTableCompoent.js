@@ -20,7 +20,7 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
         return "bg-green-200";
     };
     return (
-        <div className={`w-full  relative ${maxHeight} overflow-x-auto bg-white`}>
+        <div className={`w-full  relative ${maxHeight} overflow-x-auto`}>
             {normalRows.length > 0 ? (
                 <div className="border border-slate-800">
                     <table className="table-fixed w-full ">
