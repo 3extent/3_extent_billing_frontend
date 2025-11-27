@@ -5,7 +5,7 @@ import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
 import autoTable from 'jspdf-autotable';
 import { toWords } from 'number-to-words';
-import { LOGO_BASE64 } from "./logoBase64";
+import { LOGO_BASE64 } from "./AppConst";
 export const exportToExcel = async (data, fileName = "StyledData.xlsx", customerInfo = null) => {
   if (!data || data.length === 0) {
     alert("No data to export!");
