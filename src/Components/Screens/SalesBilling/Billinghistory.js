@@ -56,7 +56,7 @@ function Billinghistory({ isDraft = false }) {
             });
             getBillData();
         } else {
-            const errorMsg = response?.data?.error || "Failed to delete billr";
+            const errorMsg = response?.data?.error || "Failed to delete bill";
             toast.error(errorMsg, {
                 position: "top-center",
                 autoClose: 2000,
