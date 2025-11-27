@@ -88,9 +88,9 @@ function Billinghistory({ isDraft = false }) {
                                     bill.customer.gst_number,
                                     bill.products,
                                     bill.payable_amount,
-                                    bill.customer?.firm_name
+                                    bill.customer?.firm_name,
+                                    bill.net_total,
                                 );
-
                             }}
                         />
                     </div>
