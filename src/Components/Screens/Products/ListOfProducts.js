@@ -20,7 +20,7 @@ function ListOfProducts() {
     const [status, setStatus] = useState(STATUS_OPTIONS[0]);
     const [brandOptions, setBrandOptions] = useState([]);
     const [loading, setLoading] = useState(false);
-    const fromDate = moment().subtract( 'days').format('YYYY-MM-DD');
+    const fromDate = moment().subtract('days').format('YYYY-MM-DD');
     const toDate = moment().format('YYYY-MM-DD');
     const [from, setFrom] = useState(fromDate);
     const [to, setTo] = useState(toDate);
@@ -70,15 +70,17 @@ function ListOfProducts() {
                 id: product._id,
                 "Actions": (
                     <div className='flex items-center justify-end gap-2'>
-                        <div className='flex justify-end'>
-                            <div
-                                title="Edit"
-                                onClick={() => navigate(`/stockin/${product._id}`)}
-                                className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
-                            >
-                                <i className="fa fa-pencil text-gray-700 text-sm" />
+                        {product.status !== 'SOLD' && (
+                            <div className='flex justify-end'>
+                                <div
+                                    title="Edit"
+                                    onClick={() => navigate(`/stockin/${product._id}`)}
+                                    className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
+                                >
+                                    <i className="fa fa-pencil text-gray-700 text-sm" />
+                                </div>
                             </div>
-                        </div>
+                        )}
                         <PrimaryButtonComponent
                             label="Barcode"
                             icon="fa fa-print"

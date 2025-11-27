@@ -16,11 +16,12 @@ export default function SalesBilling() {
     const [loading, setLoading] = useState(false);
     const [hiddenColumns, setHiddenColumns] = useState([
         "Purchase Price",
-        "QC-Remark"
+        "QC-Remark",
+        "Supplier Name"
     ]);
     const [dynamicHeaders, setDynamicHeaders] = useState(() => {
         return SALESBILLING_COLOUMNS.filter(
-            (col) => !["Purchase Price", "QC-Remark"].includes(col)
+            (col) => !["Purchase Price", "QC-Remark", "Supplier Name"].includes(col)
         );
     });
     const navigate = useNavigate();
@@ -37,7 +38,7 @@ export default function SalesBilling() {
     const [card, setCard] = useState("");
     const [totalAmount, setTotalAmount] = useState(0);
     const [pendingAmount, setPendingAmount] = useState(0);
-    const toggleableColumns = ["Purchase Price", "QC-Remark"];
+    const toggleableColumns = ["Purchase Price", "QC-Remark", "Supplier Name"];
     const handleDeleteRow = (imeiNumber) => {
         setRows((currentRows) => {
             const updatedRows = [...currentRows];
@@ -65,7 +66,8 @@ export default function SalesBilling() {
                 if (rateIndex !== -1) newHeaders.splice(rateIndex + 1, 0, "Purchase Price");
                 else newHeaders.push("Purchase Price");
             }
-            else newHeaders.push("QC-Remark");
+            else
+                newHeaders.push(columnName);
             setDynamicHeaders(newHeaders);
             setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
         };
@@ -174,6 +176,7 @@ export default function SalesBilling() {
                 "Grade": product.grade,
                 "Accessories": product.accessories,
                 "QC-Remark": product.qc_remark,
+                "Supplier Name": product?.supplier?.name,
                 "Status": product.status,
                 "Action": (
                     <div className="flex justify-end">
@@ -244,7 +247,8 @@ export default function SalesBilling() {
                 response.data.billing.customer?.gst_number,
                 response.data.billing.products,
                 response.data.billing.payable_amount,
-
+                response.data.billing.customer?.firm_name,
+                response.data.billing.net_total
             );
         } else {
             const errorMsg = response?.data?.error || "Something went wrong while saving bill.";
@@ -346,6 +350,9 @@ export default function SalesBilling() {
         exportToExcel(rows, "salesbillingData.xlsx");
     };
     const navigateAddCustomer = () => {
+        if (rows.length > 0) {
+            handleDraftData();
+        }
         navigate("/addcustomer")
     }
     return (
@@ -427,7 +434,7 @@ export default function SalesBilling() {
                     </button>
                     {showDropdown && (
                         <div className="absolute bg-white border shadow-md mt-1 rounded w-48 z-10 max-h-48 overflow-auto">
-                            {["Purchase Price", "QC-Remark"].map((col) => (
+                            {["Purchase Price", "QC-Remark", "Supplier Name"].map((col) => (
                                 <label
                                     key={col}
                                     className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"

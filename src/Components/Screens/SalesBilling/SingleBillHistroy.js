@@ -5,7 +5,7 @@ import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
-import { generateAndSavePdf } from "../../../Util/Utility";
+import { exportToExcel, generateAndSavePdf } from "../../../Util/Utility";
 import { API_URLS } from "../../../Util/AppConst";
 export default function SingleBillHistory() {
     const { billId } = useParams();
@@ -32,6 +32,7 @@ export default function SingleBillHistory() {
                 gstno: bill.customer?.gst_number,
                 firmname: bill.customer?.firm_name,
                 amount: bill.payable_amount,
+                netTotal: bill.net_total,
                 date: moment((bill.created_at)).format('ll')
             });
             const singleBillHistrotFormattedRows = bill.products.map((product, index) => ({
@@ -42,6 +43,7 @@ export default function SingleBillHistory() {
                 "Rate": product.sold_at_price,
                 "Sale Price": product.sales_price,
                 "Purchase Price": product.purchase_price,
+                "GST Purchase Price": product.gst_purchase_price,
                 "QC-Remark": product.qc_remark,
                 "Grade": product.grade,
                 "Accessories": product.accessories,
@@ -74,7 +76,8 @@ export default function SingleBillHistory() {
             customerInfo.gstno,
             singleBill.products,
             customerInfo.amount,
-            customerInfo.firmname
+            customerInfo.firmname,
+            customerInfo.netTotal,
         );
     }
     const getSingleBillHistroyAllData = (id) => {
@@ -89,6 +92,9 @@ export default function SingleBillHistory() {
     const handleNavigateBillHistroy = () => {
         navigate(-1);
     }
+    const handleExportToExcel = () => {
+        exportToExcel(rows, "billData.xlsx", customerInfo);
+    };
     return (
         <div>
             {loading && <Spinner />}
@@ -106,6 +112,11 @@ export default function SingleBillHistory() {
                         icon="fa fa-print"
                         buttonClassName="py-1 px-3 text-[12px] font-semibold"
                         onClick={handleGenaratePdf}
+                    />
+                    <PrimaryButtonComponent
+                        label="Export to Excel"
+                        icon="fa fa-file-excel-o"
+                        onClick={handleExportToExcel}
                     />
                 </div>
             </div>
