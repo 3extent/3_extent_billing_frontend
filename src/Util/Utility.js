@@ -128,7 +128,7 @@ export const generateAndSavePdf = (
   rows = [],
   payable_amount,
   firm_name,
-  netTotal,
+  net_total,
 ) => {
   console.log("Firm Name:", firm_name);
   const now = new Date();
@@ -270,7 +270,7 @@ export const generateAndSavePdf = (
   const amountInWordsClean = amountInWordsRaw.replace(/,/g, ""); // remove commas
   const amountInWords = `${capitalize(amountInWordsClean)} Only`;
   const formattedAmount = `Rs ${Number(payable_amount).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
-   const formattedNetTotal = `Rs ${Number(netTotal).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
+   const formattedNetTotal = `Rs ${Number(net_total).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
   tableRows.push([
     {
       content: `Amount(In Words): ${amountInWords}`,
@@ -395,7 +395,6 @@ export const generateAndSavePdf = (
       //  TOTAL row: top & bottom border
       if (isTotalRow) {
         doc.line(cell.x, cell.y, cell.x + cell.width, cell.y); // top
-        // doc.line(cell.x, cell.y + cell.height, cell.x + cell.width, cell.y + cell.height); // bottom
       }
       // NET Total: bottom border
       if (isNetTotalRow) {

@@ -14,7 +14,6 @@ export default function SingleBillHistory() {
     const [singleBill, setSingleBill] = useState([])
     const [customerInfo, setCustomerInfo] = useState();
     const [loading, setLoading] = useState(false);
-    const [netTotal, setNetTotal] = useState(0);
     useEffect(() => {
         if (billId) {
             getSingleBillHistroyAllData(billId);
@@ -32,6 +31,7 @@ export default function SingleBillHistory() {
                 gstno: bill.customer?.gst_number,
                 firmname: bill.customer?.firm_name,
                 amount: bill.payable_amount,
+                nettotal: bill.net_total,
                 date: moment((bill.created_at)).format('ll')
             });
             const singleBillHistrotFormattedRows = bill.products.map((product, index) => ({
@@ -47,7 +47,6 @@ export default function SingleBillHistory() {
                 "Grade": product.grade,
                 "Accessories": product.accessories,
             }));
-            setNetTotal(response.data.netTotal)
             setSingleBill(bill);
             setRows(singleBillHistrotFormattedRows);
         } else {
@@ -64,7 +63,7 @@ export default function SingleBillHistory() {
             singleBill.products,
             customerInfo.amount,
             customerInfo.firmname,
-            netTotal,
+            customerInfo.nettotal,
         );
     }
     const getSingleBillHistroyAllData = (id) => {
