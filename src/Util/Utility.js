@@ -120,6 +120,53 @@ export const exportToExcel = async (data, fileName = "StyledData.xlsx", customer
  * 5. Add a thank you note at the end.
  * 6. Save the PDF as "SalesBilling.pdf".
  */
+const numberToWordsIndian = (num) => {
+  num = Math.floor(num);
+
+  const ones = [
+    "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine",
+    "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen",
+    "Sixteen", "Seventeen", "Eighteen", "Nineteen"
+  ];
+
+  const tens = [
+    "", "", "Twenty", "Thirty", "Forty", "Fifty",
+    "Sixty", "Seventy", "Eighty", "Ninety"
+  ];
+
+  const convert = (n) => {
+    if (n < 20) return ones[n];
+    if (n < 100)
+      return tens[Math.floor(n / 10)] + (n % 10 ? " " + ones[n % 10] : "");
+    if (n < 1000)
+      return ones[Math.floor(n / 100)] + " Hundred" + (n % 100 ? " " + convert(n % 100) : "");
+    return "";
+  };
+
+  if (num === 0) return "Zero";
+
+  let str = "";
+
+  const crore = Math.floor(num / 10000000);
+  if (crore) str += convert(crore) + " Crore ";
+  num %= 10000000;
+
+  const lakh = Math.floor(num / 100000);
+  if (lakh) str += convert(lakh) + " Lakh ";
+  num %= 100000;
+
+  const thousand = Math.floor(num / 1000);
+  if (thousand) str += convert(thousand) + " Thousand ";
+  num %= 1000;
+
+  const hundred = Math.floor(num / 100);
+  if (hundred) str += convert(hundred) + " Hundred ";
+  num %= 100;
+
+  if (num) str += convert(num);
+
+  return str.trim();
+};
 export const generateAndSavePdf = (
   name,
   invoice_number,
@@ -266,7 +313,7 @@ export const generateAndSavePdf = (
 
   const totalRowIndex = tableRows.length;
   const capitalize = (str) => str.replace(/\b\w/g, char => char.toUpperCase());
-  const amountInWordsRaw = toWords(payable_amount); // returns words with commas sometimes
+  const amountInWordsRaw = numberToWordsIndian(payable_amount); // returns words with commas sometimes
   const amountInWordsClean = amountInWordsRaw.replace(/,/g, ""); // remove commas
   const amountInWords = `${capitalize(amountInWordsClean)} Only`;
   const formattedAmount = `Rs ${Number(payable_amount).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
