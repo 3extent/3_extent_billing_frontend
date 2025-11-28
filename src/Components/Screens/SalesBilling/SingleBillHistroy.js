@@ -9,7 +9,6 @@ import { exportToExcel, generateAndSavePdf } from "../../../Util/Utility";
 import { API_URLS } from "../../../Util/AppConst";
 import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
 import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
-import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { toast } from "react-toastify";
 export default function SingleBillHistory() {
     const { billId } = useParams();
@@ -19,9 +18,7 @@ export default function SingleBillHistory() {
     const [customerInfo, setCustomerInfo] = useState();
     const [imeiOptions, setImeiOptions] = useState([]);
     const [selectedImei, setSelectedImei] = useState("");
-    const [contactNoOptions, setContactNoOptions] = useState([]);
     const [selectedContactNo, setSelectedContactNo] = useState("");
-    const [customers, setCustomers] = useState([]);
     const [customerName, setCustomerName] = useState("");
     const [showPaymentPopup, setShowPaymentPopup] = useState(false);
     const [cashAmount, setCashAmount] = useState("");
@@ -33,7 +30,6 @@ export default function SingleBillHistory() {
     useEffect(() => {
         if (billId) {
             getAllImeis();
-            getCustomerAllData();
             getSingleBillHistroyAllData(billId);
         }
     }, [billId]);
@@ -68,24 +64,6 @@ export default function SingleBillHistory() {
             setImeiOptions(imeis);
         } else {
             console.error("IMEI numbers fetching error");
-        }
-    };
-    const getCustomerAllData = () => {
-        apiCall({
-            method: 'GET',
-            url: `${API_URLS.USERS}?role=CUSTOMER`,
-            data: {},
-            callback: getCustomersCallback,
-            setLoading: setLoading
-        });
-    };
-    const getCustomersCallback = (response) => {
-        if (response.status === 200) {
-            setCustomers(response.data);
-            const contactNos = response.data.map(customer => customer.contact_number);
-            setContactNoOptions(contactNos);
-        } else {
-            console.error("Customer contact numbers fetching error");
         }
     };
     const getSingleBillHistroyCallBack = (response) => {
@@ -152,62 +130,50 @@ export default function SingleBillHistory() {
             return newRows;
         });
     };
+    const addRowCallback = (response) => {
+        if (response.status === 200 && response.data.length > 0) {
+            const product = response.data[0];
+            if (!product || (product.status !== "AVAILABLE" && product.status !== "RETURN")) {
+                toast.warning("Product is already sold !", { position: "top-center", autoClose: 2000 });
+                setSelectedImei("");
+                return;
+            }
+            const newRow = {
+                "Sr.No": rows.length + 1,
+                "IMEI NO": product.imei_number,
+                "Brand": product.model?.brand?.name,
+                "Model": product.model?.name,
+                "Rate": product.sales_price,
+                "Sale Price": product.sales_price,
+                "Purchase Price": product.purchase_price,
+                "QC-Remark": product.qc_remark,
+                "Grade": product.grade,
+                "Accessories": product.accessories,
+                "Action": (
+                    <div className="flex justify-end">
+                        <div
+                            title="delete"
+                            onClick={() => handleDeleteRow(product.imei_number)}
+                            className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
+                        >
+                            <i className="fa fa-trash text-gray-700 text-sm" />
+                        </div>
+                    </div>
+                ),
+            };
+
+            setRows(Rows => [...Rows, newRow]);
+            setSelectedImei("");
+        }
+    }
     const addRow = (imei) => {
         apiCall({
             method: "GET",
             url: `${API_URLS.PRODUCTS}?imei_number=${imei}`,
             data: {},
-            callback: (response) => {
-                if (response.status === 200 && response.data.length > 0) {
-                    const product = response.data[0];
-                    if (!product || (product.status !== "AVAILABLE" && product.status !== "RETURN")) {
-                        toast.warning("Product is already sold !", { position: "top-center", autoClose: 2000 });
-                        setSelectedImei("");
-                        return;
-                    }
-                    const newRow = {
-                        "Sr.No": rows.length + 1,
-                        "IMEI NO": product.imei_number,
-                        "Brand": product.model?.brand?.name,
-                        "Model": product.model?.name,
-                        "Rate": product.sales_price,
-                        "Sale Price": product.sales_price,
-                        "Purchase Price": product.purchase_price,
-                        "QC-Remark": product.qc_remark,
-                        "Grade": product.grade,
-                        "Accessories": product.accessories,
-                        "Action": (
-                            <div className="flex justify-end">
-                                <div
-                                    title="delete"
-                                    onClick={() => handleDeleteRow(product.imei_number)}
-                                    className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
-                                >
-                                    <i className="fa fa-trash text-gray-700 text-sm" />
-                                </div>
-                            </div>
-                        ),
-                    };
-
-                    setRows(Rows => [...Rows, newRow]);
-                    setSelectedImei("");
-                }
-            },
+            callback: addRowCallback,
             setLoading: setLoading
         });
-    };
-    const handleContactNoChange = (value) => {
-        setSelectedContactNo(value);
-        if (!value) {
-            setCustomerName("");
-            return;
-        }
-        const customer = customers.find(customer => customer.contact_number === value);
-        if (customer) {
-            setCustomerName(customer.name);
-        } else {
-            setCustomerName("");
-        }
     };
     const handleSaveData = () => {
         if (totalAmount <= 0) {
@@ -359,7 +325,7 @@ export default function SingleBillHistory() {
                     </div>
                 )}
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 mb-6">
                 <CustomDropdownInputComponent
                     label="IMEI No :"
                     dropdownClassName="w-[190px]"
@@ -373,22 +339,6 @@ export default function SingleBillHistory() {
                             ? imeiOptions.filter((imei) => imei.startsWith(selectedImei))
                             : []
                     }
-                />
-                <CustomDropdownInputComponent
-                    dropdownClassName="w-[190px] "
-                    placeholder="Select Contact No"
-                    value={selectedContactNo}
-                    maxLength={10}
-                    numericOnly={true}
-                    onChange={handleContactNoChange}
-                    options={contactNoOptions}
-                />
-                <InputComponent
-                    type="text"
-                    placeholder="Enter Customer Name"
-                    value={customerName}
-                    onChange={(e) => setCustomerName(e.target.value)}
-                    inputClassName="w-[190px] mb-6"
                 />
             </div>
             <div className="h-[64vh]">
