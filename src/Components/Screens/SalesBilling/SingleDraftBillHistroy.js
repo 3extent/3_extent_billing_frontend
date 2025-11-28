@@ -203,6 +203,8 @@ export default function SingleDraftBillHistory() {
                 response.data.payable_amount,
                 response.data.customer?.firm_name,
                 response.data.net_total,
+                response.data.c_gst,
+                response.data.s_gst
             );
 
         } else {

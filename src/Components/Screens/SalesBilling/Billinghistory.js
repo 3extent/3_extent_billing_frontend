@@ -130,6 +130,8 @@ function Billinghistory({ isDraft = false }) {
                                     bill.payable_amount,
                                     bill.customer?.firm_name,
                                     bill.net_total,
+                                    bill.c_gst,
+                                    bill.s_gst
                                 );
                             }}
                         />

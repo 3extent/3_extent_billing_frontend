@@ -131,6 +131,8 @@ export const generateAndSavePdf = (
   payable_amount,
   firm_name,
   net_total,
+  c_gst,
+  s_gst
 ) => {
   console.log("Firm Name:", firm_name);
   const now = new Date();
@@ -257,28 +259,30 @@ export const generateAndSavePdf = (
       Number(row.sold_at_price || 0).toFixed(2)
     ]
   });
-  const MIN_VISIBLE_ROWS = 10;
+  const MIN_VISIBLE_ROWS = 8;
   if (tableRows.length < MIN_VISIBLE_ROWS) {
     const emptyRowsNeeded = MIN_VISIBLE_ROWS - tableRows.length;
     for (let i = 0; i < emptyRowsNeeded; i++) {
       tableRows.push(["", "", "", "", ""]);
     }
   }
-const toWords = new ToWords({
-  localeCode: "en-IN",       // Indian format
-  converterOptions: {
-    currency: false,
-    ignoreDecimal: true,
-    ignoreZeroCurrency: false,
-  }
-});
+  const toWords = new ToWords({
+    localeCode: "en-IN",       // Indian format
+    converterOptions: {
+      currency: false,
+      ignoreDecimal: true,
+      ignoreZeroCurrency: false,
+    }
+  });
   const totalRowIndex = tableRows.length;
   const capitalize = (str) => str.replace(/\b\w/g, char => char.toUpperCase());
   const amountInWordsRaw = toWords.convert(payable_amount);
   const amountInWordsClean = amountInWordsRaw.replace(/,/g, ""); // remove commas
   const amountInWords = `${capitalize(amountInWordsClean)} Only`;
   const formattedAmount = `Rs ${Number(payable_amount).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
-   const formattedNetTotal = `Rs ${Number(net_total).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
+  const formattedNetTotal = `Rs ${Number(net_total).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
+  const formattedSGST = Number(s_gst).toLocaleString("en-IN", { minimumFractionDigits: 2 });
+  const formattedCGST = Number(c_gst).toLocaleString("en-IN", { minimumFractionDigits: 2 });
   tableRows.push([
     {
       content: `Amount(In Words): ${amountInWords}`,
@@ -303,15 +307,15 @@ const toWords = new ToWords({
   ]);
   tableRows.push([
     { content: "", colSpan: 3, styles: { halign: "left" } },
-    { content: "SGST", styles: { halign: "right", fontStyle: "normal", fontSize: 9 } },
-    { content: "9%", styles: { halign: "right", fontStyle: "normal", fontSize: 9 } },
+    { content: "SGST(9%)", styles: { halign: "right", fontStyle: "normal", fontSize: 9 } },
+    { content: formattedSGST, styles: { halign: "right", fontStyle: "normal", fontSize: 9 } },
   ]);
 
   // ROW 3 → CGST
   tableRows.push([
     { content: "", colSpan: 3, styles: { halign: "left" } },
-    { content: "CGST", styles: { halign: "right", fontStyle: "normal", fontSize: 9 } },
-    { content: "9%", styles: { halign: "right", fontStyle: "normal", fontSize: 9 } },
+    { content: "CGST(9%)", styles: { halign: "right", fontStyle: "normal", fontSize: 9 } },
+    { content: formattedCGST, styles: { halign: "right", fontStyle: "normal", fontSize: 9 } },
   ]);
 
   // ROW 4 → Net Total
