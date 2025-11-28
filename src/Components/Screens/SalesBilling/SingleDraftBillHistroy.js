@@ -185,69 +185,60 @@ export default function SingleDraftBillHistory() {
         }
         handledraftSaveData();
     }
-    
-    const billsCallback = (response) => {
-        console.log("response: ", response);
-        if (response.status === 200) {
-            toast.success("Bill saved successfully!", {
-                position: "top-center",
-                autoClose: 2000,
-            });
-            setRows([]);
-            setSelectedImei("");
-            setCustomerName("");
-            setSelectedContactNo("");
-            setOnlineAmount("");
-            setCashAmount("");
-            setCard("");
-            setShowPaymentPopup(false);
-            setPendingAmount(0);
-            navigate("/billinghistory");
-            generateAndSavePdf(
-                response.data.billing.customer?.name,
-                response.data.billing.invoice_number,
-                response.data.billing.customer?.contact_number,
-                response.data.billing.customer?.address,
-                response.data.billing.customer?.gst_number,
-                response.data.billing.products,
-                response.data.billing.payable_amount,
-                response.data.billing.customer?.firm_name,
-                response.data.billing.net_total,
-            );
-        } else {
-            const errorMsg = response?.data?.error || "Something went wrong while saving bill.";
-            toast.error(errorMsg, {
-                position: "top-center",
-                autoClose: 3000,
-            });
-            setShowPaymentPopup(false);
-        }
-    };
     const handlePrintButton = () => {
         if (!draftBillId) return;
-        const billsData = {
-            customer_name: customerName,
-            contact_number: selectedContactNo,
-            products: rows.map((row) => ({
-                imei_number: row["IMEI NO"],
-                rate: row["Rate"],
-            })),
-            paid_amount: [
-                { method: "cash", amount: Number(cashAmount) },
-                { method: "online", amount: Number(onlineAmount) },
-                { method: "card", amount: Number(card) },
-            ],
+        const cash = Number(cashAmount || 0);
+        const online = Number(onlineAmount || 0);
+        const cardAmt = Number(card || 0);
+        const totalPaid = cash + online + cardAmt;
+
+        const paymentData = {
             payable_amount: totalAmount,
-            pending_amount: pendingAmount,
+            paid_amount: [
+                { method: "cash", amount: cash },
+                { method: "online", amount: online },
+                { method: "card", amount: cardAmt },
+            ],
+            pending_amount: totalAmount - totalPaid,
         };
         apiCall({
-            method: 'PUT',
-            url: `${API_URLS.BILLING}/${draftBillId}`,
-            data: billsData,
-            callback: billsCallback,
-            setLoading: setLoading
-        })
+            method: "PUT",
+            url: `${API_URLS.BILLING}/payment/${draftBillId}`,
+            data: paymentData,
+            callback: (response) => {
+                if (response.status === 200) {
+                    toast.success("Payment updated successfully!", {
+                        position: "top-center",
+                        autoClose: 2000,
+                    });
+                    setShowPaymentPopup(false);
+                    navigate("/billinghistory")
+                    console.log('response.data: ', response.data);
+                    generateAndSavePdf(
+                        response.data.customer?.name,
+                        response.data.invoice_number,
+                        response.data.customer?.contact_number,
+                        response.data.customer?.address,
+                        response.data.customer?.gst_number,
+                        response.data.products,
+                        response.data.payable_amount,
+                        response.data.customer?.firm_name,
+                        response.data.net_total,
+
+                    );
+                } else {
+                    const errorMsg = response?.data?.error || "Something went wrong while saving bill.";
+                    toast.error(errorMsg, {
+                        position: "top-center",
+                        autoClose: 3000,
+                    });
+                    setShowPaymentPopup(false);
+                }
+            },
+            setLoading: setLoading,
+        });
     };
+
     const draftCallback = (response) => {
         if (response.status === 200) {
             toast.success("Draft saved successfully!", {
@@ -298,10 +289,6 @@ export default function SingleDraftBillHistory() {
     };
     const saveDraftCallback = (response) => {
         if (response.status === 200) {
-            toast.success("Saved successfully!", {
-                position: "top-center",
-                autoClose: 2000,
-            });
             setShowPaymentPopup(true);
         } else {
             const errorMsg = response?.data?.error || "Something went wrong while saving draft.";
