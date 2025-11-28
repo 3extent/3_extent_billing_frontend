@@ -8,7 +8,8 @@ export default function DashboardSidebar({ onLogout }) {
         { icon: "fa fa-blind", label: "Supplier", path: "/supplier" },
         { icon: "fa fa-user-circle-o", label: "Customer", path: "/customer" },
         { icon: "fa fa-android", label: "Brands", path: "/brands" },
-        { icon: "fa fa-th-large", label: "Models", path: "/models" }
+        { icon: "fa fa-th-large", label: "Models", path: "/models" },
+        { icon: "fa fa-registered", label: "Repair", path: "/repair" }
     ])
     const navigate = useNavigate();
     const handleLogout = () => {
