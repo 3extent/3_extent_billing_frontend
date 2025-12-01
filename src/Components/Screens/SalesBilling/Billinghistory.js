@@ -86,7 +86,7 @@ function Billinghistory({ isDraft = false }) {
                 "Contact Number": bill.customer?.contact_number,
                 "Total Amount": bill.payable_amount,
                 "Remaining Amount": bill.pending_amount,
-                "Profit": bill.profit,
+                "Profit": bill.actualProfit,
                 "Total Products": bill.products.length,
                 _id: bill._id,
                 "Actions": (
