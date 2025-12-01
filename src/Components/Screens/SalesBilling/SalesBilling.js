@@ -200,8 +200,6 @@ export default function SalesBilling() {
                 setRows(Rows => [...Rows, ...newUniqueRows]);
             }
             setSelectedImei("");
-            setCustomerName("");
-            setSelectedContactNo("");
         } else {
             console.log("Error");
         }
