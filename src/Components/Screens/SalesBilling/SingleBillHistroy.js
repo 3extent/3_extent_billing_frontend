@@ -33,6 +33,8 @@ export default function SingleBillHistory() {
                 firmname: bill.customer?.firm_name,
                 amount: bill.payable_amount,
                 netTotal: bill?.net_total,
+                cGst: bill.c_gst,
+                sGst: bill.s_gst,
                 date: moment((bill.created_at)).format('ll')
             });
             const singleBillHistrotFormattedRows = bill.products.map((product, index) => ({
@@ -78,6 +80,8 @@ export default function SingleBillHistory() {
             customerInfo.amount,
             customerInfo.firmname,
             customerInfo.netTotal,
+            customerInfo.cGst,
+            customerInfo.sGst,
         );
     }
     const getSingleBillHistroyAllData = (id) => {

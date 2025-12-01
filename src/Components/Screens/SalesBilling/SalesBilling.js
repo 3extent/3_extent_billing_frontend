@@ -248,7 +248,11 @@ export default function SalesBilling() {
                 response.data.billing.products,
                 response.data.billing.payable_amount,
                 response.data.billing.customer?.firm_name,
-                response.data.billing.net_total
+                response.data.billing.net_total,
+                response.data.billing.c_gst,
+                response.data.billing.s_gst,
+
+
             );
         } else {
             const errorMsg = response?.data?.error || "Something went wrong while saving bill.";
