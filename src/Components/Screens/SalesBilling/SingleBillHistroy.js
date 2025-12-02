@@ -55,7 +55,7 @@ export default function SingleBillHistory() {
     useEffect(() => {
         const total = rows.reduce((sum, row) => {
             if (!row["IMEI NO"]) return sum;
-            const rate = parseFloat(
+            const rate = parseInt(
                 Number(row["Rate"]),
             );
             return sum + (isNaN(rate) ? 0 : rate);
