@@ -19,6 +19,8 @@ import { ToastContainer } from 'react-toastify';
 import SingleDraftBillHistory from './Components/Screens/SalesBilling/SingleDraftBillHistroy';
 import PrivacyPolicy from './Components/Screens/Policies/PrivacyPolicy';
 import TermAndCondition from './Components/Screens/Policies/TermAndCondition';
+import AddRepair from './Components/Screens/Repair/AddRepair';
+import Repair from './Components/Screens/Repair/Repair';
 
 
 
@@ -146,18 +148,29 @@ function App() {
             } />
             <Route path="/billinghistory" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
-                <Billinghistory isDraft={false}/>
+                <Billinghistory isDraft={false} />
               </ProtectedRoute>
             } />
             <Route path="/draftbillhistroy" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
-                <Billinghistory isDraft={true}/>
+                <Billinghistory isDraft={true} />
               </ProtectedRoute>
             } />
-            <Route path="/singleBillHistory/:billId" element={<SingleBillHistory  />} />
+            <Route path="/singleBillHistory/:billId" element={<SingleBillHistory />} />
             <Route path="/singleDraftBillHistroy/:draftBillId" element={<SingleDraftBillHistory />} />
 
             <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="/repair" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <Repair />
+              </ProtectedRoute>
+            } />
+            <Route path="/addrepair" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <AddRepair />
+              </ProtectedRoute>
+            } />
+
           </Routes>
         </div>
       </div>
