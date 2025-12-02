@@ -27,6 +27,7 @@ export default function SingleBillHistory() {
     const [totalAmount, setTotalAmount] = useState(0);
     const [pendingAmount, setPendingAmount] = useState(0);
     const [loading, setLoading] = useState(false);
+    const [showTotalRow, setShowTotalRow] = useState(false);
     useEffect(() => {
         if (billId) {
             getAllImeis();
@@ -46,7 +47,13 @@ export default function SingleBillHistory() {
         setPendingAmount(pending);
     }, [cashAmount, card, onlineAmount, totalAmount, pendingAmount]);
     useEffect(() => {
-        const total = rows.reduce((sum, row) => sum + Number(row["Rate"] || 0), 0);
+        const total = rows.reduce((sum, row) =>{
+        if (!row["IMEI NO"]) return sum; 
+        const rate = parseFloat(
+            String(row["Rate"])
+        );
+        return sum + (isNaN(rate) ? 0 : rate);
+        },0);
         setTotalAmount(total);
     }, [rows]);
     const getAllImeis = () => {
@@ -78,6 +85,9 @@ export default function SingleBillHistory() {
                 gstno: bill.customer?.gst_number,
                 firmname: bill.customer?.firm_name,
                 amount: bill.payable_amount,
+                netTotal: bill.net_total,
+                cGst: bill.c_gst,
+                sGst: bill.s_gst,
                 date: moment((bill.created_at)).format('ll')
             });
             setCustomerName(bill.customer?.name || "");
@@ -90,6 +100,7 @@ export default function SingleBillHistory() {
                 "Rate": product.sold_at_price,
                 "Sale Price": product.sales_price,
                 "Purchase Price": product.purchase_price,
+                "GST Purchase Price": product.gst_purchase_price,
                 "QC-Remark": product.qc_remark,
                 "Grade": product.grade,
                 "Accessories": product.accessories,
@@ -105,6 +116,19 @@ export default function SingleBillHistory() {
                     </div>
                 ),
             }));
+            singleBillHistrotFormattedRows.push({
+                _id: "total",
+                "Sr.No": "Total",
+                "IMEI NO": "",
+                Brand: "",
+                Model: "",
+                "Rate": response.data.totalRate?.toLocaleString("en-IN") || 0,
+                "Sale Price": response.data.totalSalesPrice?.toLocaleString("en-IN") || 0,
+                "Purchase Price": response.data.totalPurchasePrice?.toLocaleString("en-IN") || 0,
+                "QC-Remark": "",
+                Grade: "",
+                Accessories: "",
+            });
             setSingleBill(bill);
             setRows(singleBillHistrotFormattedRows);
         } else {
@@ -116,6 +140,7 @@ export default function SingleBillHistory() {
         updatedRows[index]["Rate"] = Number(newRate);
         setRows(updatedRows);
     };
+   
     const handleDeleteRow = (imeiNumber) => {
         setRows((currentRows) => {
             const updatedRows = [...currentRows];
@@ -237,7 +262,10 @@ export default function SingleBillHistory() {
             customerInfo.gstno,
             singleBill.products,
             customerInfo.amount,
-            customerInfo.firmname
+            customerInfo.firmname,
+            customerInfo.netTotal,
+            customerInfo.cGst,
+            customerInfo.sGst,
         );
     }
     const handlePrintButton = () => {
@@ -302,7 +330,6 @@ export default function SingleBillHistory() {
                         label="Export to Excel"
                         icon="fa fa-file-excel-o"
                         onClick={handleExportToExcel}
-
                     />
                 </div>
             </div>
@@ -341,14 +368,22 @@ export default function SingleBillHistory() {
                     }
                 />
             </div>
-            <div className="h-[64vh]">
+            <div className="h-[40vh]">
                 <CustomTableCompoent
                     headers={SINGLEBILLHISTORY_COLOUMNS}
                     rows={rows}
                     onRateChange={handleRateChange}
                     editable={true}
-
+                    showTotalRow={showTotalRow}
                 />
+            </div>
+            <div className="flex justify-end">
+                <button
+                    className="rounded-full"
+                    onClick={() => setShowTotalRow(!showTotalRow)}
+                >
+                    <i className="fa fa-circle-o" aria-hidden="true"></i>
+                </button>
             </div>
             <div className=" fixed bottom-16 right-5 font-bold gap-4 text-[22px]  flex justify-end">
                 Total Amount : {Number(totalAmount).toLocaleString("en-IN")}

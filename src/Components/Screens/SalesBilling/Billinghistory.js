@@ -30,6 +30,7 @@ function Billinghistory({ isDraft = false }) {
     const [from, setFrom] = useState(fromDate);
     const [to, setTo] = useState(toDate);
     const [selectAllDates, setSelectAllDates] = useState(false);
+    const [showTotalRow, setShowTotalRow] = useState(false);
     useEffect(() => {
         getBillData();
     }, [isDraft]);
@@ -47,6 +48,33 @@ function Billinghistory({ isDraft = false }) {
         const pending = selectedBill.pending_amount - paidTotal;
         setPendingAmount(pending);
     }, [cashAmount, card, onlineAmount, selectedBill]);
+    const handleDeleteBillCallback = (response) => {
+        if (response.status === 200) {
+            toast.success("Bill deleted successfully!", {
+                position: "top-center",
+                autoClose: 2000,
+            });
+            getBillData();
+        } else {
+            const errorMsg = response?.data?.error || "Failed to delete bill";
+            toast.error(errorMsg, {
+                position: "top-center",
+                autoClose: 2000,
+            });
+        }
+    };
+    const handleDeleteBill = (billId) => {
+        if (!billId) return;
+
+        apiCall({
+            method: "DELETE",
+            url: `${API_URLS.BILLING}/${billId}`,
+            data: {},
+            setLoading: setLoading,
+            callback: handleDeleteBillCallback,
+        });
+    };
+
     const getBillCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
@@ -58,11 +86,23 @@ function Billinghistory({ isDraft = false }) {
                 "Contact Number": bill.customer?.contact_number,
                 "Total Amount": bill.payable_amount,
                 "Remaining Amount": bill.pending_amount,
-                "Profit": bill.profit,
+                "Profit": bill.actualProfit,
                 "Total Products": bill.products.length,
                 _id: bill._id,
                 "Actions": (
                     <div className="flex items-center justify-end gap-2">
+                        {isDraft && (
+                            <div
+                                title="delete"
+                                className="flex items-center justify-center rounded-full bg-gray-300 hover:bg-gray-400 cursor-pointer w-10 h-10 min-w-[40px] min-h-[40px]"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteBill(bill._id);
+                                }}
+                            >
+                                <i className="fa fa-trash text-gray-700 text-lg" />
+                            </div>
+                        )}
                         {Number(bill.pending_amount) > 0 && (
                             <PrimaryButtonComponent
                                 label="Pay"
@@ -88,28 +128,32 @@ function Billinghistory({ isDraft = false }) {
                                     bill.customer.gst_number,
                                     bill.products,
                                     bill.payable_amount,
-                                    bill.customer?.firm_name
+                                    bill.customer?.firm_name,
+                                    bill.net_total,
+                                    bill.c_gst,
+                                    bill.s_gst
                                 );
-
                             }}
                         />
+
                     </div>
                 )
             }));
             console.log('billingformattedRows: ', billingformattedRows);
-
-            billingformattedRows.push({
-                _id: "total",
-                "Bill id": "Total",
-                "Date": "",
-                "Customer Name": "",
-                "Contact Number": "",
-                "Total Amount": response.data.totalAmount?.toLocaleString("en-IN") || 0,
-                "Remaining Amount": response.data.totalRemaining?.toLocaleString("en-IN") || 0,
-                "Profit": response.data.totalProfit,
-                "Total Products": response.data.totalProducts || 0,
-                "Actions": ""
-            });
+            if (!isDraft) {
+                billingformattedRows.push({
+                    _id: "total",
+                    "Bill id": "Total",
+                    "Date": "",
+                    "Customer Name": "",
+                    "Contact Number": "",
+                    "Total Amount": response.data.totalAmount?.toLocaleString("en-IN") || 0,
+                    "Remaining Amount": response.data.totalRemaining?.toLocaleString("en-IN") || 0,
+                    "Profit": response.data.totalProfit,
+                    "Total Products": response.data.totalProducts || 0,
+                    "Actions": ""
+                });
+            }
             setRows(billingformattedRows);
         } else {
             console.log("Error");
@@ -307,9 +351,18 @@ function Billinghistory({ isDraft = false }) {
                     headers={BILLINGHISTORY_COLOUMNS}
                     rows={rows}
                     onRowClick={handleRowClick}
-                    showTotalRow={!isDraft}
+                    showTotalRow={!isDraft && showTotalRow}
                 />
             </div>
+            {!isDraft && (
+                <div className="flex justify-end">
+                    <button className="rounded-full" onClick={() => setShowTotalRow(!showTotalRow)}>
+                        <i className="fa fa-circle-o" aria-hidden="true"></i>
+                    </button>
+                </div>
+            )}
+
+
             {showPaymentPopup && selectedBill && (
                 <CustomPopUpComponet
                     totalAmount={selectedBill.pending_amount}
