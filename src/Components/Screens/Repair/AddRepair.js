@@ -15,11 +15,11 @@ function AddRepair() {
         model_name: "",
         grade: "",
         purchase_price: "",
-        sales_price: "",
         engineer_name: "",
-        qc_remark: "",
+        issue: "",
         repairer_name: "",
-        accessories: ""
+        accessories: "",
+        charges: ""
     });
     const [brandOptions, setBrandOptions] = useState([]);
     const [modelOptions, setModelOptions] = useState([]);
@@ -83,11 +83,11 @@ function AddRepair() {
                 model_name: "",
                 grade: "",
                 purchase_price: "",
-                sales_price: "",
                 engineer_name: "",
-                qc_remark: "",
+                issue: "",
                 repairer_name: "",
-                accessories: ""
+                accessories: "",
+                charges: ""
             });
         } else {
             const errorMsg = response?.data?.error || "Failed to add repair";
@@ -115,7 +115,7 @@ function AddRepair() {
     return (
         <div>
             {loading && <Spinner />}
-            <div className="w-full mb-4">
+            <div className="grid grid-cols-3 mt-2 gap-x-5 gap-y-1">
                 <InputComponent
                     label="IMEI"
                     type="text"
@@ -123,8 +123,11 @@ function AddRepair() {
                     placeholder="IMEI"
                     maxLength={15}
                     numericOnly={true}
-                    inputClassName="w-[30%]"
+                    inputClassName="w-[80%]"
                     labelClassName="font-serif font-bold"
+                    value={productData.imei_number}
+                    onChange={handleInputChange}
+
                 />
             </div>
             <div className="grid grid-cols-3 mt-2 gap-x-5 gap-y-1">
@@ -171,30 +174,6 @@ function AddRepair() {
                     onChange={handleInputChange}
                 />
                 <InputComponent
-                    label="Sales Price"
-                    type="text"
-                    name="sales_price"
-                    placeholder="Rate Selling Price"
-                    numericOnly={true}
-                    inputClassName="w-[80%]"
-                    labelClassName="font-serif font-bold"
-                    value={productData.sales_price}
-                    onChange={handleInputChange}
-                />
-                <InputComponent
-                    label="IMEI"
-                    type="text"
-                    name="imei_number"
-                    placeholder="IMEI"
-                    maxLength={15}
-                    numericOnly={true}
-                    inputClassName="w-[80%]"
-                    labelClassName="font-serif font-bold"
-                    value={productData.imei_number}
-                    onChange={handleInputChange}
-
-                />
-                <InputComponent
                     label="Enginner Name "
                     type="text"
                     name="engineer_name"
@@ -205,13 +184,13 @@ function AddRepair() {
                     onChange={handleInputChange}
                 />
                 <InputComponent
-                    label="QC Remark"
+                    label="Issue"
                     type="text"
-                    name="qc_remark"
-                    placeholder="QC Remark"
+                    name="issue"
+                    placeholder="Issue"
                     inputClassName="w-[80%]"
                     labelClassName="font-serif font-bold"
-                    value={productData.qc_remark}
+                    value={productData.issue}
                     onChange={handleInputChange}
                 />
                 <InputComponent
@@ -224,6 +203,18 @@ function AddRepair() {
                     value={productData.repairer_name}
                     onChange={handleInputChange}
                 />
+                <InputComponent
+                    label="Charges"
+                    type="text"
+                    name="charges"
+                    placeholder="Enter Charges"
+                    numericOnly={true}
+                    inputClassName="w-[80%]"
+                    labelClassName="font-serif font-bold"
+                    value={productData.charges}
+                    onChange={handleInputChange}
+                />
+
                 <DropdownCompoent
                     label="Accessories"
                     name="accessories"

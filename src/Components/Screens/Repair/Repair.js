@@ -5,6 +5,7 @@ import { REPAIR_OPTIONS } from "./Constants";
 import { useEffect, useState } from "react";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { API_URLS } from "../../../Util/AppConst";
+import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 
 
 function Repair() {
@@ -22,9 +23,9 @@ function Repair() {
                 IMEI: repair.imei_number,
                 Grade: repair.grade,
                 PurchasePrice: repair.purchase_price,
-                SalesPrice: repair.sales_price,
                 Engineer: repair.engineer_name,
-                QCRemark: repair.qc_remark,
+                Charges: repair.charges,
+                Issue: repair.issue,
                 Repairer: repair.repairer_name,
                 Accessories: repair.accessories,
                 id: repair._id
@@ -56,8 +57,18 @@ function Repair() {
                 onClick={navigateAddRepair}
                 buttonClassName="py-1 px-3 text-sm font-bold"
             />
-            <div className="mb-5">
+            <div  className="mb-10 mt-5">
+                <InputComponent
+                    label="IMEI"
+                    type="text"
+                    name="imei_number"
+                    placeholder="IMEI"
+                    maxLength={15}
+                    numericOnly={true}
+                    inputClassName="w-[%]40"
+                    labelClassName="font-serif font-bold"
 
+                />
             </div>
             <div className="h-[75vh]">
                 <CustomTableCompoent
