@@ -13,35 +13,34 @@ function BulkOfProduct() {
     const [showTable, setShowTable] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const validateBulkRow = (row, rowIndex) => {
-        const errors = [];
-        if (!row["Brand Name"] || !row["Brand Name"].trim()) errors.push(`Row ${rowIndex + 1}: Brand Name is required`);
-        if (!row["Model Name"] || !row["Model Name"].trim()) errors.push(`Row ${rowIndex + 1}: Model Name is required`);
-        if (!row["IMEI"] || !row["IMEI"].toString().trim()) errors.push(`Row ${rowIndex + 1}: IMEI is required`);
-        if (!row["Purchase Price"] || isNaN(row["Purchase Price"])) errors.push(`Row ${rowIndex + 1}: Purchase Price is invalid`);
-        if (!row["Sales Price"] || isNaN(row["Sales Price"])) errors.push(`Row ${rowIndex + 1}: Sales Price is invalid`);
-        if (!row["Grade"] || !row["Grade"].trim()) errors.push(`Row ${rowIndex + 1}: Grade is required`);
-        if (!row["Engineer Name"] || !row["Engineer Name"].trim()) errors.push(`Row ${rowIndex + 1}: Engineer Name is required`);
-        if (!row["Accessories"] || !row["Accessories"].trim()) errors.push(`Row ${rowIndex + 1}: Accessories is required`);
-        if (!row["Supplier"] || !row["Supplier"].trim()) errors.push(`Row ${rowIndex + 1}: Supplier is required`);
-        return errors;
-    };
+    const requiredFields = [
+        "Brand Name",
+        "Model Name",
+        "IMEI",
+        "Sales Price",
+        "Purchase Price",
+        "Grade",
+        "Engineer Name",
+        "Accessories",
+        "Supplier",
+        "QC Remark"
+    ];
     const handleAddProductData = () => {
         if (excelData.length === 0) {
             setError("Please upload an Excel file.");
             return;
         }
-        let allErrors = [];
-        excelData.forEach((row, index) => {
-            const rowErrors = validateBulkRow(row, index);
-            if (rowErrors.length) allErrors = allErrors.concat(rowErrors);
-        });
+        const hasEmptyField = excelData.some(row =>
+            requiredFields.some(field => !row[field] || String(row[field]).trim() === "")
+        );
 
-        if (allErrors.length > 0) {
-            setError(allErrors.join("\n"));
+        if (hasEmptyField) {
+            setError("All fields are compulsory");
             return;
         }
+
         setError("");
+
         const bulkOfProductformatteddata = excelData.map((row) => ({
             brand_name: row["Brand Name"] ? row["Brand Name"].trim().toUpperCase() : "",
             model_name: row["Model Name"] ? row["Model Name"].trim().toUpperCase() : "",
