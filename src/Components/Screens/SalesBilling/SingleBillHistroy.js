@@ -52,16 +52,18 @@ export default function SingleBillHistory() {
         console.log('online: ', online);
         console.log('cash: ', cash);
     }, [cashAmount, card, onlineAmount, totalAmount]);
+
     useEffect(() => {
         const total = rows.reduce((sum, row) => {
             if (!row["IMEI NO"]) return sum;
-            const rate = parseInt(
-                Number(row["Rate"]),
+            const rate = parseFloat(
+                String(row["Rate"]).replace(/\D/g, ""),
             );
             return sum + (isNaN(rate) ? 0 : rate);
         }, 0);
         setTotalAmount(total);
     }, [rows]);
+
     const getAllImeis = () => {
         let url = `${API_URLS.PRODUCTS}?status=AVAILABLE,RETURN`;
         apiCall({
@@ -109,6 +111,12 @@ export default function SingleBillHistory() {
             setSelectedContactNo(bill.customer?.contact_number || "");
             setTotalAmount(Number(bill.payable_amount || 0));
             setPendingAmount(Number(bill.pending_amount || 0));
+            const cashPaid = bill.paid_amount.find(p => p.method === "cash")?.amount || "0";
+            const onlinePaid = bill.paid_amount.find(p => p.method === "online")?.amount || "0";
+            const cardPaid = bill.paid_amount.find(p => p.method === "card")?.amount || "0";
+            setCashAmount(cashPaid);
+            setOnlineAmount(onlinePaid);
+            setCard(cardPaid);
             const singleBillHistrotFormattedRows = bill.products.map((product, index) => ({
                 "Sr.No": index + 1,
                 "IMEI NO": product.imei_number,
@@ -277,7 +285,7 @@ export default function SingleBillHistory() {
                 { method: "card", amount: Number(card) },
             ],
             payable_amount: totalAmount,
-            pending_amount: totalAmount,
+            pending_amount: pendingAmount,
         };
         apiCall({
             method: 'PUT',
