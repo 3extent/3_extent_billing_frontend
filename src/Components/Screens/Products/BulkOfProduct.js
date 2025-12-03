@@ -13,12 +13,34 @@ function BulkOfProduct() {
     const [showTable, setShowTable] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const requiredFields = [
+        "Brand Name",
+        "Model Name",
+        "IMEI",
+        "Sales Price",
+        "Purchase Price",
+        "Grade",
+        "Engineer Name",
+        "Accessories",
+        "Supplier",
+        "QC Remark"
+    ];
     const handleAddProductData = () => {
         if (excelData.length === 0) {
             setError("Please upload an Excel file.");
             return;
         }
+        const hasEmptyField = excelData.some(row =>
+            requiredFields.some(field => !row[field] || String(row[field]).trim() === "")
+        );
+
+        if (hasEmptyField) {
+            setError("All fields are compulsory");
+            return;
+        }
+
         setError("");
+
         const bulkOfProductformatteddata = excelData.map((row) => ({
             brand_name: row["Brand Name"] ? row["Brand Name"].trim().toUpperCase() : "",
             model_name: row["Model Name"] ? row["Model Name"].trim().toUpperCase() : "",
@@ -95,9 +117,6 @@ function BulkOfProduct() {
         <div className="w-full">
             {loading && <Spinner />}
             <div className='flex gap-10 items-center'>
-                {error && (
-                    <div className="text-red-600 text-sm ">{error}</div>
-                )}
                 <InputComponent
                     label="Upload Excel File"
                     type="file"
@@ -113,6 +132,9 @@ function BulkOfProduct() {
                 />
 
             </div>
+            {error && (
+                <div className="text-red-600 text-sm ">{error}</div>
+            )}
             {showTable && excelData.length > 0 && (
                 <div className=" mt-6 h-[44vh]">
                     <CustomTableCompoent headers={tableHeaders} rows={excelData} />
