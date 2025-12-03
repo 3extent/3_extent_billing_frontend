@@ -23,6 +23,8 @@ function AddRepair() {
     });
     const [brandOptions, setBrandOptions] = useState([]);
     const [modelOptions, setModelOptions] = useState([]);
+    const [imeiOptions, setImeiOptions] = useState([]);
+    const [selectedImei, setSelectedImei] = useState("");
     const [loading, setLoading] = useState(false);
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -70,6 +72,64 @@ function AddRepair() {
             setLoading: setLoading
         });
     }, []);
+    const getAllImeis = () => {
+        let url = `${API_URLS.PRODUCTS}?status=AVAILABLE,RETURN`;
+        apiCall({
+            method: "GET",
+            url: url,
+            data: {},
+            callback: getImeisCallback,
+        });
+    };
+    const getImeisCallback = (response) => {
+        if (response.status === 200) {
+            const imeis = response.data.map(item => item.imei_number);
+            setImeiOptions(imeis);
+        } else {
+            console.error("IMEI numbers fetching error");
+        }
+    };
+    const getProductDataByIMEI = (imei) => {
+        if (!imei) return;
+        const url = `${API_URLS.PRODUCTS}?imei_number=${imei}`;
+        apiCall({
+            method: "GET",
+            url,
+            data: {},
+            callback: getProductDataCallback,
+            setLoading: setLoading
+        });
+    };
+    const getProductDataCallback = (response) => {
+        if (response.status === 200 && response.data.length > 0) {
+            const product = response.data[0];
+            setProductData({
+                imei_number: product.imei_number || "",
+                brand_name: product.brand?.name || (product.model?.brand?.name || ""),
+                model_name: product.model?.name || "",
+                grade: product.grade || "",
+                purchase_price: product.purchase_price || "",
+                engineer_name: product.engineer_name || "",
+                accessories: product.accessories || "",
+                issue: "",
+                repairer_name: "",
+                charges: ""
+            });
+        } else {
+            setProductData({
+                imei_number: "",
+                brand_name: "",
+                model_name: "",
+                grade: "",
+                purchase_price: "",
+                engineer_name: "",
+                accessories: "",
+                issue: "",
+                repairer_name: "",
+                charges: ""
+            });
+        }
+    };
     const addRepairCallback = (response) => {
         setLoading(false);
         if (response.status === 200) {
@@ -110,24 +170,31 @@ function AddRepair() {
     useEffect(() => {
         getBrandsAllData();
         getModelsAllData();
+        getAllImeis();
     }, [getBrandsAllData, getModelsAllData]);
+    useEffect(() => {
+        if (selectedImei.length >= 11) {
+            getProductDataByIMEI(selectedImei);
+        }
+    }, [selectedImei]);
 
     return (
         <div>
             {loading && <Spinner />}
             <div className="grid grid-cols-3 mt-2 gap-x-5 gap-y-1">
-                <InputComponent
-                    label="IMEI"
-                    type="text"
-                    name="imei_number"
-                    placeholder="IMEI"
+                <CustomDropdownInputComponent
+                    label="IMEI No :"
+                    dropdownClassName="w-[190px]"
+                    placeholder="Scan IMEI No"
+                    value={selectedImei}
                     maxLength={15}
                     numericOnly={true}
-                    inputClassName="w-[80%]"
-                    labelClassName="font-serif font-bold"
-                    value={productData.imei_number}
-                    onChange={handleInputChange}
-
+                    onChange={(value) => setSelectedImei(value)}
+                    options={
+                        selectedImei.length >= 11
+                            ? imeiOptions.filter((imei) => imei.startsWith(selectedImei))
+                            : []
+                    }
                 />
             </div>
             <div className="grid grid-cols-3 mt-2 gap-x-5 gap-y-1">

@@ -10,11 +10,14 @@ import InputComponent from "../../CustomComponents/InputComponent/InputComponent
 
 function Repair() {
     const navigate = useNavigate();
-    const [rows, setRows] = useState([]);
+    // const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false);
     const navigateAddRepair = () => {
         navigate("/addrepair")
     }
+    const rows = [
+        { Brand: "apple" }
+    ];
     const getRepairsCallBack = (response) => {
         if (response.status === 200) {
             const repairFormattedRows = response.data.map((repair) => ({
@@ -30,7 +33,7 @@ function Repair() {
                 Accessories: repair.accessories,
                 id: repair._id
             }));
-            setRows(repairFormattedRows);
+            // setRows(repairFormattedRows);
         } else {
             console.log("Error fetching repairs");
         }
@@ -57,7 +60,7 @@ function Repair() {
                 onClick={navigateAddRepair}
                 buttonClassName="py-1 px-3 text-sm font-bold"
             />
-            <div  className="mb-10 mt-5">
+            <div className="mb-10 mt-5">
                 <InputComponent
                     label="IMEI"
                     type="text"
