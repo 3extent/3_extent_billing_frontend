@@ -25,22 +25,28 @@ function BulkOfProduct() {
         "Supplier",
         "QC Remark"
     ];
+    const isEmptyValue = (value) => {
+        if (!value) return true;
+        const val = String(value).trim().toLowerCase();
+        return val === "" || val === "-" || val === "na" || val === "n/a" || val === "null" || val === "undefined";
+    };
     const handleAddProductData = () => {
         if (excelData.length === 0) {
             setError("Please upload an Excel file.");
             return;
         }
-        const hasEmptyField = excelData.some(row =>
-            requiredFields.some(field => !row[field] || String(row[field]).trim() === "")
-        );
+        for (let colIndex = 0; colIndex < requiredFields.length; colIndex++) {
+            let columnName = requiredFields[colIndex];
+            for (let rowIndex = 0; rowIndex < excelData.length; rowIndex++) {
+                let row = excelData[rowIndex];
 
-        if (hasEmptyField) {
-            setError("All fields are compulsory");
-            return;
+                if (isEmptyValue(row[columnName])) {
+                    setError(`${columnName} column: missing or invalid value in row ${rowIndex + 1}`);
+                    return;
+                }
+            }
         }
-
         setError("");
-
         const bulkOfProductformatteddata = excelData.map((row) => ({
             brand_name: row["Brand Name"] ? row["Brand Name"].trim().toUpperCase() : "",
             model_name: row["Model Name"] ? row["Model Name"].trim().toUpperCase() : "",
