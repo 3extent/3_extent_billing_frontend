@@ -21,19 +21,29 @@ export default function SingleBillHistory() {
     const [selectedContactNo, setSelectedContactNo] = useState("");
     const [customerName, setCustomerName] = useState("");
     const [showPaymentPopup, setShowPaymentPopup] = useState(false);
-    const [cashAmount, setCashAmount] = useState("");
-    const [onlineAmount, setOnlineAmount] = useState("");
-    const [card, setCard] = useState("");
+
+    const [cashPaid, setCashPaid] = useState(0);
+    const [onlinePaid, setOnlinePaid] = useState(0);
+    const [cardPaid, setCardPaid] = useState(0);
     const [totalAmount, setTotalAmount] = useState(0);
     const [pendingAmount, setPendingAmount] = useState(0);
+    const [paidAmount, setPaidAmount] = useState(0);
+
+    const [cashPaidPopup, setCashPaidPopup] = useState(0);
+    const [onlinePaidPopup, setOnlinePaidPopup] = useState(0);
+    const [cardPaidPopup, setCardPaidPopup] = useState(0);
+
+
     const [loading, setLoading] = useState(false);
     const [showTotalRow, setShowTotalRow] = useState(false);
+
     useEffect(() => {
         if (billId) {
             getAllImeis();
             getSingleBillHistroyAllData(billId);
         }
     }, [billId]);
+
     useEffect(() => {
         if (selectedImei.length === 15) {
             addRow(selectedImei);
@@ -41,17 +51,9 @@ export default function SingleBillHistory() {
     }, [selectedImei]);
 
     useEffect(() => {
-        const cash = Number(cashAmount);
-        const online = Number(onlineAmount);
-        const cardAmt = Number(card);
-        const pending = totalAmount - (cash + online + cardAmt);
+        const pending = totalAmount - (Number(cashPaidPopup) + Number(onlinePaidPopup) + Number(cardPaidPopup));
         setPendingAmount(pending);
-        console.log('cardAmt: ', cardAmt);
-        console.log('totalAmount: ', totalAmount);
-        console.log('pending: ', pending);
-        console.log('online: ', online);
-        console.log('cash: ', cash);
-    }, [cashAmount, card, onlineAmount, totalAmount]);
+    }, [cashPaidPopup, cardPaidPopup, onlinePaidPopup]);
 
     useEffect(() => {
         const total = rows.reduce((sum, row) => {
@@ -61,7 +63,11 @@ export default function SingleBillHistory() {
             );
             return sum + (isNaN(rate) ? 0 : rate);
         }, 0);
-        setTotalAmount(total);
+        setTotalAmount(total - paidAmount);
+        console.log('total: ', total);
+
+        const pending = total - paidAmount;
+        setPendingAmount(pending);
     }, [rows]);
 
     const getAllImeis = () => {
@@ -73,6 +79,7 @@ export default function SingleBillHistory() {
             callback: getImeisCallback,
         });
     };
+
     const getImeisCallback = (response) => {
         if (response.status === 200) {
             const imeis = response.data.map(item => item.imei_number);
@@ -81,6 +88,7 @@ export default function SingleBillHistory() {
             console.error("IMEI numbers fetching error");
         }
     };
+
     const getSingleBillHistroyAllData = (id) => {
         apiCall({
             method: 'GET',
@@ -90,6 +98,7 @@ export default function SingleBillHistory() {
             setLoading: setLoading
         })
     };
+
     const getSingleBillHistroyCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
@@ -111,12 +120,17 @@ export default function SingleBillHistory() {
             setSelectedContactNo(bill.customer?.contact_number || "");
             setTotalAmount(Number(bill.payable_amount || 0));
             setPendingAmount(Number(bill.pending_amount || 0));
-            const cashPaid = bill.paid_amount.find(p => p.method === "cash")?.amount || "0";
-            const onlinePaid = bill.paid_amount.find(p => p.method === "online")?.amount || "0";
-            const cardPaid = bill.paid_amount.find(p => p.method === "card")?.amount || "0";
-            setCashAmount(cashPaid);
-            setOnlineAmount(onlinePaid);
-            setCard(cardPaid);
+
+            const cashPaid = Number(bill.paid_amount.find(p => p.method === "cash")?.amount || "0");
+            const onlinePaid = Number(bill.paid_amount.find(p => p.method === "online")?.amount || "0");
+            const cardPaid = Number(bill.paid_amount.find(p => p.method === "card")?.amount || "0");
+
+            setCashPaid(cashPaid);
+            setOnlinePaid(onlinePaid);
+            setCardPaid(cardPaid);
+
+            setPaidAmount(cashPaid + onlinePaid + cardPaid);
+
             const singleBillHistrotFormattedRows = bill.products.map((product, index) => ({
                 "Sr.No": index + 1,
                 "IMEI NO": product.imei_number,
@@ -129,6 +143,7 @@ export default function SingleBillHistory() {
                 "QC-Remark": product.qc_remark,
                 "Grade": product.grade,
                 "Accessories": product.accessories,
+                status: product.status,
                 "Action": (
                     <div className="flex justify-end">
                         <div
@@ -141,29 +156,32 @@ export default function SingleBillHistory() {
                     </div>
                 ),
             }));
-            singleBillHistrotFormattedRows.push({
-                _id: "total",
-                "Sr.No": "Total",
-                "IMEI NO": "",
-                Brand: "",
-                Model: "",
-                "Rate": response.data.totalRate?.toLocaleString("en-IN") || 0,
-                "Sale Price": response.data.totalSalesPrice?.toLocaleString("en-IN") || 0,
-                "Purchase Price": response.data.totalPurchasePrice?.toLocaleString("en-IN") || 0,
-                "QC-Remark": "",
-                Grade: "",
-                Accessories: "",
-            });
+            // singleBillHistrotFormattedRows.push({
+            //     _id: "total",
+            //     "Sr.No": "Total",
+            //     "IMEI NO": "",
+            //     Brand: "",
+            //     Model: "",
+            //     "Rate": response.data.totalRate?.toLocaleString("en-IN") || 0,
+            //     "Sale Price": response.data.totalSalesPrice?.toLocaleString("en-IN") || 0,
+            //     "Purchase Price": response.data.totalPurchasePrice?.toLocaleString("en-IN") || 0,
+            //     "QC-Remark": "",
+            //     Grade: "",
+            //     Accessories: "",
+            // });
             setSingleBill(bill);
             setRows(singleBillHistrotFormattedRows);
         } else {
             console.log("Error");
         }
     }
+
     const handleRateChange = (index, newRate) => {
+        console.log('newRate: ', newRate);
         const updatedRows = [...rows];
         updatedRows[index]["Rate"] = Number(newRate);
         setRows(updatedRows);
+        console.log('updatedRows: ', updatedRows);
     };
 
     const handleDeleteRow = (imeiNumber) => {
@@ -180,6 +198,7 @@ export default function SingleBillHistory() {
             return newRows;
         });
     };
+
     const addRowCallback = (response) => {
         if (response.status === 200 && response.data.length > 0) {
             const product = response.data[0];
@@ -197,6 +216,7 @@ export default function SingleBillHistory() {
                 "Rate": product.sales_price,
                 "Sale Price": product.sales_price,
                 "Purchase Price": product.purchase_price,
+                "GST Purchase Price": product.gst_purchase_price,
                 "QC-Remark": product.qc_remark,
                 "Grade": product.grade,
                 "Accessories": product.accessories,
@@ -217,6 +237,7 @@ export default function SingleBillHistory() {
             setSelectedImei("");
         }
     }
+
     const addRow = (imei) => {
         apiCall({
             method: "GET",
@@ -226,6 +247,7 @@ export default function SingleBillHistory() {
             setLoading: setLoading
         });
     };
+
     const handleSaveData = () => {
         if (totalAmount <= 0) {
             toast.warning("Please add products before proceeding to payment.", {
@@ -236,12 +258,14 @@ export default function SingleBillHistory() {
         }
         handleBillSaveData();
     }
+
     const handleCancelPopup = () => {
-        setCashAmount("");
-        setOnlineAmount("");
-        setCard("");
+        setCashPaidPopup(0);
+        setOnlinePaidPopup(0);
+        setCardPaidPopup(0);
         setShowPaymentPopup(false);
     };
+
     const handleGenaratePdf = () => {
         generateAndSavePdf(
             customerInfo.name,
@@ -257,6 +281,7 @@ export default function SingleBillHistory() {
             customerInfo.sGst,
         );
     }
+
     const saveBillCallback = (response) => {
         if (response.status === 200) {
             setShowPaymentPopup(true);
@@ -268,6 +293,7 @@ export default function SingleBillHistory() {
             });
         }
     }
+
     const handleBillSaveData = () => {
         if (!billId) return;
         const billsData = {
@@ -280,9 +306,9 @@ export default function SingleBillHistory() {
                     rate: Number(row["Rate"]),
                 })),
             paid_amount: [
-                { method: "cash", amount: Number(cashAmount) },
-                { method: "online", amount: Number(onlineAmount) },
-                { method: "card", amount: Number(card) },
+                { method: "cash", amount: Number(cashPaid) },
+                { method: "online", amount: Number(onlinePaid) },
+                { method: "card", amount: Number(cardPaid) },
             ],
             payable_amount: totalAmount,
             pending_amount: pendingAmount,
@@ -294,6 +320,7 @@ export default function SingleBillHistory() {
             callback: saveBillCallback,
         })
     };
+
     const paymentUpdateCallback = (response) => {
         if (response.status === 200) {
             toast.success("Payment updated successfully!", {
@@ -325,11 +352,12 @@ export default function SingleBillHistory() {
             setShowPaymentPopup(false);
         }
     };
+
     const handlePrintButton = () => {
         if (!billId) return;
-        const cash = Number(cashAmount || 0);
-        const online = Number(onlineAmount || 0);
-        const cardAmt = Number(card || 0);
+        const cash = Number(cashPaidPopup || 0);
+        const online = Number(onlinePaidPopup || 0);
+        const cardAmt = Number(cardPaidPopup || 0);
         const totalPaid = cash + online + cardAmt;
 
         const paymentData = {
@@ -349,12 +377,15 @@ export default function SingleBillHistory() {
             setLoading: setLoading,
         });
     };
+
     const handleNavigateBillHistroy = () => {
         navigate(-1);
     }
+
     const handleExportToExcel = () => {
         exportToExcel(rows, "billData.xlsx", customerInfo);
     };
+
     return (
         <div>
             {loading && <Spinner />}
@@ -446,13 +477,13 @@ export default function SingleBillHistory() {
                 <CustomPopUpComponet
                     isbillingHistory={true}
                     totalAmount={totalAmount}
-                    cashAmount={cashAmount}
-                    onlineAmount={onlineAmount}
-                    card={card}
+                    cashAmount={cashPaidPopup}
+                    onlineAmount={onlinePaidPopup}
+                    card={cardPaidPopup}
                     pendingAmount={pendingAmount}
-                    setCashAmount={setCashAmount}
-                    setOnlineAmount={setOnlineAmount}
-                    setCard={setCard}
+                    setCashAmount={setCashPaidPopup}
+                    setOnlineAmount={setOnlinePaidPopup}
+                    setCard={setCardPaidPopup}
                     handleCancelButton={handleCancelPopup}
                     handlePrintButton={handlePrintButton}
                 />
