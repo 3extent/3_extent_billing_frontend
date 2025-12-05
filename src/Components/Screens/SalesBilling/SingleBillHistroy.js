@@ -26,13 +26,14 @@ export default function SingleBillHistory() {
     const [onlinePaid, setOnlinePaid] = useState(0);
     const [cardPaid, setCardPaid] = useState(0);
     const [totalAmount, setTotalAmount] = useState(0);
+    const [payableAmount, setPayableAmount] = useState(0);
     const [pendingAmount, setPendingAmount] = useState(0);
     const [paidAmount, setPaidAmount] = useState(0);
 
     const [cashPaidPopup, setCashPaidPopup] = useState(0);
     const [onlinePaidPopup, setOnlinePaidPopup] = useState(0);
     const [cardPaidPopup, setCardPaidPopup] = useState(0);
-
+    
 
     const [loading, setLoading] = useState(false);
     const [showTotalRow, setShowTotalRow] = useState(false);
@@ -51,10 +52,10 @@ export default function SingleBillHistory() {
     }, [selectedImei]);
 
     useEffect(() => {
-        const pending = totalAmount - (Number(cashPaidPopup) + Number(onlinePaidPopup) + Number(cardPaidPopup));
+        const pending = payableAmount - (Number(cashPaidPopup) + Number(onlinePaidPopup) + Number(cardPaidPopup));
         setPendingAmount(pending);
     }, [cashPaidPopup, cardPaidPopup, onlinePaidPopup]);
-
+    
     useEffect(() => {
         const total = rows.reduce((sum, row) => {
             if (!row["IMEI NO"]) return sum;
@@ -63,7 +64,8 @@ export default function SingleBillHistory() {
             );
             return sum + (isNaN(rate) ? 0 : rate);
         }, 0);
-        setTotalAmount(total - paidAmount);
+        setTotalAmount(total );
+        setPayableAmount(total - paidAmount);
         console.log('total: ', total);
 
         const pending = total - paidAmount;
@@ -119,6 +121,7 @@ export default function SingleBillHistory() {
             setCustomerName(bill.customer?.name || "");
             setSelectedContactNo(bill.customer?.contact_number || "");
             setTotalAmount(Number(bill.payable_amount || 0));
+            setPayableAmount(Number(bill.payable_amount || 0));
             setPendingAmount(Number(bill.pending_amount || 0));
 
             const cashPaid = Number(bill.paid_amount.find(p => p.method === "cash")?.amount || "0");
@@ -249,7 +252,7 @@ export default function SingleBillHistory() {
     };
 
     const handleSaveData = () => {
-        if (totalAmount <= 0) {
+        if (payableAmount <= 0) {
             toast.warning("Please add products before proceeding to payment.", {
                 position: "top-center",
                 autoClose: 2000,
@@ -299,12 +302,16 @@ export default function SingleBillHistory() {
         const billsData = {
             customer_name: customerName,
             contact_number: selectedContactNo,
-            products: rows
-                .filter(row => row["IMEI NO"])
-                .map(row => ({
-                    imei_number: row["IMEI NO"],
-                    rate: Number(row["Rate"]),
-                })),
+            // products: rows
+            //     .filter(row => row["IMEI NO"])
+            //     .map(row => ({
+            //         imei_number: row["IMEI NO"],
+            //         rate: Number(row["Rate"]),
+            //     })),
+             products: rows.map((row) => ({
+                imei_number: row["IMEI NO"],
+                rate: row["Rate"],
+            })),
             paid_amount: [
                 { method: "cash", amount: Number(cashPaid) },
                 { method: "online", amount: Number(onlinePaid) },
@@ -367,7 +374,7 @@ export default function SingleBillHistory() {
                 { method: "online", amount: online },
                 { method: "card", amount: cardAmt },
             ],
-            pending_amount: totalAmount - totalPaid,
+            pending_amount: payableAmount - totalPaid,
         };
         apiCall({
             method: "PUT",
@@ -464,7 +471,8 @@ export default function SingleBillHistory() {
                 </button>
             </div>
             <div className=" fixed bottom-16 right-5 font-bold gap-4 text-[22px]  flex justify-end">
-                <div>Payable Amount: {Number(pendingAmount).toLocaleString("en-IN")}</div>
+                <div>Total Amount: {Number(totalAmount).toLocaleString("en-IN")}</div>
+                <div>Payable Amount: {Number(payableAmount).toLocaleString("en-IN")}</div>
             </div>
             <div className=" fixed bottom-5 right-5 flex gap-4 mt-3">
                 <PrimaryButtonComponent
@@ -476,7 +484,7 @@ export default function SingleBillHistory() {
             {showPaymentPopup && (
                 <CustomPopUpComponet
                     isbillingHistory={true}
-                    totalAmount={totalAmount}
+                    totalAmount={payableAmount}
                     cashAmount={cashPaidPopup}
                     onlineAmount={onlinePaidPopup}
                     card={cardPaidPopup}

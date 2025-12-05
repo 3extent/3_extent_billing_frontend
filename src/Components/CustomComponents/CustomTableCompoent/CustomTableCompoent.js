@@ -55,7 +55,7 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
                                                         onRateChange(rowIndex, value === "" ? "" : Number(value));
                                                     }}
                                                     className="border border-gray-300 px-2 py-1 w-24 "
-                                                    disabled={rowIndex === 0}
+                                                   
                                                 />
                                             ) : (
                                                 row[header] !== undefined && row[header] !== null && row[header] !== ""
