@@ -31,6 +31,7 @@ function Billinghistory({ isDraft = false }) {
     const [to, setTo] = useState(toDate);
     const [selectAllDates, setSelectAllDates] = useState(false);
     const [showTotalRow, setShowTotalRow] = useState(false);
+    const [totalRow, setTotalRow] = useState(null);
     useEffect(() => {
         getBillData();
     }, [isDraft]);
@@ -141,7 +142,7 @@ function Billinghistory({ isDraft = false }) {
             }));
             console.log('billingformattedRows: ', billingformattedRows);
             if (!isDraft) {
-                billingformattedRows.push({
+                setTotalRow({
                     _id: "total",
                     "Bill id": "Total",
                     "Date": "",
@@ -350,6 +351,7 @@ function Billinghistory({ isDraft = false }) {
                 <CustomTableCompoent
                     headers={BILLINGHISTORY_COLOUMNS}
                     rows={rows}
+                    totalRow={totalRow}
                     onRowClick={handleRowClick}
                     showTotalRow={!isDraft && showTotalRow}
                 />

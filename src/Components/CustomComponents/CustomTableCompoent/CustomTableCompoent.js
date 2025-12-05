@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-export default function CustomTableCompoent({ headers, rows, onRateChange, maxHeight = "h-full", onRowClick, editable = false, showTotalRow = false }) {
+export default function CustomTableCompoent({ headers, rows, onRateChange, maxHeight = "h-full", onRowClick, editable = false, showTotalRow = false, totalRow }) {
     const [tableHeaders, setTableHeaders] = useState(headers)
     const [tableRows, setTableRows] = useState(rows)
     const Rows = tableRows && tableRows.length > 0;
@@ -9,8 +9,6 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
     useEffect(() => {
         setTableRows(rows);
     }, [rows]);
-    const normalRows = tableRows.filter(row => row._id !== "total");
-    const totalRow = tableRows.find(row => row._id === "total");
     const getTotalRowBg = () => {
         if (!totalRow) return "bg-white";
         if (totalRow.Profit != null) {
@@ -21,7 +19,7 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
     };
     return (
         <div className={`w-full  relative ${maxHeight} overflow-x-auto`}>
-            {normalRows.length > 0 ? (
+            {tableRows.length > 0 ? (
                 <div className="border border-slate-800">
                     <table className="table-fixed w-full ">
                         <thead className=" sticky top-0 bg-slate-800 text-white text-sm font-semibold">
@@ -36,7 +34,7 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
                             </tr>
                         </thead>
                         <tbody >
-                            {normalRows.map((row, rowIndex) => {
+                            {tableRows.map((row, rowIndex) => {
                                 console.log('row: ', row);
 
                                 return <tr key={rowIndex}
@@ -55,7 +53,7 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
                                                         onRateChange(rowIndex, value === "" ? "" : Number(value));
                                                     }}
                                                     className="border border-gray-300 px-2 py-1 w-24 "
-                                                   
+
                                                 />
                                             ) : (
                                                 row[header] !== undefined && row[header] !== null && row[header] !== ""
@@ -77,7 +75,7 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
             )
             }
             {
-                totalRow && normalRows.length > 0 && showTotalRow && (
+                totalRow && tableRows.length > 0 && showTotalRow && (
                     <div className={`mt-5 sticky bottom-0 font-extrabold text-[20px] z-20  ${getTotalRowBg()}`}>
                         <div className="overflow-x-auto">
                             <table className="table-fixed w-full">

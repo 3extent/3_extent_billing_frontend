@@ -33,10 +33,12 @@ export default function SingleBillHistory() {
     const [cashPaidPopup, setCashPaidPopup] = useState(0);
     const [onlinePaidPopup, setOnlinePaidPopup] = useState(0);
     const [cardPaidPopup, setCardPaidPopup] = useState(0);
-    
+
 
     const [loading, setLoading] = useState(false);
     const [showTotalRow, setShowTotalRow] = useState(false);
+
+    const [totalRow, setTotalRow] = useState(null);
 
     useEffect(() => {
         if (billId) {
@@ -55,7 +57,7 @@ export default function SingleBillHistory() {
         const pending = payableAmount - (Number(cashPaidPopup) + Number(onlinePaidPopup) + Number(cardPaidPopup));
         setPendingAmount(pending);
     }, [cashPaidPopup, cardPaidPopup, onlinePaidPopup]);
-    
+
     useEffect(() => {
         const total = rows.reduce((sum, row) => {
             if (!row["IMEI NO"]) return sum;
@@ -64,7 +66,7 @@ export default function SingleBillHistory() {
             );
             return sum + (isNaN(rate) ? 0 : rate);
         }, 0);
-        setTotalAmount(total );
+        setTotalAmount(total);
         setPayableAmount(total - paidAmount);
         console.log('total: ', total);
 
@@ -159,19 +161,18 @@ export default function SingleBillHistory() {
                     </div>
                 ),
             }));
-            // singleBillHistrotFormattedRows.push({
-            //     _id: "total",
-            //     "Sr.No": "Total",
-            //     "IMEI NO": "",
-            //     Brand: "",
-            //     Model: "",
-            //     "Rate": response.data.totalRate?.toLocaleString("en-IN") || 0,
-            //     "Sale Price": response.data.totalSalesPrice?.toLocaleString("en-IN") || 0,
-            //     "Purchase Price": response.data.totalPurchasePrice?.toLocaleString("en-IN") || 0,
-            //     "QC-Remark": "",
-            //     Grade: "",
-            //     Accessories: "",
-            // });
+            setTotalRow({
+                "Sr.No": "Total",
+                "IMEI NO": "",
+                Brand: "",
+                Model: "",
+                "Rate": response.data.totalRate?.toLocaleString("en-IN") || 0,
+                "Sale Price": response.data.totalSalesPrice?.toLocaleString("en-IN") || 0,
+                "Purchase Price": response.data.totalPurchasePrice?.toLocaleString("en-IN") || 0,
+                "QC-Remark": "",
+                Grade: "",
+                Accessories: ""
+            });
             setSingleBill(bill);
             setRows(singleBillHistrotFormattedRows);
         } else {
@@ -210,9 +211,8 @@ export default function SingleBillHistory() {
                 setSelectedImei("");
                 return;
             }
-            const filteredRows = rows.filter(row => row._id !== "total");
             const newRow = {
-                "Sr.No": filteredRows.length + 1,
+                "Sr.No": rows.length + 1,
                 "IMEI NO": product.imei_number,
                 "Brand": product.model?.brand?.name,
                 "Model": product.model?.name,
@@ -302,13 +302,7 @@ export default function SingleBillHistory() {
         const billsData = {
             customer_name: customerName,
             contact_number: selectedContactNo,
-            // products: rows
-            //     .filter(row => row["IMEI NO"])
-            //     .map(row => ({
-            //         imei_number: row["IMEI NO"],
-            //         rate: Number(row["Rate"]),
-            //     })),
-             products: rows.map((row) => ({
+            products: rows.map((row) => ({
                 imei_number: row["IMEI NO"],
                 rate: row["Rate"],
             })),
@@ -457,6 +451,7 @@ export default function SingleBillHistory() {
                 <CustomTableCompoent
                     headers={SINGLEBILLHISTORY_COLOUMNS}
                     rows={rows}
+                    totalRow={totalRow}
                     onRateChange={handleRateChange}
                     editable={true}
                     showTotalRow={showTotalRow}
