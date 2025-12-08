@@ -23,7 +23,6 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
         return "bg-green-200";
     };
     return (
-        
         <div className={`w-full  relative ${maxHeight} overflow-x-auto`}>
             {toggleableColumns.length > 0 && tableRows.length > 0 && (
                 <div className="w-full flex justify-start bg-white py-2 pl-2 sticky top-0 z-30">
@@ -130,7 +129,7 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
                                                     : ["Total Amount", "Remaining Amount", "Profit", "Total Products", "Purchase Price", "Sale Price", "Rate"].includes(
                                                         header)
                                                         ? 
-                                                        totalRow[header].toLocaleString()
+                                                        totalRow[header]?.toLocaleString()
                                                         : ""
                                                         }
                                             </td>
