@@ -31,7 +31,7 @@ export default function SalesBilling() {
     const navigateBillingHistory = () => {
         navigate("/billinghistory")
     }
-    const [showDropdown, setShowDropdown] = useState(false);
+    // const [showDropdown, setShowDropdown] = useState(false);
     const [showPaymentPopup, setShowPaymentPopup] = useState(false);
     const [cashAmount, setCashAmount] = useState("");
     const [onlineAmount, setOnlineAmount] = useState("");
@@ -425,7 +425,7 @@ export default function SalesBilling() {
                     />
                 </div>
             </div>
-            {rows.length > 0 && (
+            {/* {rows.length > 0 && (
                 <div className="relative mb-2">
                     <button
                         onClick={() => setShowDropdown(!showDropdown)}
@@ -455,13 +455,16 @@ export default function SalesBilling() {
                         </div>
                     )}
                 </div>
-            )}
+            )} */}
             <div className="h-[54vh]">
                 <CustomTableCompoent
                     headers={dynamicHeaders}
                     rows={rows}
                     onRateChange={handleRateChange}
                     editable={true}
+                    toggleableColumns={toggleableColumns}
+                    hiddenColumns={hiddenColumns}
+                    onToggleColumn={toggleColumn}
                 />
             </div>
             <div className=" fixed bottom-16 right-5 font-bold gap-4 text-[22px]  flex justify-end">

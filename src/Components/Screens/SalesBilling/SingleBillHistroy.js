@@ -15,6 +15,40 @@ export default function SingleBillHistory() {
     const [customerInfo, setCustomerInfo] = useState();
     const [loading, setLoading] = useState(false);
     const [showTotalRow, setShowTotalRow] = useState(false);
+    const toggleableColumns = ["Purchase Price", "QC-Remark", "GST Purchase Price", "Supplier Name"];
+
+    const [hiddenColumns, setHiddenColumns] = useState([
+        "Purchase Price",
+        "QC-Remark",
+        "GST Purchase Price",
+        "Supplier Name"
+    ]);
+
+     const [dynamicHeaders, setDynamicHeaders] = useState(() => {
+        return SINGLEBILLHISTORY_COLOUMNS.filter(
+            (col) => !["Purchase Price", "QC-Remark", "GST Purchase Price", "Supplier Name"].includes(col)
+        );
+    });
+
+     const toggleColumn = (columnName) => {
+        if (!toggleableColumns.includes(columnName)) return;
+        if (dynamicHeaders.includes(columnName)) {
+            setDynamicHeaders(dynamicHeaders.filter(col => col !== columnName));
+            setHiddenColumns([...hiddenColumns, columnName]);
+        } else {
+            let newHeaders = [...dynamicHeaders];
+            if (columnName === "Purchase Price" || columnName === "GST Purchase Price") {
+                const rateIndex = newHeaders.indexOf("Rate");
+                if (rateIndex !== -1) newHeaders.splice(rateIndex + 1, 0, columnName);
+                else newHeaders.push(columnName);
+            } else {
+                newHeaders.push(columnName);
+            }
+            setDynamicHeaders(newHeaders);
+            setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
+        };
+    };
+
     useEffect(() => {
         if (billId) {
             getSingleBillHistroyAllData(billId);
@@ -49,6 +83,7 @@ export default function SingleBillHistory() {
                 "QC-Remark": product.qc_remark,
                 "Grade": product.grade,
                 "Accessories": product.accessories,
+                "Supplier Name": product.supplier?.name,
             }));
             singleBillHistrotFormattedRows.push({
                 _id: "total",
@@ -145,8 +180,11 @@ export default function SingleBillHistory() {
             </div>
             <div className="h-[64vh]">
                 <CustomTableCompoent
-                    headers={SINGLEBILLHISTORY_COLOUMNS}
+                    headers={dynamicHeaders}
                     rows={rows}
+                    toggleableColumns={toggleableColumns}
+                    hiddenColumns={hiddenColumns}
+                    onToggleColumn={toggleColumn}
                     showTotalRow={showTotalRow}
                 />
             </div>
