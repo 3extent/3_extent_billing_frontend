@@ -78,7 +78,9 @@ export default function SalesBilling() {
     const [selectedContactNo, setSelectedContactNo] = useState("");
     const [customers, setCustomers] = useState([]);
     const [customerName, setCustomerName] = useState("");
+
     const handleRateChange = (index, newRate) => {
+        console.log('newRate: ', newRate);
         const updatedRows = [...rows];
         updatedRows[index]["Rate"] = Number(newRate);
         setRows(updatedRows);

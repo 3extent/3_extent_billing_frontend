@@ -31,6 +31,7 @@ function Billinghistory({ isDraft = false }) {
     const [to, setTo] = useState(toDate);
     const [selectAllDates, setSelectAllDates] = useState(false);
     const [showTotalRow, setShowTotalRow] = useState(false);
+    const [totalRow, setTotalRow] = useState(null);
     useEffect(() => {
         getBillData();
     }, [isDraft]);
@@ -91,18 +92,16 @@ function Billinghistory({ isDraft = false }) {
                 _id: bill._id,
                 "Actions": (
                     <div className="flex items-center justify-end gap-2">
-                        {isDraft && (
-                            <div
-                                title="delete"
-                                className="flex items-center justify-center rounded-full bg-gray-300 hover:bg-gray-400 cursor-pointer w-10 h-10 min-w-[40px] min-h-[40px]"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDeleteBill(bill._id);
-                                }}
-                            >
-                                <i className="fa fa-trash text-gray-700 text-lg" />
-                            </div>
-                        )}
+                        <div
+                            title="delete"
+                            className="flex items-center justify-center rounded-full bg-gray-300 hover:bg-gray-400 cursor-pointer w-10 h-10 min-w-[40px] min-h-[40px]"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteBill(bill._id);
+                            }}
+                        >
+                            <i className="fa fa-trash text-gray-700 text-lg" />
+                        </div>
                         {Number(bill.pending_amount) > 0 && (
                             <PrimaryButtonComponent
                                 label="Pay"
@@ -141,7 +140,7 @@ function Billinghistory({ isDraft = false }) {
             }));
             console.log('billingformattedRows: ', billingformattedRows);
             if (!isDraft) {
-                billingformattedRows.push({
+                setTotalRow({
                     _id: "total",
                     "Bill id": "Total",
                     "Date": "",
@@ -350,6 +349,7 @@ function Billinghistory({ isDraft = false }) {
                 <CustomTableCompoent
                     headers={BILLINGHISTORY_COLOUMNS}
                     rows={rows}
+                    totalRow={totalRow}
                     onRowClick={handleRowClick}
                     showTotalRow={!isDraft && showTotalRow}
                 />
