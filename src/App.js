@@ -21,6 +21,9 @@ import PrivacyPolicy from './Components/Screens/Policies/PrivacyPolicy';
 import TermAndCondition from './Components/Screens/Policies/TermAndCondition';
 import AddRepair from './Components/Screens/Repair/AddRepair';
 import Repair from './Components/Screens/Repair/Repair';
+import Repairers from './Components/Screens/Repair/Repairers';
+import AddRepairers from './Components/Screens/Repair/AddRepairers';
+import AcceptRepair from './Components/Screens/Repair/AcceptRepair';
 
 
 
@@ -120,6 +123,21 @@ function App() {
                 <Models />
               </ProtectedRoute>
             } />
+            <Route path="/repair" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <Repair />
+              </ProtectedRoute>
+            } />
+            {/* <Route path="/acceptrepair/:id" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <AcceptRepair />
+              </ProtectedRoute>
+            } /> */}
+            <Route path="/repairers" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <Repairers />
+              </ProtectedRoute>
+            } />
             <Route path="/stockin/:product_id?" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <StockIn />
@@ -160,14 +178,14 @@ function App() {
             <Route path="/singleDraftBillHistroy/:draftBillId" element={<SingleDraftBillHistory />} />
 
             <Route path="*" element={<Navigate to="/" replace />} />
-            <Route path="/repair" element={
-              <ProtectedRoute isAuthenticated={loginStatus}>
-                <Repair />
-              </ProtectedRoute>
-            } />
-            <Route path="/addrepair" element={
+            <Route path="/addrepair/" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <AddRepair />
+              </ProtectedRoute>
+            } />
+            <Route path="/AddRepairers" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <AddRepairers />
               </ProtectedRoute>
             } />
 

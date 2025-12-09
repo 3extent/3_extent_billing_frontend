@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 
 function AddRepair() {
     const [productData, setProductData] = useState({
+        id: "",
         imei_number: "",
         brand_name: "",
         model_name: "",
@@ -17,18 +18,40 @@ function AddRepair() {
         purchase_price: "",
         engineer_name: "",
         issue: "",
-        repairer_name: "",
         accessories: "",
-        charges: ""
+        charges: "",
+        repairer_name: "",
+        repair_contact_no: "",
     });
     const [brandOptions, setBrandOptions] = useState([]);
     const [modelOptions, setModelOptions] = useState([]);
     const [imeiOptions, setImeiOptions] = useState([]);
     const [selectedImei, setSelectedImei] = useState("");
     const [loading, setLoading] = useState(false);
+
+    const [repairers, setRepairers] = useState([]);
+    const [repairerNames, setRepairerNames] = useState([]);
+    const [repairerContacts, setRepairerContacts] = useState([]);
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setProductData({ ...productData, [name]: value });
+    };
+    const handleRepairerChange = (value) => {
+        const selected = repairers.find((item) => item.name === value);
+        setProductData({
+            ...productData,
+            repairer_name: value,
+            repair_contact_no: selected?.contact || "",
+        });
+    };
+
+    const handleRepairContactChange = (value) => {
+        const selected = repairers.find((item) => item.contact === value);
+        setProductData({
+            ...productData,
+            repair_contact_no: value,
+            repairer_name: selected?.name || "",
+        });
     };
     const handleBrandProductData = (value) => {
         setProductData(productData => ({ ...productData, brand_name: value }));
@@ -104,6 +127,7 @@ function AddRepair() {
         if (response.status === 200 && response.data.length > 0) {
             const product = response.data[0];
             setProductData({
+                id: product.id ?? product._id ?? "",
                 imei_number: product.imei_number || "",
                 brand_name: product.brand?.name || (product.model?.brand?.name || ""),
                 model_name: product.model?.name || "",
@@ -112,11 +136,13 @@ function AddRepair() {
                 engineer_name: product.engineer_name || "",
                 accessories: product.accessories || "",
                 issue: "",
+                charges: "",
                 repairer_name: "",
-                charges: ""
+                repair_contact_no: ""
             });
         } else {
             setProductData({
+                id: "",
                 imei_number: "",
                 brand_name: "",
                 model_name: "",
@@ -125,59 +151,103 @@ function AddRepair() {
                 engineer_name: "",
                 accessories: "",
                 issue: "",
+                charges: "",
                 repairer_name: "",
-                charges: ""
+                repair_contact_no: ""
             });
         }
     };
-    const addRepairCallback = (response) => {
+    const updateRepairCallback = (response) => {
         setLoading(false);
+        console.log("Response from PUT request:", response);
         if (response.status === 200) {
-            toast.success("Repair added successfully!", {
-                position: "top-center",
-                autoClose: 2000,
-            });
-            setProductData({
-                imei_number: "",
-                brand_name: "",
-                model_name: "",
-                grade: "",
-                purchase_price: "",
-                engineer_name: "",
-                issue: "",
-                repairer_name: "",
-                accessories: "",
-                charges: ""
-            });
+            toast.success("Repair details updated successfully!");
+            // setProductData((prev) => ({
+            //     ...prev,
+            //     issue: "",
+            //     charges: "",
+            //     repairer_name: "",
+            //     repairer: "",
+            //     repair_contact_no: ""
+            // }));
         } else {
-            const errorMsg = response?.data?.error || "Failed to add repair";
-            toast.error(errorMsg, {
-                position: "top-center",
-                autoClose: 2000,
-            });
+            toast.error("Failed to update repair details");
+            console.error(response);
         }
     };
     const saveRepairData = () => {
+        if (!productData.id) {
+            toast.error("No product selected for repair");
+            return;
+        }
+
+        // if (!productData.repairer) {
+        //     toast.error("Select a valid repairer");
+        //     return;
+        // }
+
+
         setLoading(true);
+
+        // const payload = {
+        //     issue: productData.issue,
+        //     repair_cost: productData.charges,
+        //     repair_remark: productData.repairer_name,
+        //     status: "REPAIRED",
+        // };
+        const statusToSend = productData.repair_cost ? "REPAIRED" : "IN_REPAIRING";
+
+        const payload = {
+            status: statusToSend,
+        };
         apiCall({
-            method: "POST",
-            url: API_URLS.REPAIRS,
-            data: productData,
-            callback: addRepairCallback,
-            setLoading: setLoading
+            method: "PUT",
+            url: `${API_URLS.PRODUCTS}/${productData.id}/repair`,
+            data: payload,
+            callback: updateRepairCallback,
+            setLoading,
         });
     };
+    // const getRepairersCallback = (response) => {
+    //     console.log('Repairers response: ', response);
+    //     if (response.status === 200) {
+    //                 const repairers = response.data.map(repairer => repairer.name);
+    //                 setRepairerNameOptions(repairers);
+    //             } else {
+    //                 console.log("Error fetching repairers");
+    //             }
+    //         };
+    const getRepairersCallback = (response) => {
+        if (response.status === 200) {
+            const data = response.data.map((item) => ({
+                name: item.name,
+                contact: item.contact_number,
+            }));
+
+            setRepairers(data);
+            setRepairerNames(data.map((item) => item.name));
+            setRepairerContacts(data.map((item) => item.contact));
+        }
+    };
+    const getAllRepairers = useCallback(() => {
+        apiCall({
+            method: 'GET',
+            url: `${API_URLS.USERS}?role=REPAIRER`,
+            data: {},
+            callback: getRepairersCallback,
+        });
+    }, []);
     useEffect(() => {
         getBrandsAllData();
         getModelsAllData();
         getAllImeis();
-    }, [getBrandsAllData, getModelsAllData]);
+        getAllRepairers();
+    }, [getBrandsAllData, getModelsAllData, getAllRepairers]);
     useEffect(() => {
         if (selectedImei.length >= 11) {
             getProductDataByIMEI(selectedImei);
         }
     }, [selectedImei]);
-
     return (
         <div>
             {loading && <Spinner />}
@@ -261,16 +331,6 @@ function AddRepair() {
                     onChange={handleInputChange}
                 />
                 <InputComponent
-                    label="Repairer Name"
-                    type="text"
-                    name="repairer_name"
-                    placeholder="Enter Repairer Name"
-                    inputClassName="w-[80%]"
-                    labelClassName="font-serif font-bold"
-                    value={productData.repairer_name}
-                    onChange={handleInputChange}
-                />
-                <InputComponent
                     label="Charges"
                     type="text"
                     name="charges"
@@ -291,6 +351,23 @@ function AddRepair() {
                     options={ACCESSORIES_OPTIONS}
                     value={productData.accessories}
                     onChange={handleInputChange}
+                />
+                <CustomDropdownInputComponent
+                    name="Repairer Name"
+                    placeholder="Select Repairer"
+                    options={repairerNames}
+                    value={productData.repairer_name}
+                    onChange={handleRepairerChange}
+                    dropdownClassName="w-[80%]"
+                />
+                <CustomDropdownInputComponent
+                    name="Contact Number"
+                    placeholder="Select Contact Number"
+                    options={repairerContacts}
+                    value={productData.repair_contact_no}
+                    onChange={handleRepairContactChange}
+                    dropdownClassName="w-[80%]"
+                    numericOnly={true}
                 />
                 <div className="col-span-3 mt-5 flex justify-center gap-4">
                     <PrimaryButtonComponent
