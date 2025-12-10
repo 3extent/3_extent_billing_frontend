@@ -9,8 +9,7 @@ import InputComponent from "../../CustomComponents/InputComponent/InputComponent
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import AcceptRepair from "./AcceptRepair";
 import { toast } from "react-toastify";
-
-
+import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 function Repair() {
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
@@ -18,6 +17,7 @@ function Repair() {
     const [status, setStatus] = useState(STATUS_OPTIONS[0]);
     const [selectedRepair, setSelectedRepair] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
+    const [imeiNumber, setIMEINumber] = useState();
     const navigateAddRepair = () => {
         navigate("/addrepair")
     }
@@ -33,7 +33,8 @@ function Repair() {
                 "Purchase Price": repair.purchase_price || "-",
                 Charges: repair.repair_cost !== null ? repair.repair_cost : "-",
                 "Engineer Name": repair.engineer_name || "-",
-                "Repairer Name": repair.repair_remark || "-",
+                "Repairer Remark": repair.repair_remark || "-",
+                "Repairer": repair.repair_by?.name || "-",
                 Accessories: repair.accessories || "-",
                 Status: repair.status || "-",
                 Action: (
@@ -54,15 +55,36 @@ function Repair() {
             console.log("Error fetching repairs");
         }
     };
-    const getAllRepairs = () => {
+    // const getAllRepairs = ({ imeiNumber, }) => {
+    const getAllRepairs = ({ imeiNumber, status } = {}) => {
+        // let url = `${API_URLS.PRODUCTS}?status=IN_REPAIRING,REPAIRED`;
+        let url = `${API_URLS.PRODUCTS}?`;
+        if (status === "REPAIRED / AVAILABLE") {
+            url += "status=AVAILABLE";
+        } else if (status === "IN_REPAIRING") {
+            url += "status=IN_REPAIRING";
+        }
+        if (imeiNumber) {
+            url += `&imei_number=${imeiNumber}`
+        }
         apiCall({
             method: "GET",
-            url: `${API_URLS.PRODUCTS}?status=IN_REPAIRING,REPAIRED`,
+            // url: `${API_URLS.PRODUCTS}?status=IN_REPAIRING,REPAIRED`,
+            url,
             data: {},
             callback: getRepairsCallBack,
             setLoading
         });
     };
+    const handleSearchFilter = () => {
+        getAllRepairs({ imeiNumber, status });
+    }
+    const handleResetFilter = () => {
+        setIMEINumber('');
+        setStatus(STATUS_OPTIONS[0]);
+        // getAllRepairs({ imeiNumber: "", });
+        getAllRepairs({ status: STATUS_OPTIONS[0] });
+    }
     const acceptRepairCallback = (response) => {
         setLoading(false);
         setModalOpen(false);
@@ -89,6 +111,9 @@ function Repair() {
             grade,
             repair_remark: remark,
             status: "REPAIRED",
+            // status: "AVAILABLE",
+            is_repaired: true,
+            repair_by: selectedRepair.repair_by?._id,
         };
         apiCall({
             method: "PUT",
@@ -111,16 +136,15 @@ function Repair() {
                 onClick={navigateAddRepair}
                 buttonClassName="py-1 px-3 text-sm font-bold"
             />
-            <div className="mb-10 mt-5 grid grid-cols-4">
+            <div className="flex items-center gap-4">
                 <InputComponent
-                    label="IMEI"
-                    type="text"
-                    name="imei_number"
-                    placeholder="IMEI"
+                    placeholder="Enter IMEI NO"
+                    value={imeiNumber}
                     maxLength={15}
                     numericOnly={true}
-                    inputClassName="w-[%]40"
+                    inputClassName="mb-2 w-[190px]"
                     labelClassName="font-serif font-bold"
+                    onChange={(e) => setIMEINumber(e.target.value)}
 
                 />
                 <DropdownCompoent
@@ -128,7 +152,19 @@ function Repair() {
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
                     options={STATUS_OPTIONS}
-                    className="w-[190px]"
+                    className="w-[190px] mt-3"
+                />
+                <PrimaryButtonComponent
+                    label="Search"
+                    icon="fa fa-search"
+                    onClick={handleSearchFilter}
+                    buttonClassName="mt-1 py-1 px-5"
+                />
+                <PrimaryButtonComponent
+                    label="Reset"
+                    icon="fa fa-refresh"
+                    onClick={handleResetFilter}
+                    buttonClassName="mt-1 py-1 px-5"
                 />
             </div>
             <div className="h-[75vh]">

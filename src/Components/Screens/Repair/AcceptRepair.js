@@ -41,13 +41,14 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit }) {
                             labelClassName="font-bold"
                         />
                         <InputComponent
-                            label="QC Remark"
+                            label="Repair Remark"  
                             type="text"
-                            value={remark}
+                            value={remark}      
                             onChange={(e) => setRemark(e.target.value)}
                             inputClassName="w-full"
                             labelClassName="font-bold"
                         />
+
                     </div>
                     <div className="mt-3 flex justify-end gap-2 p-2">
                         <PrimaryButtonComponent

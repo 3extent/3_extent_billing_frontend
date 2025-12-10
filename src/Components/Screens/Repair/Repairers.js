@@ -16,7 +16,11 @@ function Repairers() {
         if (response.status === 200) {
             const RepairedFormattedRows = response.data.map((repairer) => ({
                 "Repairer Name": repairer.name,
+                "Firm Name": repairer.firm_name,
+                "GST Number": repairer.gst_number,
                 "Contact": repairer.contact_number,
+                "State": repairer.state,
+                "Address": repairer.address,
                 id: repairer._id
             }));
             setRows(RepairedFormattedRows);

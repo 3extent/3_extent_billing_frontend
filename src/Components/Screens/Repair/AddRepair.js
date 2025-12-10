@@ -7,6 +7,7 @@ import { API_URLS } from "../../../Util/AppConst";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { ACCESSORIES_OPTIONS, GRADE_OPTIONS } from "./Constants";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 function AddRepair() {
     const [productData, setProductData] = useState({
@@ -19,21 +20,23 @@ function AddRepair() {
         engineer_name: "",
         issue: "",
         accessories: "",
-        charges: "",
         repairer_name: "",
-        repair_contact_no: "",
+        repairer_contact_no: "",
     });
     const [brandOptions, setBrandOptions] = useState([]);
     const [modelOptions, setModelOptions] = useState([]);
     const [imeiOptions, setImeiOptions] = useState([]);
     const [selectedImei, setSelectedImei] = useState("");
     const [loading, setLoading] = useState(false);
+    const [errors, setErrors] = useState({});
 
     const [repairers, setRepairers] = useState([]);
     const [repairerNames, setRepairerNames] = useState([]);
     const [repairerContacts, setRepairerContacts] = useState([]);
+    const navigate = useNavigate();
     const handleInputChange = (event) => {
         const { name, value } = event.target;
+        setErrors(prev => ({ ...prev, [name]: "" }));
         setProductData({ ...productData, [name]: value });
     };
     const handleRepairerChange = (value) => {
@@ -41,7 +44,7 @@ function AddRepair() {
         setProductData({
             ...productData,
             repairer_name: value,
-            repair_contact_no: selected?.contact || "",
+            repairer_contact_number: selected?.contact || "",
         });
     };
 
@@ -49,15 +52,17 @@ function AddRepair() {
         const selected = repairers.find((item) => item.contact === value);
         setProductData({
             ...productData,
-            repair_contact_no: value,
+            repairer_contact_number: value,
             repairer_name: selected?.name || "",
         });
     };
     const handleBrandProductData = (value) => {
+        setErrors(prev => ({ ...prev, brand_name: "" }));
         setProductData(productData => ({ ...productData, brand_name: value }));
     };
 
     const handleModelProductData = (value) => {
+        setErrors(prev => ({ ...prev, model_name: "" }));
         setProductData(productData => ({ ...productData, model_name: value }));
     };
     const getBrandsCallBack = (response) => {
@@ -136,9 +141,8 @@ function AddRepair() {
                 engineer_name: product.engineer_name || "",
                 accessories: product.accessories || "",
                 issue: "",
-                charges: "",
                 repairer_name: "",
-                repair_contact_no: ""
+                repairer_contact_number: ""
             });
         } else {
             setProductData({
@@ -151,9 +155,8 @@ function AddRepair() {
                 engineer_name: "",
                 accessories: "",
                 issue: "",
-                charges: "",
                 repairer_name: "",
-                repair_contact_no: ""
+                repairer_contact_number: ""
             });
         }
     };
@@ -162,6 +165,7 @@ function AddRepair() {
         console.log("Response from PUT request:", response);
         if (response.status === 200) {
             toast.success("Repair details updated successfully!");
+            navigate("/repair");
             // setProductData((prev) => ({
             //     ...prev,
             //     issue: "",
@@ -175,7 +179,26 @@ function AddRepair() {
             console.error(response);
         }
     };
+    const handleValidation = () => {
+        const newErrors = {};
+
+        if (!selectedImei.trim()) newErrors.imei_number = "Please select IMEI Number";
+        if (!productData.brand_name.trim()) newErrors.brand_name = "Please select Brand Name";
+        if (!productData.model_name.trim()) newErrors.model_name = "Please select Model Name";
+        if (!productData.grade.trim()) newErrors.grade = "Please select Grade";
+        if (!productData.purchase_price.trim() || isNaN(productData.purchase_price))
+            newErrors.purchase_price = "Please enter valid Purchase Price";
+        if (!productData.engineer_name.trim()) newErrors.engineer_name = "Please enter Engineer Name";
+        // if (!productData.issue.trim()) newErrors.issue = "Please describe the Issue";
+        // if (!productData.accessories.trim()) newErrors.accessories = "Please select Accessories";
+        // if (!productData.repairer_name.trim()) newErrors.repairer_name = "Please select Repairer";
+        // if (!productData.repair_contact_no.trim()) newErrors.repair_contact_no = "Repair contact is required";
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
     const saveRepairData = () => {
+        if (!handleValidation()) return;
         if (!productData.id) {
             toast.error("No product selected for repair");
             return;
@@ -188,17 +211,13 @@ function AddRepair() {
 
 
         setLoading(true);
-
-        // const payload = {
-        //     issue: productData.issue,
-        //     repair_cost: productData.charges,
-        //     repair_remark: productData.repairer_name,
-        //     status: "REPAIRED",
-        // };
         const statusToSend = productData.repair_cost ? "REPAIRED" : "IN_REPAIRING";
-
         const payload = {
+            issue: productData.issue,
+            repairer_name: productData.repairer_name,
+            repairer_contact_number: productData.repairer_contact_number,
             status: statusToSend,
+            repair_by: productData.selectedRepairerId,
         };
         apiCall({
             method: "PUT",
@@ -265,6 +284,7 @@ function AddRepair() {
                             ? imeiOptions.filter((imei) => imei.startsWith(selectedImei))
                             : []
                     }
+                    error={errors.imei_number}
                 />
             </div>
             <div className="grid grid-cols-3 mt-2 gap-x-5 gap-y-1">
@@ -276,6 +296,7 @@ function AddRepair() {
                     options={brandOptions}
                     value={productData.brand_name}
                     onChange={handleBrandProductData}
+                    error={errors.brand_name}
 
                 />
                 <CustomDropdownInputComponent
@@ -286,6 +307,7 @@ function AddRepair() {
                     options={modelOptions}
                     value={productData.model_name}
                     onChange={handleModelProductData}
+                    error={errors.model_name}
 
                 />
                 <DropdownCompoent
@@ -297,6 +319,7 @@ function AddRepair() {
                     options={GRADE_OPTIONS}
                     value={productData.grade}
                     onChange={handleInputChange}
+                    error={errors.grade}
 
                 />
                 <InputComponent
@@ -309,6 +332,7 @@ function AddRepair() {
                     labelClassName="font-serif font-bold"
                     value={productData.purchase_price}
                     onChange={handleInputChange}
+                    error={errors.purchase_price}
                 />
                 <InputComponent
                     label="Enginner Name "
@@ -319,6 +343,7 @@ function AddRepair() {
                     labelClassName="font-serif font-bold"
                     value={productData.engineer_name}
                     onChange={handleInputChange}
+                    error={errors.engineer_name}
                 />
                 <InputComponent
                     label="Issue"
@@ -330,18 +355,6 @@ function AddRepair() {
                     value={productData.issue}
                     onChange={handleInputChange}
                 />
-                <InputComponent
-                    label="Charges"
-                    type="text"
-                    name="charges"
-                    placeholder="Enter Charges"
-                    numericOnly={true}
-                    inputClassName="w-[80%]"
-                    labelClassName="font-serif font-bold"
-                    value={productData.charges}
-                    onChange={handleInputChange}
-                />
-
                 <DropdownCompoent
                     label="Accessories"
                     name="accessories"
@@ -351,6 +364,7 @@ function AddRepair() {
                     options={ACCESSORIES_OPTIONS}
                     value={productData.accessories}
                     onChange={handleInputChange}
+
                 />
                 <CustomDropdownInputComponent
                     name="Repairer Name"
@@ -364,7 +378,7 @@ function AddRepair() {
                     name="Contact Number"
                     placeholder="Select Contact Number"
                     options={repairerContacts}
-                    value={productData.repair_contact_no}
+                    value={productData.repairer_contact_number}
                     onChange={handleRepairContactChange}
                     dropdownClassName="w-[80%]"
                     numericOnly={true}
