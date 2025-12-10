@@ -23,7 +23,7 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
         return "bg-green-200";
     };
     return (
-        <div className={`w-full  relative ${maxHeight} overflow-x-auto`}>
+        <div>
             {toggleableColumns.length > 0 && tableRows.length > 0 && (
                 <div className="w-full flex justify-start bg-white py-2 pl-2 sticky top-0 z-30">
                     <div className="relative">
@@ -57,6 +57,41 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
                     </div>
                 </div>
             )}
+
+        <div className={`w-full relative ${maxHeight} overflow-x-auto`}>
+            {/* {toggleableColumns.length > 0 && tableRows.length > 0 && (
+                <div className="w-full flex justify-start bg-white py-2 pl-2 sticky top-0 z-30">
+                    <div className="relative">
+                        <button
+                            onClick={() => setShowDropdown(!showDropdown)}
+                            className="px-2 py-1 border rounded hover:bg-gray-200"
+                        >
+                            <i className="fa fa-ellipsis-h"></i>
+                        </button>
+
+                        {showDropdown && (
+                            <div className="absolute left-0 bg-white border rounded shadow-md mt-1 w-48 z-40">
+                                {toggleableColumns.map((col) => (
+                                    <label
+                                        key={col}
+                                        className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            checked={!hiddenColumns.includes(col)}
+                                            onChange={() => onToggleColumn(col)}
+                                            className="mr-2"
+                                            onFocus={() => setShowDropdown(true)}
+                                            onBlur={() => setTimeout(() => setShowDropdown(false), 300)}
+                                        />
+                                        {col}
+                                    </label>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )} */}
             {tableRows.length > 0 ? (
                 <div className="border border-slate-800">
                     <table className="table-fixed w-full ">
@@ -142,6 +177,7 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
                 )
             }
         </div >
+        </div>
     );
 }
 

@@ -480,8 +480,9 @@ export default function SingleBillHistory() {
                     }
                 />
             </div>
-            <div className="h-[40vh]">
+            {/* <div className="h-[40vh]"> */}
                 <CustomTableCompoent
+                    maxHeight="h-[34vh]"
                     headers={dynamicHeaders}
                     rows={rows}
                     totalRow={totalRow}
@@ -492,7 +493,7 @@ export default function SingleBillHistory() {
                     onToggleColumn={toggleColumn}
                     showTotalRow={showTotalRow}
                 />
-            </div>
+            {/* </div> */}
             <div className="flex justify-end">
                 <button
                     className="rounded-full"

@@ -95,13 +95,13 @@ function Brands() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <div className="h-[64vh]">
-                <CustomTableCompoent
-                    headers={BRANDS_COLOUMNS}
-                    rows={rows}
-
+            {/* <div className="h-[64vh]"> */}
+            <CustomTableCompoent
+            maxHeight="h-[75vh]"
+            headers={BRANDS_COLOUMNS}
+            rows={rows}
                 />
-            </div>
+            {/* </div> */}
         </div>
     );
 } export default Brands;

@@ -458,17 +458,19 @@ export default function SalesBilling() {
                     )}
                 </div>
             )} */}
-            <div className="h-[54vh]">
-                <CustomTableCompoent
-                    headers={dynamicHeaders}
-                    rows={rows}
-                    onRateChange={handleRateChange}
-                    editable={true}
-                    toggleableColumns={toggleableColumns}
-                    hiddenColumns={hiddenColumns}
-                    onToggleColumn={toggleColumn}
-                />
-            </div>
+            {/* <div className="h-[54vh]"> */}
+            <CustomTableCompoent
+                maxHeight="h-[54vh]"
+                headers={dynamicHeaders}
+                rows={rows}
+                onRateChange={handleRateChange}
+                editable={true}
+                toggleableColumns={toggleableColumns}
+                hiddenColumns={hiddenColumns}
+                onToggleColumn={toggleColumn}
+
+            />
+            {/* </div> */}
             <div className=" fixed bottom-16 right-5 font-bold gap-4 text-[22px]  flex justify-end">
                 Total Amount : {Number(totalAmount).toLocaleString("en-IN")}
             </div>

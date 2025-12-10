@@ -269,12 +269,13 @@ function ListOfProducts() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <div className="h-[60vh]">
+            {/* <div className="h-[60vh]"> */}
                 <CustomTableCompoent
+                maxHeight="h-[60vh]"
                     headers={PRODUCT_COLOUMNS}
                     rows={rows}
                 />
-            </div>
+            {/* </div> */}
 
         </div>
     );

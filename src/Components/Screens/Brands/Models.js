@@ -50,7 +50,7 @@ export default function Models() {
         }
     }
     const getModelsAllData = ({ brandName, modelName }) => {
-         let url =  `${API_URLS.MODEL}?`;
+        let url = `${API_URLS.MODEL}?`;
         if (modelName) {
             url += `&modelName=${modelName}`
         }
@@ -68,7 +68,7 @@ export default function Models() {
     const getBrandsAllData = () => {
         apiCall({
             method: 'GET',
-            url:  API_URLS.BRANDS,
+            url: API_URLS.BRANDS,
             data: {},
             callback: getBrandsCallBack,
         })
@@ -133,12 +133,13 @@ export default function Models() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <div className="h-[75vh]">
-                <CustomTableCompoent
-                    headers={MODELS_COLOUMNS}
-                    rows={rows}
-                />
-            </div>
+            {/* <div className="h-[75vh]"> */}
+            <CustomTableCompoent
+                maxHeight="h-[75vh]"
+                headers={MODELS_COLOUMNS}
+                rows={rows}
+            />
+            {/* </div> */}
         </div>
     );
 }

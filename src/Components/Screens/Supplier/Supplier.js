@@ -113,12 +113,13 @@ function Supplier() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <div className="h-[75vh]">
-                <CustomTableCompoent
-                    headers={SUPPLIER_COLUMNS}
-                    rows={rows}
-                />
-            </div>
+            {/* <div className="h-[75vh]"> */}
+            <CustomTableCompoent
+                maxHeight="h-[75vh]"
+                headers={SUPPLIER_COLUMNS}
+                rows={rows}
+            />
+            {/* </div> */}
         </div>
     );
 }
