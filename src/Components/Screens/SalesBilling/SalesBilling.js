@@ -462,6 +462,9 @@ export default function SalesBilling() {
                     rows={rows}
                     onRateChange={handleRateChange}
                     editable={true}
+                    autoScrollBottom={true}
+                    maxHeight="h-[54vh]"
+
                 />
             </div>
             <div className=" fixed bottom-16 right-5 font-bold gap-4 text-[22px]  flex justify-end">

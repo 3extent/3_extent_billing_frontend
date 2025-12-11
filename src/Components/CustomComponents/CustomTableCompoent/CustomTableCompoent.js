@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
-export default function CustomTableCompoent({ headers, rows, onRateChange, maxHeight = "h-full", onRowClick, editable = false, showTotalRow = false }) {
+import { useEffect, useRef, useState } from "react";
+export default function CustomTableCompoent({ headers, rows, onRateChange, maxHeight = "h-full", onRowClick, editable = false, showTotalRow = false, autoScrollBottom = false, }) {
     const [tableHeaders, setTableHeaders] = useState(headers)
     const [tableRows, setTableRows] = useState(rows)
+    const tableRef = useRef(null);
+    const lastRowRef = useRef(null)
     const Rows = tableRows && tableRows.length > 0;
     useEffect(() => {
         setTableHeaders(headers);
@@ -9,6 +11,13 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
     useEffect(() => {
         setTableRows(rows);
     }, [rows]);
+    useEffect(() => {
+        if (autoScrollBottom && lastRowRef.current) {
+            setTimeout(() => {
+                lastRowRef.current.scrollIntoView({ behavior: "smooth" });
+            }, 50);
+        }
+    }, [tableRows]);
     const normalRows = tableRows.filter(row => row._id !== "total");
     const totalRow = tableRows.find(row => row._id === "total");
     const getTotalRowBg = () => {
@@ -20,7 +29,8 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
         return "bg-green-200";
     };
     return (
-        <div className={`w-full  relative ${maxHeight} overflow-x-auto`}>
+        <div ref={tableRef}
+            className={`w-full  relative ${maxHeight} overflow-x-auto overflow-y-auto`}>
             {normalRows.length > 0 ? (
                 <div className="border border-slate-800">
                     <table className="table-fixed w-full ">
@@ -38,6 +48,7 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
                         <tbody >
                             {normalRows.map((row, rowIndex) => (
                                 <tr key={rowIndex}
+                                    ref={rowIndex === normalRows.length - 1 ? lastRowRef : null}
                                     className={`border-b border-slate-300 text-left text-[12px] ${onRowClick ? "cursor-pointer hover:bg-slate-100" : ""
                                         }`}
                                     onClick={() => onRowClick && onRowClick(row)}
