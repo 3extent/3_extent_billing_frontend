@@ -29,6 +29,39 @@ function ListOfProducts() {
 
     const [selectAllDates, setSelectAllDates] = useState(false);
     const navigate = useNavigate();
+
+    const toggleableColumns = ["GST Purchase Price", "Accessories", "Engineer Name"];
+
+    const [hiddenColumns, setHiddenColumns] = useState([
+        "GST Purchase Price",
+        "Accessories",
+        "Engineer Name"
+    ]);
+    const [dynamicHeaders, setDynamicHeaders] = useState(() => {
+        return PRODUCT_COLOUMNS.filter(
+            (col) => !["GST Purchase Price", "Accessories", "Engineer Name"].includes(col)
+        );
+    });
+
+    const toggleColumn = (columnName) => {
+        if (!toggleableColumns.includes(columnName)) return;
+        if (dynamicHeaders.includes(columnName)) {
+            setDynamicHeaders(dynamicHeaders.filter(col => col !== columnName));
+            setHiddenColumns([...hiddenColumns, columnName]);
+        } else {
+            let newHeaders = [...dynamicHeaders];
+               const gradeIndex = newHeaders.indexOf("Grade");
+                if (gradeIndex !== +1) {
+                    newHeaders.splice(gradeIndex, 0, columnName);
+
+            } else {
+                newHeaders.push(columnName);
+            }
+            setDynamicHeaders(newHeaders);
+            setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
+        };
+    };
+
     useEffect(() => {
         setFrom(fromDate);
         setTo(toDate);
@@ -67,6 +100,9 @@ function ListOfProducts() {
                 "Sales Price": product.sales_price,
                 "Purchase Price": product.purchase_price,
                 "Grade": product.grade,
+                "Engineer Name": product.engineer_name,
+                "Accessories": product.accessories,
+                "GST Purchase Price": product.gst_purchase_price,
                 id: product._id,
                 "Actions": (
                     <div className='flex items-center justify-end gap-2'>
@@ -89,7 +125,6 @@ function ListOfProducts() {
                                 () => handleBarcodePrint([{ modelName: product.model.name, grade: product.grade, imei_number: product.imei_number }])
                             }
                         />
-
                     </div>
                 )
             }));
@@ -269,14 +304,14 @@ function ListOfProducts() {
                     onClick={handleResetFilter}
                 />
             </div>
-            {/* <div className="h-[60vh]"> */}
-                <CustomTableCompoent
-                maxHeight="h-[60vh]"
-                    headers={PRODUCT_COLOUMNS}
-                    rows={rows}
-                />
-            {/* </div> */}
-
+            <CustomTableCompoent
+                maxHeight="h-[50vh]"
+                headers={dynamicHeaders}
+                rows={rows}
+                toggleableColumns={toggleableColumns}
+                hiddenColumns={hiddenColumns}
+                onToggleColumn={toggleColumn}
+            />
         </div>
     );
 }

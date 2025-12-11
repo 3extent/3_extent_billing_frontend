@@ -1,5 +1,5 @@
 export const PRODUCT_COLOUMNS = ["Date", "IMEI NO", "Model", "Brand", "Supplier",
-    "QC Remark", "Sales Price", "Purchase Price", "Grade", "Actions"]
+    "QC Remark", "Sales Price", "Purchase Price", "Grade","Engineer Name","Accessories","GST Purchase Price","GST Purchase Price", "Actions"]
 export const STOCK_TYPE_OPTIONS = ['Single Product', 'Multiple Product'];
 export const GRADE_OPTIONS = ['A', 'B', 'C', 'D'];
 export const ACCESSORIES_OPTIONS = ['All kit', 'Only Phone', 'Only Box'];

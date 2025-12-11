@@ -31,7 +31,6 @@ export default function SalesBilling() {
     const navigateBillingHistory = () => {
         navigate("/billinghistory")
     }
-    // const [showDropdown, setShowDropdown] = useState(false);
     const [showPaymentPopup, setShowPaymentPopup] = useState(false);
     const [cashAmount, setCashAmount] = useState("");
     const [onlineAmount, setOnlineAmount] = useState("");
@@ -389,7 +388,7 @@ export default function SalesBilling() {
                 <div className="flex items-center gap-3">
                     <CustomDropdownInputComponent
                         label="IMEI No :"
-                        dropdownClassName="w-[190px]"
+                        dropdownClassName="w-[190px] z-[999]"
                         placeholder="Scan IMEI No"
                         value={selectedImei}
                         maxLength={15}
@@ -427,38 +426,6 @@ export default function SalesBilling() {
                     />
                 </div>
             </div>
-            {/* {rows.length > 0 && (
-                <div className="relative mb-2">
-                    <button
-                        onClick={() => setShowDropdown(!showDropdown)}
-                        className="px-2 py-1 border rounded hover:bg-gray-200"
-                        title="Show columns"
-                    >
-                        <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
-                    </button>
-                    {showDropdown && (
-                        <div className="absolute bg-white border shadow-md mt-1 rounded w-48 z-10 max-h-48 overflow-auto">
-                            {["Purchase Price", "QC-Remark", "Supplier Name"].map((col) => (
-                                <label
-                                    key={col}
-                                    className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                >
-                                    <input
-                                        type="checkbox"
-                                        checked={dynamicHeaders.includes(col)}
-                                        onChange={() => toggleColumn(col)}
-                                        className="mr-2"
-                                        onFocus={() => setShowDropdown(true)}
-                                        onBlur={() => setTimeout(() => setShowDropdown(false), 300)}
-                                    />
-                                    {col}
-                                </label>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            )} */}
-            {/* <div className="h-[54vh]"> */}
             <CustomTableCompoent
                 maxHeight="h-[54vh]"
                 headers={dynamicHeaders}
@@ -470,7 +437,6 @@ export default function SalesBilling() {
                 onToggleColumn={toggleColumn}
 
             />
-            {/* </div> */}
             <div className=" fixed bottom-16 right-5 font-bold gap-4 text-[22px]  flex justify-end">
                 Total Amount : {Number(totalAmount).toLocaleString("en-IN")}
             </div>
