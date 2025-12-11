@@ -25,7 +25,7 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
     return (
         <div>
             {toggleableColumns.length > 0 && tableRows.length > 0 && (
-                <div className="w-full flex justify-start bg-white py-2 pl-2 sticky top-0 z-30">
+                <div className="w-full flex justify-start bg-white py-2 pl-2  top-0 z-30">
                     <div className="relative">
                         <button
                             onClick={() => setShowDropdown(!showDropdown)}

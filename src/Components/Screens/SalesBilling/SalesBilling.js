@@ -401,7 +401,7 @@ export default function SalesBilling() {
                         }
                     />
                     <CustomDropdownInputComponent
-                        dropdownClassName="w-[190px] "
+                        dropdownClassName="w-[190px]  z-[999]"
                         placeholder="Select Contact No"
                         value={selectedContactNo}
                         maxLength={10}
