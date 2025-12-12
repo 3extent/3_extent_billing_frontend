@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 function AddRepairers() {
     const navigate = useNavigate();
     const [errors, setErrors] = useState({});
-
     const [repairerData, setRepairerData] = useState({
         name: "",
         firm_name: "",
@@ -18,10 +17,6 @@ function AddRepairers() {
         gst_number: "",
         role: "REPAIRER",
     });
-    // const handleInputChange = (event) => {
-    //     const { name, value } = event.target;
-    //     setRepairerData({ ...repairerData, [name]: value.toUpperCase() });
-    // };
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         const uppercasedValue = value.toUpperCase();

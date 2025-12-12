@@ -32,7 +32,6 @@ function Repairers() {
         const url = `${API_URLS.USERS}?role=REPAIRER`;
         apiCall({
             method: "GET",
-            // url: API_URLS.USERS,
             url: url,
             data: {},
             callback: getRepairersCallback,

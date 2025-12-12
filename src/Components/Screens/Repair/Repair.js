@@ -14,7 +14,7 @@ function Repair() {
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [status, setStatus] = useState(STATUS_OPTIONS[0]);
+    const [status, setStatus] = useState("");
     const [selectedRepair, setSelectedRepair] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
     const [imeiNumber, setIMEINumber] = useState();
@@ -37,17 +37,17 @@ function Repair() {
                 "Repairer": repair.repair_by?.name || "-",
                 Accessories: repair.accessories || "-",
                 Status: repair.status || "-",
-                Action: (
-                    <button
-                        className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
+                Action: repair.status === "IN_REPAIRING" && (
+                    <PrimaryButtonComponent
+                        label="Accept"
+                        buttonClassName="py-1 px-3 text-sm bg-green-600 text-white rounded"
                         onClick={() => {
                             setSelectedRepair(repair);
                             setModalOpen(true);
                         }}
-                    >
-                        Accept
-                    </button>
+                    />
                 ),
+
             }));
             console.log("Formatted Rows:", repairFormattedRows);
             setRows(repairFormattedRows);
@@ -57,10 +57,10 @@ function Repair() {
     };
     // const getAllRepairs = ({ imeiNumber, }) => {
     const getAllRepairs = ({ imeiNumber, status } = {}) => {
-        // let url = `${API_URLS.PRODUCTS}?status=IN_REPAIRING,REPAIRED`;
+        console.log("Status selected:", status, "IMEI:", imeiNumber);
         let url = `${API_URLS.PRODUCTS}?`;
-        if (status === "REPAIRED / AVAILABLE") {
-            url += "status=AVAILABLE";
+        if (status === "AVAILABLE & REPAIRED") {
+            url += "status=AVAILABLE&is_repaired=true";
         } else if (status === "IN_REPAIRING") {
             url += "status=IN_REPAIRING";
         }
@@ -69,7 +69,6 @@ function Repair() {
         }
         apiCall({
             method: "GET",
-            // url: `${API_URLS.PRODUCTS}?status=IN_REPAIRING,REPAIRED`,
             url,
             data: {},
             callback: getRepairsCallBack,
@@ -81,9 +80,8 @@ function Repair() {
     }
     const handleResetFilter = () => {
         setIMEINumber('');
-        setStatus(STATUS_OPTIONS[0]);
-        // getAllRepairs({ imeiNumber: "", });
-        getAllRepairs({ status: STATUS_OPTIONS[0] });
+        setStatus('');
+        getAllRepairs();
     }
     const acceptRepairCallback = (response) => {
         setLoading(false);
@@ -111,8 +109,6 @@ function Repair() {
             grade,
             repair_remark: remark,
             status: "REPAIRED",
-            // status: "AVAILABLE",
-            is_repaired: true,
             repair_by: selectedRepair.repair_by?._id,
         };
         apiCall({
