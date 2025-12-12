@@ -5,16 +5,38 @@ import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponen
 import { GRADE_OPTIONS } from "./Constants";
 
 export default function AcceptRepair({ open, repair, onClose, onSubmit }) {
-    const [charges, setCharges] = useState(repair?.repair_cost || "");
-    const [grade, setGrade] = useState(repair?.grade || "");
-    const [remark, setRemark] = useState(repair?.repair_remark || "");
-
+    const [repairData, setRepairData] = useState({
+        charges: repair?.repair_cost || "",
+        grade: repair?.grade || "",
+        remark: repair?.repair_remark || "",
+    });
+    const [errors, setErrors] = useState({});
     useEffect(() => {
-        setCharges(repair?.repair_cost || "");
-        setGrade(repair?.grade || "");
-        setRemark(repair?.repair_remark || "");
+        if (repair) {
+            setRepairData({
+                charges: repair.repair_cost || "",
+                grade: repair.grade || "",
+                remark: repair.repair_remark || ""
+            });
+            setErrors({});
+        }
     }, [repair]);
-
+    const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        setRepairData({ ...repairData, [name]: value });
+        setErrors({ ...errors, [name]: "" });
+    };
+    const handleValidation = () => {
+        const newErrors = {};
+        if (!repairData.charges.trim()) newErrors.charges = "Please enter charges";
+        if (!repairData.remark.trim()) newErrors.remark = "Please enter repair remark";
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+    const handleSubmit = () => {
+        if (!handleValidation()) return;
+        onSubmit({ ...repairData });
+    };
     if (!open) return null;
 
     return (
@@ -26,27 +48,31 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit }) {
                         <InputComponent
                             label="Charges"
                             type="text"
+                            name="charges"
                             numericOnly
-                            value={charges}
-                            onChange={(e) => setCharges(e.target.value)}
+                            value={repairData.charges}
+                            onChange={handleInputChange}
                             inputClassName="w-full"
                             labelClassName="font-bold"
+                            error={errors.charges}
                         />
                         <DropdownCompoent
                             label="Grade"
                             options={GRADE_OPTIONS}
-                            value={grade}
-                            onChange={(e) => setGrade(e.target.value)}
+                            value={repairData.grade}
+                            onChange={handleInputChange}
                             className="w-full"
                             labelClassName="font-bold"
                         />
                         <InputComponent
-                            label="Repair Remark"  
+                            label="Repair Remark"
                             type="text"
-                            value={remark}      
-                            onChange={(e) => setRemark(e.target.value)}
+                            name="remark"
+                            value={repairData.remark}
+                            onChange={handleInputChange}
                             inputClassName="w-full"
                             labelClassName="font-bold"
+                            error={errors.remark}
                         />
 
                     </div>
@@ -58,7 +84,7 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit }) {
                         />
                         <PrimaryButtonComponent
                             label="Accept"
-                            onClick={() => onSubmit({ charges, grade, remark })}
+                            onClick={handleSubmit}
                             className="bg-green-500 text-white hover:bg-green-600 px-3 py-1"
                         />
                     </div>
