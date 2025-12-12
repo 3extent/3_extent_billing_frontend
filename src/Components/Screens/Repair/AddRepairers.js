@@ -4,6 +4,7 @@ import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponen
 import { API_URLS } from "../../../Util/AppConst";
 import { apiCall } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function AddRepairers() {
     const navigate = useNavigate();
@@ -25,7 +26,7 @@ function AddRepairers() {
     };
     const addRepairerCallback = (response) => {
         if (response.status === 200) {
-            console.log("Repairer added successfully!");
+            toast.success("Repairer added successfully!");
             setRepairerData({
                 name: "",
                 firm_name: "",
@@ -37,7 +38,7 @@ function AddRepairers() {
             });
             navigate("/repairers");
         } else {
-            console.error("Failed to add repairer", response?.data?.error);
+            toast.error("Failed to add repairer", response?.data?.error);
         }
     };
     const handleValidation = () => {

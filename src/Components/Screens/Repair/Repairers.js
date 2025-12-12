@@ -5,6 +5,7 @@ import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/Cust
 import { apiCall } from "../../../Util/AxiosUtils";
 import { useCallback, useEffect, useState } from "react";
 import { API_URLS } from "../../../Util/AppConst";
+import { toast } from "react-toastify";
 
 function Repairers() {
     const navigate = useNavigate();
@@ -25,7 +26,7 @@ function Repairers() {
             }));
             setRows(RepairedFormattedRows);
         } else {
-            console.error("Failed to fetch repairers");
+            toast.error("Failed to fetch repairers");
         }
     }, []);
     const getAllRepairers = useCallback(() => {

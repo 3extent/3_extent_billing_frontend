@@ -52,7 +52,7 @@ function Repair() {
             console.log("Formatted Rows:", repairFormattedRows);
             setRows(repairFormattedRows);
         } else {
-            console.log("Error fetching repairs");
+            toast.error("Error fetching repairs");
         }
     };
     // const getAllRepairs = ({ imeiNumber, }) => {
