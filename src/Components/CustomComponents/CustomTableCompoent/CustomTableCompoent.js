@@ -4,6 +4,7 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
     const [tableRows, setTableRows] = useState(rows)
     const tableRef = useRef(null);
     const lastRowRef = useRef(null)
+     const [isAtBottom, setIsAtBottom] = useState(true);
     const Rows = tableRows && tableRows.length > 0;
     useEffect(() => {
         setTableHeaders(headers);
@@ -11,13 +12,28 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
     useEffect(() => {
         setTableRows(rows);
     }, [rows]);
+    const handleScroll = () => {
+    const scrollElement = tableRef.current;
+    if (!scrollElement) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = scrollElement;
+    setIsAtBottom(scrollTop + clientHeight >= scrollHeight - 20);
+  };
+   useEffect(() => {
+    const scrollElement = tableRef.current;
+    if (!scrollElement) return;
+
+    scrollElement.addEventListener("scroll", handleScroll);
+    return () => scrollElement.removeEventListener("scroll", handleScroll);
+  }, []);
+
     useEffect(() => {
-        if (autoScrollBottom && lastRowRef.current) {
+        if (autoScrollBottom  && isAtBottom && lastRowRef.current) {
             setTimeout(() => {
                 lastRowRef.current.scrollIntoView({ behavior: "smooth" });
             }, 50);
         }
-    }, [tableRows]);
+    }, [tableRows,isAtBottom]);
     const normalRows = tableRows.filter(row => row._id !== "total");
     const totalRow = tableRows.find(row => row._id === "total");
     const getTotalRowBg = () => {
