@@ -19,6 +19,8 @@ import { ToastContainer } from 'react-toastify';
 import SingleDraftBillHistory from './Components/Screens/SalesBilling/SingleDraftBillHistroy';
 import PrivacyPolicy from './Components/Screens/Policies/PrivacyPolicy';
 import TermAndCondition from './Components/Screens/Policies/TermAndCondition';
+import Maintanance from './Components/Screens/Maintanance/Maintanance';
+import AddMaintanance from './Components/Screens/Maintanance/AddMaintanance';
 
 
 
@@ -118,6 +120,11 @@ function App() {
                 <Models />
               </ProtectedRoute>
             } />
+            <Route path="/maintanance" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <Maintanance />
+              </ProtectedRoute>
+            } />
             <Route path="/stockin/:product_id?" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <StockIn />
@@ -146,15 +153,20 @@ function App() {
             } />
             <Route path="/billinghistory" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
-                <Billinghistory isDraft={false}/>
+                <Billinghistory isDraft={false} />
+              </ProtectedRoute>
+            } />
+             <Route path="/addMaintanance" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <AddMaintanance />
               </ProtectedRoute>
             } />
             <Route path="/draftbillhistroy" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
-                <Billinghistory isDraft={true}/>
+                <Billinghistory isDraft={true} />
               </ProtectedRoute>
             } />
-            <Route path="/singleBillHistory/:billId" element={<SingleBillHistory  />} />
+            <Route path="/singleBillHistory/:billId" element={<SingleBillHistory />} />
             <Route path="/singleDraftBillHistroy/:draftBillId" element={<SingleDraftBillHistory />} />
 
             <Route path="*" element={<Navigate to="/" replace />} />
