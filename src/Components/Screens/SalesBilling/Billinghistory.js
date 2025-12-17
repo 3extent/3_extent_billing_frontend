@@ -160,25 +160,27 @@ function Billinghistory({ isDraft = false }) {
     }
     const getBillData = () => {
         let url = `${API_URLS.BILLING}?`;
-        if (isDraft) url += `status=DRAFTED`;
-        else {
-            if (customerName) {
-                url += `&customer_name=${customerName}`
-            }
-            if (contactNo) {
-                url += `&contact_number=${contactNo}`
-            }
-            if (paymentStatus) {
-                url += `&status=${paymentStatus}`
-            }
-            if (imeiNumber) {
-                url += `&imei_number=${imeiNumber}`
-            }
-            if (!selectAllDates) {
-                if (from) url += `&from=${moment.utc(from).valueOf(from)}`;
-                if (to) url += `&to=${moment.utc(to).endOf('day').valueOf(to)}`;
-            }
+        if (isDraft) {
+            url += `status=DRAFTED`;
         }
+
+        if (customerName) {
+            url += `&customer_name=${customerName}`
+        }
+        if (contactNo) {
+            url += `&contact_number=${contactNo}`
+        }
+        if (!isDraft && paymentStatus) {
+            url += `&status=${paymentStatus}`;
+        }1
+        if (imeiNumber) {
+            url += `&imei_number=${imeiNumber}`
+        }
+        if (!selectAllDates) {
+            if (from) url += `&from=${moment.utc(from).valueOf(from)}`;
+            if (to) url += `&to=${moment.utc(to).endOf('day').valueOf(to)}`;
+        }
+
         apiCall({
             method: 'GET',
             url: url,
@@ -203,6 +205,10 @@ function Billinghistory({ isDraft = false }) {
             navigate(path);
         }
     };
+
+    const handleNavigateBillHistroy = () => {
+        navigate(-1);
+    }
     const handlepaymentMethod = (bill) => {
         if (Number(bill.pending_amount) === 0) {
             return;
@@ -271,80 +277,88 @@ function Billinghistory({ isDraft = false }) {
     return (
         <div>
             {loading && <Spinner />}
-            <div className="text-xl font-serif">{isDraft ? "Drafted Bill History" : "Billing History"}</div>
-            {!isDraft && (
-                <>
-                    <div className="flex items-center gap-4 ">
-                        <InputComponent
-                            type="text"
-                            placeholder="Customer Name"
-                            inputClassName="w-[190px] mb-2"
-                            value={customerName}
-                            onChange={(e) => setCustomerName(e.target.value)}
-                        />
-                        <InputComponent
-                            type="text"
-                            placeholder="Contact No"
-                            inputClassName="w-[180px] mb-2"
-                            value={contactNo}
-                            maxLength={10}
-                            onChange={(e) => setContactNo(e.target.value)}
-                        />
-                        <DropdownCompoent
-                            placeholder="Select status"
-                            value={paymentStatus}
-                            onChange={(e) => setPaymentStatus(e.target.value)}
-                            options={PAYMENTSTATUS_OPTIONS}
-                            className="w-[180px] mt-3"
-                        />
-                        <InputComponent
-                            type="date"
-                            placeholder="Start Date"
-                            inputClassName="w-[190px] mb-2"
-                            value={from}
-                            onChange={(e) => handleDateChange(e.target.value, setFrom)}
-                            disabled={selectAllDates}
-                        />
-                        <InputComponent
-                            type="date"
-                            placeholder="End Date"
-                            inputClassName="w-[190px] mb-2"
-                            value={to}
-                            onChange={(e) => handleDateChange(e.target.value, setTo)}
-                            disabled={selectAllDates}
-                        />
-                        <label className='flex items-center gap-2 text-sm'>
-                            <input
-                                type="checkbox"
-                                checked={selectAllDates}
-                                onChange={(e) => setSelectAllDates(e.target.checked)}
-                            />
-                            All Data
-                        </label>
-                    </div>
-                    <div className='flex items-center gap-4'>
-                        <InputComponent
-                            type="text"
-                            placeholder="IMEI NO"
-                            inputClassName="mb-5 w-[190px] "
-                            value={imeiNumber}
-                            numericOnly={true}
-                            maxLength={15}
-                            onChange={(e) => setIMEINumber(e.target.value)}
-                        />
-                        <PrimaryButtonComponent
-                            label="Search"
-                            icon="fa fa-search"
-                            onClick={handleSearchFilter}
-                        />
-                        <PrimaryButtonComponent
-                            label="Reset"
-                            icon="fa fa-refresh"
-                            onClick={handleResetFilter}
-                        />
-                    </div>
-                </>
-            )}
+            <div className="flex justify-between items-center">
+                <div className="text-xl font-serif">{isDraft ? "Drafted Bill History" : "Billing History"}</div>
+                <div>
+                    <PrimaryButtonComponent
+                        label="Back"
+                        icon="fa fa-arrow-left"
+                        buttonClassName="py-1 px-3 text-[12px] font-semibold"
+                        onClick={handleNavigateBillHistroy}
+                    />
+                </div>
+            </div>
+            <div className="flex items-center gap-4 ">
+                <InputComponent
+                    type="text"
+                    placeholder="Customer Name"
+                    inputClassName="w-[190px] mb-2"
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                />
+                <InputComponent
+                    type="text"
+                    placeholder="Contact No"
+                    inputClassName="w-[180px] mb-2"
+                    value={contactNo}
+                    maxLength={10}
+                    onChange={(e) => setContactNo(e.target.value)}
+                />
+                {!isDraft && (
+                    <DropdownCompoent
+                        placeholder="Select status"
+                        value={paymentStatus}
+                        onChange={(e) => setPaymentStatus(e.target.value)}
+                        options={PAYMENTSTATUS_OPTIONS}
+                        className="w-[180px] mt-3"
+                    />
+                )}
+                <InputComponent
+                    type="date"
+                    placeholder="Start Date"
+                    inputClassName="w-[190px] mb-2"
+                    value={from}
+                    onChange={(e) => handleDateChange(e.target.value, setFrom)}
+                    disabled={selectAllDates}
+                />
+                <InputComponent
+                    type="date"
+                    placeholder="End Date"
+                    inputClassName="w-[190px] mb-2"
+                    value={to}
+                    onChange={(e) => handleDateChange(e.target.value, setTo)}
+                    disabled={selectAllDates}
+                />
+                <label className='flex items-center gap-2 text-sm'>
+                    <input
+                        type="checkbox"
+                        checked={selectAllDates}
+                        onChange={(e) => setSelectAllDates(e.target.checked)}
+                    />
+                    All Data
+                </label>
+            </div>
+            <div className='flex items-center gap-4'>
+                <InputComponent
+                    type="text"
+                    placeholder="IMEI NO"
+                    inputClassName="mb-5 w-[190px] "
+                    value={imeiNumber}
+                    numericOnly={true}
+                    maxLength={15}
+                    onChange={(e) => setIMEINumber(e.target.value)}
+                />
+                <PrimaryButtonComponent
+                    label="Search"
+                    icon="fa fa-search"
+                    onClick={handleSearchFilter}
+                />
+                <PrimaryButtonComponent
+                    label="Reset"
+                    icon="fa fa-refresh"
+                    onClick={handleResetFilter}
+                />
+            </div>
             <div className="h-[60vh]">
                 <CustomTableCompoent
                     headers={BILLINGHISTORY_COLOUMNS}
@@ -361,8 +375,6 @@ function Billinghistory({ isDraft = false }) {
                     </button>
                 </div>
             )}
-
-
             {showPaymentPopup && selectedBill && (
                 <CustomPopUpComponet
                     totalAmount={selectedBill.pending_amount}
