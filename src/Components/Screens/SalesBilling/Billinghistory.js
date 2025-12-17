@@ -172,7 +172,7 @@ function Billinghistory({ isDraft = false }) {
         }
         if (!isDraft && paymentStatus) {
             url += `&status=${paymentStatus}`;
-        }1
+        }
         if (imeiNumber) {
             url += `&imei_number=${imeiNumber}`
         }
