@@ -107,7 +107,7 @@ function BulkOfProduct() {
             const workbook = XLSX.read(data, { type: 'binary' });
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
-            const jsonData = XLSX.utils.sheet_to_json(worksheet);
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
             if (jsonData.length > 0) {
                 setError('');
                 setExcelData(jsonData);
