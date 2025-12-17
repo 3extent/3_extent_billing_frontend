@@ -467,7 +467,7 @@ export default function SingleBillHistory() {
             </div>
             <div className=" fixed bottom-16 right-5 font-bold gap-4 text-[22px]  flex justify-end">
                 <div>Total Amount: {Number(totalAmount).toLocaleString("en-IN")}</div>
-                <div>Payable Amount: {Number(payableAmount).toLocaleString("en-IN")}</div>
+                <div>Remaining Amount: {Number(payableAmount).toLocaleString("en-IN")}</div>
             </div>
             <div className=" fixed bottom-5 right-5 flex gap-4 mt-3">
                 <PrimaryButtonComponent
