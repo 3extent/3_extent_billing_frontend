@@ -1,6 +1,7 @@
 import { useState } from "react";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
+import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 
 function AddMaintanance() {
     const [maintenanceData, setMaintenanceData] = useState({
@@ -43,7 +44,7 @@ function AddMaintanance() {
                     inputClassName="w-[80%]"
                     labelClassName="font-serif font-bold"
                 />
-                <InputComponent
+                <DropdownCompoent
                     label="Paid By"
                     name="paid_by"
                     type="text"
