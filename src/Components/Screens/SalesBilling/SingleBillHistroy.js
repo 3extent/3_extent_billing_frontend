@@ -128,10 +128,10 @@ export default function SingleBillHistory() {
                 {customerInfo && (
                     <div className="">
                         <div className="text-[16px] font-semibold">
-                            Customer Name :<span className="font-normal text-[14px]">{customerInfo.name}</span>
+                            Customer Name : <span className="font-normal text-[14px]">{customerInfo.name}</span>
                         </div>
                         <div className="text-[16px] font-semibold">
-                            Firm Name :<span className="font-normal text-[14px]">{customerInfo.firmname || "-"}</span>
+                            Firm Name : <span className="font-normal text-[14px]">{customerInfo.firmname || "-"}</span>
                         </div>
 
                         <div className="text-[16px] font-semibold">
