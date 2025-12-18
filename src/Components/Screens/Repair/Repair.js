@@ -42,12 +42,12 @@ function Repair() {
                         label="Accept"
                         buttonClassName="py-1 px-3 text-sm bg-green-600 text-white rounded"
                         onClick={() => {
+                            console.log("Selected repair object:", repair);
                             setSelectedRepair(repair);
                             setModalOpen(true);
                         }}
                     />
                 ),
-
             }));
             console.log("Formatted Rows:", repairFormattedRows);
             setRows(repairFormattedRows);

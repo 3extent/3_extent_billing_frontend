@@ -184,7 +184,7 @@ function AddRepair() {
         if (!productData.purchase_price.trim() || isNaN(productData.purchase_price))
             newErrors.purchase_price = "Please enter valid Purchase Price";
         if (!productData.engineer_name.trim()) newErrors.engineer_name = "Please enter Engineer Name";
-        // if (!productData.issue.trim()) newErrors.issue = "Please describe the Issue";
+        if (!productData.issue.trim()) newErrors.issue = "Please describe the Issue";
         // if (!productData.accessories.trim()) newErrors.accessories = "Please select Accessories";
         // if (!productData.repairer_name.trim()) newErrors.repairer_name = "Please select Repairer";
         // if (!productData.repair_contact_no.trim()) newErrors.repair_contact_no = "Repair contact is required";
@@ -337,6 +337,7 @@ function AddRepair() {
                     labelClassName="font-serif font-bold"
                     value={productData.issue}
                     onChange={handleInputChange}
+                    error={errors.issue}
                 />
                 <DropdownCompoent
                     label="Accessories"

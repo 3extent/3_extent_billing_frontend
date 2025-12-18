@@ -6,6 +6,8 @@ import { apiCall } from "../../../Util/AxiosUtils";
 import { useCallback, useEffect, useState } from "react";
 import { API_URLS } from "../../../Util/AppConst";
 import { toast } from "react-toastify";
+import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
+import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 
 function Repairers() {
     const navigate = useNavigate();
@@ -13,6 +15,8 @@ function Repairers() {
         navigate("/addrepairers")
     }
     const [rows, setRows] = useState([]);
+    const [repairerName, setRepairerName] = useState('');
+    const [contactNo, setContactNo] = useState('');
     const getRepairersCallback = useCallback((response) => {
         if (response.status === 200) {
             const RepairedFormattedRows = response.data.map((repairer) => ({
@@ -29,8 +33,12 @@ function Repairers() {
             toast.error("Failed to fetch repairers");
         }
     }, []);
-    const getAllRepairers = useCallback(() => {
-        const url = `${API_URLS.USERS}?role=REPAIRER`;
+    // const getAllRepairers = useCallback(() => {
+    const getAllRepairers = useCallback(({ repairerName, contactNo } = {}) => {
+        let url = `${API_URLS.USERS}?role=REPAIRER`;
+
+        if (repairerName) url += `&name=${repairerName}`;
+        if (contactNo) url += `&contact_number=${contactNo}`;
         apiCall({
             method: "GET",
             url: url,
@@ -38,13 +46,52 @@ function Repairers() {
             callback: getRepairersCallback,
         });
     }, [getRepairersCallback]);
+    const handleSearchFilter = () => {
+        getAllRepairers({ repairerName, contactNo });
+    }
 
     useEffect(() => {
         getAllRepairers();
     }, [getAllRepairers]);
+    const handleResetFilter = () => {
+        setRepairerName('');
+        setContactNo('');
+        getAllRepairers({});
+    }
 
     return (
         <div>
+            <div className="flex items-center gap-4 mb-5">
+                <InputComponent
+                    type="text"
+                    placeholder="Repairer Name"
+                    value={repairerName}
+                    onChange={(e) => setRepairerName(e.target.value)}
+                    inputClassName="w-[190px]"
+                />
+                <InputComponent
+                    type="text"
+                    placeholder="Contact No"
+                    value={contactNo}
+                    onChange={(e) => setContactNo(e.target.value)}
+                    numericOnly={true}
+                    maxLength={10}
+                    inputClassName="w-[190px]"
+                />
+                <PrimaryButtonComponent
+                    label="Search"
+                    icon="fa fa-search"
+                    buttonClassName="mt-5 py-1 px-5"
+                    onClick={handleSearchFilter}
+                />
+                <PrimaryButtonComponent
+                    label="Reset"
+                    icon="fa fa-refresh"
+                    buttonClassName="mt-5 py-1 px-5"
+                    onClick={handleResetFilter}
+                />
+            </div>
+
             <CustomHeaderComponent
                 name="List Of Repair Information"
                 label="Add Repairer"
