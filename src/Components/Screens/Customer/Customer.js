@@ -144,7 +144,7 @@ export default function Customer() {
                 />
             </div>
             <CustomTableCompoent
-                maxHeight="h-[75vh]"
+                maxHeight="h-[65vh]"
                 headers={dynamicHeaders}
                 rows={rows}
                 toggleableColumns={toggleableColumns}

@@ -30,16 +30,14 @@ function ListOfProducts() {
     const [selectAllDates, setSelectAllDates] = useState(false);
     const navigate = useNavigate();
 
-    const toggleableColumns = ["GST Purchase Price", "Accessories", "Engineer Name"];
+    const toggleableColumns = ["GST Purchase Price", "Accessories", "Engineer Name","Repair Cost","Repair Name","Repair Contact No","Repair Remark","After purchase"];
 
     const [hiddenColumns, setHiddenColumns] = useState([
-        "GST Purchase Price",
-        "Accessories",
-        "Engineer Name"
+        "GST Purchase Price","Accessories","Engineer Name","Repair Cost","Repair Name","Repair Contact No","Repair Remark","After purchase"
     ]);
     const [dynamicHeaders, setDynamicHeaders] = useState(() => {
         return PRODUCT_COLOUMNS.filter(
-            (col) => !["GST Purchase Price", "Accessories", "Engineer Name"].includes(col)
+            (col) => !["GST Purchase Price", "Accessories", "Engineer Name","Repair Cost","Repair Name","Repair Contact No","Repair Remark","After purchase"].includes(col)
         );
     });
 
@@ -103,6 +101,10 @@ function ListOfProducts() {
                 "Engineer Name": product.engineer_name,
                 "Accessories": product.accessories,
                 "GST Purchase Price": product.gst_purchase_price,
+                "Repair Cost":product.repair_cost,
+                "Repair Name":product.repair_by.name,
+                "Repair Contact No":product.repair_by.contact_number,
+                "Repair Remark":product.repair_remark,
                 id: product._id,
                 "Actions": (
                     <div className='flex items-center justify-end gap-2'>
