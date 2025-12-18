@@ -96,7 +96,7 @@ function Repair() {
             console.error(response);
         }
     };
-    const handleAcceptSubmit = ({ charges, grade, remark }) => {
+    const handleAcceptSubmit = ({ charges, grade, remark, imei }) => {
         if (!selectedRepair?._id) {
             toast.error("Repair ID missing!");
             return;
@@ -106,9 +106,11 @@ function Repair() {
 
         const payload = {
             repair_cost: charges,
-            grade,
+            // grade,
             repair_remark: remark,
             status: "REPAIRED",
+            grade: grade,
+            imei_number: imei,
             repair_by: selectedRepair.repair_by?._id,
         };
         apiCall({

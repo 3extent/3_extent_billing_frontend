@@ -9,11 +9,13 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit }) {
         charges: repair?.repair_cost || "",
         grade: repair?.grade || "",
         remark: repair?.repair_remark || "",
+        imei: repair?.imei_number || "",
     });
     const [errors, setErrors] = useState({});
     useEffect(() => {
         if (repair) {
             setRepairData({
+                imei: repair.imei_number || "",
                 charges: repair.repair_cost || "",
                 grade: repair.grade || "",
                 remark: repair.repair_remark || ""
@@ -28,6 +30,11 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit }) {
     };
     const handleValidation = () => {
         const newErrors = {};
+        if (!repairData.imei || !repairData.imei.trim()) {
+            newErrors.imei = "Please enter IMEI number";
+        } else if (repairData.imei.length !== 15) {
+            newErrors.imei = "IMEI must be 15 digits";
+        }
         if (!repairData.charges.trim()) newErrors.charges = "Please enter charges";
         if (!repairData.remark.trim()) newErrors.remark = "Please enter repair remark";
         setErrors(newErrors);
@@ -46,6 +53,17 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit }) {
                 <div className="pb-3">
                     <div className="flex flex-col gap-3 p-6">
                         <InputComponent
+                            label="IMEI Number"
+                            name="imei"
+                            value={repairData.imei}
+                            onChange={handleInputChange}
+                            inputClassName="w-full"
+                            labelClassName="font-bold"
+                            numericOnly
+                            maxLength={15}
+                            error={errors.imei}
+                        />
+                        <InputComponent
                             label="Charges"
                             type="text"
                             name="charges"
@@ -58,12 +76,14 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit }) {
                         />
                         <DropdownCompoent
                             label="Grade"
+                            name="grade"
                             options={GRADE_OPTIONS}
                             value={repairData.grade}
                             onChange={handleInputChange}
                             className="w-full"
                             labelClassName="font-bold"
                         />
+
                         <InputComponent
                             label="Repair Remark"
                             type="text"
