@@ -32,6 +32,36 @@ function Billinghistory({ isDraft = false }) {
     const [selectAllDates, setSelectAllDates] = useState(false);
     const [showTotalRow, setShowTotalRow] = useState(false);
     const [totalRow, setTotalRow] = useState(null);
+    const toggleableColumns = ["Profit"];
+
+    const [hiddenColumns, setHiddenColumns] = useState([
+        "Profit",
+    ]);
+
+    const [dynamicHeaders, setDynamicHeaders] = useState(() => {
+            return BILLINGHISTORY_COLOUMNS.filter(
+                (col) => !["Profit",].includes(col)
+            );
+        });
+
+    const toggleColumn = (columnName) => {
+        if (!toggleableColumns.includes(columnName)) return;
+        if (dynamicHeaders.includes(columnName)) {
+            setDynamicHeaders(dynamicHeaders.filter(col => col !== columnName));
+            setHiddenColumns([...hiddenColumns, columnName]);
+        } else {
+            let newHeaders = [...dynamicHeaders];
+            const gradeIndex = newHeaders.indexOf("Grade");
+            if (gradeIndex !== +1) {
+                newHeaders.splice(gradeIndex, 0, columnName);
+
+            } else {
+                newHeaders.push(columnName);
+            }
+            setDynamicHeaders(newHeaders);
+            setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
+        };
+    };
     useEffect(() => {
         getBillData();
     }, [isDraft]);
@@ -345,16 +375,17 @@ function Billinghistory({ isDraft = false }) {
                     </div>
                 </>
             )}
-            {/* <div className="h-[60vh]"> */}
             <CustomTableCompoent
-                maxHeight="h-[60vh]"
-                headers={BILLINGHISTORY_COLOUMNS}
+                maxHeight="h-[55vh]"
+                headers={dynamicHeaders}
                 rows={rows}
                 totalRow={totalRow}
                 onRowClick={handleRowClick}
                 showTotalRow={!isDraft && showTotalRow}
+                toggleableColumns={toggleableColumns}
+                hiddenColumns={hiddenColumns}
+                onToggleColumn={toggleColumn}
             />
-            {/* </div> */}
             {!isDraft && (
                 <div className="flex justify-end">
                     <button className="rounded-full" onClick={() => setShowTotalRow(!showTotalRow)}>

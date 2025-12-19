@@ -13,6 +13,37 @@ function Supplier() {
     const [supplierName, setSupplierName] = useState('');
     const [contactNo, setContactNo] = useState('');
     const [loading, setLoading] = useState(false);
+
+    const toggleableColumns = ["Address","Contact No 2","Firm Name"];
+    
+        const [hiddenColumns, setHiddenColumns] = useState([
+            "Address","Contact No 2","Firm Name",
+        ]);
+    
+        const [dynamicHeaders, setDynamicHeaders] = useState(() => {
+                return SUPPLIER_COLUMNS.filter(
+                    (col) => !["Address","Contact No 2","Firm Name"].includes(col)
+                );
+            });
+
+            const toggleColumn = (columnName) => {
+        if (!toggleableColumns.includes(columnName)) return;
+        if (dynamicHeaders.includes(columnName)) {
+            setDynamicHeaders(dynamicHeaders.filter(col => col !== columnName));
+            setHiddenColumns([...hiddenColumns, columnName]);
+        } else {
+            let newHeaders = [...dynamicHeaders];
+            const actionIndex = newHeaders.indexOf("Action");
+            if (actionIndex !== +1) {
+                newHeaders.splice(actionIndex, 0, columnName);
+
+            } else {
+                newHeaders.push(columnName);
+            }
+            setDynamicHeaders(newHeaders);
+            setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
+        };
+    };
     const navigateAddSupplier = () => {
         navigate("/addsupplier")
     }
@@ -25,6 +56,9 @@ function Supplier() {
                 "GST No": supplier.gst_number,
                 "State": supplier.state,
                 "Balance": supplier.balance,
+                "Address":supplier.address,
+                "Contact No 2":supplier.contact_number2,
+                "Firm Name":supplier.firm_name,
                 "Supplier Type": supplier.type,
                 "Action": (
                     <div className="flex justify-end">
@@ -114,9 +148,13 @@ function Supplier() {
                 />
             </div>
             <CustomTableCompoent
-                maxHeight="h-[75vh]"
-                headers={SUPPLIER_COLUMNS}
+                maxHeight="h-[65vh]"
+                headers={dynamicHeaders}
                 rows={rows}
+                toggleableColumns={toggleableColumns}
+                hiddenColumns={hiddenColumns}
+                onToggleColumn={toggleColumn}
+
             />
         </div>
     );
