@@ -31,7 +31,8 @@ function Repair() {
                 Model: repair.model?.name || "-",
                 Grade: repair.grade || "-",
                 "Purchase Price": repair.purchase_price || "-",
-                Charges: repair.repair_cost !== null ? repair.repair_cost : "-",
+                "Part Cost": repair.part_cost || "-",
+                "Repairer Cost": repair.repairer_cost || "-",
                 "Engineer Name": repair.engineer_name || "-",
                 "Repairer Remark": repair.repair_remark || "-",
                 "Repairer": repair.repair_by?.name || "-",
@@ -96,7 +97,7 @@ function Repair() {
             console.error(response);
         }
     };
-    const handleAcceptSubmit = ({ charges, grade, remark, imei }) => {
+    const handleAcceptSubmit = ({ partCost, repairerCost, grade, remark, imei }) => {
         if (!selectedRepair?._id) {
             toast.error("Repair ID missing!");
             return;
@@ -105,8 +106,8 @@ function Repair() {
         setLoading(true);
 
         const payload = {
-            repair_cost: charges,
-            // grade,
+            part_cost: partCost,
+            repairer_cost: repairerCost,
             repair_remark: remark,
             status: "REPAIRED",
             grade: grade,

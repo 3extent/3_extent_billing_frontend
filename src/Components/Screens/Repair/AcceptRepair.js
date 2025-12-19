@@ -6,7 +6,8 @@ import { GRADE_OPTIONS } from "./Constants";
 
 export default function AcceptRepair({ open, repair, onClose, onSubmit }) {
     const [repairData, setRepairData] = useState({
-        charges: repair?.repair_cost || "",
+        partCost: repair?.part_cost || "",
+        repairerCost: repair?.repairer_cost || "",
         grade: repair?.grade || "",
         remark: repair?.repair_remark || "",
         imei: repair?.imei_number || "",
@@ -16,7 +17,8 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit }) {
         if (repair) {
             setRepairData({
                 imei: repair.imei_number || "",
-                charges: repair.repair_cost || "",
+                partCost: repair.part_cost || "",
+                repairerCost: repair.repairer_cost || "",
                 grade: repair.grade || "",
                 remark: repair.repair_remark || ""
             });
@@ -35,7 +37,12 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit }) {
         } else if (repairData.imei.length !== 15) {
             newErrors.imei = "IMEI must be 15 digits";
         }
-        if (!repairData.charges.trim()) newErrors.charges = "Please enter charges";
+        if (!repairData.partCost.trim()) {
+            newErrors.partCost = "Please enter part cost";
+        }
+        if (!repairData.repairerCost.trim()) {
+            newErrors.repairerCost = "Please enter repairer cost";
+        }
         if (!repairData.remark.trim()) newErrors.remark = "Please enter repair remark";
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -64,16 +71,27 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit }) {
                             error={errors.imei}
                         />
                         <InputComponent
-                            label="Charges"
-                            type="text"
-                            name="charges"
+                            label="Part Cost"
+                            name="partCost"
                             numericOnly
-                            value={repairData.charges}
+                            value={repairData.partCost}
                             onChange={handleInputChange}
-                            inputClassName="w-full"
+                            error={errors.partCost}
+                            className="w-full"
                             labelClassName="font-bold"
-                            error={errors.charges}
                         />
+
+                        <InputComponent
+                            label="Repairer Cost"
+                            name="repairerCost"
+                            numericOnly
+                            value={repairData.repairerCost}
+                            onChange={handleInputChange}
+                            error={errors.repairerCost}
+                            className="w-full"
+                            labelClassName="font-bold"
+                        />
+
                         <DropdownCompoent
                             label="Grade"
                             name="grade"
