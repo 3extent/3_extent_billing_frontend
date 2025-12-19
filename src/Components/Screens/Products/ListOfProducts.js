@@ -29,43 +29,6 @@ function ListOfProducts() {
 
     const [selectAllDates, setSelectAllDates] = useState(false);
     const navigate = useNavigate();
-
-    const toggleableColumns = ["GST Purchase Price", "Accessories", "Engineer Name", "Part Cost",
-        "Repairer Cost"];
-
-    const [hiddenColumns, setHiddenColumns] = useState([
-        "GST Purchase Price",
-        "Accessories",
-        "Engineer Name",
-        "Part Cost",
-        "Repairer Cost"
-    ]);
-    const [dynamicHeaders, setDynamicHeaders] = useState(() => {
-        return PRODUCT_COLOUMNS.filter(
-            (col) => !["GST Purchase Price", "Accessories", "Engineer Name", "Part Cost",
-                "Repairer Cost"].includes(col)
-        );
-    });
-
-    const toggleColumn = (columnName) => {
-        if (!toggleableColumns.includes(columnName)) return;
-        if (dynamicHeaders.includes(columnName)) {
-            setDynamicHeaders(dynamicHeaders.filter(col => col !== columnName));
-            setHiddenColumns([...hiddenColumns, columnName]);
-        } else {
-            let newHeaders = [...dynamicHeaders];
-            const gradeIndex = newHeaders.indexOf("Grade");
-            if (gradeIndex !== +1) {
-                newHeaders.splice(gradeIndex, 0, columnName);
-
-            } else {
-                newHeaders.push(columnName);
-            }
-            setDynamicHeaders(newHeaders);
-            setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
-        };
-    };
-
     useEffect(() => {
         setFrom(fromDate);
         setTo(toDate);
@@ -104,11 +67,6 @@ function ListOfProducts() {
                 "Sales Price": product.sales_price,
                 "Purchase Price": product.purchase_price,
                 "Grade": product.grade,
-                "Engineer Name": product.engineer_name,
-                "Accessories": product.accessories,
-                "GST Purchase Price": product.gst_purchase_price,
-                "Part Cost": product.part_cost,
-                "Repairer Cost": product.repairer_cost,
                 id: product._id,
                 "Actions": (
                     <div className='flex items-center justify-end gap-2'>
@@ -131,6 +89,7 @@ function ListOfProducts() {
                                 () => handleBarcodePrint([{ modelName: product.model.name, grade: product.grade, imei_number: product.imei_number }])
                             }
                         />
+
                     </div>
                 )
             }));
@@ -156,9 +115,16 @@ function ListOfProducts() {
         if (supplierName) {
             url += `&supplierName=${supplierName}`;
         }
-        if (status) {
-            url += `&status=${status}`
+        // if (status) {
+        //     url += `&status=${status}`
+        // }
+
+        if (status === "AVAILABLE & REPAIRED") {
+            url += "status=AVAILABLE&is_repaired=true";
+        } else if (status) {
+            url += `status=${status}`;
         }
+
         if (!selectAllDates) {
             if (from) url += `&from=${moment.utc(from).valueOf()}`;
             if (to) url += `&to=${moment.utc(to).endOf('day').valueOf()}`;
@@ -310,14 +276,13 @@ function ListOfProducts() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <CustomTableCompoent
-                maxHeight="h-[50vh]"
-                headers={dynamicHeaders}
-                rows={rows}
-                toggleableColumns={toggleableColumns}
-                hiddenColumns={hiddenColumns}
-                onToggleColumn={toggleColumn}
-            />
+            <div className="h-[60vh]">
+                <CustomTableCompoent
+                    headers={PRODUCT_COLOUMNS}
+                    rows={rows}
+                />
+            </div>
+
         </div>
     );
 }
