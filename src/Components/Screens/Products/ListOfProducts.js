@@ -30,16 +30,20 @@ function ListOfProducts() {
     const [selectAllDates, setSelectAllDates] = useState(false);
     const navigate = useNavigate();
 
-    const toggleableColumns = ["GST Purchase Price", "Accessories", "Engineer Name"];
+    const toggleableColumns = ["GST Purchase Price", "Accessories", "Engineer Name", "Part Cost",
+        "Repairer Cost"];
 
     const [hiddenColumns, setHiddenColumns] = useState([
         "GST Purchase Price",
         "Accessories",
-        "Engineer Name"
+        "Engineer Name",
+        "Part Cost",
+        "Repairer Cost"
     ]);
     const [dynamicHeaders, setDynamicHeaders] = useState(() => {
         return PRODUCT_COLOUMNS.filter(
-            (col) => !["GST Purchase Price", "Accessories", "Engineer Name"].includes(col)
+            (col) => !["GST Purchase Price", "Accessories", "Engineer Name", "Part Cost",
+                "Repairer Cost"].includes(col)
         );
     });
 
@@ -50,9 +54,9 @@ function ListOfProducts() {
             setHiddenColumns([...hiddenColumns, columnName]);
         } else {
             let newHeaders = [...dynamicHeaders];
-               const gradeIndex = newHeaders.indexOf("Grade");
-                if (gradeIndex !== +1) {
-                    newHeaders.splice(gradeIndex, 0, columnName);
+            const gradeIndex = newHeaders.indexOf("Grade");
+            if (gradeIndex !== +1) {
+                newHeaders.splice(gradeIndex, 0, columnName);
 
             } else {
                 newHeaders.push(columnName);
@@ -103,6 +107,8 @@ function ListOfProducts() {
                 "Engineer Name": product.engineer_name,
                 "Accessories": product.accessories,
                 "GST Purchase Price": product.gst_purchase_price,
+                "Part Cost": product.part_cost,
+                "Repairer Cost": product.repairer_cost,
                 id: product._id,
                 "Actions": (
                     <div className='flex items-center justify-end gap-2'>
