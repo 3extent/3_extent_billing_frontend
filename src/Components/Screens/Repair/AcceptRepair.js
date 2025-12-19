@@ -77,7 +77,7 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit }) {
                             value={repairData.partCost}
                             onChange={handleInputChange}
                             error={errors.partCost}
-                            className="w-full"
+                            inputClassName="w-full"
                             labelClassName="font-bold"
                         />
 
@@ -88,7 +88,7 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit }) {
                             value={repairData.repairerCost}
                             onChange={handleInputChange}
                             error={errors.repairerCost}
-                            className="w-full"
+                            inputClassName="w-full"
                             labelClassName="font-bold"
                         />
 
@@ -101,7 +101,6 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit }) {
                             className="w-full"
                             labelClassName="font-bold"
                         />
-
                         <InputComponent
                             label="Repair Remark"
                             type="text"
