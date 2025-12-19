@@ -178,6 +178,7 @@ export default function SalesBilling() {
                 "QC-Remark": product.qc_remark,
                 "Supplier Name": product?.supplier?.name,
                 "Status": product.status,
+                is_repaired: product.is_repaired,
                 "Action": (
                     <div className="flex justify-end">
                         <div

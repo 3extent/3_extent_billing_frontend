@@ -38,7 +38,9 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
                         <tbody >
                             {normalRows.map((row, rowIndex) => (
                                 <tr key={rowIndex}
-                                    className={`border-b border-slate-300 text-left text-[12px] ${onRowClick ? "cursor-pointer hover:bg-slate-100" : ""
+                                    className={`border-b text-left text-[12px]
+                                          ${row.is_repaired ? "bg-red-100 hover:bg-red-300" : "border-slate-300 hover:bg-slate-100"}
+                                        ${onRowClick ? "cursor-pointer " : ""
                                         }`}
                                     onClick={() => onRowClick && onRowClick(row)}
                                 >
