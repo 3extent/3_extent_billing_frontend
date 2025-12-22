@@ -38,19 +38,20 @@ export default function SingleBillHistory() {
 
     const [loading, setLoading] = useState(false);
     const [showTotalRow, setShowTotalRow] = useState(false);
-    const toggleableColumns = ["Purchase Price", "QC-Remark", "GST Purchase Price", "Supplier Name","Sale Price"];
+    const toggleableColumns = ["Purchase Price", "QC-Remark", "GST Purchase Price", "Supplier Name", "Sale Price", "Profit"];
 
     const [hiddenColumns, setHiddenColumns] = useState([
         "Purchase Price",
         "QC-Remark",
         "GST Purchase Price",
         "Supplier Name",
-        "Sale Price"
+        "Sale Price",
+        "Profit"
     ]);
 
     const [dynamicHeaders, setDynamicHeaders] = useState(() => {
         return SINGLEBILLHISTORY_COLOUMNS.filter(
-            (col) => !["Purchase Price", "QC-Remark", "GST Purchase Price", "Supplier Name","Sale Price"].includes(col)
+            (col) => !["Purchase Price", "QC-Remark", "GST Purchase Price", "Supplier Name", "Sale Price", "Profit"].includes(col)
         );
     });
 
@@ -182,6 +183,7 @@ export default function SingleBillHistory() {
                 "Grade": product.grade,
                 "Accessories": product.accessories,
                 "Supplier Name": product.supplier?.name,
+                "Profit": bill.actualProfit,
                 status: product.status,
                 "Action": (
                     <div className="flex justify-end">
@@ -481,18 +483,18 @@ export default function SingleBillHistory() {
                     }
                 />
             </div>
-                <CustomTableCompoent
-                    maxHeight="h-[34vh]"
-                    headers={dynamicHeaders}
-                    rows={rows}
-                    totalRow={totalRow}
-                    onRateChange={handleRateChange}
-                    editable={true}
-                    toggleableColumns={toggleableColumns}
-                    hiddenColumns={hiddenColumns}
-                    onToggleColumn={toggleColumn}
-                    showTotalRow={showTotalRow}
-                />
+            <CustomTableCompoent
+                maxHeight="h-[34vh]"
+                headers={dynamicHeaders}
+                rows={rows}
+                totalRow={totalRow}
+                onRateChange={handleRateChange}
+                editable={true}
+                toggleableColumns={toggleableColumns}
+                hiddenColumns={hiddenColumns}
+                onToggleColumn={toggleColumn}
+                showTotalRow={showTotalRow}
+            />
             <div className="flex justify-end">
                 <button
                     className="rounded-full"
