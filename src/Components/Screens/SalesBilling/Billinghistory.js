@@ -376,7 +376,7 @@ function Billinghistory({ isDraft = false }) {
                 </>
             )}
             <CustomTableCompoent
-                maxHeight="h-[55vh]"
+                maxHeight="h-[50vh]"
                 headers={dynamicHeaders}
                 rows={rows}
                 totalRow={totalRow}

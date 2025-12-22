@@ -219,7 +219,7 @@ function ListOfProducts() {
 
     }
     const handleExportToExcel = () => {
-        exportToExcel(rows, "ProductList.xlsx");
+        exportToExcel(rows, "ProductList.xlsx" ,null, dynamicHeaders);
     };
     return (
         <div className='w-full'>

@@ -6,16 +6,20 @@ import jsPDF from "jspdf";
 import autoTable from 'jspdf-autotable';
 import { LOGO_BASE64 } from "./AppConst";
 import { ToWords } from "to-words";
-export const exportToExcel = async (data, fileName = "StyledData.xlsx", customerInfo = null) => {
+export const exportToExcel = async (data, fileName = "StyledData.xlsx", customerInfo = null , visibleColumns = null) => {
   if (!data || data.length === 0) {
     alert("No data to export!");
     return;
   }
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet("Sheet1");
-  const headers = Object.keys(data[0]).filter(
-    (header) => !["id", "Supplier", "Actions", "Action"].includes(header)
-  );
+   let headers = visibleColumns 
+    ? visibleColumns.filter(header => !["Action", "Actions"].includes(header)) 
+    : Object.keys(data[0]).filter(header => !["id","Actions","Action"].includes(header));
+
+  // const headers = Object.keys(data[0]).filter(
+  //   (header) => !["id", "Supplier", "Actions", "Action"].includes(header)
+  // );
   let rowIndex = 1;
   worksheet.mergeCells(rowIndex, 1, rowIndex + 1, headers.length);
   const titleCell = worksheet.getCell(`A${rowIndex}`);

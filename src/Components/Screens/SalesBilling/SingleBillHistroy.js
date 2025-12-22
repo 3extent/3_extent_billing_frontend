@@ -420,7 +420,7 @@ export default function SingleBillHistory() {
     }
 
     const handleExportToExcel = () => {
-        exportToExcel(rows, "billData.xlsx", customerInfo);
+        exportToExcel(rows, "billData.xlsx", customerInfo, dynamicHeaders);
     };
 
     return (

@@ -358,7 +358,7 @@ export default function SalesBilling() {
         })
     };
     const handleExportToExcel = () => {
-        exportToExcel(rows, "salesbillingData.xlsx");
+        exportToExcel(rows, "salesbillingData.xlsx", null,dynamicHeaders);
     };
     const navigateAddCustomer = () => {
         if (rows.length > 0) handleDraftData(false);
