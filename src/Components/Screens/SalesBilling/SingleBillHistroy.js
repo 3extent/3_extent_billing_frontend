@@ -38,18 +38,19 @@ export default function SingleBillHistory() {
 
     const [loading, setLoading] = useState(false);
     const [showTotalRow, setShowTotalRow] = useState(false);
-    const toggleableColumns = ["Purchase Price", "QC-Remark", "GST Purchase Price", "Supplier Name"];
+    const toggleableColumns = ["Purchase Price", "QC-Remark", "GST Purchase Price", "Supplier Name","Sale Price"];
 
     const [hiddenColumns, setHiddenColumns] = useState([
         "Purchase Price",
         "QC-Remark",
         "GST Purchase Price",
-        "Supplier Name"
+        "Supplier Name",
+        "Sale Price"
     ]);
 
     const [dynamicHeaders, setDynamicHeaders] = useState(() => {
         return SINGLEBILLHISTORY_COLOUMNS.filter(
-            (col) => !["Purchase Price", "QC-Remark", "GST Purchase Price", "Supplier Name"].includes(col)
+            (col) => !["Purchase Price", "QC-Remark", "GST Purchase Price", "Supplier Name","Sale Price"].includes(col)
         );
     });
 
@@ -480,7 +481,6 @@ export default function SingleBillHistory() {
                     }
                 />
             </div>
-            {/* <div className="h-[40vh]"> */}
                 <CustomTableCompoent
                     maxHeight="h-[34vh]"
                     headers={dynamicHeaders}
@@ -493,7 +493,6 @@ export default function SingleBillHistory() {
                     onToggleColumn={toggleColumn}
                     showTotalRow={showTotalRow}
                 />
-            {/* </div> */}
             <div className="flex justify-end">
                 <button
                     className="rounded-full"
