@@ -30,14 +30,17 @@ function ListOfProducts() {
     const [selectAllDates, setSelectAllDates] = useState(false);
     const navigate = useNavigate();
 
-    const toggleableColumns = ["GST Purchase Price", "Accessories", "Engineer Name","Repair Cost","Repair Name","Repair Contact No","Repair Remark","After purchase"];
+    const toggleableColumns = ["GST Purchase Price", "Accessories", "Engineer Name", "Part Cost",
+        "Repairer Cost", "Repair Name", "Repair Contact No", "Repair Remark", "After purchase"];
 
     const [hiddenColumns, setHiddenColumns] = useState([
-        "GST Purchase Price","Accessories","Engineer Name","Repair Cost","Repair Name","Repair Contact No","Repair Remark","After purchase"
+        "GST Purchase Price", "Accessories", "Engineer Name", "Part Cost",
+        "Repairer Cost", "Repair Name", "Repair Contact No", "Repair Remark", "After purchase"
     ]);
     const [dynamicHeaders, setDynamicHeaders] = useState(() => {
         return PRODUCT_COLOUMNS.filter(
-            (col) => !["GST Purchase Price", "Accessories", "Engineer Name","Repair Cost","Repair Name","Repair Contact No","Repair Remark","After purchase"].includes(col)
+            (col) => !["GST Purchase Price", "Accessories", "Engineer Name", "Part Cost",
+                "Repairer Cost", "Repair Name", "Repair Contact No", "Repair Remark", "After purchase"].includes(col)
         );
     });
 
@@ -48,9 +51,9 @@ function ListOfProducts() {
             setHiddenColumns([...hiddenColumns, columnName]);
         } else {
             let newHeaders = [...dynamicHeaders];
-               const actionIndex = newHeaders.indexOf("Actions");
-                if (actionIndex !== +1) {
-                    newHeaders.splice(actionIndex, 0, columnName);
+            const actionIndex = newHeaders.indexOf("Actions");
+            if (actionIndex !== +1) {
+                newHeaders.splice(actionIndex, 0, columnName);
 
             } else {
                 newHeaders.push(columnName);
@@ -101,10 +104,11 @@ function ListOfProducts() {
                 "Engineer Name": product.engineer_name,
                 "Accessories": product.accessories,
                 "GST Purchase Price": product.gst_purchase_price,
-                "Repair Cost":product.repair_cost,
-                "Repair Name":product.repair_by?.name,
-                "Repair Contact No":product.repair_by?.contact_number,
-                "Repair Remark":product.repair_remark,
+                "Part Cost": product.part_cost,
+                "Repairer Cost": product.repairer_cost,
+                "Repair Name": product.repair_by?.name,
+                "Repair Contact No": product.repair_by?.contact_number,
+                "Repair Remark": product.repair_remark,
                 id: product._id,
                 "Actions": (
                     <div className='flex items-center justify-end gap-2'>
@@ -127,6 +131,7 @@ function ListOfProducts() {
                                 () => handleBarcodePrint([{ modelName: product.model.name, grade: product.grade, imei_number: product.imei_number }])
                             }
                         />
+
                     </div>
                 )
             }));
@@ -152,9 +157,12 @@ function ListOfProducts() {
         if (supplierName) {
             url += `&supplierName=${supplierName}`;
         }
-        if (status) {
-            url += `&status=${status}`
+        if (status === "AVAILABLE & REPAIRED") {
+            url += "status=AVAILABLE&is_repaired=true";
+        } else if (status) {
+            url += `status=${status}`;
         }
+
         if (!selectAllDates) {
             if (from) url += `&from=${moment.utc(from).valueOf()}`;
             if (to) url += `&to=${moment.utc(to).endOf('day').valueOf()}`;
@@ -248,7 +256,6 @@ function ListOfProducts() {
                     value={supplierName}
                     onChange={(value) => setSupplierName(value)}
                     options={supplierOptions}
-
                 />
                 <InputComponent
                     type="text"
@@ -306,14 +313,14 @@ function ListOfProducts() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <CustomTableCompoent
-                maxHeight="h-[50vh]"
-                headers={dynamicHeaders}
-                rows={rows}
-                toggleableColumns={toggleableColumns}
-                hiddenColumns={hiddenColumns}
-                onToggleColumn={toggleColumn}
-            />
+                <CustomTableCompoent
+                    maxHeight="h-[50vh]"
+                    headers={dynamicHeaders}
+                    rows={rows}
+                    toggleableColumns={toggleableColumns}
+                    hiddenColumns={hiddenColumns}
+                    onToggleColumn={toggleColumn}
+                />
         </div>
     );
 }
