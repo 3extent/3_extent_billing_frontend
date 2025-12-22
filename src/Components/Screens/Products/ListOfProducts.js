@@ -48,9 +48,9 @@ function ListOfProducts() {
             setHiddenColumns([...hiddenColumns, columnName]);
         } else {
             let newHeaders = [...dynamicHeaders];
-               const gradeIndex = newHeaders.indexOf("Grade");
-                if (gradeIndex !== +1) {
-                    newHeaders.splice(gradeIndex, 0, columnName);
+               const actionIndex = newHeaders.indexOf("Actions");
+                if (actionIndex !== +1) {
+                    newHeaders.splice(actionIndex, 0, columnName);
 
             } else {
                 newHeaders.push(columnName);
@@ -102,8 +102,8 @@ function ListOfProducts() {
                 "Accessories": product.accessories,
                 "GST Purchase Price": product.gst_purchase_price,
                 "Repair Cost":product.repair_cost,
-                "Repair Name":product.repair_by.name,
-                "Repair Contact No":product.repair_by.contact_number,
+                "Repair Name":product.repair_by?.name,
+                "Repair Contact No":product.repair_by?.contact_number,
                 "Repair Remark":product.repair_remark,
                 id: product._id,
                 "Actions": (
