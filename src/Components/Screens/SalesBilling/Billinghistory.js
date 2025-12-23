@@ -7,13 +7,16 @@ import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCo
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
-import { generateAndSavePdf } from "../../../Util/Utility";
+import { exportToExcel, generateAndSavePdf } from "../../../Util/Utility";
 import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
 import { API_URLS } from "../../../Util/AppConst";
 import { toast } from "react-toastify";
 function Billinghistory({ isDraft = false }) {
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
+
+    const [billingRawData, setBillingRawData] = useState([]);
+
     const [loading, setLoading] = useState(false)
     const [showPaymentPopup, setShowPaymentPopup] = useState(false);
     const [cashAmount, setCashAmount] = useState("");
@@ -39,10 +42,10 @@ function Billinghistory({ isDraft = false }) {
     ]);
 
     const [dynamicHeaders, setDynamicHeaders] = useState(() => {
-            return BILLINGHISTORY_COLOUMNS.filter(
-                (col) => !["Profit",].includes(col)
-            );
-        });
+        return BILLINGHISTORY_COLOUMNS.filter(
+            (col) => !["Profit",].includes(col)
+        );
+    });
 
     const toggleColumn = (columnName) => {
         if (!toggleableColumns.includes(columnName)) return;
@@ -109,6 +112,7 @@ function Billinghistory({ isDraft = false }) {
     const getBillCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
+            setBillingRawData(response.data.billings);
             const billingformattedRows = response.data.billings.map((bill, index) => ({
                 "Bill id": index + 1,
                 "Date": moment(bill.created_at).format('ll'),
@@ -304,18 +308,68 @@ function Billinghistory({ isDraft = false }) {
         setSelectAllDates(false);
         getBillData({ from, to });
     }
+
+    const ProductExportData = () => {
+        const data = [];
+
+        billingRawData.map((bill) => {
+            bill.products.map((product) => {
+                data.push({
+                    "Date": moment(bill.created_at).format("DD-MM-YYYY"),
+                    "Invoice No": bill.invoice_number,
+                    "Customer Name": bill.customer?.name,
+                    "Contact No": bill.customer?.contact_number,
+                    "IMEI No": product.imei_number,
+                    "Model": product.model?.name,
+                    "Grade": product.grade,
+                    "Engineer": product.engineer_name,
+                    "Sale Price": product.sold_at_price,
+                    "Purchase Price": product.purchase_price,
+                    "Repair Cost": product.repair_cost,
+                    "Profit": product.profitToShow,
+                    "Payment Status": bill.status,
+                });
+            });
+        });
+
+        return data;
+    };
+
+    const handleExportToExcel = () => {
+        if (!billingRawData.length) {
+            toast.error("No data to export");
+            return;
+        }
+
+        const exportData = ProductExportData();
+
+        exportToExcel(
+            exportData,
+            `Product_Report_${from}_to_${to}.xlsx`,
+            null,
+            Object.keys(exportData[0])
+        );
+    };
     return (
         <div>
             {loading && <Spinner />}
             <div className="flex justify-between items-center">
                 <div className="text-xl font-serif">{isDraft ? "Drafted Bill History" : "Billing History"}</div>
-                <div>
+                <div className="flex gap-3">
                     <PrimaryButtonComponent
                         label="Back"
                         icon="fa fa-arrow-left"
                         buttonClassName="py-1 px-3 text-[12px] font-semibold"
                         onClick={handleNavigateBillHistroy}
                     />
+                    {!isDraft && (
+                        <PrimaryButtonComponent
+                            label="Export to Excel"
+                            icon="fa fa-file-excel-o"
+                            onClick={handleExportToExcel}
+                        />
+                    )}
+
                 </div>
             </div>
             <div className="flex items-center gap-4 ">
