@@ -36,13 +36,13 @@ export default function SingleBillHistory() {
         }
     }, [billId]);
 
-    useEffect(() => {
-        const cash = Number(cashAmount);
-        const online = Number(onlineAmount);
-        const cardAmt = Number(card);
-        const pending = Number(pendingAmount) - Number(cash) + Number(online) + Number(cardAmt);
-        setPendingAmount(pending);
-    }, [cashAmount, card, onlineAmount,]);
+    // useEffect(() => {
+    //     const cash = Number(cashAmount);
+    //     const online = Number(onlineAmount);
+    //     const cardAmt = Number(card);
+    //     const pending = Number(pendingAmount) - Number(cash) + Number(online) + Number(cardAmt);
+    //     setPendingAmount(pending);
+    // }, [cashAmount, card, onlineAmount,]);
 
     // Total calculate
     useEffect(() => {
