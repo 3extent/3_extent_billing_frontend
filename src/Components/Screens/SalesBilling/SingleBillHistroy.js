@@ -17,7 +17,7 @@ export default function SingleBillHistory() {
     const [singleBill, setSingleBill] = useState([])
     const [customerInfo, setCustomerInfo] = useState();
 
-    // const [imeiOptions, setImeiOptions] = useState([]);
+    const [imeiOptions, setImeiOptions] = useState([]);
     const [selectedImei, setSelectedImei] = useState("");
     const [selectedContactNo, setSelectedContactNo] = useState("");
     const [customerName, setCustomerName] = useState("");
@@ -98,6 +98,13 @@ export default function SingleBillHistory() {
             return prev;
         });
     }, [rows])
+
+    useEffect(() => {
+        let paymentAmount = Number(fixPendingAmount) - Number(cardPaidPopup) - Number(onlinePaidPopup) - Number(cashPaidPopup)
+        setPendingAmount(paymentAmount)
+    }, [cashPaidPopup, onlinePaidPopup, cardPaidPopup])
+
+
 
     const getAllImeis = () => {
         let url = `${API_URLS.PRODUCTS}?status=AVAILABLE,RETURN`;
@@ -289,6 +296,7 @@ export default function SingleBillHistory() {
         setCashPaidPopup(0);
         setOnlinePaidPopup(0);
         setCardPaidPopup(0);
+        setPendingAmount(Number(fixPendingAmount))
         setShowPaymentPopup(false);
     };
 
