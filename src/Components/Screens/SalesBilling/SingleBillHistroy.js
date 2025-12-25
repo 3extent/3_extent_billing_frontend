@@ -300,8 +300,9 @@ export default function SingleBillHistory() {
                 autoClose: 3000,
             });
         }
+        
     }
-
+ 
     const handleBillSaveData = () => {
         if (!billId) return;
         const billsData = {
@@ -314,6 +315,7 @@ export default function SingleBillHistory() {
             paid_amount: existingPaidAmount,
             payable_amount: totalAmount,
             pending_amount: pendingAmount,
+            advance_amount:advanceAmount
         };
         apiCall({
             method: 'PUT',
@@ -321,8 +323,9 @@ export default function SingleBillHistory() {
             data: billsData,
             callback: saveBillCallback,
         })
+          console.log('billsData: ', billsData);
     };
-
+    
     const paymentUpdateCallback = (response) => {
         if (response.status === 200) {
             toast.success("Payment updated successfully!", {
