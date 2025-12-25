@@ -102,6 +102,11 @@ export default function SingleBillHistory() {
 
     }, [rows])
 
+    useEffect(() => {
+        let paymentAmount = Number(fixPendingAmount) - Number(cardPaidPopup) - Number(onlinePaidPopup) - Number(cashPaidPopup)
+        setPendingAmount(paymentAmount)
+    }, [cashPaidPopup, onlinePaidPopup, cardPaidPopup])
+
 
 
     const getAllImeis = () => {
@@ -287,6 +292,7 @@ export default function SingleBillHistory() {
         setCashPaidPopup(0);
         setOnlinePaidPopup(0);
         setCardPaidPopup(0);
+        setPendingAmount(Number(fixPendingAmount))
         setShowPaymentPopup(false);
     };
 
