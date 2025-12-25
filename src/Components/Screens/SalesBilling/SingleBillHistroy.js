@@ -56,54 +56,66 @@ export default function SingleBillHistory() {
     }, [selectedImei]);
 
     useEffect(() => {
-        const existingTotalAmount = totalAmount;
-        const totalRateOFAllProducts = rows.reduce((sum, row) => sum + Number(row["Rate"] || 0), 0);
-        setTotalAmount(totalRateOFAllProducts);
+        const totalDue = rows.reduce((sum, row) => sum + Number(row["Rate"] || 0), 0);
 
-        let amountDifference = existingTotalAmount - totalRateOFAllProducts
-        if (pendingAmount > 0) {
-            let tempPendingAmount = pendingAmount - amountDifference;
-            if (tempPendingAmount > 0) {
-                setPendingAmount(tempPendingAmount);
-                setFixPendingAmount(tempPendingAmount);
+        const paidCash = Number(existingPaidAmount.find(p => p.method === "cash")?.amount || 0);
+        const paidOnline = Number(existingPaidAmount.find(p => p.method === "online")?.amount || 0);
+        const paidCard = Number(existingPaidAmount.find(p => p.method === "card")?.amount || 0);
+
+        let totalPaid = paidCash + paidOnline + paidCard;
+
+        let newCash = paidCash;
+        let newOnline = paidOnline;
+        let newCard = paidCard;
+
+        let advance = 0;
+        let pending = 0;
+
+        if (totalPaid >= totalDue) {
+            // fully paid
+            advance = totalPaid - totalDue;
+            pending = 0;
+
+            let reduce = totalPaid - totalDue; // how much extra we need to reduce from paid
+
+            // Deduct in order: cash → online → card
+            if (newCash >= reduce) {
+                newCash -= reduce;
+                reduce = 0;
             } else {
-                setAdvanceAmount(amountDifference - pendingAmount)
-                setFixPendingAmount(0)
-                setPendingAmount(0)
+                reduce -= newCash;
+                newCash = 0;
+
+                if (newOnline >= reduce) {
+                    newOnline -= reduce;
+                    reduce = 0;
+                } else {
+                    reduce -= newOnline;
+                    newOnline = 0;
+                    newCard = Math.max(0, newCard - reduce);
+                    reduce = 0;
+                }
             }
+        } else if (totalPaid > 0) {
+            // partially paid
+            pending = totalDue - totalPaid;
+            advance = 0;
         } else {
-            setAdvanceAmount(prev => Number(prev) + Number(amountDifference));
+            // unpaid
+            pending = totalDue;
+            advance = 0;
         }
 
-        setExistingPaidAmount((prev) => {
-            console.log('prev: ', prev)
-            let cash = Number(prev.find(p => p.method === "cash")?.amount || "0");
-            let online = Number(prev.find(p => p.method === "online")?.amount || "0");
-            let card = Number(prev.find(p => p.method === "card")?.amount || "0");
+        setTotalAmount(totalDue);
+        setPendingAmount(pending);
+        setAdvanceAmount(advance);
+        setExistingPaidAmount([
+            { method: "cash", amount: newCash },
+            { method: "online", amount: newOnline },
+            { method: "card", amount: newCard },
+        ]);
+    }, [rows]);
 
-            console.log('card: ', card, typeof card)
-            console.log('online: ', online, typeof online)
-            console.log('cash: ', cash, typeof cash)
-            console.log('amountDifference: ', amountDifference, typeof amountDifference)
-
-            // Calculate new values without mutating prev
-            if (cash > amountDifference) {
-                cash -= amountDifference;
-            }
-            if (online > amountDifference) {
-                online -= amountDifference
-            }
-            if (card > amountDifference) {
-                card -= amountDifference;
-            }
-            prev = [
-                { method: "cash", amount: cash },
-                { method: "online", amount: online },
-                { method: "card", amount: card },
-            ];
-            return prev;
-        });
-    }, [rows])
 
     useEffect(() => {
         let paymentAmount = Number(fixPendingAmount) - Number(cardPaidPopup) - Number(onlinePaidPopup) - Number(cashPaidPopup)
