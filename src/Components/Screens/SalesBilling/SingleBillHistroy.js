@@ -8,7 +8,7 @@ import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponen
 import { exportToExcel, generateAndSavePdf } from "../../../Util/Utility";
 import { API_URLS } from "../../../Util/AppConst";
 import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
-import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
+// import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
 import { toast } from "react-toastify";
 export default function SingleBillHistory() {
     const { billId } = useParams();
@@ -103,9 +103,6 @@ export default function SingleBillHistory() {
             ];
             return prev;
         });
-
-
-
     }, [rows])
 
     useEffect(() => {
