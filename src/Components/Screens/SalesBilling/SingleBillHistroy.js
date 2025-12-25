@@ -25,6 +25,7 @@ export default function SingleBillHistory() {
 
     const [totalAmount, setTotalAmount] = useState(0);
     const [pendingAmount, setPendingAmount] = useState(0);
+    const [fixPendingAmount, setFixPendingAmount] = useState(0);
 
 
     //New amounts
@@ -32,7 +33,7 @@ export default function SingleBillHistory() {
     const [onlinePaidPopup, setOnlinePaidPopup] = useState(0);
     const [cardPaidPopup, setCardPaidPopup] = useState(0);
 
-    const [existingPaidAmount, setExistingPaidAmount] = useState(0);
+    const [existingPaidAmount, setExistingPaidAmount] = useState([]);
     const [advanceAmount, setAdvanceAmount] = useState(0);
 
 
@@ -60,25 +61,40 @@ export default function SingleBillHistory() {
         setTotalAmount(totalRateOFAllProducts);
 
         let amountDifference = existingTotalAmount - totalRateOFAllProducts
-         if (pendingAmount > 0) {
-            setPendingAmount(prev => Number(prev) - Number(amountDifference));
+        if (pendingAmount > 0) {
+            let tempPendingAmount = pendingAmount - amountDifference;
+            setPendingAmount(tempPendingAmount);
+            setFixPendingAmount(tempPendingAmount);
         } else {
             setAdvanceAmount(prev => Number(prev) + Number(amountDifference));
         }
 
         setExistingPaidAmount((prev) => {
-            const { cash = 0, online = 0, card = 0 } = prev;
+            console.log('prev: ', prev)
+            let cash = Number(prev.find(p => p.method === "cash")?.amount || "0");
+            let online = Number(prev.find(p => p.method === "online")?.amount || "0");
+            let card = Number(prev.find(p => p.method === "card")?.amount || "0");
+
+            console.log('card: ', card, typeof card)
+            console.log('online: ', online, typeof online)
+            console.log('cash: ', cash, typeof cash)
+            console.log('amountDifference: ', amountDifference, typeof amountDifference)
 
             // Calculate new values without mutating prev
             if (cash > amountDifference) {
-                return { ...prev, cash: cash - amountDifference };
+                cash -= amountDifference;
             }
             if (online > amountDifference) {
-                return { ...prev, online: online - amountDifference };
+                online -= amountDifference
             }
             if (card > amountDifference) {
-                return { ...prev, card: card - amountDifference };
+                card -= amountDifference;
             }
+            prev = [
+                { method: "cash", amount: cash },
+                { method: "online", amount: online },
+                { method: "card", amount: card },
+            ];
             return prev;
         });
 
@@ -292,7 +308,9 @@ export default function SingleBillHistory() {
 
     const saveBillCallback = (response) => {
         if (response.status === 200) {
-            setShowPaymentPopup(true);
+            if (pendingAmount > 0) {
+                setShowPaymentPopup(true);
+            }
         } else {
             const errorMsg = response?.data?.error || "Something went wrong while saving bill.";
             toast.error(errorMsg, {
@@ -300,9 +318,9 @@ export default function SingleBillHistory() {
                 autoClose: 3000,
             });
         }
-        
+
     }
- 
+
     const handleBillSaveData = () => {
         if (!billId) return;
         const billsData = {
@@ -315,17 +333,18 @@ export default function SingleBillHistory() {
             paid_amount: existingPaidAmount,
             payable_amount: totalAmount,
             pending_amount: pendingAmount,
-            advance_amount:advanceAmount
+            advance_amount: advanceAmount
         };
+        console.log('billsData: ', billsData)
         apiCall({
             method: 'PUT',
             url: `${API_URLS.BILLING}/${billId}`,
             data: billsData,
             callback: saveBillCallback,
         })
-          console.log('billsData: ', billsData);
+        console.log('billsData: ', billsData);
     };
-    
+
     const paymentUpdateCallback = (response) => {
         if (response.status === 200) {
             toast.success("Payment updated successfully!", {
@@ -483,7 +502,7 @@ export default function SingleBillHistory() {
             {showPaymentPopup && (
                 <CustomPopUpComponet
                     isbillingHistory={true}
-                    totalAmount={pendingAmount}
+                    totalAmount={fixPendingAmount}
                     cashAmount={cashPaidPopup}
                     onlineAmount={onlinePaidPopup}
                     card={cardPaidPopup}
