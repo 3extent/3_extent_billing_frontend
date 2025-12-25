@@ -8,7 +8,7 @@ import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponen
 import { exportToExcel, generateAndSavePdf } from "../../../Util/Utility";
 import { API_URLS } from "../../../Util/AppConst";
 import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
-import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
+// import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
 import { toast } from "react-toastify";
 export default function SingleBillHistory() {
     const { billId } = useParams();
@@ -17,7 +17,7 @@ export default function SingleBillHistory() {
     const [singleBill, setSingleBill] = useState([])
     const [customerInfo, setCustomerInfo] = useState();
 
-    const [imeiOptions, setImeiOptions] = useState([]);
+    // const [imeiOptions, setImeiOptions] = useState([]);
     const [selectedImei, setSelectedImei] = useState("");
     const [selectedContactNo, setSelectedContactNo] = useState("");
     const [customerName, setCustomerName] = useState("");
@@ -97,12 +97,7 @@ export default function SingleBillHistory() {
             ];
             return prev;
         });
-
-
-
     }, [rows])
-
-
 
     const getAllImeis = () => {
         let url = `${API_URLS.PRODUCTS}?status=AVAILABLE,RETURN`;
