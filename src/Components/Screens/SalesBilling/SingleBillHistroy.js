@@ -216,6 +216,13 @@ export default function SingleBillHistory() {
 
     const handleDeleteRow = (imeiNumber) => {
         setRows((currentRows) => {
+            if (currentRows.length <= 1) {
+                toast.warning("At least one product must remain in the bill!", {
+                    position: "top-center",
+                    autoClose: 2000,
+                });
+                return currentRows;
+            }
             const updatedRows = [...currentRows];
             const index = updatedRows.findIndex(row => row["IMEI NO"] === imeiNumber);
             if (index !== -1) {
@@ -388,8 +395,6 @@ export default function SingleBillHistory() {
         const cash = Number(cashPaidPopup || 0);
         const online = Number(onlinePaidPopup || 0);
         const cardAmt = Number(cardPaidPopup || 0);
-        const totalPaid = cash + online + cardAmt;
-
         const paymentData = {
             payable_amount: totalAmount,
             paid_amount: [
