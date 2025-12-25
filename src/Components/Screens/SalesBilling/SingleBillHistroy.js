@@ -324,6 +324,7 @@ export default function SingleBillHistory() {
 
     const saveBillCallback = (response) => {
         if (response.status === 200) {
+
             if (pendingAmount > 0) {
                 setShowPaymentPopup(true);
             }
@@ -357,6 +358,7 @@ export default function SingleBillHistory() {
             url: `${API_URLS.BILLING}/${billId}`,
             data: billsData,
             callback: saveBillCallback,
+            setLoading: setLoading,
         })
         console.log('billsData: ', billsData);
     };
