@@ -63,8 +63,14 @@ export default function SingleBillHistory() {
         let amountDifference = existingTotalAmount - totalRateOFAllProducts
         if (pendingAmount > 0) {
             let tempPendingAmount = pendingAmount - amountDifference;
-            setPendingAmount(tempPendingAmount);
-            setFixPendingAmount(tempPendingAmount);
+            if (tempPendingAmount > 0) {
+                setPendingAmount(tempPendingAmount);
+                setFixPendingAmount(tempPendingAmount);
+            } else {
+                setAdvanceAmount(amountDifference - pendingAmount)
+                setFixPendingAmount(0)
+                setPendingAmount(0)
+            }
         } else {
             setAdvanceAmount(prev => Number(prev) + Number(amountDifference));
         }
