@@ -60,24 +60,31 @@ export default function SingleBillHistory() {
         const existingTotalAmount = totalAmount;
         const totalRateOFAllProducts = rows.reduce((sum, row) => sum + Number(row["Rate"] || 0), 0);
         setTotalAmount(totalRateOFAllProducts);
+        console.log('totalRateOFAllProducts: ', totalRateOFAllProducts);
 
         let amountDifference = existingTotalAmount - totalRateOFAllProducts
+        console.log('amountDifference: ', amountDifference);
 
         //If the bill is partially paid
         if (pendingAmount > 0) {
             let tempPendingAmount = pendingAmount - amountDifference;
+            console.log('tempPendingAmount: ', tempPendingAmount);
             if (tempPendingAmount > 0) {//If pending amount is greater than amount difference
                 setPendingAmount(tempPendingAmount);
+                console.log('tempPendingAmount: ', tempPendingAmount);
+
                 setFixPendingAmount(tempPendingAmount);
                 amountDifference = 0
             } else {//If pending amount is less than amount difference
                 setAdvanceAmount(amountDifference - pendingAmount)
+                console.log('amountDifference - pendingAmoun: ', amountDifference - pendingAmount);
                 setFixPendingAmount(0)
                 setPendingAmount(0)
                 amountDifference -= pendingAmount;
             }
         } else {//If the bill is fully paid
             setAdvanceAmount(prev => Number(prev) + Number(amountDifference));
+            console.log('(prev => Number(prev) + Number(amountDifference): ', (prev => Number(prev) + Number(amountDifference)));
         }
 
         if (pendingAmount >= amountDifference) {
@@ -133,12 +140,13 @@ export default function SingleBillHistory() {
                 return prev;
             });
         }
-    }, [rows.length])
+    }, [rows])
 
 
     useEffect(() => {
         let paymentAmount = Number(fixPendingAmount) - Number(cardPaidPopup) - Number(onlinePaidPopup) - Number(cashPaidPopup)
         setPendingAmount(paymentAmount)
+        console.log('paymentAmount: ', paymentAmount);
     }, [cashPaidPopup, onlinePaidPopup, cardPaidPopup])
 
 
