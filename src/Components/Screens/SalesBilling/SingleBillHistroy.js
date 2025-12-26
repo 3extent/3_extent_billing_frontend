@@ -87,7 +87,7 @@ export default function SingleBillHistory() {
             console.log('(prev => Number(prev) + Number(amountDifference): ', (prev => Number(prev) + Number(amountDifference)));
         }
 
-        if (pendingAmount >= amountDifference) {
+        if (pendingAmount === 0 || pendingAmount >= amountDifference) {
             setExistingPaidAmount((prev) => {
                 console.log('prev: ', prev)
                 let cash = Number(prev.find(p => p.method === "cash")?.amount || "0");
