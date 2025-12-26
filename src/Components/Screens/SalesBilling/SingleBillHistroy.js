@@ -14,6 +14,7 @@ export default function SingleBillHistory() {
     const { billId } = useParams();
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
+    const [updatedRows, setUpdatedRows] = useState([])
     const [singleBill, setSingleBill] = useState([])
     const [customerInfo, setCustomerInfo] = useState();
 
@@ -56,65 +57,54 @@ export default function SingleBillHistory() {
     }, [selectedImei]);
 
     useEffect(() => {
-        const totalDue = rows.reduce((sum, row) => sum + Number(row["Rate"] || 0), 0);
+        const existingTotalAmount = totalAmount;
+        const totalRateOFAllProducts = rows.reduce((sum, row) => sum + Number(row["Rate"] || 0), 0);
+        setTotalAmount(totalRateOFAllProducts);
 
-        const paidCash = Number(existingPaidAmount.find(p => p.method === "cash")?.amount || 0);
-        const paidOnline = Number(existingPaidAmount.find(p => p.method === "online")?.amount || 0);
-        const paidCard = Number(existingPaidAmount.find(p => p.method === "card")?.amount || 0);
-
-        let totalPaid = paidCash + paidOnline + paidCard;
-
-        let newCash = paidCash;
-        let newOnline = paidOnline;
-        let newCard = paidCard;
-
-        let advance = 0;
-        let pending = 0;
-
-        if (totalPaid >= totalDue) {
-            // fully paid
-            advance = totalPaid - totalDue;
-            pending = 0;
-
-            let reduce = totalPaid - totalDue; // how much extra we need to reduce from paid
-
-            // Deduct in order: cash → online → card
-            if (newCash >= reduce) {
-                newCash -= reduce;
-                reduce = 0;
+        let amountDifference = existingTotalAmount - totalRateOFAllProducts
+        if (pendingAmount > 0) {
+            let tempPendingAmount = pendingAmount - amountDifference;
+            if (tempPendingAmount > 0) {
+                setPendingAmount(tempPendingAmount);
+                setFixPendingAmount(tempPendingAmount);
             } else {
-                reduce -= newCash;
-                newCash = 0;
-
-                if (newOnline >= reduce) {
-                    newOnline -= reduce;
-                    reduce = 0;
-                } else {
-                    reduce -= newOnline;
-                    newOnline = 0;
-                    newCard = Math.max(0, newCard - reduce);
-                    reduce = 0;
-                }
+                setAdvanceAmount(amountDifference - pendingAmount)
+                setFixPendingAmount(0)
+                setPendingAmount(0)
             }
-        } else if (totalPaid > 0) {
-            // partially paid
-            pending = totalDue - totalPaid;
-            advance = 0;
         } else {
-            // unpaid
-            pending = totalDue;
-            advance = 0;
+            setAdvanceAmount(prev => Number(prev) + Number(amountDifference));
         }
 
-        setTotalAmount(totalDue);
-        setPendingAmount(pending);
-        setAdvanceAmount(advance);
-        setExistingPaidAmount([
-            { method: "cash", amount: newCash },
-            { method: "online", amount: newOnline },
-            { method: "card", amount: newCard },
-        ]);
-    }, [rows]);
+        setExistingPaidAmount((prev) => {
+            console.log('prev: ', prev)
+            let cash = Number(prev.find(p => p.method === "cash")?.amount || "0");
+            let online = Number(prev.find(p => p.method === "online")?.amount || "0");
+            let card = Number(prev.find(p => p.method === "card")?.amount || "0");
+
+            console.log('card: ', card, typeof card)
+            console.log('online: ', online, typeof online)
+            console.log('cash: ', cash, typeof cash)
+            console.log('amountDifference: ', amountDifference, typeof amountDifference)
+
+            // Calculate new values without mutating prev
+            if (cash > amountDifference) {
+                cash -= amountDifference;
+            }
+            if (online > amountDifference) {
+                online -= amountDifference
+            }
+            if (card > amountDifference) {
+                card -= amountDifference;
+            }
+            prev = [
+                { method: "cash", amount: cash },
+                { method: "online", amount: online },
+                { method: "card", amount: card },
+            ];
+            return prev;
+        });
+    }, [rows])
 
 
     useEffect(() => {
@@ -336,6 +326,10 @@ export default function SingleBillHistory() {
 
     const saveBillCallback = (response) => {
         if (response.status === 200) {
+            toast.success("Bill saved successfully!", {
+                position: "top-center",
+                autoClose: 2000,
+            });
 
             if (pendingAmount > 0) {
                 setShowPaymentPopup(true);
