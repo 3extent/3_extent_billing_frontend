@@ -3,7 +3,7 @@ import PrimaryButtonComponent from "../PrimaryButtonComponent/PrimaryButtonCompo
 export default function CustomPopUpComponet({ totalAmount, cashAmount, onlineAmount, card, pendingAmount, handleCancelButton, handlePrintButton, setCashAmount, setOnlineAmount, setCard, Advance, setAdvance, handleSaveButton, isbillingHistory = false }) {
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div className="bg-white shadow-lg w-[50%] rounded-[10px]">
+            <div className="bg-white shadow-lg w-[55%] rounded-[10px]">
                 <div className="text-lg py-5 font-bold  pl-7 bg-slate-900 text-white font-serif rounded-t-[10px]">
                     Payment Method</div>
                 <div className="pb-5">
@@ -12,7 +12,7 @@ export default function CustomPopUpComponet({ totalAmount, cashAmount, onlineAmo
                             Total Amount : {Number(totalAmount).toLocaleString("en-IN")}
                         </span>
                     </div>
-                    <div className="flex gap-4 items-center justify-center mt-5">
+                    <div className="flex gap-4 items-center justify-center  mt-5">
                         <InputComponent
                             label="CASH"
                             type="text"
