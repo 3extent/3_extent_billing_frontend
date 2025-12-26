@@ -62,48 +62,77 @@ export default function SingleBillHistory() {
         setTotalAmount(totalRateOFAllProducts);
 
         let amountDifference = existingTotalAmount - totalRateOFAllProducts
+
+        //If the bill is partially paid
         if (pendingAmount > 0) {
             let tempPendingAmount = pendingAmount - amountDifference;
-            if (tempPendingAmount > 0) {
+            if (tempPendingAmount > 0) {//If pending amount is greater than amount difference
                 setPendingAmount(tempPendingAmount);
                 setFixPendingAmount(tempPendingAmount);
-            } else {
+                amountDifference = 0
+            } else {//If pending amount is less than amount difference
                 setAdvanceAmount(amountDifference - pendingAmount)
                 setFixPendingAmount(0)
                 setPendingAmount(0)
+                amountDifference -= pendingAmount;
             }
-        } else {
+        } else {//If the bill is fully paid
             setAdvanceAmount(prev => Number(prev) + Number(amountDifference));
         }
 
-        setExistingPaidAmount((prev) => {
-            console.log('prev: ', prev)
-            let cash = Number(prev.find(p => p.method === "cash")?.amount || "0");
-            let online = Number(prev.find(p => p.method === "online")?.amount || "0");
-            let card = Number(prev.find(p => p.method === "card")?.amount || "0");
+        if (pendingAmount >= amountDifference) {
+            setExistingPaidAmount((prev) => {
+                console.log('prev: ', prev)
+                let cash = Number(prev.find(p => p.method === "cash")?.amount || "0");
+                let online = Number(prev.find(p => p.method === "online")?.amount || "0");
+                let card = Number(prev.find(p => p.method === "card")?.amount || "0");
 
-            console.log('card: ', card, typeof card)
-            console.log('online: ', online, typeof online)
-            console.log('cash: ', cash, typeof cash)
-            console.log('amountDifference: ', amountDifference, typeof amountDifference)
+                console.log('card: ', card, typeof card)
+                console.log('online: ', online, typeof online)
+                console.log('cash: ', cash, typeof cash)
+                console.log('amountDifference: ', amountDifference, typeof amountDifference)
 
-            // Calculate new values without mutating prev
-            if (cash > amountDifference) {
-                cash -= amountDifference;
-            }
-            if (online > amountDifference) {
-                online -= amountDifference
-            }
-            if (card > amountDifference) {
-                card -= amountDifference;
-            }
-            prev = [
-                { method: "cash", amount: cash },
-                { method: "online", amount: online },
-                { method: "card", amount: card },
-            ];
-            return prev;
-        });
+                // Calculate new values without mutating prev
+                if (cash >= amountDifference) {
+                    cash -= amountDifference;
+                } else {
+                    let remaining_diff = amountDifference;
+                    if (remaining_diff > 0) {
+                        if (remaining_diff >= cash) {
+                            remaining_diff -= cash
+                            cash = 0
+                        } else {
+                            cash -= remaining_diff
+                            remaining_diff = 0;
+                        }
+                    }
+                    if (remaining_diff > 0) {
+                        if (remaining_diff >= online) {
+                            remaining_diff -= online;
+                            online = 0;
+                        } else {
+                            online -= remaining_diff;
+                            remaining_diff = 0;
+                        }
+                    }
+                    if (remaining_diff > 0) {
+                        if (remaining_diff >= card) {
+                            remaining_diff -= card;
+                            card = 0;
+                        } else {
+                            card -= remaining_diff;
+                            remaining_diff = 0;
+                        }
+                    }
+                }
+                prev = [
+                    { method: "cash", amount: cash },
+                    { method: "online", amount: online },
+                    { method: "card", amount: card },
+                ];
+                return prev;
+            });
+        }
     }, [rows])
 
 

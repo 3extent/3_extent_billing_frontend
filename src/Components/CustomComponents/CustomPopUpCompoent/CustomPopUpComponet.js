@@ -42,17 +42,16 @@ export default function CustomPopUpComponet({ totalAmount, cashAmount, onlineAmo
                             inputClassName="w-[150px] "
                             numericOnly={true}
                         />
-                        {isbillingHistory && (
-                            <InputComponent
-                                label="Advance"
-                                type="text"
-                                placeholder=""
-                                value={Advance}
-                                labelClassName="font-bold"
-                                onChange={(e) => setAdvance(e.target.value)}
-                                inputClassName="w-[150px] "
-                                numericOnly={true}
-                            />)}
+                        <InputComponent
+                            label="Advance"
+                            type="text"
+                            placeholder=""
+                            value={Advance}
+                            labelClassName="font-bold"
+                            onChange={(e) => setAdvance(e.target.value)}
+                            inputClassName="w-[150px] "
+                            numericOnly={true}
+                        />
                     </div>
                     <div className="my-5">
                         <span className="font-bold gap-4 ml-7 text-[18px]">
