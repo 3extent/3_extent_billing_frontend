@@ -83,7 +83,8 @@ function ListOfProducts() {
                         )}
                         <PrimaryButtonComponent
                             label="Barcode"
-                            icon="fa fa-print"
+                            icon="fa fa-barcode"
+                            iconOnly={true}
                             buttonClassName="py-1 px-3 text-[12px] font-semibold"
                             onClick={
                                 () => handleBarcodePrint([{ modelName: product.model.name, grade: product.grade, imei_number: product.imei_number }])
