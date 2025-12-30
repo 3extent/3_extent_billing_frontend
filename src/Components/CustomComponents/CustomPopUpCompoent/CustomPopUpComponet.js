@@ -1,6 +1,11 @@
+import { useRef } from "react";
 import InputComponent from "../InputComponent/InputComponent";
 import PrimaryButtonComponent from "../PrimaryButtonComponent/PrimaryButtonComponent";
-export default function CustomPopUpComponet({ totalAmount, cashAmount, onlineAmount, card, pendingAmount, handleCancelButton, handlePrintButton, setCashAmount, setOnlineAmount, setCard, Advance, setAdvance, handleSaveButton, isbillingHistory = false }) {
+export default function CustomPopUpComponet({ totalAmount, cashAmount, onlineAmount, card, pendingAmount, handleCancelButton, handlePrintButton, setCashAmount, setOnlineAmount, setCard, advance, setAdvance, handleSaveButton, isbillingHistory = false }) {
+    const isAdvanceLockedRef = useRef(
+        advance !== "" && Number(advance) > 0
+    );
+
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
             <div className="bg-white shadow-lg w-[55%] rounded-[10px]">
@@ -42,15 +47,17 @@ export default function CustomPopUpComponet({ totalAmount, cashAmount, onlineAmo
                             inputClassName="w-[150px] "
                             numericOnly={true}
                         />
+
                         <InputComponent
                             label="Advance"
                             type="text"
                             placeholder=""
-                            value={Advance}
+                            value={advance}
                             labelClassName="font-bold"
                             onChange={(e) => setAdvance(e.target.value)}
                             inputClassName="w-[150px] "
                             numericOnly={true}
+                            readOnly={isAdvanceLockedRef.current}
                         />
                     </div>
                     <div className="my-5">

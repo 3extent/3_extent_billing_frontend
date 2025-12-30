@@ -1,4 +1,4 @@
-export default function InputComponent({ label, type, placeholder, onChange, inputClassName = "", accept, labelClassName = "", name, value, disabled = false, maxLength, error, numericOnly = false, }) {
+export default function InputComponent({ label, type, placeholder, onChange, inputClassName = "", accept, labelClassName = "", name, value, disabled = false, readOnly = false, maxLength, error, numericOnly = false, }) {
     const handleChange = (e) => {
         const val = e.target.value;
         if (!numericOnly) {
@@ -23,6 +23,7 @@ export default function InputComponent({ label, type, placeholder, onChange, inp
                 accept={accept}
                 name={name}
                 value={value}
+                readOnly={readOnly}
                 disabled={disabled}
                 maxLength={maxLength}
                 inputMode={numericOnly}

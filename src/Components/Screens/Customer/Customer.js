@@ -30,6 +30,9 @@ export default function Customer() {
                 "State": customer.state,
                 "GST No": customer.gst_number,
                 "PAN No": customer.pan_number,
+                "Total Amount":customer.total_amount,
+                "Remaining Amount":customer.remaining_amount,
+                "Advance Amount":customer.advance_amount,
                 "Action": (
                     <div className="flex justify-end">
                         <div
@@ -71,6 +74,10 @@ export default function Customer() {
         setCustomerName('');
         getCustomerAllData({});
     }
+
+    const handleRowClick = (row) => {
+       navigate(`/singleCustomerBillDetails/${row.id}`);
+    };
     return (
         <div className="w-full">
             {loading && <Spinner />}
@@ -115,6 +122,7 @@ export default function Customer() {
                 <CustomTableCompoent
                     headers={CUSTOMER_COLOUMS}
                     rows={rows}
+                    onRowClick={handleRowClick}
                 />
             </div>
         </div>

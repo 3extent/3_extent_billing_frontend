@@ -19,6 +19,7 @@ import { ToastContainer } from 'react-toastify';
 import SingleDraftBillHistory from './Components/Screens/SalesBilling/SingleDraftBillHistroy';
 import PrivacyPolicy from './Components/Screens/Policies/PrivacyPolicy';
 import TermAndCondition from './Components/Screens/Policies/TermAndCondition';
+import SingleCustomerBillDetails from './Components/Screens/Customer/SingleCustomerBillDetails';
 
 
 
@@ -139,6 +140,16 @@ function App() {
                 <AddCustomer />
               </ProtectedRoute>
             } />
+
+            <Route
+              path="/singleCustomerBillDetails/:customerId"
+              element={
+                <ProtectedRoute isAuthenticated={loginStatus}>
+                  <SingleCustomerBillDetails />
+                </ProtectedRoute>
+              }
+            />
+
             <Route path="/addsupplier/:supplier_id?" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <AddSupplier />
@@ -146,15 +157,15 @@ function App() {
             } />
             <Route path="/billinghistory" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
-                <Billinghistory isDraft={false}/>
+                <Billinghistory isDraft={false} />
               </ProtectedRoute>
             } />
             <Route path="/draftbillhistroy" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
-                <Billinghistory isDraft={true}/>
+                <Billinghistory isDraft={true} />
               </ProtectedRoute>
             } />
-            <Route path="/singleBillHistory/:billId" element={<SingleBillHistory  />} />
+            <Route path="/singleBillHistory/:billId" element={<SingleBillHistory />} />
             <Route path="/singleDraftBillHistroy/:draftBillId" element={<SingleDraftBillHistory />} />
 
             <Route path="*" element={<Navigate to="/" replace />} />

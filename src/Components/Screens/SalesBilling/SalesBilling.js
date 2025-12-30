@@ -33,11 +33,15 @@ export default function SalesBilling() {
     }
     const [showDropdown, setShowDropdown] = useState(false);
     const [showPaymentPopup, setShowPaymentPopup] = useState(false);
+
     const [cashAmount, setCashAmount] = useState("");
     const [onlineAmount, setOnlineAmount] = useState("");
     const [card, setCard] = useState("");
+    const [advance,setAdvance ] = useState(0);
+
     const [totalAmount, setTotalAmount] = useState(0);
     const [pendingAmount, setPendingAmount] = useState(0);
+
     const toggleableColumns = ["Purchase Price", "QC-Remark", "Supplier Name"];
     const handleDeleteRow = (imeiNumber) => {
         setRows((currentRows) => {
@@ -98,9 +102,10 @@ export default function SalesBilling() {
         const cash = Number(cashAmount);
         const online = Number(onlineAmount);
         const cardAmt = Number(card);
-        const pending = totalAmount - (cash + online + cardAmt);
+        const advanceAmt=Number(advance)
+        const pending = totalAmount - (cash + online + cardAmt +advanceAmt);
         setPendingAmount(pending);
-    }, [cashAmount, card, onlineAmount, totalAmount, pendingAmount]);
+    }, [cashAmount, card, onlineAmount, advance, totalAmount, pendingAmount]);
     useEffect(() => {
         const total = rows.reduce((sum, row) => sum + Number(row["Rate"] || 0), 0);
         setTotalAmount(total);
@@ -127,13 +132,16 @@ export default function SalesBilling() {
         setSelectedContactNo(value);
         if (!value) {
             setCustomerName("");
+            setAdvance(0);
             return;
         }
         const customer = customers.find(customer => customer.contact_number === value);
         if (customer) {
             setCustomerName(customer.name);
+            setAdvance(Number(customer.advance_amount) || 0);;
         } else {
             setCustomerName("");
+            setAdvance(0);
         }
     };
     const getAllImeis = () => {
@@ -293,6 +301,8 @@ export default function SalesBilling() {
                 { method: "cash", amount: Number(cashAmount) },
                 { method: "online", amount: Number(onlineAmount) },
                 { method: "card", amount: Number(card) },
+                { method: "advance", amount: Number(advance) },
+               
             ],
             payable_amount: totalAmount,
             pending_amount: pendingAmount,
@@ -488,10 +498,12 @@ export default function SalesBilling() {
                     cashAmount={cashAmount}
                     onlineAmount={onlineAmount}
                     card={card}
+                    advance={advance}
                     pendingAmount={pendingAmount}
                     setCashAmount={setCashAmount}
                     setOnlineAmount={setOnlineAmount}
                     setCard={setCard}
+                    setAdvance={setAdvance}
                     handleCancelButton={handleCancelPopup}
                     handlePrintButton={handlePrintButton}
                 />
