@@ -91,16 +91,16 @@ function Billinghistory({ isDraft = false }) {
                 _id: bill._id,
                 "Actions": (
                     <div className="flex items-center justify-end gap-2">
-                            <div
-                                title="delete"
-                                className="flex items-center justify-center rounded-full bg-gray-300 hover:bg-gray-400 cursor-pointer w-10 h-10 min-w-[40px] min-h-[40px]"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDeleteBill(bill._id);
-                                }}
-                            >
-                                <i className="fa fa-trash text-gray-700 text-lg" />
-                            </div>
+                        <div
+                            title="delete"
+                            className="flex items-center justify-center rounded-full bg-gray-300 hover:bg-gray-400 cursor-pointer w-10 h-10 min-w-[40px] min-h-[40px]"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteBill(bill._id);
+                            }}
+                        >
+                            <i className="fa fa-trash text-gray-700 text-lg" />
+                        </div>
                         {Number(bill.pending_amount) > 0 && (
                             <PrimaryButtonComponent
                                 label="Pay"
@@ -174,8 +174,8 @@ function Billinghistory({ isDraft = false }) {
                 url += `&imei_number=${imeiNumber}`
             }
             if (!selectAllDates) {
-                if (from) url += `&from=${moment.utc(from).valueOf(from)}`;
-                if (to) url += `&to=${moment.utc(to).endOf('day').valueOf(to)}`;
+                if (from) url += `&from=${moment.utc(from).startOf('day').valueOf()}`;
+                if (to) url += `&to=${moment.utc(to).endOf('day').valueOf()}`;
             }
         }
         apiCall({
