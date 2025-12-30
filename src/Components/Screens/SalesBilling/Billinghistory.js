@@ -15,7 +15,7 @@ function Billinghistory({ isDraft = false }) {
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
 
-    const [billingRawData, setBillingRawData] = useState([]);
+    const [billingProductData, setBillingProductData] = useState([]);
 
     const [loading, setLoading] = useState(false)
     const [showPaymentPopup, setShowPaymentPopup] = useState(false);
@@ -112,7 +112,7 @@ function Billinghistory({ isDraft = false }) {
     const getBillCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
-            setBillingRawData(response.data.billings);
+            setBillingProductData(response.data.billings);
             const billingformattedRows = response.data.billings.map((bill, index) => ({
                 "Bill id": index + 1,
                 "Date": moment(bill.created_at).format('ll'),
@@ -312,10 +312,10 @@ function Billinghistory({ isDraft = false }) {
     const ProductExportData = () => {
         const data = [];
 
-        billingRawData.map((bill) => {
+        billingProductData.map((bill) => {
             bill.products.map((product) => {
                 data.push({
-                    "Date": moment(bill.created_at).format("DD-MM-YYYY"),
+                    "Date": moment(bill.created_at).format('ll'),
                     "Invoice No": bill.invoice_number,
                     "Customer Name": bill.customer?.name,
                     "Contact No": bill.customer?.contact_number,
@@ -336,7 +336,7 @@ function Billinghistory({ isDraft = false }) {
     };
 
     const handleExportToExcel = () => {
-        if (!billingRawData.length) {
+        if (!billingProductData.length) {
             toast.error("No data to export");
             return;
         }
@@ -345,7 +345,7 @@ function Billinghistory({ isDraft = false }) {
 
         exportToExcel(
             exportData,
-            `Product_Report_${from}_to_${to}.xlsx`,
+            `Product_datewise_${from}_to_${to}.xlsx`,
             null,
             Object.keys(exportData[0])
         );
@@ -443,15 +443,16 @@ function Billinghistory({ isDraft = false }) {
                     onClick={handleResetFilter}
                 />
             </div>
-            <div className="h-[60vh]">
+            {/* <div className="h-[60vh]"> */}
                 <CustomTableCompoent
+                    maxHeight="h-[60vh]"
                     headers={BILLINGHISTORY_COLOUMNS}
                     rows={rows}
                     totalRow={totalRow}
                     onRowClick={handleRowClick}
                     showTotalRow={!isDraft && showTotalRow}
                 />
-            </div>
+            {/* </div> */}
             {!isDraft && (
                 <div className="flex justify-end">
                     <button className="rounded-full" onClick={() => setShowTotalRow(!showTotalRow)}>
