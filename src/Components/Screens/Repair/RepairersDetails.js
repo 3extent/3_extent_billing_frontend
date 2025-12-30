@@ -15,13 +15,16 @@ import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCo
 export default function RepairersDetails() {
     const navigate = useNavigate();
     const { repairer_id } = useParams();
-    const today = moment().format('YYYY-MM-DD');
     const [status, setStatus] = useState("");
     const [loading, setLoading] = useState(false);
     const [rows, setRows] = useState([]);
     const [imeiNumber, setIMEINumber] = useState('');
-    const [from, setFrom] = useState(today);
-    const [to, setTo] = useState(today);
+
+    const fromDate = moment().format("YYYY-MM-DD");
+    const toDate = moment().format("YYYY-MM-DD");
+
+    const [from, setFrom] = useState(fromDate);
+    const [to, setTo] = useState(toDate);
     const [selectAllDates, setSelectAllDates] = useState(false);
 
     const handleBack = () => {
@@ -70,10 +73,9 @@ export default function RepairersDetails() {
         }
 
         if (imeiNumber) url += `&imei_number=${imeiNumber}`;
-
         if (!selectAllDates) {
-            if (from) url += `&from=${new Date(from).getTime()}`;
-            if (to) url += `&to=${new Date(to).getTime()}`;
+            if (from) url += `&repair_from=${moment.utc(from).valueOf()}`;
+            if (to) url += `&repair_to=${moment.utc(to).endOf("day").valueOf()}`;
         }
         apiCall({
             method: "GET",
@@ -86,20 +88,20 @@ export default function RepairersDetails() {
     };
 
     useEffect(() => {
-        getRepairerDetails({ from, to, selectAllDates });
+        getRepairerDetails({ from, to, selectAllDates, status });
     }, [repairer_id]);
     const handleSearchFilter = () => {
         getRepairerDetails({ imeiNumber, status, from, to, selectAllDates });
     };
     const handleResetFilter = () => {
-        setIMEINumber('');
+        setIMEINumber("");
         setStatus("");
-        setFrom(today);
-        setTo(today);
+        setFrom(fromDate);
+        setTo(toDate);
         setSelectAllDates(false);
-        getRepairerDetails({ from: today, to: today });
-    };
 
+        getRepairerDetails({ from: fromDate, to: toDate });
+    };
     return (
         <div>
             {loading && <Spinner />}
@@ -123,17 +125,17 @@ export default function RepairersDetails() {
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
                     options={STATUS_OPTIONS}
-                    className="w-[190px] mt-3"
+                    className="w-[190px] mt-2"
                 />
-
                 <label className="flex items-center gap-2 text-sm">
                     <input
                         type="checkbox"
                         checked={selectAllDates}
                         onChange={(e) => setSelectAllDates(e.target.checked)}
                     />
-                    All Dates
+                    All Data
                 </label>
+
                 <InputComponent
                     type="date"
                     inputClassName="w-[180px] mb-5"
@@ -141,6 +143,7 @@ export default function RepairersDetails() {
                     onChange={(e) => handleDateChange(e.target.value, setFrom)}
                     disabled={selectAllDates}
                 />
+
                 <InputComponent
                     type="date"
                     inputClassName="w-[180px] mb-5"
