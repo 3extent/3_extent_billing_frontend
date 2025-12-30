@@ -21,7 +21,7 @@ function AddRepair() {
         issue: "",
         accessories: "",
         repairer_name: "",
-        repairer_contact_no: "",
+        repairer_contact_number: "",
     });
     const [brandOptions, setBrandOptions] = useState([]);
     const [modelOptions, setModelOptions] = useState([]);
@@ -34,6 +34,11 @@ function AddRepair() {
     const [repairerNames, setRepairerNames] = useState([]);
     const [repairerContacts, setRepairerContacts] = useState([]);
     const navigate = useNavigate();
+
+    const handleImeiChange = (value) => {
+        setSelectedImei(value)
+        setErrors({})
+    }
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setErrors(prev => ({ ...prev, [name]: "" }));
@@ -41,6 +46,7 @@ function AddRepair() {
     };
     const handleRepairerChange = (value) => {
         const selected = repairers.find((item) => item.name === value);
+        setErrors(prev => ({ ...prev, repairer_contact_number: "", repairer_name: "" }));
         setProductData({
             ...productData,
             repairer_name: value,
@@ -50,6 +56,7 @@ function AddRepair() {
 
     const handleRepairContactChange = (value) => {
         const selected = repairers.find((item) => item.contact === value);
+        setErrors(prev => ({ ...prev, repairer_contact_number: "", repairer_name: "" }));
         setProductData({
             ...productData,
             repairer_contact_number: value,
@@ -142,12 +149,12 @@ function AddRepair() {
                 purchase_price: product.purchase_price || "",
                 engineer_name: product.engineer_name || "",
                 accessories: product.accessories || "",
-                issue: "",
-                repairer_name: "",
-                repairer_contact_number: ""
+                issue: productData.issue || "",
+                repairer_name: productData.repairer_name || "",
+                repairer_contact_number: productData.repairer_contact_number || ""
             });
         } else {
-            toast.error("This IMEI is not AVAILABLE or RETURN.");
+            toast.error("This IMEI number is not Available.");
             setProductData({
                 id: "",
                 imei_number: "",
@@ -185,13 +192,13 @@ function AddRepair() {
             newErrors.purchase_price = "Please enter valid Purchase Price";
         if (!productData.engineer_name.trim()) newErrors.engineer_name = "Please enter Engineer Name";
         if (!productData.issue.trim()) newErrors.issue = "Please describe the Issue";
-        // if (!productData.accessories.trim()) newErrors.accessories = "Please select Accessories";
-        // if (!productData.repairer_name.trim()) newErrors.repairer_name = "Please select Repairer";
-        // if (!productData.repair_contact_no.trim()) newErrors.repair_contact_no = "Repair contact is required";
+        if (!productData.accessories.trim()) newErrors.accessories = "Please select Accessories";
+        if (!productData.repairer_name.trim()) newErrors.repairer_name = "Please select Repairer";
+        if (!productData.repairer_contact_number.trim()) newErrors.repairer_contact_number = "Repair contact is required";
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
-    };
+    }
     const saveRepairData = () => {
         if (!handleValidation()) return;
         if (!productData.id) {
@@ -245,10 +252,16 @@ function AddRepair() {
             getProductDataByIMEI(selectedImei);
         }
     }, [selectedImei]);
-    const isImeiSelected = !!productData.id;
+    // const isImeiSelected = !!productData.id;
+    const handleBack = () => {
+        navigate(-1);
+    };
     return (
         <div>
             {loading && <Spinner />}
+            <div className='text-xl font-serif mb-4'>
+                Create Repair Request
+            </div>
             <div className="grid grid-cols-3 mt-2 gap-x-5 gap-y-1">
                 <CustomDropdownInputComponent
                     name="IMEI Number"
@@ -258,7 +271,8 @@ function AddRepair() {
                     value={selectedImei}
                     maxLength={15}
                     numericOnly={true}
-                    onChange={(value) => setSelectedImei(value)}
+                    // onChange={(value) => setSelectedImei(value)}
+                    onChange={handleImeiChange}
                     options={
                         selectedImei.length >= 11
                             ? imeiOptions.filter((imei) => imei.startsWith(selectedImei))
@@ -277,7 +291,7 @@ function AddRepair() {
                     value={productData.brand_name}
                     onChange={handleBrandProductData}
                     error={errors.brand_name}
-                    disabled={isImeiSelected}
+                    disabled={productData.id}
 
                 />
                 <CustomDropdownInputComponent
@@ -289,7 +303,7 @@ function AddRepair() {
                     value={productData.model_name}
                     onChange={handleModelProductData}
                     error={errors.model_name}
-                    disabled={isImeiSelected}
+                    disabled={productData.id}
 
                 />
                 <DropdownCompoent
@@ -302,6 +316,7 @@ function AddRepair() {
                     value={productData.grade}
                     onChange={handleInputChange}
                     error={errors.grade}
+                    disabled={productData.id}
                 />
                 <InputComponent
                     label="Purchase Price"
@@ -314,7 +329,7 @@ function AddRepair() {
                     value={productData.purchase_price}
                     onChange={handleInputChange}
                     error={errors.purchase_price}
-                    disabled={isImeiSelected}
+                    disabled={productData.id}
                 />
                 <InputComponent
                     label="Enginner Name "
@@ -326,7 +341,7 @@ function AddRepair() {
                     value={productData.engineer_name}
                     onChange={handleInputChange}
                     error={errors.engineer_name}
-                    disabled={isImeiSelected}
+                    disabled={productData.id}
                 />
                 <InputComponent
                     label="Issue"
@@ -348,6 +363,8 @@ function AddRepair() {
                     options={ACCESSORIES_OPTIONS}
                     value={productData.accessories}
                     onChange={handleInputChange}
+                    disabled={productData.id}
+                    error={errors.accessories}
                 />
                 <CustomDropdownInputComponent
                     name="Repairer Name"
@@ -356,6 +373,7 @@ function AddRepair() {
                     value={productData.repairer_name}
                     onChange={handleRepairerChange}
                     dropdownClassName="w-[80%]"
+                    error={errors.repairer_name}
                 />
                 <CustomDropdownInputComponent
                     name="Contact Number"
@@ -365,8 +383,14 @@ function AddRepair() {
                     onChange={handleRepairContactChange}
                     dropdownClassName="w-[80%]"
                     numericOnly={true}
+                    error={errors.repairer_contact_number}
                 />
                 <div className="col-span-3 mt-5 flex justify-center gap-4">
+                    <PrimaryButtonComponent
+                        label="Back"
+                        icon="fa fa-arrow-left"
+                        onClick={handleBack}
+                    />
                     <PrimaryButtonComponent
                         label="Save"
                         icon="fa fa-save"
@@ -377,4 +401,4 @@ function AddRepair() {
         </div>
 
     )
-} export default AddRepair;
+} export default AddRepair; 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-export default function CustomDropdownInputComponent({ name, dropdownClassName = "", labelClassName = "", placeholder = "", options = [], value = "", onChange = () => { }, maxLength, error, disabled = false, }) {
+export default function CustomDropdownInputComponent({ name, dropdownClassName = "", labelClassName = "", placeholder = "", options = [], value = "", onChange = () => { }, maxLength, error, disabled = false, numericOnly = false, }) {
     const [inputValue, setInputValue] = useState('');
     const [showDropdown, setShowDropdown] = useState(false);
     useEffect(() => {
@@ -34,6 +34,7 @@ export default function CustomDropdownInputComponent({ name, dropdownClassName =
                 placeholder={placeholder}
                 disabled={disabled}
                 maxLength={maxLength}
+                inputMode={numericOnly}
                 className={`px-3 py-2 border border-gray-300 rounded-md ${error ? 'border-red-600' : 'border-gray-300'} ${dropdownClassName}
                   ${disabled ? "cursor-not-allowed bg-gray-200 opacity-50" : ""}`}
             />
@@ -44,6 +45,7 @@ export default function CustomDropdownInputComponent({ name, dropdownClassName =
                             key={index}
                             className="px-4 py-2 hover:bg-gray-300 cursor-pointer"
                             onMouseDown={() => handleSelect(option)}
+                            
                         >
                             {option}
                         </div>

@@ -24,7 +24,7 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
             {normalRows.length > 0 ? (
                 <div className="border border-slate-800">
                     <table className="table-fixed w-full ">
-                        <thead className=" sticky top-0 bg-slate-800 text-white text-sm font-semibold">
+                        <thead className="sticky top-0 bg-slate-800 text-white text-sm font-semibold">
                             <tr>
                                 {tableHeaders.map((header, index) => (
                                     <th key={index}
@@ -44,8 +44,10 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
                                         }`}
                                     onClick={() => onRowClick && onRowClick(row)}
                                 >
-                                    {tableHeaders.map((header, colIndex) => (
-                                        <td key={colIndex} className="px-4 py-2 text-left">
+                                    {tableHeaders.map((header, colIndex) => {
+                                        console.log('header: ', header);
+                                        console.log('row[header]: ', row[header]);
+                                        return <td key={colIndex} className={`px-4 py-2 ${header === "Action" ? "text-right" : "text-left"}`}>
                                             {editable && header === "Rate" ? (
                                                 <input
                                                     type="type"
@@ -57,12 +59,12 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
                                                     className="border border-gray-300 px-2 py-1 w-24 "
                                                 />
                                             ) : (
-                                                row[header] !== undefined && row[header] !== null && row[header] !== ""
+                                                row[header]
                                                     ? row[header]
                                                     : "-"
                                             )}
                                         </td>
-                                    ))}
+                                    })}
                                 </tr>
                             ))}
                         </tbody>

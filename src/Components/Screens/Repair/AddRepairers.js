@@ -1,14 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { API_URLS } from "../../../Util/AppConst";
-import { apiCall } from "../../../Util/AxiosUtils";
-import { useNavigate } from "react-router-dom";
+import { apiCall, Spinner } from "../../../Util/AxiosUtils";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
 function AddRepairers() {
     const navigate = useNavigate();
+    const { repairer_id } = useParams();
     const [errors, setErrors] = useState({});
+    const [loading, setLoading] = useState(false);
     const [repairerData, setRepairerData] = useState({
         name: "",
         firm_name: "",
@@ -18,28 +20,57 @@ function AddRepairers() {
         gst_number: "",
         role: "REPAIRER",
     });
+    useEffect(() => {
+        if (repairer_id) {
+            getRepairerData();
+        }
+    }, [repairer_id]);
+
+    // const addRepairerCallback = (response) => {
+    //     if (response.status === 200) {
+    //         toast.success("Repairer added successfully!");
+    //         setRepairerData({
+    //             name: "",
+    //             firm_name: "",
+    //             state: "",
+    //             address: "",
+    //             contact_number: "",
+    //             gst_number: "",
+    //             role: "REPAIRER",
+    //         });
+    //         navigate("/repairers");
+    //     } else {
+    //         toast.error("Failed to add repairer", response?.data?.error);
+    //     }
+    // };
+    const getRepairerDataCallback = (response) => {
+        if (response.status === 200) {
+            setRepairerData({
+                name: response.data.name,
+                firm_name: response.data.firm_name,
+                state: response.data.state,
+                address: response.data.address,
+                contact_number: response.data.contact_number,
+                gst_number: response.data.gst_number,
+                role: "REPAIRER",
+            });
+        }
+    };
+
+    const getRepairerData = () => {
+        apiCall({
+            method: "GET",
+            url: `${API_URLS.USERS}/${repairer_id}`,
+            data: {},
+            callback: getRepairerDataCallback,
+            setLoading: setLoading,
+        });
+    };
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         const uppercasedValue = value.toUpperCase();
         setErrors(prev => ({ ...prev, [name]: "" }));
         setRepairerData({ ...repairerData, [name]: uppercasedValue });
-    };
-    const addRepairerCallback = (response) => {
-        if (response.status === 200) {
-            toast.success("Repairer added successfully!");
-            setRepairerData({
-                name: "",
-                firm_name: "",
-                state: "",
-                address: "",
-                contact_number: "",
-                gst_number: "",
-                role: "REPAIRER",
-            });
-            navigate("/repairers");
-        } else {
-            toast.error("Failed to add repairer", response?.data?.error);
-        }
     };
     const handleValidation = () => {
         const newErrors = {};
@@ -68,13 +99,67 @@ function AddRepairers() {
         if (!handleValidation()) {
             return;
         }
+        if (repairer_id) {
+            editRepairerData();
+        } else {
+            addRepairerData();
+        }
+        // apiCall({
+        //     method: 'POST',
+        //     url: API_URLS.USERS,
+        //     data: repairerData,
+        //     callback: addRepairerCallback,
+        // });
+    };
+    const addRepairerCallback = (response) => {
+        if (response.status === 200) {
+            toast.success("Repairer added successfully!");
+            setRepairerData({
+                name: "",
+                firm_name: "",
+                state: "",
+                address: "",
+                contact_number: "",
+                gst_number: "",
+                role: "REPAIRER",
+            });
+            navigate("/repairers");
+        } else {
+            toast.error("Failed to add repairer", response?.data?.error);
+        }
+    };
+    const addRepairerData = () => {
         apiCall({
-            method: 'POST',
+            method: "POST",
             url: API_URLS.USERS,
             data: repairerData,
             callback: addRepairerCallback,
+            setLoading: setLoading,
         });
     };
+    const editRepairerCallback = (response) => {
+        if (response.status === 200) {
+            toast.success("Repairer updated successfully!", {
+                position: "top-center",
+                autoClose: 2000,
+            });
+            navigate("/repairers");
+        } else {
+            const errorMsg = response?.data?.error || "Failed to update repairer";
+            toast.error(errorMsg);
+        }
+    };
+
+    const editRepairerData = () => {
+        apiCall({
+            method: "PUT",
+            url: `${API_URLS.USERS}/${repairer_id}`,
+            data: repairerData,
+            callback: editRepairerCallback,
+            setLoading: setLoading,
+        });
+    };
+
 
     const handleBack = () => {
         navigate(-1);
@@ -82,7 +167,10 @@ function AddRepairers() {
 
     return (
         <div className="w-full">
-            <div className='text-xl font-serif mb-4'>Add Repairers</div>
+            {loading && <Spinner />}
+            <div className='text-xl font-serif mb-4'>
+                {repairer_id ? "Edit Repairer" : "Add Repairer"}
+            </div>
             <div className="grid grid-cols-2 gap-x-5 gap-y-2">
                 <InputComponent
                     label="Repair Name"

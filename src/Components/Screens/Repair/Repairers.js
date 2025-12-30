@@ -8,16 +8,27 @@ import { API_URLS } from "../../../Util/AppConst";
 import { toast } from "react-toastify";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
+import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
 
 function Repairers() {
     const navigate = useNavigate();
     const navigateAddRepairers = () => {
         navigate("/addrepairers")
     }
+
     const [rows, setRows] = useState([]);
     const [repairerName, setRepairerName] = useState('');
     const [contactNo, setContactNo] = useState('');
+
+    const [showPaymentPopup, setShowPaymentPopup] = useState(false);
+    const [selectedRepairer, setSelectedRepairer] = useState(null);
+    const [cashAmount, setCashAmount] = useState("");
+    const [onlineAmount, setOnlineAmount] = useState("");
+    const [card, setCard] = useState("");
+    const [pendingAmount, setPendingAmount] = useState(0);
+
     const getRepairersCallback = useCallback((response) => {
+        console.log("API Response:", response);
         if (response.status === 200) {
             const RepairedFormattedRows = response.data.map((repairer) => ({
                 "Repairer Name": repairer.name,
@@ -26,19 +37,49 @@ function Repairers() {
                 "Contact": repairer.contact_number,
                 "State": repairer.state,
                 "Address": repairer.address,
+                "Total Part Cost": repairer.total_part_cost || 0,
+                "Total Repairer Cost": repairer.total_repairer_cost || 0,
+                "Total Paid": repairer.total_paid || 0,
+                "Total Remaining": repairer.total_part_cost || 0,
+                "Actions": (
+                    <div className="flex gap-2 justify-end">
+                        <div
+                            title="Edit"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                navigate(`/addrepairers/${repairer._id}`);
+                            }}
+                            className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
+                        >
+                            <i className="fa fa-pencil text-gray-700 text-sm" />
+                        </div>
+                        <PrimaryButtonComponent
+                            label="Pay"
+                            buttonClassName="py-1 px-3 text-[12px] font-semibold"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handlePayClick(repairer);
+                            }}
+                        />
+                    </div>
+                ),
+
                 id: repairer._id
             }));
             setRows(RepairedFormattedRows);
+            console.log("Formatted Rows:", RepairedFormattedRows);
         } else {
             toast.error("Failed to fetch repairers");
         }
     }, []);
+
     // const getAllRepairers = useCallback(() => {
     const getAllRepairers = useCallback(({ repairerName, contactNo } = {}) => {
         let url = `${API_URLS.USERS}?role=REPAIRER`;
 
         if (repairerName) url += `&name=${repairerName}`;
         if (contactNo) url += `&contact_number=${contactNo}`;
+        console.log("Fetching repairers from URL:", url);
         apiCall({
             method: "GET",
             url: url,
@@ -46,21 +87,53 @@ function Repairers() {
             callback: getRepairersCallback,
         });
     }, [getRepairersCallback]);
+
     const handleSearchFilter = () => {
+        console.log("Search clicked with:", { repairerName, contactNo });
         getAllRepairers({ repairerName, contactNo });
     }
 
+    const handleResetFilter = () => {
+        setRepairerName("");
+        setContactNo("");
+        console.log("Reset filters");
+        getAllRepairers();
+    };
+
     useEffect(() => {
+        console.log("Component mounted: fetching all repairers");
         getAllRepairers();
     }, [getAllRepairers]);
-    const handleResetFilter = () => {
-        setRepairerName('');
-        setContactNo('');
-        getAllRepairers({});
-    }
 
+    const handleCancelPopup = () => {
+        console.log("Cancel payment popup");
+        setShowPaymentPopup(false);
+        setCashAmount("");
+        setOnlineAmount("");
+        setCard("");
+        setSelectedRepairer(null);
+    };
+    const handlePayClick = (repairer) => {
+        console.log("Pay clicked for repairer:", repairer);
+        setSelectedRepairer(repairer);
+        setPendingAmount((repairer.total_repairer_cost || 0) - (repairer.total_paid || 0));
+        setCashAmount("");
+        setOnlineAmount("");
+        setCard("");
+        setShowPaymentPopup(true);
+    };
+    const handleRowClick = (row) => {
+        navigate(`/repairerDetails/${row.id}`);
+    };
     return (
         <div>
+            <CustomHeaderComponent
+                name="List Of Repairer Information"
+                label="Add Repairer"
+                icon="fa fa-plus-circle"
+                onClick={navigateAddRepairers}
+                buttonClassName="py-1 px-3 text-sm font-bold"
+            />
             <div className="flex items-center gap-4 mb-5">
                 <InputComponent
                     type="text"
@@ -91,20 +164,27 @@ function Repairers() {
                     onClick={handleResetFilter}
                 />
             </div>
-
-            <CustomHeaderComponent
-                name="List Of Repair Information"
-                label="Add Repairer"
-                icon="fa fa-plus-circle"
-                onClick={navigateAddRepairers}
-                buttonClassName="py-1 px-3 text-sm font-bold"
-            />
             <div className="h-[75vh] mt-5">
                 <CustomTableCompoent
                     headers={REPAIRERS_OPTIONS}
                     rows={rows}
+                    onRowClick={handleRowClick}
                 />
             </div>
+            {showPaymentPopup && selectedRepairer && (
+                <CustomPopUpComponet
+                    totalAmount={selectedRepairer.total_repairer_cost || 0}
+                    //    totalAmount={50000}
+                    pendingAmount={pendingAmount}
+                    cashAmount={cashAmount}
+                    onlineAmount={onlineAmount}
+                    card={card}
+                    setCashAmount={setCashAmount}
+                    setOnlineAmount={setOnlineAmount}
+                    setCard={setCard}
+                    handleCancelButton={handleCancelPopup}
+                />
+            )}
         </div>
     )
 } export default Repairers;

@@ -7,12 +7,21 @@ import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { API_URLS } from "../../../Util/AppConst";
+import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
 function Supplier() {
     const [rows, setRows] = useState([]);
     const navigate = useNavigate();
     const [supplierName, setSupplierName] = useState('');
     const [contactNo, setContactNo] = useState('');
     const [loading, setLoading] = useState(false);
+
+    const [showPaymentPopup, setShowPaymentPopup] = useState(false);
+    const [selectedSupplier, setSelectedSupplier] = useState(null);
+    const [cashAmount, setCashAmount] = useState("");
+    const [onlineAmount, setOnlineAmount] = useState("");
+    const [card, setCard] = useState("");
+    const [pendingAmount, setPendingAmount] = useState(0);
+
     const navigateAddSupplier = () => {
         navigate("/addsupplier")
     }
@@ -26,15 +35,29 @@ function Supplier() {
                 "State": supplier.state,
                 "Balance": supplier.balance,
                 "Supplier Type": supplier.type,
+                "Total Supplier Cost": supplier.total_supplier_cost || 0,
+                "Total Paid": supplier.total_paid || 0,
+                "Total Remaining": (supplier.total_supplier_cost || 0) - (supplier.total_paid || 0),
                 "Action": (
-                    <div className="flex justify-end">
+                    <div className="flex gap-2 justify-end">
                         <div
                             title="Edit"
-                            onClick={() => navigate(`/addsupplier/${supplier._id}`)}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                navigate(`/addsupplier/${supplier._id}`);
+                            }}
                             className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
                         >
                             <i className="fa fa-pencil text-gray-700 text-sm" />
                         </div>
+                        <PrimaryButtonComponent
+                            label="Pay"
+                            buttonClassName="py-1 px-3 text-[12px] font-semibold"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handlePayClick(supplier);
+                            }}
+                        />
                     </div>
                 ),
 
@@ -72,6 +95,26 @@ function Supplier() {
         setContactNo('');
         getSupplierAllData({});
     }
+    const handlePayClick = (supplier) => {
+        setSelectedSupplier(supplier);
+        setPendingAmount((supplier.total_supplier_cost || 0) - (supplier.total_paid || 0));
+        setCashAmount("");
+        setOnlineAmount("");
+        setCard("");
+        setShowPaymentPopup(true);
+    };
+
+    const handleCancelPopup = () => {
+        setShowPaymentPopup(false);
+        setSelectedSupplier(null);
+        setCashAmount("");
+        setOnlineAmount("");
+        setCard("");
+    };
+    const handleRowClick = (row) => {
+        navigate(`/supplierDetails/${row.id}`);
+    };
+
     return (
         <div className="w-full">
             {loading && <Spinner />}
@@ -117,8 +160,25 @@ function Supplier() {
                 <CustomTableCompoent
                     headers={SUPPLIER_COLUMNS}
                     rows={rows}
+                    onRowClick={handleRowClick}
+
                 />
             </div>
+            {showPaymentPopup && selectedSupplier && (
+                <CustomPopUpComponet
+                    totalAmount={selectedSupplier.total_supplier_cost || 0}
+                    pendingAmount={pendingAmount}
+                    cashAmount={cashAmount}
+                    onlineAmount={onlineAmount}
+                    card={card}
+                    setCashAmount={setCashAmount}
+                    setOnlineAmount={setOnlineAmount}
+                    setCard={setCard}
+                    handleCancelButton={handleCancelPopup}
+                // handleSaveButton={handleSavePayment} 
+                />
+            )}
+
         </div>
     );
 }

@@ -29,7 +29,7 @@ function SingleProductStockIn() {
     supplier_name: '',
     qc_remark: '',
     status: STATUS_OPTIONS[0] || ''
-  });
+  });       
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setErrors((prev) => ({ ...prev, [name]: "" }));

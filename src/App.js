@@ -24,6 +24,8 @@ import Repair from './Components/Screens/Repair/Repair';
 import Repairers from './Components/Screens/Repair/Repairers';
 import AddRepairers from './Components/Screens/Repair/AddRepairers';
 import AcceptRepair from './Components/Screens/Repair/AcceptRepair';
+import RepairersDetails from './Components/Screens/Repair/RepairersDetails';
+import SupplierDetails from './Components/Screens/Supplier/SupplierDetails';
 
 
 
@@ -183,9 +185,19 @@ function App() {
                 <AddRepair />
               </ProtectedRoute>
             } />
-            <Route path="/AddRepairers" element={
+            <Route path="/addrepairers/:repairer_id?" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <AddRepairers />
+              </ProtectedRoute>
+            } />
+            <Route path="/repairerDetails/:repairer_id" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <RepairersDetails />
+              </ProtectedRoute>
+            } />
+            <Route path="/supplierDetails/:supplier_id" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <SupplierDetails />  
               </ProtectedRoute>
             } />
 

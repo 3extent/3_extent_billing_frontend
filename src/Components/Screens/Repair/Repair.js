@@ -10,14 +10,21 @@ import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCo
 import AcceptRepair from "./AcceptRepair";
 import { toast } from "react-toastify";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
+import moment from "moment";
 function Repair() {
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [status, setStatus] = useState("");
+    const [status, setStatus] = useState("IN_REPAIRING");
     const [selectedRepair, setSelectedRepair] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
     const [imeiNumber, setIMEINumber] = useState();
+
+    const fromDate = moment().format("YYYY-MM-DD");
+    const toDate = moment().format("YYYY-MM-DD");
+    const [from, setFrom] = useState(fromDate);
+    const [to, setTo] = useState(toDate);
+    const [selectAllDates, setSelectAllDates] = useState(false);
     const navigateAddRepair = () => {
         navigate("/addrepair")
     }
@@ -26,18 +33,25 @@ function Repair() {
         if (response.status === 200) {
             const repairFormattedRows = response.data.map((repair) => ({
                 _id: repair._id,
-                IMEI: repair.imei_number || "-",
-                Brand: repair.model?.brand?.name || "-",
-                Model: repair.model?.name || "-",
-                Grade: repair.grade || "-",
-                "Purchase Price": repair.purchase_price || "-",
-                "Part Cost": repair.part_cost || "-",
-                "Repairer Cost": repair.repairer_cost || "-",
-                "Engineer Name": repair.engineer_name || "-",
-                "Repairer Remark": repair.repair_remark || "-",
-                "Repairer": repair.repair_by?.name || "-",
-                Accessories: repair.accessories || "-",
-                Status: repair.status || "-",
+                "Repair Started": repair.repair_started_at
+                    ? moment(repair.repair_started_at).format("ll")
+                    : "-",
+                "Repair Completed": repair.repair_completed_at
+                    ? moment(repair.repair_completed_at).format("ll")
+                    : "-",
+
+                IMEI: repair.imei_number,
+                Brand: repair.model?.brand?.name,
+                Model: repair.model?.name,
+                Grade: repair.grade,
+                "Purchase Price": repair.purchase_price,
+                "Part Cost": repair.part_cost,
+                "Repairer Cost": repair.repairer_cost,
+                "Engineer Name": repair.engineer_name,
+                "Repairer Remark": repair.repair_remark,
+                "Repairer": repair.repair_by?.name,
+                Accessories: repair.accessories,
+                Status: repair.status,
                 Action: repair.status === "IN_REPAIRING" && (
                     <PrimaryButtonComponent
                         label="Accept"
@@ -53,11 +67,11 @@ function Repair() {
             console.log("Formatted Rows:", repairFormattedRows);
             setRows(repairFormattedRows);
         } else {
-            toast.error("Error fetching repairs");
+            console.log("Error fetching repairs");
         }
     };
     // const getAllRepairs = ({ imeiNumber, }) => {
-    const getAllRepairs = ({ imeiNumber, status } = {}) => {
+    const getAllRepairs = ({ imeiNumber, status, from, to, selectAllDates } = {}) => {
         console.log("Status selected:", status, "IMEI:", imeiNumber);
         let url = `${API_URLS.PRODUCTS}?`;
         if (status === "AVAILABLE & REPAIRED") {
@@ -68,6 +82,10 @@ function Repair() {
         if (imeiNumber) {
             url += `&imei_number=${imeiNumber}`
         }
+        if (!selectAllDates) {
+            if (from) url += `&repair_from=${moment.utc(from).valueOf()}`;
+            if (to) url += `&repair_to=${moment.utc(to).endOf("day").valueOf()}`;
+        }
         apiCall({
             method: "GET",
             url,
@@ -76,13 +94,25 @@ function Repair() {
             setLoading
         });
     };
+    const handleDateChange = (value, setDate) => {
+        const today = moment().format("YYYY-MM-DD");
+        if (value > today) {
+            setDate(today);
+        } else {
+            setDate(value);
+        }
+    };
     const handleSearchFilter = () => {
-        getAllRepairs({ imeiNumber, status });
+        getAllRepairs({ imeiNumber, status, from, to, selectAllDates });
     }
     const handleResetFilter = () => {
         setIMEINumber('');
-        setStatus('');
-        getAllRepairs();
+        setStatus("IN_REPAIRING");
+        // getAllRepairs();
+        setFrom(fromDate);
+        setTo(toDate);
+        setSelectAllDates(false);
+        getAllRepairs({ from: fromDate, to: toDate, status });
     }
     const acceptRepairCallback = (response) => {
         setLoading(false);
@@ -91,7 +121,7 @@ function Repair() {
 
         if (response.status === 200) {
             toast.success("Repair accepted successfully!");
-            getAllRepairs();
+            getAllRepairs({ imeiNumber, status, from, to, selectAllDates });
         } else {
             toast.error("Failed to accept repair");
             console.error(response);
@@ -122,15 +152,18 @@ function Repair() {
         });
     };
 
+    // useEffect(() => {
+    //     getAllRepairs();
+    // }, []);
     useEffect(() => {
-        getAllRepairs();
+        getAllRepairs({ from, to, selectAllDates, status });
     }, []);
     return (
         <div>
             {loading && <Spinner />}
             <CustomHeaderComponent
-                name="List Of Repair Information"
-                label="Add Repair"
+                name="Repair Dashboard"
+                label="Send for Repair"
                 icon="fa fa-plus-circle"
                 onClick={navigateAddRepair}
                 buttonClassName="py-1 px-3 text-sm font-bold"
@@ -153,6 +186,31 @@ function Repair() {
                     options={STATUS_OPTIONS}
                     className="w-[190px] mt-3"
                 />
+                <label className="flex items-center gap-2 text-sm">
+                    <input
+                        type="checkbox"
+                        checked={selectAllDates}
+                        onChange={(e) => setSelectAllDates(e.target.checked)}
+                    />
+                    All Data
+                </label>
+
+                <InputComponent
+                    type="date"
+                    inputClassName="w-[190px] mb-5"
+                    value={from}
+                    onChange={(e) => handleDateChange(e.target.value, setFrom)}
+                    disabled={selectAllDates}
+                />
+
+                <InputComponent
+                    type="date"
+                    inputClassName="w-[190px] mb-5"
+                    value={to}
+                    onChange={(e) => handleDateChange(e.target.value, setTo)}
+                    disabled={selectAllDates}
+                />
+
                 <PrimaryButtonComponent
                     label="Search"
                     icon="fa fa-search"

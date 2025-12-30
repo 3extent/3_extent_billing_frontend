@@ -1,0 +1,172 @@
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { apiCall } from "../../../Util/AxiosUtils";
+import { API_URLS } from "../../../Util/AppConst";
+import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
+import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
+import { Spinner } from "../../../Util/AxiosUtils";
+import { REPAIRER_DETAILS_HEADERS, STATUS_OPTIONS } from "./Constants";
+import { toast } from "react-toastify";
+import moment from "moment";
+import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
+import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
+import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
+
+export default function RepairersDetails() {
+    const navigate = useNavigate();
+    const { repairer_id } = useParams();
+    const today = moment().format('YYYY-MM-DD');
+    const [status, setStatus] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [rows, setRows] = useState([]);
+    const [imeiNumber, setIMEINumber] = useState('');
+    const [from, setFrom] = useState(today);
+    const [to, setTo] = useState(today);
+    const [selectAllDates, setSelectAllDates] = useState(false);
+
+    const handleBack = () => {
+        navigate(-1);
+    };
+
+    const handleDateChange = (value, setDate) => {
+        const today = moment().format('YYYY-MM-DD');
+        if (value > today) {
+            setDate(today);
+        } else {
+            setDate(value);
+        }
+    };
+    const getRepairerDetailsCallback = (response) => {
+        setLoading(false);
+        if (response.status === 200) {
+            const repairer = response.data;
+            const repairedFormattedRows = repairer.products.map((item) => ({
+                "Repair Started": item.repair_started_at
+                    ? moment(item.repair_started_at).format("ll")
+                    : "-",
+                "Repair Completed": item.repair_completed_at
+                    ? moment(item.repair_completed_at).format("ll")
+                    : "-",
+                IMEI: item.imei_number,
+                Model: item.model.name,
+                "Part Cost": item.part_cost,
+                "Repairer Cost": item.repairer_cost,
+                id: item._id
+            }));
+            console.log("Formatted Repairer Rows:", repairedFormattedRows);
+            setRows(repairedFormattedRows);
+        } else {
+            toast.error("Failed to fetch repairer details");
+        }
+    };
+    const getRepairerDetails = ({ imeiNumber, status, from, to, selectAllDates } = {}) => {
+        if (!repairer_id) return;
+        setLoading(true);
+        let url = `${API_URLS.USERS}/${repairer_id}?`;
+        if (status === "AVAILABLE & REPAIRED") {
+            url += "&status=AVAILABLE&is_repaired=true";
+        } else if (status === "IN_REPAIRING") {
+            url += "&status=IN_REPAIRING";
+        }
+
+        if (imeiNumber) url += `&imei_number=${imeiNumber}`;
+
+        if (!selectAllDates) {
+            if (from) url += `&from=${new Date(from).getTime()}`;
+            if (to) url += `&to=${new Date(to).getTime()}`;
+        }
+        apiCall({
+            method: "GET",
+            // url: `${API_URLS.USERS}/${repairer_id}`,
+            url: url,
+            data: {},
+            callback: getRepairerDetailsCallback,
+            setLoading: setLoading
+        });
+    };
+
+    useEffect(() => {
+        getRepairerDetails({ from, to, selectAllDates });
+    }, [repairer_id]);
+    const handleSearchFilter = () => {
+        getRepairerDetails({ imeiNumber, status, from, to, selectAllDates });
+    };
+    const handleResetFilter = () => {
+        setIMEINumber('');
+        setStatus("");
+        setFrom(today);
+        setTo(today);
+        setSelectAllDates(false);
+        getRepairerDetails({ from: today, to: today });
+    };
+
+    return (
+        <div>
+            {loading && <Spinner />}
+            <CustomHeaderComponent
+                name="Repairer Details"
+                label="Back"
+                icon="fa fa-arrow-left"
+                onClick={handleBack}
+                buttonClassName="py-1 px-3 text-sm font-bold"
+            />
+            <div className="flex items-center gap-4 mt-4">
+                <input
+                    type="text"
+                    placeholder="Enter IMEI NO"
+                    value={imeiNumber}
+                    onChange={(e) => setIMEINumber(e.target.value)}
+                    className="border p-2 rounded w-[180px]"
+                />
+                <DropdownCompoent
+                    placeholder="Select status"
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
+                    options={STATUS_OPTIONS}
+                    className="w-[190px] mt-3"
+                />
+
+                <label className="flex items-center gap-2 text-sm">
+                    <input
+                        type="checkbox"
+                        checked={selectAllDates}
+                        onChange={(e) => setSelectAllDates(e.target.checked)}
+                    />
+                    All Dates
+                </label>
+                <InputComponent
+                    type="date"
+                    inputClassName="w-[180px] mb-5"
+                    value={from}
+                    onChange={(e) => handleDateChange(e.target.value, setFrom)}
+                    disabled={selectAllDates}
+                />
+                <InputComponent
+                    type="date"
+                    inputClassName="w-[180px] mb-5"
+                    value={to}
+                    onChange={(e) => handleDateChange(e.target.value, setTo)}
+                    disabled={selectAllDates}
+                />
+                <PrimaryButtonComponent
+                    label="Search"
+                    icon="fa fa-search"
+                    onClick={handleSearchFilter}
+                />
+                <PrimaryButtonComponent
+                    label="Reset"
+                    icon="fa fa-refresh"
+                    onClick={handleResetFilter}
+                />
+            </div>
+
+            <div className="h-[60vh] mt-4">
+                <CustomTableCompoent
+                    headers={REPAIRER_DETAILS_HEADERS}
+                    rows={rows}
+                />
+            </div>
+
+        </div>
+    );
+}
