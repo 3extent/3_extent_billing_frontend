@@ -10,6 +10,7 @@ import InputComponent from "../../CustomComponents/InputComponent/InputComponent
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import moment from "moment";
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
+import { exportToExcel } from "../../../Util/Utility";
 
 
 export default function SupplierDetails() {
@@ -143,6 +144,10 @@ export default function SupplierDetails() {
         getSupplierDetails({ from, to, });
     }
 
+    const handleExportToExcel = () => {
+            exportToExcel(rows, "SupplierDetails.xlsx");
+        };
+
     return (
         <div>
             {loading && <Spinner />}
@@ -193,39 +198,48 @@ export default function SupplierDetails() {
                 />
             </div>
 
-            <div className='flex items-center gap-4'>
-                <label className='flex items-center gap-2 text-sm'>
-                    <input
-                        type="checkbox"
-                        checked={selectAllDates}
-                        onChange={(e) => setSelectAllDates(e.target.checked)}
+            <div className="flex justify-between items-center ">
+                <div className='flex items-center gap-4'>
+                    <label className='flex items-center gap-2 text-sm'>
+                        <input
+                            type="checkbox"
+                            checked={selectAllDates}
+                            onChange={(e) => setSelectAllDates(e.target.checked)}
+                        />
+                        All Data
+                    </label>
+                    <InputComponent
+                        type="date"
+                        inputClassName="w-[190px] mb-5"
+                        value={from}
+                        onChange={(e) => handleDateChange(e.target.value, setFrom)}
+                        disabled={selectAllDates}
                     />
-                    All Data
-                </label>
-                <InputComponent
-                    type="date"
-                    inputClassName="w-[190px] mb-5"
-                    value={from}
-                    onChange={(e) => handleDateChange(e.target.value, setFrom)}
-                    disabled={selectAllDates}
-                />
-                <InputComponent
-                    type="date"
-                    inputClassName="w-[190px] mb-5"
-                    value={to}
-                    onChange={(e) => handleDateChange(e.target.value, setTo)}
-                    disabled={selectAllDates}
-                />
-                <PrimaryButtonComponent
-                    label="Search"
-                    icon="fa fa-search"
-                    onClick={handleSearchFilter}
-                />
-                <PrimaryButtonComponent
-                    label="Reset"
-                    icon="fa fa-refresh"
-                    onClick={handleResetFilter}
-                />
+                    <InputComponent
+                        type="date"
+                        inputClassName="w-[190px] mb-5"
+                        value={to}
+                        onChange={(e) => handleDateChange(e.target.value, setTo)}
+                        disabled={selectAllDates}
+                    />
+                    <PrimaryButtonComponent
+                        label="Search"
+                        icon="fa fa-search"
+                        onClick={handleSearchFilter}
+                    />
+                    <PrimaryButtonComponent
+                        label="Reset"
+                        icon="fa fa-refresh"
+                        onClick={handleResetFilter}
+                    />
+                </div>
+                <div>
+                    <PrimaryButtonComponent
+                        label="Export to Excel"
+                        icon="fa fa-file-excel-o"
+                     onClick={handleExportToExcel}
+                    />
+                </div>
             </div>
             <CustomTableCompoent
                 maxHeight="h-[60vh]"
