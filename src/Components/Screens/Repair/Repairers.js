@@ -38,9 +38,9 @@ function Repairers() {
                 "State": repairer.state,
                 "Address": repairer.address,
                 "Total Part Cost": repairer.total_part_cost,
-                "Total Repairer Cost": repairer.total_repairer_cost,
+                "Total Repairer Cost": repairer.payable_amount,
                 "Total Paid": repairer.total_paid,
-                "Total Repairer Remaining": repairer.total_remaining,
+                "Total Repairer Remaining": repairer.pending_amount,
                 "Actions": (
                     <div className="flex gap-2 justify-end">
                         <div
@@ -115,20 +115,20 @@ function Repairers() {
         const paidTotal = cash + online + cardAmt;
 
         const pending =
-            (selectedRepairer.total_repairer_cost || 0) -
+            (selectedRepairer.payable_amount) -
             ((selectedRepairer.total_paid || 0) + paidTotal);
 
         setPendingAmount(pending);
     }, [cashAmount, onlineAmount, card, selectedRepairer]);
     const handlePayClick = (repairer) => {
+        const payableAmount = Number(repairer.payable_amount || 0);
+        const totalPaid = Number(repairer.total_paid || 0);
         setSelectedRepairer({
             ...repairer,
-            total_repairer_cost: Number(repairer.total_repairer_cost),
-            // total_part_cost: Number(repairer.total_part_cost),
+            payable_amount: payableAmount,
+            total_repairer_cost: Number(repairer.total_repairer_cost || 0),
         });
-
-        const pending =
-            (repairer.total_repairer_cost || 0) - (repairer.total_paid || 0);
+        const pending = payableAmount - (repairer.total_paid || 0);
 
         setPendingAmount(pending);
         setCashAmount("");
@@ -173,9 +173,17 @@ function Repairers() {
             toast.error("Please enter payment amount");
             return;
         }
+        console.log("Selected Repairer:", selectedRepairer.name);
+        console.log("Cash Amount Entered:", cash);
+        console.log("Online Amount Entered:", online);
+        console.log("Card Amount Entered:", cardAmt);
+        console.log("Total Paid Entered:", paidTotal);
+        console.log("Repairer's Total Payable Amount:", selectedRepairer.payable_amount);
+        console.log("Repairer's Total Paid Already:", selectedRepairer.total_paid);
+        console.log("Calculated Pending Amount:", pendingAmount);
 
         const payload = {
-            payable_amount: selectedRepairer.total_repairer_cost,
+            payable_amount: selectedRepairer.payable_amount,
             paid_amount: [
                 { method: "cash", amount: cash },
                 { method: "online", amount: online },
@@ -183,6 +191,7 @@ function Repairers() {
             ],
             total_part_cost: selectedRepairer.total_part_cost,
         };
+        console.log("Repairer Payment Payload:", payload);
         apiCall({
             method: "PUT",
             url: `${API_URLS.USERS}/payment/${selectedRepairer._id}`,
@@ -241,7 +250,8 @@ function Repairers() {
             </div>
             {showPaymentPopup && selectedRepairer && (
                 <CustomPopUpComponet
-                    totalAmount={selectedRepairer.total_repairer_cost || 0}
+                    totalAmount={selectedRepairer.payable_amount}
+                    // pendingAmount={selectedRepairer.payable_amount}
                     pendingAmount={pendingAmount}
                     cashAmount={cashAmount}
                     onlineAmount={onlineAmount}
