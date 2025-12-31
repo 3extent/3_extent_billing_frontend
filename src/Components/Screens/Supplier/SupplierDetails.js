@@ -99,9 +99,6 @@ export default function SupplierDetails() {
         if (grade) {
             url += `&grade=${grade}`
         }
-        if (modelName) {
-            url += `&modelName=${modelName}`
-        }
         if (brandName) {
             url += `&brandName=${brandName}`
         }
