@@ -22,6 +22,16 @@ function Supplier() {
     const [card, setCard] = useState("");
     const [pendingAmount, setPendingAmount] = useState(0);
 
+    useEffect(() => {
+         if (!selectedSupplier) return;
+        const cash = Number(cashAmount || 0);
+        const online = Number(onlineAmount || 0);
+        const cardAmt = Number(card || 0);
+        const paidTotal = cash + online + cardAmt;
+        const pending = pendingAmount - paidTotal;
+        setPendingAmount(pending);
+    }, [cashAmount, card, onlineAmount]);
+
     const navigateAddSupplier = () => {
         navigate("/addsupplier")
     }
@@ -35,9 +45,9 @@ function Supplier() {
                 "State": supplier.state,
                 "Balance": supplier.balance,
                 "Supplier Type": supplier.type,
-                "Total Supplier Cost": supplier.total_supplier_cost || 0,
-                "Total Paid": supplier.total_paid || 0,
-                "Total Remaining": (supplier.total_supplier_cost || 0) - (supplier.total_paid || 0),
+                "Total Supplier Cost": supplier.total_supplier_cost,
+                "Total Paid": supplier.total_paid,
+                "Total Remaining":supplier.total_supplier_Remaining,
                 "Action": (
                     <div className="flex gap-2 justify-end">
                         <div
@@ -53,14 +63,13 @@ function Supplier() {
                         <PrimaryButtonComponent
                             label="Pay"
                             buttonClassName="py-1 px-3 text-[12px] font-semibold"
-                            onClick={(e) => {
-                                e.stopPropagation();
+                            onClick={(event) => {
+                                event.stopPropagation();
                                 handlePayClick(supplier);
                             }}
                         />
                     </div>
                 ),
-
                 id: supplier._id
             }));
             setRows(supplierFormattedRows);
@@ -87,6 +96,8 @@ function Supplier() {
     useEffect(() => {
         getSupplierAllData({});
     }, [getSupplierAllData]);
+
+
     const handleSearchFilter = () => {
         getSupplierAllData({ supplierName, contactNo });
     }
@@ -97,7 +108,7 @@ function Supplier() {
     }
     const handlePayClick = (supplier) => {
         setSelectedSupplier(supplier);
-        setPendingAmount((supplier.total_supplier_cost || 0) - (supplier.total_paid || 0));
+        // setPendingAmount((supplier.total_supplier_cost || 0) - (supplier.total_paid || 0));
         setCashAmount("");
         setOnlineAmount("");
         setCard("");
@@ -105,11 +116,12 @@ function Supplier() {
     };
 
     const handleCancelPopup = () => {
-        setShowPaymentPopup(false);
-        setSelectedSupplier(null);
+
+        // setSelectedSupplier("");
         setCashAmount("");
         setOnlineAmount("");
         setCard("");
+        setShowPaymentPopup(false);
     };
     const handleRowClick = (row) => {
         navigate(`/supplierDetails/${row.id}`);

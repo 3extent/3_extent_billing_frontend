@@ -172,7 +172,7 @@ function ListOfProducts() {
         setGrade('');
         setIMEINumber('');
         setBrandName('');
-        setStatus();
+        setStatus(STATUS_OPTIONS[0]);
         setFrom(fromDate);
         setTo(toDate);
         setSelectAllDates(false);
