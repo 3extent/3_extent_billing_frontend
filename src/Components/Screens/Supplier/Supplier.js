@@ -41,17 +41,26 @@ function Supplier() {
     const navigateAddSupplier = () => {
         navigate("/addsupplier")
     }
+
+
+
     const getSupplierCallBack = useCallback((response) => {
         console.log('response: ', response);
+
         if (response.status === 200) {
-            const supplierFormattedRows = response.data.users.map((supplier) => ({
+            const supplierFormattedRows = response.data.users.map((supplier) => {
+                const cash = Number(supplier.paid_amount.find(p => p.method === "cash")?.amount || 0);
+                const online = Number(supplier.paid_amount.find(p => p.method === "online")?.amount || 0);
+                const card = Number(supplier.paid_amount.find(p => p.method === "card")?.amount || 0);
+                const total_paid = cash + online + card;
+                return {
                 "Supplier Name": supplier.name,
                 "Contact No": supplier.contact_number,
                 "GST No": supplier.gst_number,
                 "State": supplier.state,
                 "Supplier Type": supplier.type,
                 "Total Supplier Cost": supplier.payable_amount,
-                "Total Supplier Paid": supplier.total_paid,
+                "Total Supplier Paid": total_paid,
                 "Total Supplier Remaining": supplier.pending_amount,
                 "Action": (
                     <div className="flex gap-2 justify-end">
@@ -76,7 +85,8 @@ function Supplier() {
                     </div>
                 ),
                 id: supplier._id
-            }));
+            }
+            });
             supplierFormattedRows.push({
                 _id: "total",
                 "Bill id": "Total",
@@ -88,7 +98,7 @@ function Supplier() {
                 "Total Supplier Cost": Number(response.data.payable_amount_of_all_users || 0).toLocaleString("en-IN"),
                 "Total Supplier Paid": Number(response.data.paid_amount_of_all_users || 0).toLocaleString("en-IN"),
                 "Total Supplier Remaining": Number(response.data.pending_amount_of_all_users || 0).toLocaleString("en-IN"),
-                "Action":""
+                "Action": ""
             });
             setRows(supplierFormattedRows);
         } else {
