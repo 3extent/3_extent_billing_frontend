@@ -26,6 +26,7 @@ export default function RepairersDetails() {
     const [from, setFrom] = useState(fromDate);
     const [to, setTo] = useState(toDate);
     const [selectAllDates, setSelectAllDates] = useState(false);
+    const [showTotalRow, setShowTotalRow] = useState(false);
 
     const handleBack = () => {
         navigate(-1);
@@ -58,6 +59,12 @@ export default function RepairersDetails() {
                 Status: item.status,
                 id: item._id
             }));
+            repairedFormattedRows.push({
+                _id: "total",
+                "Purchase Price": "",
+                "Part Cost ": response.data.part_cost_of_all_products,
+                "Repairer Cost": response.data.repairer_cost_of_all_products
+            });
             console.log("Formatted Repairer Rows:", repairedFormattedRows);
             setRows(repairedFormattedRows);
         } else {
@@ -169,9 +176,14 @@ export default function RepairersDetails() {
                 <CustomTableCompoent
                     headers={REPAIRER_DETAILS_HEADERS}
                     rows={rows}
+                    showTotalRow={showTotalRow}
                 />
             </div>
-
+            <div className="flex justify-end">
+                <button className="rounded-full" onClick={() => setShowTotalRow(!showTotalRow)}>
+                    <i className="fa fa-circle-o" aria-hidden="true"></i>
+                </button>
+            </div>
         </div>
     );
 }
