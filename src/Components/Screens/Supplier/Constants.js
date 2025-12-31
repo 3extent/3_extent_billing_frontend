@@ -9,5 +9,7 @@ export const SINGLE_SUPPLIER_DETAILS = [
     "Model Name",
     "Brand Name",
     "Purchase Price", 
-    "grade",
+    "Grade",
+    "Qc-Remark",
+    "Status"
 ];

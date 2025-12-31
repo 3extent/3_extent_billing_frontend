@@ -74,17 +74,19 @@ export default function SupplierDetails() {
                 "Model Name": product.model?.name,
                 "Brand Name": product.model?.brand?.name,
                 "Purchase Price": product.purchase_price,
-                "grade": product.grade,
+                "Grade": product.grade,
+                "Qc-Remark": product.qc_remark,
+                "Status": product.status,
                 id: product._id
             }));
 
             setRows(formattedRows);
         } else {
-             toast.error("Failed to fetch supplier details");
+            toast.error("Failed to fetch supplier details");
         }
     };
 
-    const getSupplierDetails = ({ imeiNumber, modelName,grade,brandName,status, from, to, selectAllDates } = {}) => {
+    const getSupplierDetails = ({ imeiNumber, modelName, grade, brandName, status, from, to, selectAllDates } = {}) => {
         if (!supplier_id) return;
         setLoading(true);
         let url = `${API_URLS.USERS}/${supplier_id}?`;
@@ -130,7 +132,7 @@ export default function SupplierDetails() {
         }
     };
     const handleSearchFilter = () => {
-        getSupplierDetails({ imeiNumber, modelName, brandName,grade,status, from, to, selectAllDates });
+        getSupplierDetails({ imeiNumber, modelName, brandName, grade, status, from, to, selectAllDates });
     }
     const handleResetFilter = () => {
         setModelName('');
