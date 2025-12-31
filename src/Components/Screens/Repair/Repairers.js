@@ -35,7 +35,7 @@ function Repairers() {
                 "Repairer Name": repairer.name,
                 "Firm Name": repairer.firm_name,
                 "GST Number": repairer.gst_number,
-                "Contact": repairer.contact_number,
+                "Contact": repairer.contact_number, 
                 "State": repairer.state,
                 "Address": repairer.address,
                 "Total Part Cost": repairer.total_part_cost,

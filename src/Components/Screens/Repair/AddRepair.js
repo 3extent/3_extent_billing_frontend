@@ -223,7 +223,7 @@ function AddRepair() {
     };
     const getRepairersCallback = (response) => {
         if (response.status === 200) {
-            const data = response.data.map((item) => ({
+            const data = response.data.users.map((item) => ({
                 name: item.name,
                 contact: item.contact_number,
             }));

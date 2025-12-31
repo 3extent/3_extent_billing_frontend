@@ -174,7 +174,7 @@ function SingleProductStockIn() {
   const getSupplierCallBack = (response) => {
     console.log('response: ', response);
     if (response.status === 200) {
-      const suppliers = response.data.map(Supplier => Supplier.name);
+      const suppliers = response.data.users.map(Supplier => Supplier.name);
       setSupplierNameOPtions(suppliers);
     } else {
       console.log("Error");
