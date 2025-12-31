@@ -37,10 +37,10 @@ function Repairers() {
                 "Contact": repairer.contact_number,
                 "State": repairer.state,
                 "Address": repairer.address,
-                "Total Part Cost": repairer.total_part_cost || 0,
-                "Total Repairer Cost": repairer.total_repairer_cost || 0,
-                "Total Paid": repairer.total_paid || 0,
-                "Total Remaining": repairer.total_part_cost || 0,
+                "Total Part Cost": repairer.total_part_cost,
+                "Total Repairer Cost": repairer.total_repairer_cost,
+                "Total Paid": repairer.total_paid,
+                "Total Repairer Remaining": repairer.total_remaining,
                 "Actions": (
                     <div className="flex gap-2 justify-end">
                         <div
@@ -105,22 +105,90 @@ function Repairers() {
         getAllRepairers();
     }, [getAllRepairers]);
 
-    const handleCancelPopup = () => {
-        console.log("Cancel payment popup");
-        setShowPaymentPopup(false);
-        setCashAmount("");
-        setOnlineAmount("");
-        setCard("");
-        setSelectedRepairer(null);
-    };
+    useEffect(() => {
+        if (!selectedRepairer) return;
+
+        const cash = Number(cashAmount || 0);
+        const online = Number(onlineAmount || 0);
+        const cardAmt = Number(card || 0);
+
+        const paidTotal = cash + online + cardAmt;
+
+        const pending =
+            (selectedRepairer.total_repairer_cost || 0) -
+            ((selectedRepairer.total_paid || 0) + paidTotal);
+
+        setPendingAmount(pending);
+    }, [cashAmount, onlineAmount, card, selectedRepairer]);
     const handlePayClick = (repairer) => {
-        console.log("Pay clicked for repairer:", repairer);
-        setSelectedRepairer(repairer);
-        setPendingAmount((repairer.total_repairer_cost || 0) - (repairer.total_paid || 0));
+        setSelectedRepairer({
+            ...repairer,
+            total_repairer_cost: Number(repairer.total_repairer_cost),
+            // total_part_cost: Number(repairer.total_part_cost),
+        });
+
+        const pending =
+            (repairer.total_repairer_cost || 0) - (repairer.total_paid || 0);
+
+        setPendingAmount(pending);
         setCashAmount("");
         setOnlineAmount("");
         setCard("");
         setShowPaymentPopup(true);
+    };
+
+    const handleCancelPopup = () => {
+        setShowPaymentPopup(false);
+        setSelectedRepairer(null);
+
+        setCashAmount("");
+        setOnlineAmount("");
+        setCard("");
+
+        setPendingAmount(0);
+    };
+    const handleRepairerPaymentCallback = (response) => {
+        if (response.status === 200) {
+            toast.success("Repairer payment updated successfully!");
+            handleCancelPopup();
+            getAllRepairers();
+        } else {
+            toast.error("Repairer payment failed");
+        }
+    };
+
+    const handleSaveRepairerPayment = () => {
+        if (!selectedRepairer?._id) {
+            toast.error("Repairer not selected");
+            return;
+        }
+
+        const cash = Number(cashAmount || 0);
+        const online = Number(onlineAmount || 0);
+        const cardAmt = Number(card || 0);
+
+        const paidTotal = cash + online + cardAmt;
+
+        if (paidTotal <= 0) {
+            toast.error("Please enter payment amount");
+            return;
+        }
+
+        const payload = {
+            payable_amount: selectedRepairer.total_repairer_cost,
+            paid_amount: [
+                { method: "cash", amount: cash },
+                { method: "online", amount: online },
+                { method: "card", amount: cardAmt },
+            ],
+            total_part_cost: selectedRepairer.total_part_cost,
+        };
+        apiCall({
+            method: "PUT",
+            url: `${API_URLS.USERS}/payment/${selectedRepairer._id}`,
+            data: payload,
+            callback: handleRepairerPaymentCallback,
+        });
     };
     const handleRowClick = (row) => {
         navigate(`/repairerDetails/${row.id}`);
@@ -174,7 +242,6 @@ function Repairers() {
             {showPaymentPopup && selectedRepairer && (
                 <CustomPopUpComponet
                     totalAmount={selectedRepairer.total_repairer_cost || 0}
-                    //    totalAmount={50000}
                     pendingAmount={pendingAmount}
                     cashAmount={cashAmount}
                     onlineAmount={onlineAmount}
@@ -183,8 +250,10 @@ function Repairers() {
                     setOnlineAmount={setOnlineAmount}
                     setCard={setCard}
                     handleCancelButton={handleCancelPopup}
+                    handleSaveButton={handleSaveRepairerPayment}
                 />
             )}
+
         </div>
     )
 } export default Repairers;

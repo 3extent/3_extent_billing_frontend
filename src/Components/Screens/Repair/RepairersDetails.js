@@ -50,10 +50,12 @@ export default function RepairersDetails() {
                 "Repair Completed": item.repair_completed_at
                     ? moment(item.repair_completed_at).format("ll")
                     : "-",
-                IMEI: item.imei_number,
+                "IMEI NO": item.imei_number,
                 Model: item.model.name,
+                "Purchase Price": item.purchase_price,
                 "Part Cost": item.part_cost,
                 "Repairer Cost": item.repairer_cost,
+                Status: item.status,
                 id: item._id
             }));
             console.log("Formatted Repairer Rows:", repairedFormattedRows);
