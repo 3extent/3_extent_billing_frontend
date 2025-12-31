@@ -68,9 +68,9 @@ function Repair() {
             }));
             repairFormattedRows.push({
                 _id: "total",
-                "Purchase Price": "",
-                "Part Cost": response.data.part_cost_of_all_products,
-                "Repairer Cost": response.data.repairer_cost_of_all_products
+                "Purchase Price": Number(response.data.purchase_total_of_all_products || 0).toLocaleString("en-IN"),
+                "Part Cost": Number(response.data.part_cost_of_all_products || 0).toLocaleString("en-IN"),
+                "Repairer Cost": Number(response.data.repairer_cost_of_all_products || 0).toLocaleString("en-IN"),
             });
             console.log("Formatted Rows:", repairFormattedRows);
             setRows(repairFormattedRows);

@@ -43,7 +43,7 @@ export default function RepairersDetails() {
     const getRepairerDetailsCallback = (response) => {
         setLoading(false);
         if (response.status === 200) {
-            const repairer = response.data;
+            const repairer = response.data.user;
             const repairedFormattedRows = repairer.products.map((item) => ({
                 "Repair Started": item.repair_started_at
                     ? moment(item.repair_started_at).format("ll")
@@ -61,9 +61,9 @@ export default function RepairersDetails() {
             }));
             repairedFormattedRows.push({
                 _id: "total",
-                "Purchase Price": "",
-                "Part Cost ": response.data.part_cost_of_all_products,
-                "Repairer Cost": response.data.repairer_cost_of_all_products
+                "Purchase Price": Number(response.data.purchase_total_of_all_products || 0).toLocaleString("en-IN"),
+                "Part Cost ": Number(response.data.part_cost_of_all_products || 0).toLocaleString("en-IN"),
+                "Repairer Cost": Number(response.data.repairer_cost_of_all_products || 0).toLocaleString("en-IN"),
             });
             console.log("Formatted Repairer Rows:", repairedFormattedRows);
             setRows(repairedFormattedRows);

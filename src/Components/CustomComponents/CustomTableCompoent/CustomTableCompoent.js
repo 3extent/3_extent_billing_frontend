@@ -82,18 +82,16 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
                             <tbody>
                                 <tr>
                                     {tableHeaders.map((header, index) => (
-                                        <td
-                                            key={index}
-                                            className="px-4 py-2 text-left "
-                                        >
+                                        <td key={index} className="px-4 py-2 text-left">
                                             {header === "Bill id" || header === "Sr.No"
                                                 ? "Total"
-                                                : ["Total Amount", "Remaining Amount", "Profit", "Total Products", "Purchase Price", "Sale Price", "Rate", "Part Cost", "Repairer Cost", "Total Paid", "Total Repairer Remaining", "Total Part Cost", "Total Repairer Cost", "Total Supplier Paid", "Total Supplier Remaining", "Supplier Purchase Price"].includes(
-                                                    header
-                                                )
-                                                    ? totalRow[header].toLocaleString()
+                                                : ["Total Amount", "Remaining Amount", "Profit", "Total Products", "Purchase Price", "Sale Price", "Rate", "Part Cost", "Repairer Cost", "Total Paid", "Total Repairer Remaining", "Total Part Cost", "Total Repairer Cost", "Total Supplier Paid", "Total Supplier Remaining", "Supplier Purchase Price"].includes(header)
+                                                    ? totalRow[header] != null
+                                                        ? totalRow[header].toLocaleString()
+                                                        : "-"
                                                     : ""}
                                         </td>
+
                                     ))}
                                 </tr>
                             </tbody>

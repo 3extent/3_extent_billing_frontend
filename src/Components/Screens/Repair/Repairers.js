@@ -35,7 +35,7 @@ function Repairers() {
                 "Repairer Name": repairer.name,
                 "Firm Name": repairer.firm_name,
                 "GST Number": repairer.gst_number,
-                "Contact": repairer.contact_number, 
+                "Contact": repairer.contact_number,
                 "State": repairer.state,
                 "Address": repairer.address,
                 "Total Part Cost": repairer.total_part_cost,
@@ -70,10 +70,10 @@ function Repairers() {
             RepairedFormattedRows.push({
                 _id: "total",
                 "Repairer Name": "Total",
-                "Total Part Cost": response.data.part_cost_of_all_users || 0,
-                "Total Repairer Cost": response.data.payable_amount_of_all_users || 0,
-                "Total Paid": response.data.paid_amount_of_all_users || 0,
-                "Total Repairer Remaining": response.data.pending_amount_of_all_users || 0
+                "Total Part Cost": Number(response.data.part_cost_of_all_users || 0).toLocaleString("en-IN"),
+                "Total Repairer Cost": (response.data.payable_amount_of_all_users || 0).toLocaleString("en-IN"),
+                "Total Paid": Number(response.data.paid_amount_of_all_users || 0).toLocaleString("en-IN"),
+                "Total Repairer Remaining": Number(response.data.pending_amount_of_all_users || 0).toLocaleString("en-IN"),
             });
             setRows(RepairedFormattedRows);
             console.log("Formatted Rows:", RepairedFormattedRows);
@@ -131,13 +131,13 @@ function Repairers() {
     }, [cashAmount, onlineAmount, card, selectedRepairer]);
     const handlePayClick = (repairer) => {
         const payableAmount = Number(repairer.payable_amount || 0);
-        const totalPaid = Number(repairer.total_paid || 0);
+        // const totalPaid = Number(repairer.total_paid || 0);
         setSelectedRepairer({
             ...repairer,
             payable_amount: payableAmount,
             total_repairer_cost: Number(repairer.total_repairer_cost || 0),
         });
-        const pending = payableAmount - (repairer.total_paid || 0);
+        const pending = payableAmount - (repairer.paid_amount || 0);
 
         setPendingAmount(pending);
         setCashAmount("");
