@@ -48,7 +48,7 @@ function ListOfProducts() {
     };
     const getSuppliersCallBack = (response) => {
         if (response.status === 200) {
-            const suppliers = response.data.map(supplier => supplier.name);
+            const suppliers = response.data.users.map(supplier => supplier.name);
             setSupplierOptions(suppliers);
         } else {
             console.log("Error fetching suppliers");
@@ -57,7 +57,7 @@ function ListOfProducts() {
     const getProductsCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
-            const productFormattedRows = response.data.map((product) => ({
+            const productFormattedRows = response.data.products.map((product) => ({
                 "Date": moment(product.created_at).format('ll'),
                 "IMEI NO": product.imei_number,
                 "Model": typeof product.model === 'object' ? product.model.name : product.model,
