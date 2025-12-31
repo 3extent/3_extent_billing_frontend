@@ -12,7 +12,6 @@ import moment from "moment";
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import { exportToExcel } from "../../../Util/Utility";
 
-
 export default function SupplierDetails() {
     const [imeiNumber, setIMEINumber] = useState();
     const [grade, setGrade] = useState();
@@ -33,6 +32,8 @@ export default function SupplierDetails() {
 
     const [loading, setLoading] = useState(false);
     const [rows, setRows] = useState([]);
+
+    const [showTotalRow, setShowTotalRow] = useState(false);
 
     const handleBack = () => {
         navigate(-1);
@@ -68,7 +69,7 @@ export default function SupplierDetails() {
     const getSupplierDetailsCallback = (response) => {
         setLoading(false);
         if (response.status === 200) {
-            const supplier = response.data;
+            const supplier = response.data.user;
             const formattedRows = supplier.products.map((product) => ({
                 "Date": moment(product.created_at).format('ll'),
                 "IMEI Number": product.imei_number,
@@ -80,6 +81,18 @@ export default function SupplierDetails() {
                 "Status": product.status,
                 id: product._id
             }));
+            formattedRows.push({
+                _id: "total",
+                "Bill id": "Total",
+                "Date": "",
+                "IMEI Number": "",
+                "Model Name": "",
+                "Brand Name": "",
+                "Purchase Price": Number(response.data.purchase_total_of_all_products|| 0).toLocaleString("en-IN"),
+                "Grade": "",
+                "Qc-Remark": "",
+                "Status": ""
+            });
 
             setRows(formattedRows);
         } else {
@@ -119,8 +132,6 @@ export default function SupplierDetails() {
         });
     };
 
-
-
     const handleDateChange = (value, setDate) => {
         const today = moment().format('YYYY-MM-DD');
         if (value > today) {
@@ -142,8 +153,8 @@ export default function SupplierDetails() {
     }
 
     const handleExportToExcel = () => {
-            exportToExcel(rows, "SupplierDetails.xlsx");
-        };
+        exportToExcel(rows, "SupplierDetails.xlsx");
+    };
 
     return (
         <div>
@@ -234,7 +245,7 @@ export default function SupplierDetails() {
                     <PrimaryButtonComponent
                         label="Export to Excel"
                         icon="fa fa-file-excel-o"
-                     onClick={handleExportToExcel}
+                        onClick={handleExportToExcel}
                     />
                 </div>
             </div>
@@ -242,7 +253,13 @@ export default function SupplierDetails() {
                 maxHeight="h-[60vh]"
                 headers={SINGLE_SUPPLIER_DETAILS}
                 rows={rows}
+                showTotalRow={showTotalRow}
             />
+            <div className="flex justify-end">
+                <button className="rounded-full" onClick={() => setShowTotalRow(!showTotalRow)}>
+                    <i className="fa fa-circle-o" aria-hidden="true"></i>
+                </button>
+            </div>
         </div>
     );
 }

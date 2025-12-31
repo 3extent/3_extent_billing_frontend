@@ -8,6 +8,7 @@ import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { API_URLS } from "../../../Util/AppConst";
 import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
+import { toast } from "react-toastify";
 function Supplier() {
     const [rows, setRows] = useState([]);
     const navigate = useNavigate();
@@ -22,15 +23,20 @@ function Supplier() {
     const [card, setCard] = useState("");
     const [pendingAmount, setPendingAmount] = useState(0);
 
+    const [showTotalRow, setShowTotalRow] = useState(false);
+
     useEffect(() => {
-         if (!selectedSupplier) return;
+        if (!selectedSupplier) return;
+
         const cash = Number(cashAmount || 0);
         const online = Number(onlineAmount || 0);
         const cardAmt = Number(card || 0);
+
         const paidTotal = cash + online + cardAmt;
-        const pending = pendingAmount - paidTotal;
+
+        const pending = selectedSupplier.pending_amount - paidTotal;
         setPendingAmount(pending);
-    }, [cashAmount, card, onlineAmount]);
+    }, [cashAmount, card, onlineAmount, selectedSupplier]);
 
     const navigateAddSupplier = () => {
         navigate("/addsupplier")
@@ -38,16 +44,15 @@ function Supplier() {
     const getSupplierCallBack = useCallback((response) => {
         console.log('response: ', response);
         if (response.status === 200) {
-            const supplierFormattedRows = response.data.map((supplier) => ({
+            const supplierFormattedRows = response.data.users.map((supplier) => ({
                 "Supplier Name": supplier.name,
                 "Contact No": supplier.contact_number,
                 "GST No": supplier.gst_number,
                 "State": supplier.state,
-                "Balance": supplier.balance,
                 "Supplier Type": supplier.type,
-                "Total Supplier Cost": supplier.total_supplier_cost,
-                "Total Paid": supplier.total_paid,
-                "Total Remaining":supplier.total_supplier_Remaining,
+                "Total Supplier Cost": supplier.payable_amount,
+                "Total Supplier Paid": supplier.total_paid,
+                "Total Supplier Remaining": supplier.pending_amount,
                 "Action": (
                     <div className="flex gap-2 justify-end">
                         <div
@@ -72,6 +77,19 @@ function Supplier() {
                 ),
                 id: supplier._id
             }));
+            supplierFormattedRows.push({
+                _id: "total",
+                "Bill id": "Total",
+                "Supplier Name": "",
+                "Contact No": "",
+                "GST No": "",
+                "State": "",
+                "Supplier Type": "",
+                "Total Supplier Cost": Number(response.data.payable_amount_of_all_users || 0).toLocaleString("en-IN"),
+                "Total Supplier Paid": Number(response.data.paid_amount_of_all_users || 0).toLocaleString("en-IN"),
+                "Total Supplier Remaining": Number(response.data.pending_amount_of_all_users || 0).toLocaleString("en-IN"),
+                "Action":""
+            });
             setRows(supplierFormattedRows);
         } else {
             console.log("Error");
@@ -108,21 +126,57 @@ function Supplier() {
     }
     const handlePayClick = (supplier) => {
         setSelectedSupplier(supplier);
-        // setPendingAmount((supplier.total_supplier_cost || 0) - (supplier.total_paid || 0));
-        setCashAmount("");
-        setOnlineAmount("");
-        setCard("");
         setShowPaymentPopup(true);
     };
 
     const handleCancelPopup = () => {
-
-        // setSelectedSupplier("");
         setCashAmount("");
         setOnlineAmount("");
         setCard("");
+        setPendingAmount(Number(selectedSupplier.pending_amount) || 0);
         setShowPaymentPopup(false);
     };
+
+    const handleSupplierPaymentCallback = (response) => {
+        if (response.status === 200) {
+            toast.success("Payment supplier updated successfully!", {
+                position: "top-center",
+                autoClose: 2000,
+            });
+            handleCancelPopup();
+            getSupplierAllData();
+        }
+    };
+
+    const handleSavePayment = () => {
+        if (!selectedSupplier) return;
+
+        const cash = Number(cashAmount || 0);
+        const online = Number(onlineAmount || 0);
+        const cardAmt = Number(card || 0);
+        const paidTotal = cash + online + cardAmt;
+        const updatedPayment = {
+            payable_amount: selectedSupplier.payable_amount,
+            paid_amount: [
+                { method: "cash", amount: cash },
+                { method: "online", amount: online },
+                { method: "card", amount: cardAmt },
+            ],
+            pending_amount: selectedSupplier.pending_amount - paidTotal,
+        };
+        apiCall({
+            method: 'PUT',
+            url: `${API_URLS.USERS}/payment/${selectedSupplier._id}`,
+            data: updatedPayment,
+            callback: handleSupplierPaymentCallback,
+            setLoading: setLoading,
+        });
+        setShowPaymentPopup(false);
+        setCashAmount("");
+        setOnlineAmount("");
+        setCard("");
+    };
+
     const handleRowClick = (row) => {
         navigate(`/supplierDetails/${row.id}`);
     };
@@ -173,12 +227,17 @@ function Supplier() {
                     headers={SUPPLIER_COLUMNS}
                     rows={rows}
                     onRowClick={handleRowClick}
-
+                    showTotalRow={showTotalRow}
                 />
+            </div>
+            <div className="flex justify-end">
+                <button className="rounded-full" onClick={() => setShowTotalRow(!showTotalRow)}>
+                    <i className="fa fa-circle-o" aria-hidden="true"></i>
+                </button>
             </div>
             {showPaymentPopup && selectedSupplier && (
                 <CustomPopUpComponet
-                    totalAmount={selectedSupplier.total_supplier_cost || 0}
+                    totalAmount={selectedSupplier.pending_amount}
                     pendingAmount={pendingAmount}
                     cashAmount={cashAmount}
                     onlineAmount={onlineAmount}
@@ -187,7 +246,7 @@ function Supplier() {
                     setOnlineAmount={setOnlineAmount}
                     setCard={setCard}
                     handleCancelButton={handleCancelPopup}
-                // handleSaveButton={handleSavePayment} 
+                    handleSaveButton={handleSavePayment}
                 />
             )}
 
