@@ -26,13 +26,14 @@ function Repair() {
     const [from, setFrom] = useState(fromDate);
     const [to, setTo] = useState(toDate);
     const [selectAllDates, setSelectAllDates] = useState(false);
+    const [showTotalRow, setShowTotalRow] = useState(false);
     const navigateAddRepair = () => {
         navigate("/addrepair")
     }
     const getRepairsCallBack = (response) => {
         console.log("API Response:", response);
         if (response.status === 200) {
-            const repairFormattedRows = response.data.map((repair) => ({
+            const repairFormattedRows = response.data.products.map((repair) => ({
                 _id: repair._id,
                 "Repair Started": repair.repair_started_at
                     ? moment(repair.repair_started_at).format("ll")
@@ -65,6 +66,12 @@ function Repair() {
                     />
                 ),
             }));
+            repairFormattedRows.push({
+                _id: "total",
+                "Purchase Price": "",
+                "Part Cost": response.data.part_cost_of_all_products,
+                "Repairer Cost": response.data.repairer_cost_of_all_products
+            });
             console.log("Formatted Rows:", repairFormattedRows);
             setRows(repairFormattedRows);
         } else {
@@ -229,7 +236,13 @@ function Repair() {
                 <CustomTableCompoent
                     headers={REPAIR_OPTIONS}
                     rows={rows}
+                    showTotalRow={showTotalRow}
                 />
+            </div>
+            <div className="flex justify-end">
+                <button className="rounded-full" onClick={() => setShowTotalRow(!showTotalRow)}>
+                    <i className="fa fa-circle-o" aria-hidden="true"></i>
+                </button>
             </div>
             <AcceptRepair
                 open={modalOpen}

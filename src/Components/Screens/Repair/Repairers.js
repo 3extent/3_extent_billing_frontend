@@ -26,11 +26,12 @@ function Repairers() {
     const [onlineAmount, setOnlineAmount] = useState("");
     const [card, setCard] = useState("");
     const [pendingAmount, setPendingAmount] = useState(0);
+    const [showTotalRow, setShowTotalRow] = useState(false);
 
     const getRepairersCallback = useCallback((response) => {
         console.log("API Response:", response);
         if (response.status === 200) {
-            const RepairedFormattedRows = response.data.map((repairer) => ({
+            const RepairedFormattedRows = response.data.users.map((repairer) => ({
                 "Repairer Name": repairer.name,
                 "Firm Name": repairer.firm_name,
                 "GST Number": repairer.gst_number,
@@ -39,7 +40,7 @@ function Repairers() {
                 "Address": repairer.address,
                 "Total Part Cost": repairer.total_part_cost,
                 "Total Repairer Cost": repairer.payable_amount,
-                "Total Paid": repairer.total_paid,
+                "Total Paid": repairer.paid_amount?.reduce((sum, payment) => sum + Number(payment.amount || 0), 0),
                 "Total Repairer Remaining": repairer.pending_amount,
                 "Actions": (
                     <div className="flex gap-2 justify-end">
@@ -66,6 +67,14 @@ function Repairers() {
 
                 id: repairer._id
             }));
+            RepairedFormattedRows.push({
+                _id: "total",
+                "Repairer Name": "Total",
+                "Total Part Cost": response.data.part_cost_of_all_users || 0,
+                "Total Repairer Cost": response.data.payable_amount_of_all_users || 0,
+                "Total Paid": response.data.paid_amount_of_all_users || 0,
+                "Total Repairer Remaining": response.data.pending_amount_of_all_users || 0
+            });
             setRows(RepairedFormattedRows);
             console.log("Formatted Rows:", RepairedFormattedRows);
         } else {
@@ -246,7 +255,13 @@ function Repairers() {
                     headers={REPAIRERS_OPTIONS}
                     rows={rows}
                     onRowClick={handleRowClick}
+                    showTotalRow={showTotalRow}
                 />
+            </div>
+            <div className="flex justify-end">
+                <button className="rounded-full" onClick={() => setShowTotalRow(!showTotalRow)}>
+                    <i className="fa fa-circle-o" aria-hidden="true"></i>
+                </button>
             </div>
             {showPaymentPopup && selectedRepairer && (
                 <CustomPopUpComponet

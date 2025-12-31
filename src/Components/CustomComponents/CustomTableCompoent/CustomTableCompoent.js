@@ -88,7 +88,7 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
                                         >
                                             {header === "Bill id" || header === "Sr.No"
                                                 ? "Total"
-                                                : ["Total Amount", "Remaining Amount", "Profit", "Total Products", "Purchase Price", "Sale Price", "Rate"].includes(
+                                                : ["Total Amount", "Remaining Amount", "Profit", "Total Products", "Purchase Price", "Sale Price", "Rate", "Part Cost", "Repairer Cost", "Total Paid", "Total Repairer Remaining", "Total Part Cost", "Total Repairer Cost",].includes(
                                                     header
                                                 )
                                                     ? totalRow[header].toLocaleString()
