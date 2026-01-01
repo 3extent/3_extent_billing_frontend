@@ -48,45 +48,40 @@ function Supplier() {
         console.log('response: ', response);
 
         if (response.status === 200) {
-            const supplierFormattedRows = response.data.users.map((supplier) => {
-                const cash = Number(supplier.paid_amount.find(p => p.method === "cash")?.amount || 0);
-                const online = Number(supplier.paid_amount.find(p => p.method === "online")?.amount || 0);
-                const card = Number(supplier.paid_amount.find(p => p.method === "card")?.amount || 0);
-                const total_paid = cash + online + card;
-                return {
-                    "Supplier Name": supplier.name,
-                    "Contact No": supplier.contact_number,
-                    "GST No": supplier.gst_number,
-                    "State": supplier.state,
-                    "Supplier Type": supplier.type,
-                    "Total Supplier Cost": supplier.payable_amount,
-                    "Total Supplier Paid": total_paid,
-                    "Total Supplier Remaining": supplier.pending_amount,
-                    "Action": (
-                        <div className="flex gap-2 justify-end">
-                            <div
-                                title="Edit"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    navigate(`/addsupplier/${supplier._id}`);
-                                }}
-                                className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
-                            >
-                                <i className="fa fa-pencil text-gray-700 text-sm" />
-                            </div>
-                            <PrimaryButtonComponent
-                                label="Pay"
-                                buttonClassName="py-1 px-3 text-[12px] font-semibold"
-                                onClick={(event) => {
-                                    event.stopPropagation();
-                                    handlePayClick(supplier);
-                                }}
-                            />
+            const supplierFormattedRows = response.data.users.map((supplier) => ({
+                "Supplier Name": supplier.name,
+                "Contact No": supplier.contact_number,
+                "GST No": supplier.gst_number,
+                "State": supplier.state,
+                "Supplier Type": supplier.type,
+                "Total Supplier Cost": supplier.payable_amount,
+                "Total Supplier Paid":supplier.paid_amount?.reduce((sum, payment) => sum + Number(payment.amount || 0), 0),
+                "Total Supplier Remaining": supplier.pending_amount,
+                "Action": (
+                    <div className="flex gap-2 justify-end">
+                        <div
+                            title="Edit"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                navigate(`/addsupplier/${supplier._id}`);
+                            }}
+                            className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
+                        >
+                            <i className="fa fa-pencil text-gray-700 text-sm" />
                         </div>
-                    ),
-                    id: supplier._id
-                }
-            });
+                        <PrimaryButtonComponent
+                            label="Pay"
+                            buttonClassName="py-1 px-3 text-[12px] font-semibold"
+                            onClick={(event) => {
+                                event.stopPropagation();
+                                handlePayClick(supplier);
+                            }}
+                        />
+                    </div>
+                ),
+                id: supplier._id
+            // }
+            }));
             supplierFormattedRows.push({
                 _id: "total",
                 "Bill id": "Total",
