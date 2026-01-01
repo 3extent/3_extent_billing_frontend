@@ -45,8 +45,6 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
                                     onClick={() => onRowClick && onRowClick(row)}
                                 >
                                     {tableHeaders.map((header, colIndex) => {
-                                        console.log('header: ', header);
-                                        console.log('row[header]: ', row[header]);
                                         return <td key={colIndex} className={`px-4 py-2 ${header === "Action" ? "text-right" : "text-left"}`}>
                                             {editable && header === "Rate" ? (
                                                 <input
