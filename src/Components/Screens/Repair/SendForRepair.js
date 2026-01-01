@@ -9,7 +9,7 @@ import { ACCESSORIES_OPTIONS, GRADE_OPTIONS } from "./Constants";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
-function AddRepair() {
+function SendForRepair() {
     const [productData, setProductData] = useState({
         id: "",
         imei_number: "",
@@ -118,7 +118,7 @@ function AddRepair() {
     };
     const getImeisCallback = (response) => {
         if (response.status === 200) {
-            const imeis = response.data.map(item => item.imei_number);
+            const imeis = response.data.products.map(item => item.imei_number);
             setImeiOptions(imeis);
         } else {
             console.error("IMEI numbers fetching error");
@@ -126,7 +126,6 @@ function AddRepair() {
     };
     const getProductDataByIMEI = (imei) => {
         if (!imei) return;
-        // const url = `${API_URLS.PRODUCTS}?imei_number=${imei}`;
         const url = `${API_URLS.PRODUCTS}?imei_number=${imei}&status=AVAILABLE,RETURN`;
 
         apiCall({
@@ -138,8 +137,8 @@ function AddRepair() {
         });
     };
     const getProductDataCallback = (response) => {
-        if (response.status === 200 && response.data.length > 0) {
-            const product = response.data[0];
+        if (response.status === 200 && response.data.products.length > 0) {
+            const product = response.data.products[0];
             setProductData({
                 id: product.id ?? product._id ?? "",
                 imei_number: product.imei_number || "",
@@ -252,7 +251,6 @@ function AddRepair() {
             getProductDataByIMEI(selectedImei);
         }
     }, [selectedImei]);
-    // const isImeiSelected = !!productData.id;
     const handleBack = () => {
         navigate(-1);
     };
@@ -271,7 +269,6 @@ function AddRepair() {
                     value={selectedImei}
                     maxLength={15}
                     numericOnly={true}
-                    // onChange={(value) => setSelectedImei(value)}
                     onChange={handleImeiChange}
                     options={
                         selectedImei.length >= 11
@@ -401,4 +398,4 @@ function AddRepair() {
         </div>
 
     )
-} export default AddRepair; 
+} export default SendForRepair; 

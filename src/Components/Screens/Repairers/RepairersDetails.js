@@ -5,7 +5,7 @@ import { API_URLS } from "../../../Util/AppConst";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import { Spinner } from "../../../Util/AxiosUtils";
-import { REPAIRER_DETAILS_HEADERS, STATUS_OPTIONS } from "./Constants";
+import { REPAIRER_DETAILS_HEADERS, STATUS_OPTIONS } from "../Repair/Constants";
 import { toast } from "react-toastify";
 import moment from "moment";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";

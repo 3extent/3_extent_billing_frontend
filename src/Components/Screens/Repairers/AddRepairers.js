@@ -25,24 +25,6 @@ function AddRepairers() {
             getRepairerData();
         }
     }, [repairer_id]);
-
-    // const addRepairerCallback = (response) => {
-    //     if (response.status === 200) {
-    //         toast.success("Repairer added successfully!");
-    //         setRepairerData({
-    //             name: "",
-    //             firm_name: "",
-    //             state: "",
-    //             address: "",
-    //             contact_number: "",
-    //             gst_number: "",
-    //             role: "REPAIRER",
-    //         });
-    //         navigate("/repairers");
-    //     } else {
-    //         toast.error("Failed to add repairer", response?.data?.error);
-    //     }
-    // };
     const getRepairerDataCallback = (response) => {
         if (response.status === 200) {
             setRepairerData({
@@ -104,12 +86,6 @@ function AddRepairers() {
         } else {
             addRepairerData();
         }
-        // apiCall({
-        //     method: 'POST',
-        //     url: API_URLS.USERS,
-        //     data: repairerData,
-        //     callback: addRepairerCallback,
-        // });
     };
     const addRepairerCallback = (response) => {
         if (response.status === 200) {

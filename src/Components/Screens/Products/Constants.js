@@ -1,4 +1,4 @@
-import Repair from "../Repair/Repair";
+import Repair from "../Repair/RepairDashboard";
 
 export const PRODUCT_COLOUMNS = ["Date", "IMEI NO", "Model", "Brand", "Supplier",
     "QC Remark", "Sales Price", "Purchase Price", "Grade", "Actions"]

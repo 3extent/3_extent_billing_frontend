@@ -19,13 +19,15 @@ import { ToastContainer } from 'react-toastify';
 import SingleDraftBillHistory from './Components/Screens/SalesBilling/SingleDraftBillHistroy';
 import PrivacyPolicy from './Components/Screens/Policies/PrivacyPolicy';
 import TermAndCondition from './Components/Screens/Policies/TermAndCondition';
-import AddRepair from './Components/Screens/Repair/AddRepair';
-import Repair from './Components/Screens/Repair/Repair';
-import Repairers from './Components/Screens/Repair/Repairers';
-import AddRepairers from './Components/Screens/Repair/AddRepairers';
+import AddRepair from './Components/Screens/Repair/SendForRepair';
+import Repair from './Components/Screens/Repair/RepairDashboard';
+import Repairers from './Components/Screens/Repairers/Repairers';
+import AddRepairers from './Components/Screens/Repairers/AddRepairers';
 import AcceptRepair from './Components/Screens/Repair/AcceptRepair';
-import RepairersDetails from './Components/Screens/Repair/RepairersDetails';
+import RepairersDetails from './Components/Screens/Repairers/RepairersDetails';
 import SupplierDetails from './Components/Screens/Supplier/SupplierDetails';
+import RepairDashboard from './Components/Screens/Repair/RepairDashboard';
+import SendForRepair from './Components/Screens/Repair/SendForRepair';
 
 
 
@@ -127,7 +129,7 @@ function App() {
             } />
             <Route path="/repair" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
-                <Repair />
+                <RepairDashboard />
               </ProtectedRoute>
             } />
             {/* <Route path="/acceptrepair/:id" element={
@@ -180,9 +182,9 @@ function App() {
             <Route path="/singleDraftBillHistroy/:draftBillId" element={<SingleDraftBillHistory />} />
 
             <Route path="*" element={<Navigate to="/" replace />} />
-            <Route path="/addrepair/" element={
+            <Route path="/sendforrepair/" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
-                <AddRepair />
+                <SendForRepair />
               </ProtectedRoute>
             } />
             <Route path="/addrepairers/:repairer_id?" element={
