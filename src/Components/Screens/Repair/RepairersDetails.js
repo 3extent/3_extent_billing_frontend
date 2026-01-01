@@ -62,8 +62,8 @@ export default function RepairersDetails() {
             repairedFormattedRows.push({
                 _id: "total",
                 "Purchase Price": Number(response.data.purchase_total_of_all_products || 0).toLocaleString("en-IN"),
-                "Part Cost ": Number(response.data.part_cost_of_all_products || 0).toLocaleString("en-IN"),
-                "Repairer Cost": Number(response.data.repairer_cost_of_all_products || 0).toLocaleString("en-IN"),
+                "Part Cost": Number(response.data.total_parts_cost_used || 0).toLocaleString("en-IN"),
+                "Repairer Cost": Number(response.data.total_payable_amount || 0).toLocaleString("en-IN"),
             });
             console.log("Formatted Repairer Rows:", repairedFormattedRows);
             setRows(repairedFormattedRows);
@@ -172,7 +172,7 @@ export default function RepairersDetails() {
                 />
             </div>
 
-            <div className="h-[60vh] mt-4">
+            <div className="h-[60vh]">
                 <CustomTableCompoent
                     headers={REPAIRER_DETAILS_HEADERS}
                     rows={rows}

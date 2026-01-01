@@ -27,9 +27,35 @@ function Repair() {
     const [to, setTo] = useState(toDate);
     const [selectAllDates, setSelectAllDates] = useState(false);
     const [showTotalRow, setShowTotalRow] = useState(false);
+    const [showDropdown, setShowDropdown] = useState(false);
+    const toggleableColumns = ["Engineer Name", "Repairer Remark"];
+    const [hiddenColumns, setHiddenColumns] = useState([...toggleableColumns]);
+    const [dynamicHeaders, setDynamicHeaders] = useState(() => {
+        return REPAIR_OPTIONS.filter(col => !toggleableColumns.includes(col));
+    });
+
     const navigateAddRepair = () => {
         navigate("/addrepair")
     }
+    const toggleColumn = (columnName) => {
+        if (!toggleableColumns.includes(columnName)) return;
+
+        if (dynamicHeaders.includes(columnName)) {
+            setDynamicHeaders(dynamicHeaders.filter(col => col !== columnName));
+            setHiddenColumns([...hiddenColumns, columnName]);
+        } else {
+            let newHeaders = [...dynamicHeaders];
+            const actionIndex = newHeaders.indexOf("Action");
+            if (actionIndex !== -1) {
+                newHeaders.splice(actionIndex, 0, columnName);
+            } else {
+                newHeaders.push(columnName);
+            }
+            setDynamicHeaders(newHeaders);
+            setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
+        }
+    };
+
     const getRepairsCallBack = (response) => {
         console.log("API Response:", response);
         if (response.status === 200) {
@@ -232,9 +258,41 @@ function Repair() {
                     buttonClassName="mt-1 py-1 px-5"
                 />
             </div>
-            <div className="h-[75vh]">
+            {rows.length > 0 && (
+                <div className="relative mb-2">
+                    <button
+                        onClick={() => setShowDropdown(!showDropdown)}
+                        className="px-2 py-1 border rounded hover:bg-gray-200"
+                        title="Show columns"
+                    >
+                        <i className="fa fa-ellipsis-h" aria-hidden="true"></i>
+                    </button>
+                    {showDropdown && (
+                        <div className="absolute bg-white border shadow-md mt-1 rounded w-48 z-10 max-h-48 overflow-auto">
+                            {toggleableColumns.map((col) => (
+                                <label
+                                    key={col}
+                                    className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        checked={dynamicHeaders.includes(col)}
+                                        onChange={() => toggleColumn(col)}
+                                        className="mr-2"
+                                        onFocus={() => setShowDropdown(true)}
+                                        onBlur={() => setTimeout(() => setShowDropdown(false), 300)}
+                                    />
+                                    {col}
+                                </label>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            )}
+
+            <div className="h-[60vh]">
                 <CustomTableCompoent
-                    headers={REPAIR_OPTIONS}
+                    headers={dynamicHeaders}
                     rows={rows}
                     showTotalRow={showTotalRow}
                 />
