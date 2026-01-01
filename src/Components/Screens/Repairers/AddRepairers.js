@@ -28,12 +28,12 @@ function AddRepairers() {
     const getRepairerDataCallback = (response) => {
         if (response.status === 200) {
             setRepairerData({
-                name: response.data.name,
-                firm_name: response.data.firm_name,
-                state: response.data.state,
-                address: response.data.address,
-                contact_number: response.data.contact_number,
-                gst_number: response.data.gst_number,
+                name: response.data.user.name,
+                firm_name: response.data.user.firm_name,
+                state: response.data.user.state,
+                address: response.data.user.address,
+                contact_number: response.data.user.contact_number,
+                gst_number: response.data.user.gst_number,
                 role: "REPAIRER",
             });
         }

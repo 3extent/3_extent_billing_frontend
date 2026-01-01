@@ -74,8 +74,8 @@ export default function SingleDraftBillHistory() {
     };
     const getCustomersCallback = (response) => {
         if (response.status === 200) {
-            setCustomers(response.data);
-            const contactNos = response.data.map(customer => customer.contact_number);
+            setCustomers(response.data.users);
+            const contactNos = response.data.users.map(customer => customer.contact_number);
             setContactNoOptions(contactNos);
         } else {
             console.error("Customer contact numbers fetching error");
@@ -169,7 +169,7 @@ export default function SingleDraftBillHistory() {
     };
     const getImeisCallback = (response) => {
         if (response.status === 200) {
-            const imeis = response.data.map(item => item.imei_number);
+            const imeis = response.data.products.map(item => item.imei_number);
             setImeiOptions(imeis);
         } else {
             console.error("IMEI numbers fetching error");
@@ -330,8 +330,8 @@ export default function SingleDraftBillHistory() {
             url: `${API_URLS.PRODUCTS}?imei_number=${imei}`,
             data: {},
             callback: (response) => {
-                if (response.status === 200 && response.data.length > 0) {
-                    const product = response.data[0];
+                if (response.status === 200 && response.data.products.length > 0) {
+                    const product = response.data.products[0];
                     if (!product || (product.status !== "AVAILABLE" && product.status !== "RETURN")) {
                         toast.warning("Product is already sold !", { position: "top-center", autoClose: 2000 });
                         setSelectedImei("");
