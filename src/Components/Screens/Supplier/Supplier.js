@@ -232,7 +232,7 @@ function Supplier() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <div className="h-[75vh]">
+            <div className="h-[60vh]">
                 <CustomTableCompoent
                     headers={SUPPLIER_COLUMNS}
                     rows={rows}
