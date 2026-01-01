@@ -48,19 +48,14 @@ function Supplier() {
         console.log('response: ', response);
 
         if (response.status === 200) {
-            const supplierFormattedRows = response.data.users.map((supplier) => {
-                const cash = Number(supplier.paid_amount.find(p => p.method === "cash")?.amount || 0);
-                const online = Number(supplier.paid_amount.find(p => p.method === "online")?.amount || 0);
-                const card = Number(supplier.paid_amount.find(p => p.method === "card")?.amount || 0);
-                const total_paid = cash + online + card;
-                return {
+            const supplierFormattedRows = response.data.users.map((supplier) => ({
                 "Supplier Name": supplier.name,
                 "Contact No": supplier.contact_number,
                 "GST No": supplier.gst_number,
                 "State": supplier.state,
                 "Supplier Type": supplier.type,
                 "Total Supplier Cost": supplier.payable_amount,
-                "Total Supplier Paid": total_paid,
+                "Total Supplier Paid":supplier.paid_amount?.reduce((sum, payment) => sum + Number(payment.amount || 0), 0),
                 "Total Supplier Remaining": supplier.pending_amount,
                 "Action": (
                     <div className="flex gap-2 justify-end">
@@ -85,8 +80,8 @@ function Supplier() {
                     </div>
                 ),
                 id: supplier._id
-            }
-            });
+            // }
+            }));
             supplierFormattedRows.push({
                 _id: "total",
                 "Bill id": "Total",
