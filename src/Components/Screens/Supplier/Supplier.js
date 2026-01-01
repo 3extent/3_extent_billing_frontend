@@ -54,38 +54,38 @@ function Supplier() {
                 const card = Number(supplier.paid_amount.find(p => p.method === "card")?.amount || 0);
                 const total_paid = cash + online + card;
                 return {
-                "Supplier Name": supplier.name,
-                "Contact No": supplier.contact_number,
-                "GST No": supplier.gst_number,
-                "State": supplier.state,
-                "Supplier Type": supplier.type,
-                "Total Supplier Cost": supplier.payable_amount,
-                "Total Supplier Paid": total_paid,
-                "Total Supplier Remaining": supplier.pending_amount,
-                "Action": (
-                    <div className="flex gap-2 justify-end">
-                        <div
-                            title="Edit"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                navigate(`/addsupplier/${supplier._id}`);
-                            }}
-                            className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
-                        >
-                            <i className="fa fa-pencil text-gray-700 text-sm" />
+                    "Supplier Name": supplier.name,
+                    "Contact No": supplier.contact_number,
+                    "GST No": supplier.gst_number,
+                    "State": supplier.state,
+                    "Supplier Type": supplier.type,
+                    "Total Supplier Cost": supplier.payable_amount,
+                    "Total Supplier Paid": total_paid,
+                    "Total Supplier Remaining": supplier.pending_amount,
+                    "Action": (
+                        <div className="flex gap-2 justify-end">
+                            <div
+                                title="Edit"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    navigate(`/addsupplier/${supplier._id}`);
+                                }}
+                                className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
+                            >
+                                <i className="fa fa-pencil text-gray-700 text-sm" />
+                            </div>
+                            <PrimaryButtonComponent
+                                label="Pay"
+                                buttonClassName="py-1 px-3 text-[12px] font-semibold"
+                                onClick={(event) => {
+                                    event.stopPropagation();
+                                    handlePayClick(supplier);
+                                }}
+                            />
                         </div>
-                        <PrimaryButtonComponent
-                            label="Pay"
-                            buttonClassName="py-1 px-3 text-[12px] font-semibold"
-                            onClick={(event) => {
-                                event.stopPropagation();
-                                handlePayClick(supplier);
-                            }}
-                        />
-                    </div>
-                ),
-                id: supplier._id
-            }
+                    ),
+                    id: supplier._id
+                }
             });
             supplierFormattedRows.push({
                 _id: "total",
@@ -135,7 +135,12 @@ function Supplier() {
         getSupplierAllData({});
     }
     const handlePayClick = (supplier) => {
+        if (Number(supplier.pending_amount) === 0) return;
         setSelectedSupplier(supplier);
+        setPendingAmount(Number(supplier.pending_amount));
+        setCashAmount("");
+        setOnlineAmount("");
+        setCard("");
         setShowPaymentPopup(true);
     };
 
@@ -143,6 +148,7 @@ function Supplier() {
         setCashAmount("");
         setOnlineAmount("");
         setCard("");
+        setSelectedSupplier(null);
         setPendingAmount(Number(selectedSupplier.pending_amount) || 0);
         setShowPaymentPopup(false);
     };

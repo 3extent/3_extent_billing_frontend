@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import { REPAIRERS_OPTIONS } from "./Constants";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
-import { apiCall } from "../../../Util/AxiosUtils";
+import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useCallback, useEffect, useState } from "react";
 import { API_URLS } from "../../../Util/AppConst";
 import { toast } from "react-toastify";
@@ -19,7 +19,7 @@ function Repairers() {
     const [rows, setRows] = useState([]);
     const [repairerName, setRepairerName] = useState('');
     const [contactNo, setContactNo] = useState('');
-
+    const [loading, setLoading] = useState(false);
     const [showPaymentPopup, setShowPaymentPopup] = useState(false);
     const [selectedRepairer, setSelectedRepairer] = useState(null);
     const [cashAmount, setCashAmount] = useState("");
@@ -92,6 +92,7 @@ function Repairers() {
             url: url,
             data: {},
             callback: getRepairersCallback,
+            setLoading: setLoading
         });
     }, [getRepairersCallback]);
 
@@ -155,11 +156,6 @@ function Repairers() {
         const online = Number(onlineAmount || 0);
         const cardAmt = Number(card || 0);
         const paidTotal = cash + online + cardAmt;
-
-        if (paidTotal <= 0) {
-            toast.error("Enter a payment amount");
-            return;
-        }
         console.log("Selected Repairer:", selectedRepairer.name);
         console.log("Cash Amount Entered:", cash);
         console.log("Online Amount Entered:", online);
@@ -184,13 +180,15 @@ function Repairers() {
             url: `${API_URLS.USERS}/payment/${selectedRepairer._id}`,
             data: payload,
             callback: handleRepairerPaymentCallback,
+            setLoading: setLoading
         });
     };
     const handleRowClick = (row) => {
         navigate(`/repairerDetails/${row.id}`);
     };
     return (
-        <div>
+        <div className="w-full">
+            {loading && <Spinner />}
             <CustomHeaderComponent
                 name="List Of Repairer Information"
                 label="Add Repairer"
