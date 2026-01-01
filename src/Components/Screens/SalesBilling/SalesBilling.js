@@ -16,11 +16,12 @@ export default function SalesBilling() {
     const [loading, setLoading] = useState(false);
     const [hiddenColumns, setHiddenColumns] = useState([
         "Purchase Price",
-        "QC-Remark"
+        "QC-Remark",
+        "Supplier Name"
     ]);
     const [dynamicHeaders, setDynamicHeaders] = useState(() => {
         return SALESBILLING_COLOUMNS.filter(
-            (col) => !["Purchase Price", "QC-Remark"].includes(col)
+            (col) => !["Purchase Price", "QC-Remark", "Supplier Name"].includes(col)
         );
     });
     const navigate = useNavigate();
@@ -37,7 +38,7 @@ export default function SalesBilling() {
     const [card, setCard] = useState("");
     const [totalAmount, setTotalAmount] = useState(0);
     const [pendingAmount, setPendingAmount] = useState(0);
-    const toggleableColumns = ["Purchase Price", "QC-Remark"];
+    const toggleableColumns = ["Purchase Price", "QC-Remark", "Supplier Name"];
     const handleDeleteRow = (imeiNumber) => {
         setRows((currentRows) => {
             const updatedRows = [...currentRows];
@@ -65,7 +66,8 @@ export default function SalesBilling() {
                 if (rateIndex !== -1) newHeaders.splice(rateIndex + 1, 0, "Purchase Price");
                 else newHeaders.push("Purchase Price");
             }
-            else newHeaders.push("QC-Remark");
+            else
+                newHeaders.push(columnName);
             setDynamicHeaders(newHeaders);
             setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
         };
@@ -112,8 +114,8 @@ export default function SalesBilling() {
     };
     const getCustomersCallback = (response) => {
         if (response.status === 200) {
-            setCustomers(response.data);
-            const contactNos = response.data.map(customer => customer.contact_number);
+            setCustomers(response.data.users);
+            const contactNos = response.data.users.map(customer => customer.contact_number);
             setContactNoOptions(contactNos);
         } else {
             console.error("Customer contact numbers fetching error");
@@ -143,7 +145,7 @@ export default function SalesBilling() {
     };
     const getImeisCallback = (response) => {
         if (response.status === 200) {
-            const imeis = response.data.map(item => item.imei_number);
+            const imeis = response.data.products.map(item => item.imei_number);
             setImeiOptions(imeis);
         } else {
             console.error("IMEI numbers fetching error");
@@ -152,7 +154,7 @@ export default function SalesBilling() {
     const getsalesbillingCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
-            const filteredData = response.data.filter(
+            const filteredData = response.data.products.filter(
                 (product) => product.status === "AVAILABLE" || product.status === "RETURN"
             );
             if (filteredData.length === 0) {
@@ -163,7 +165,7 @@ export default function SalesBilling() {
                 setSelectedImei("");
                 return;
             }
-            const productFormattedRows = response.data.map((product, index) => ({
+            const productFormattedRows = response.data.products.map((product, index) => ({
                 "Sr.No": rows.length + index + 1,
                 "Date": moment(Number(product.created_at)).format('ll'),
                 "IMEI NO": product.imei_number,
@@ -174,7 +176,9 @@ export default function SalesBilling() {
                 "Grade": product.grade,
                 "Accessories": product.accessories,
                 "QC-Remark": product.qc_remark,
+                "Supplier Name": product?.supplier?.name,
                 "Status": product.status,
+                is_repaired: product.is_repaired,
                 "Action": (
                     <div className="flex justify-end">
                         <div
@@ -197,14 +201,12 @@ export default function SalesBilling() {
                 setRows(Rows => [...Rows, ...newUniqueRows]);
             }
             setSelectedImei("");
-            setCustomerName("");
-            setSelectedContactNo("");
         } else {
             console.log("Error");
         }
     }
     const getsalesbillingAllData = () => {
-        let url = `${API_URLS.PRODUCTS}?`;
+        let url = `${API_URLS.PRODUCTS}?status=AVAILABLE,RETURN`;
         if (selectedImei) {
             url += `&imei_number=${selectedImei}`
         }
@@ -245,6 +247,10 @@ export default function SalesBilling() {
                 response.data.billing.products,
                 response.data.billing.payable_amount,
                 response.data.billing.customer?.firm_name,
+                response.data.billing.net_total,
+                response.data.billing.c_gst,
+                response.data.billing.s_gst,
+
 
             );
         } else {
@@ -296,7 +302,7 @@ export default function SalesBilling() {
             setLoading: setLoading
         })
     };
-    const draftCallback = (response) => {
+    const draftCallback = (response, navigateAfterSave = true) => {
         if (response.status === 200) {
             toast.success("Draft saved successfully!", {
                 position: "top-center",
@@ -310,7 +316,7 @@ export default function SalesBilling() {
             setOnlineAmount("");
             setCard("");
             setPendingAmount(0);
-            navigate("/draftbillhistroy");
+            if (navigateAfterSave) navigate("/draftbillhistroy");
         } else {
             const errorMsg = response?.data?.error || "Something went wrong while saving draft.";
             toast.error(errorMsg, {
@@ -319,7 +325,7 @@ export default function SalesBilling() {
             });
         }
     }
-    const handleDraftData = () => {
+    const handleDraftData = (navigateAfterSave = true) => {
         const billsData = {
             customer_name: customerName,
             contact_number: selectedContactNo,
@@ -340,15 +346,16 @@ export default function SalesBilling() {
             method: 'POST',
             url: API_URLS.BILLING,
             data: billsData,
-            callback: draftCallback,
+            callback: (response) => draftCallback(response, navigateAfterSave)
         })
     };
     const handleExportToExcel = () => {
         exportToExcel(rows, "salesbillingData.xlsx");
     };
     const navigateAddCustomer = () => {
-        navigate("/addcustomer")
-    }
+        if (rows.length > 0) handleDraftData(false);
+        navigate("/addcustomer");
+    };
     return (
         <div>
             {loading && <Spinner />}
@@ -428,7 +435,7 @@ export default function SalesBilling() {
                     </button>
                     {showDropdown && (
                         <div className="absolute bg-white border shadow-md mt-1 rounded w-48 z-10 max-h-48 overflow-auto">
-                            {["Purchase Price", "QC-Remark"].map((col) => (
+                            {["Purchase Price", "QC-Remark", "Supplier Name"].map((col) => (
                                 <label
                                     key={col}
                                     className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
@@ -454,6 +461,9 @@ export default function SalesBilling() {
                     rows={rows}
                     onRateChange={handleRateChange}
                     editable={true}
+                    autoScrollBottom={true}
+                    maxHeight="h-[54vh]"
+
                 />
             </div>
             <div className=" fixed bottom-16 right-5 font-bold gap-4 text-[22px]  flex justify-end">

@@ -61,9 +61,6 @@ function AddCustomer() {
                 position: "top-center",
                 autoClose: 2000,
             });
-            setTimeout(() => {
-                navigate(-1);
-            }, 2000);
         }
     };
     const saveCallback = (response) => {
@@ -134,10 +131,10 @@ function AddCustomer() {
     const getCustomerDataCallback = (response) => {
         if (response.status === 200) {
             setCustomerData({
-                name: response.data.name, address: response.data.address,
-                firm_name: response.data.firm_name || "",
-                state: response.data.state, contact_number: response.data.contact_number, gst_number: response.data.gst_number,
-                pan_number: response.data.pan_number,
+                name: response.data.user.name, address: response.data.user.address,
+                firm_name: response.data.user.firm_name || "",
+                state: response.data.user.state, contact_number: response.data.user.contact_number, gst_number: response.data.user.gst_number,
+                pan_number: response.data.user.pan_number,
             });
         } else {
             // error("Failed to fetch customer data");

@@ -29,7 +29,7 @@ function SingleProductStockIn() {
     supplier_name: '',
     qc_remark: '',
     status: STATUS_OPTIONS[0] || ''
-  });
+  });       
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setErrors((prev) => ({ ...prev, [name]: "" }));
@@ -126,7 +126,7 @@ function SingleProductStockIn() {
       });
     }
   }
-  
+
   const deleteProduct = () => {
     apiCall({
       method: "DELETE",
@@ -174,7 +174,7 @@ function SingleProductStockIn() {
   const getSupplierCallBack = (response) => {
     console.log('response: ', response);
     if (response.status === 200) {
-      const suppliers = response.data.map(Supplier => Supplier.name);
+      const suppliers = response.data.users.map(Supplier => Supplier.name);
       setSupplierNameOPtions(suppliers);
     } else {
       console.log("Error");
@@ -392,7 +392,7 @@ function SingleProductStockIn() {
           icon="fa fa-save"
           onClick={saveProductStockIn}
         />
-        {product_id && (
+        {product_id && productData.status !== 'SOLD' && (
           <PrimaryButtonComponent
             label="Delete"
             icon="fa fa-trash"

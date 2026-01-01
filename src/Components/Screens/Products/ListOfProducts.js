@@ -20,7 +20,7 @@ function ListOfProducts() {
     const [status, setStatus] = useState(STATUS_OPTIONS[0]);
     const [brandOptions, setBrandOptions] = useState([]);
     const [loading, setLoading] = useState(false);
-    const fromDate = moment().subtract( 'days').format('YYYY-MM-DD');
+    const fromDate = moment().subtract('days').format('YYYY-MM-DD');
     const toDate = moment().format('YYYY-MM-DD');
     const [from, setFrom] = useState(fromDate);
     const [to, setTo] = useState(toDate);
@@ -48,7 +48,7 @@ function ListOfProducts() {
     };
     const getSuppliersCallBack = (response) => {
         if (response.status === 200) {
-            const suppliers = response.data.map(supplier => supplier.name);
+            const suppliers = response.data.users.map(supplier => supplier.name);
             setSupplierOptions(suppliers);
         } else {
             console.log("Error fetching suppliers");
@@ -57,7 +57,7 @@ function ListOfProducts() {
     const getProductsCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
-            const productFormattedRows = response.data.map((product) => ({
+            const productFormattedRows = response.data.products.map((product) => ({
                 "Date": moment(product.created_at).format('ll'),
                 "IMEI NO": product.imei_number,
                 "Model": typeof product.model === 'object' ? product.model.name : product.model,
@@ -70,15 +70,17 @@ function ListOfProducts() {
                 id: product._id,
                 "Actions": (
                     <div className='flex items-center justify-end gap-2'>
-                        <div className='flex justify-end'>
-                            <div
-                                title="Edit"
-                                onClick={() => navigate(`/stockin/${product._id}`)}
-                                className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
-                            >
-                                <i className="fa fa-pencil text-gray-700 text-sm" />
+                        {product.status !== 'SOLD' && (
+                            <div className='flex justify-end'>
+                                <div
+                                    title="Edit"
+                                    onClick={() => navigate(`/stockin/${product._id}`)}
+                                    className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
+                                >
+                                    <i className="fa fa-pencil text-gray-700 text-sm" />
+                                </div>
                             </div>
-                        </div>
+                        )}
                         <PrimaryButtonComponent
                             label="Barcode"
                             icon="fa fa-print"
@@ -113,11 +115,14 @@ function ListOfProducts() {
         if (supplierName) {
             url += `&supplierName=${supplierName}`;
         }
-        if (status) {
-            url += `&status=${status}`
+        if (status === "AVAILABLE & REPAIRED") {
+            url += "&status=AVAILABLE&is_repaired=true";
+        } else if (status) {
+            url += `&status=${status}`;
         }
+
         if (!selectAllDates) {
-            if (from) url += `&from=${moment.utc(from).valueOf()}`;
+            if (from) url += `&from=${moment.utc(from).startOf('day').valueOf()}`;
             if (to) url += `&to=${moment.utc(to).endOf('day').valueOf()}`;
         }
         apiCall({
@@ -163,7 +168,7 @@ function ListOfProducts() {
         setGrade('');
         setIMEINumber('');
         setBrandName('');
-        setStatus();
+        setStatus(STATUS_OPTIONS[0]);
         setFrom(fromDate);
         setTo(toDate);
         setSelectAllDates(false);

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-export default function CustomDropdownInputComponent({ name, dropdownClassName = "", labelClassName = "", placeholder = "", options = [], value = "", onChange = () => { }, maxLength, error }) {
+export default function CustomDropdownInputComponent({ name, dropdownClassName = "", labelClassName = "", placeholder = "", options = [], value = "", onChange = () => { }, maxLength, error, disabled = false, numericOnly = false, }) {
     const [inputValue, setInputValue] = useState('');
     const [showDropdown, setShowDropdown] = useState(false);
     useEffect(() => {
@@ -7,9 +7,18 @@ export default function CustomDropdownInputComponent({ name, dropdownClassName =
     }, [value]);
     const handleChange = (e) => {
         const value = e.target.value;
-        setInputValue(value);
-        setShowDropdown(true);
-        onChange(value);
+        if (!numericOnly) {
+            setInputValue(value);
+            setShowDropdown(true);
+            onChange(value);
+            return;
+        }
+
+        if (value === "" || /^\d+$/.test(value)) {
+            setInputValue(value);
+            setShowDropdown(true);
+            onChange(value);
+        }
     };
     const handleSelect = (option) => {
         setInputValue(option);
@@ -32,8 +41,11 @@ export default function CustomDropdownInputComponent({ name, dropdownClassName =
                 onFocus={() => setShowDropdown(true)}
                 onBlur={() => setTimeout(() => setShowDropdown(false), 100)}
                 placeholder={placeholder}
+                disabled={disabled}
                 maxLength={maxLength}
-                className={`px-3 py-2 border border-gray-300 rounded-md ${error ? 'border-red-600' : 'border-gray-300'} ${dropdownClassName}`}
+                inputMode={numericOnly}
+                className={`px-3 py-2 border border-gray-300 rounded-md ${error ? 'border-red-600' : 'border-gray-300'} ${dropdownClassName}
+                  ${disabled ? "cursor-not-allowed bg-gray-200 opacity-50" : ""}`}
             />
             {showDropdown && filteredOptions.length > 0 && (
                 <div className={`absolute z-10 mt-1 bg-white border border-gray-300 rounded-md max-h-40 overflow-y-auto ${dropdownClassName}`}>
@@ -42,6 +54,7 @@ export default function CustomDropdownInputComponent({ name, dropdownClassName =
                             key={index}
                             className="px-4 py-2 hover:bg-gray-300 cursor-pointer"
                             onMouseDown={() => handleSelect(option)}
+
                         >
                             {option}
                         </div>
