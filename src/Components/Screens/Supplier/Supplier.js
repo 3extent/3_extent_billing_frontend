@@ -143,7 +143,6 @@ function Supplier() {
         setOnlineAmount("");
         setCard("");
         setPendingAmount(0);
-        // setPendingAmount(Number(selectedSupplier.pending_amount) || 0);
         setShowPaymentPopup(false);
     };
 
