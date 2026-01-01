@@ -11,6 +11,7 @@ import AcceptRepair from "./AcceptRepair";
 import { toast } from "react-toastify";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import moment from "moment";
+import { handleBarcodePrint } from "../../../Util/Utility";
 function RepairDashboard() {
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
@@ -155,7 +156,18 @@ function RepairDashboard() {
 
         if (response.status === 200) {
             toast.success("Repair accepted successfully!");
+            if (selectedRepair.imei_number !== response.data.imei_number) {
+
+                handleBarcodePrint([{
+                    modelName: response.data.model.name,
+                    grade: response.data.grade,
+                    imei_number: response.data.imei_number
+                }])
+                getAllRepairs({ imeiNumber, status, from, to, selectAllDates });
+            } else {
             getAllRepairs({ imeiNumber, status, from, to, selectAllDates });
+            }
+
         } else {
             toast.error("Failed to accept repair");
             console.error(response);
