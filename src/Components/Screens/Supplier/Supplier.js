@@ -42,8 +42,6 @@ function Supplier() {
         navigate("/addsupplier")
     }
 
-
-
     const getSupplierCallBack = useCallback((response) => {
         console.log('response: ', response);
 
@@ -55,7 +53,7 @@ function Supplier() {
                 "State": supplier.state,
                 "Supplier Type": supplier.type,
                 "Total Supplier Cost": supplier.payable_amount,
-                "Total Supplier Paid":supplier.paid_amount?.reduce((sum, payment) => sum + Number(payment.amount || 0), 0),
+                "Total Supplier Paid": supplier.paid_amount?.reduce((sum, payment) => sum + Number(payment.amount || 0), 0),
                 "Total Supplier Remaining": supplier.pending_amount,
                 "Action": (
                     <div className="flex gap-2 justify-end">
@@ -80,7 +78,6 @@ function Supplier() {
                     </div>
                 ),
                 id: supplier._id
-            // }
             }));
             supplierFormattedRows.push({
                 _id: "total",
@@ -100,7 +97,7 @@ function Supplier() {
             console.log("Error");
         }
     }, [navigate]);
-    const getSupplierAllData = useCallback(({ supplierName, contactNo }) => {
+    const getSupplierAllData = useCallback(({ supplierName, contactNo }={}) => {
         let url = `${API_URLS.USERS}?role=SUPPLIER`;
         if (supplierName) {
             url += `&name=${supplierName}`
@@ -116,8 +113,9 @@ function Supplier() {
             setLoading: setLoading
         })
     }, [getSupplierCallBack]);
+
     useEffect(() => {
-        getSupplierAllData({});
+        getSupplierAllData();
     }, [getSupplierAllData]);
 
 
@@ -127,7 +125,7 @@ function Supplier() {
     const handleResetFilter = () => {
         setSupplierName('');
         setContactNo('');
-        getSupplierAllData({});
+        getSupplierAllData();
     }
     const handlePayClick = (supplier) => {
         if (Number(supplier.pending_amount) === 0) return;
@@ -140,11 +138,12 @@ function Supplier() {
     };
 
     const handleCancelPopup = () => {
+        setSelectedSupplier(null);
         setCashAmount("");
         setOnlineAmount("");
         setCard("");
-        setSelectedSupplier(null);
-        setPendingAmount(Number(selectedSupplier.pending_amount) || 0);
+        setPendingAmount(0);
+        // setPendingAmount(Number(selectedSupplier.pending_amount) || 0);
         setShowPaymentPopup(false);
     };
 
@@ -166,6 +165,7 @@ function Supplier() {
         const online = Number(onlineAmount || 0);
         const cardAmt = Number(card || 0);
         const paidTotal = cash + online + cardAmt;
+        
         const updatedPayment = {
             payable_amount: selectedSupplier.payable_amount,
             paid_amount: [
