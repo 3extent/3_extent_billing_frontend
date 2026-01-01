@@ -116,9 +116,9 @@ function ListOfProducts() {
             url += `&supplierName=${supplierName}`;
         }
         if (status === "AVAILABLE & REPAIRED") {
-            url += "status=AVAILABLE&is_repaired=true";
+            url += "&status=AVAILABLE&is_repaired=true";
         } else if (status) {
-            url += `status=${status}`;
+            url += `&status=${status}`;
         }
 
         if (!selectAllDates) {

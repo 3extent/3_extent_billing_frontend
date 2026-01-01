@@ -145,7 +145,7 @@ export default function SalesBilling() {
     };
     const getImeisCallback = (response) => {
         if (response.status === 200) {
-            const imeis = response.data.map(item => item.imei_number);
+            const imeis = response.data.products.map(item => item.imei_number);
             setImeiOptions(imeis);
         } else {
             console.error("IMEI numbers fetching error");
@@ -154,7 +154,7 @@ export default function SalesBilling() {
     const getsalesbillingCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
-            const filteredData = response.data.filter(
+            const filteredData = response.data.products.filter(
                 (product) => product.status === "AVAILABLE" || product.status === "RETURN"
             );
             if (filteredData.length === 0) {
@@ -165,7 +165,7 @@ export default function SalesBilling() {
                 setSelectedImei("");
                 return;
             }
-            const productFormattedRows = response.data.map((product, index) => ({
+            const productFormattedRows = response.data.products.map((product, index) => ({
                 "Sr.No": rows.length + index + 1,
                 "Date": moment(Number(product.created_at)).format('ll'),
                 "IMEI NO": product.imei_number,
