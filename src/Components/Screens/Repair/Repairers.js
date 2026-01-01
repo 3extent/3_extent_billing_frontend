@@ -81,8 +81,6 @@ function Repairers() {
             toast.error("Failed to fetch repairers");
         }
     }, []);
-
-    // const getAllRepairers = useCallback(() => {
     const getAllRepairers = useCallback(({ repairerName, contactNo } = {}) => {
         let url = `${API_URLS.USERS}?role=REPAIRER`;
 
@@ -116,44 +114,28 @@ function Repairers() {
 
     useEffect(() => {
         if (!selectedRepairer) return;
-
         const cash = Number(cashAmount || 0);
         const online = Number(onlineAmount || 0);
         const cardAmt = Number(card || 0);
-
         const paidTotal = cash + online + cardAmt;
-
-        const pending =
-            (selectedRepairer.payable_amount) -
-            ((selectedRepairer.total_paid || 0) + paidTotal);
-
+        const pending = Number(selectedRepairer.pending_amount) - paidTotal;
         setPendingAmount(pending);
     }, [cashAmount, onlineAmount, card, selectedRepairer]);
     const handlePayClick = (repairer) => {
-        const payableAmount = Number(repairer.payable_amount || 0);
-        // const totalPaid = Number(repairer.total_paid || 0);
-        setSelectedRepairer({
-            ...repairer,
-            payable_amount: payableAmount,
-            total_repairer_cost: Number(repairer.total_repairer_cost || 0),
-        });
-        const pending = payableAmount - (repairer.paid_amount || 0);
-
-        setPendingAmount(pending);
+        if (Number(repairer.pending_amount) === 0) return;
+        setSelectedRepairer(repairer);
+        setPendingAmount(Number(repairer.pending_amount));
         setCashAmount("");
         setOnlineAmount("");
         setCard("");
         setShowPaymentPopup(true);
     };
-
     const handleCancelPopup = () => {
         setShowPaymentPopup(false);
         setSelectedRepairer(null);
-
         setCashAmount("");
         setOnlineAmount("");
         setCard("");
-
         setPendingAmount(0);
     };
     const handleRepairerPaymentCallback = (response) => {
@@ -167,19 +149,15 @@ function Repairers() {
     };
 
     const handleSaveRepairerPayment = () => {
-        if (!selectedRepairer?._id) {
-            toast.error("Repairer not selected");
-            return;
-        }
+        if (!selectedRepairer) return;
 
         const cash = Number(cashAmount || 0);
         const online = Number(onlineAmount || 0);
         const cardAmt = Number(card || 0);
-
         const paidTotal = cash + online + cardAmt;
 
         if (paidTotal <= 0) {
-            toast.error("Please enter payment amount");
+            toast.error("Enter a payment amount");
             return;
         }
         console.log("Selected Repairer:", selectedRepairer.name);
@@ -190,15 +168,15 @@ function Repairers() {
         console.log("Repairer's Total Payable Amount:", selectedRepairer.payable_amount);
         console.log("Repairer's Total Paid Already:", selectedRepairer.total_paid);
         console.log("Calculated Pending Amount:", pendingAmount);
-
         const payload = {
-            payable_amount: selectedRepairer.payable_amount,
+            payable_amount: selectedRepairer.pending_amount,
+            total_part_cost: selectedRepairer.total_part_cost,
             paid_amount: [
                 { method: "cash", amount: cash },
                 { method: "online", amount: online },
                 { method: "card", amount: cardAmt },
             ],
-            total_part_cost: selectedRepairer.total_part_cost,
+            pending_amount: Number(selectedRepairer.pending_amount) - paidTotal,
         };
         console.log("Repairer Payment Payload:", payload);
         apiCall({
@@ -265,8 +243,7 @@ function Repairers() {
             </div>
             {showPaymentPopup && selectedRepairer && (
                 <CustomPopUpComponet
-                    totalAmount={selectedRepairer.payable_amount}
-                    // pendingAmount={selectedRepairer.payable_amount}
+                    totalAmount={Number(selectedRepairer.pending_amount)}
                     pendingAmount={pendingAmount}
                     cashAmount={cashAmount}
                     onlineAmount={onlineAmount}
