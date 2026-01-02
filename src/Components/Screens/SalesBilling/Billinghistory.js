@@ -11,11 +11,17 @@ import { generateAndSavePdf } from "../../../Util/Utility";
 import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
 import { API_URLS } from "../../../Util/AppConst";
 import { toast } from "react-toastify";
+import CustomConfirmationPopup from "../../CustomComponents/CustomPopUpCompoent/CustomConfirmationPopup";
 function Billinghistory({ isDraft = false }) {
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false)
+
     const [showPaymentPopup, setShowPaymentPopup] = useState(false);
+    const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
+
+    const [billDelete, setBillDelete] = useState(null)
+
     const [cashAmount, setCashAmount] = useState("");
     const [onlineAmount, setOnlineAmount] = useState("");
     const [card, setCard] = useState("");
@@ -62,18 +68,25 @@ function Billinghistory({ isDraft = false }) {
                 autoClose: 2000,
             });
         }
+        setShowConfirmationPopup(false);
+        setBillDelete(null);
     };
-    const handleDeleteBill = (billId) => {
-        if (!billId) return;
+    const handleDeleteBill = () => {
+        if (!billDelete) return;
 
         apiCall({
             method: "DELETE",
-            url: `${API_URLS.BILLING}/${billId}`,
+            url: `${API_URLS.BILLING}/${billDelete}`,
             data: {},
             setLoading: setLoading,
             callback: handleDeleteBillCallback,
         });
     };
+
+    const handleCancelConfirmPopup = () => {
+        setShowConfirmationPopup(false);
+        setBillDelete(null);
+    }
 
     const getBillCallBack = (response) => {
         console.log('response: ', response);
@@ -96,7 +109,8 @@ function Billinghistory({ isDraft = false }) {
                             className="flex items-center justify-center rounded-full bg-gray-300 hover:bg-gray-400 cursor-pointer w-10 h-10 min-w-[40px] min-h-[40px]"
                             onClick={(e) => {
                                 e.stopPropagation();
-                                handleDeleteBill(bill._id);
+                                setBillDelete(bill._id);
+                                setShowConfirmationPopup(true)
                             }}
                         >
                             <i className="fa fa-trash text-gray-700 text-lg" />
@@ -377,6 +391,15 @@ function Billinghistory({ isDraft = false }) {
                     handlePrintButton={isDraft ? handleSavePayment : handleSavePayment}
                 />
             )}
+
+            {showConfirmationPopup && (
+                <CustomConfirmationPopup
+                    handleCancelButton={handleCancelConfirmPopup}
+                    handleDeleteButton={handleDeleteBill}
+                />
+            )}
+
+
         </div>
     )
 }
