@@ -75,8 +75,6 @@ export default function CustomTableCompoent({ headers, rows, onRateChange, maxHe
                         </thead>
                         <tbody >
                             {tableRows.map((row, rowIndex) => {
-                                console.log('row: ', row);
-
                                 return <tr key={rowIndex}
                                     className={`border-b border-slate-300 text-left text-[12px] ${onRowClick ? "cursor-pointer hover:bg-slate-100" : ""
                                         }`}
