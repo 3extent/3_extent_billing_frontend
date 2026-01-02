@@ -82,7 +82,7 @@ function ListOfProducts() {
     };
     const getSuppliersCallBack = (response) => {
         if (response.status === 200) {
-            const suppliers = response.data.map(supplier => supplier.name);
+            const suppliers = response.data.users.map(supplier => supplier.name);
             setSupplierOptions(suppliers);
         } else {
             console.log("Error fetching suppliers");
@@ -91,7 +91,7 @@ function ListOfProducts() {
     const getProductsCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
-            const productFormattedRows = response.data.map((product) => ({
+            const productFormattedRows = response.data.products.map((product) => ({
                 "Date": moment(product.created_at).format('ll'),
                 "IMEI NO": product.imei_number,
                 "Model": typeof product.model === 'object' ? product.model.name : product.model,
@@ -158,13 +158,13 @@ function ListOfProducts() {
             url += `&supplierName=${supplierName}`;
         }
         if (status === "AVAILABLE & REPAIRED") {
-            url += "status=AVAILABLE&is_repaired=true";
+            url += "&status=AVAILABLE&is_repaired=true";
         } else if (status) {
-            url += `status=${status}`;
+            url += `&status=${status}`;
         }
 
         if (!selectAllDates) {
-            if (from) url += `&from=${moment.utc(from).valueOf()}`;
+            if (from) url += `&from=${moment.utc(from).startOf('day').valueOf()}`;
             if (to) url += `&to=${moment.utc(to).endOf('day').valueOf()}`;
         }
         apiCall({
@@ -210,7 +210,7 @@ function ListOfProducts() {
         setGrade('');
         setIMEINumber('');
         setBrandName('');
-        setStatus();
+        setStatus(STATUS_OPTIONS[0]);
         setFrom(fromDate);
         setTo(toDate);
         setSelectAllDates(false);
@@ -219,7 +219,7 @@ function ListOfProducts() {
 
     }
     const handleExportToExcel = () => {
-        exportToExcel(rows, "ProductList.xlsx" ,null, dynamicHeaders);
+        exportToExcel(rows, "ProductList.xlsx", null, dynamicHeaders);
     };
     return (
         <div className='w-full'>
@@ -313,14 +313,14 @@ function ListOfProducts() {
                     onClick={handleResetFilter}
                 />
             </div>
-                <CustomTableCompoent
-                    maxHeight="h-[50vh]"
-                    headers={dynamicHeaders}
-                    rows={rows}
-                    toggleableColumns={toggleableColumns}
-                    hiddenColumns={hiddenColumns}
-                    onToggleColumn={toggleColumn}
-                />
+            <CustomTableCompoent
+                maxHeight="h-[50vh]"
+                headers={dynamicHeaders}
+                rows={rows}
+                toggleableColumns={toggleableColumns}
+                hiddenColumns={hiddenColumns}
+                onToggleColumn={toggleColumn}
+            />
         </div>
     );
 }

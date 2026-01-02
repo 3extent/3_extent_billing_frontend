@@ -211,8 +211,8 @@ function Billinghistory({ isDraft = false }) {
             url += `&imei_number=${imeiNumber}`
         }
         if (!selectAllDates) {
-            if (from) url += `&from=${moment.utc(from).valueOf(from)}`;
-            if (to) url += `&to=${moment.utc(to).endOf('day').valueOf(to)}`;
+            if (from) url += `&from=${moment.utc(from).startOf('day').valueOf()}`;
+            if (to) url += `&to=${moment.utc(to).endOf('day').valueOf()}`;
         }
 
         apiCall({
@@ -444,14 +444,14 @@ function Billinghistory({ isDraft = false }) {
                 />
             </div>
             {/* <div className="h-[60vh]"> */}
-                <CustomTableCompoent
-                    maxHeight="h-[60vh]"
-                    headers={BILLINGHISTORY_COLOUMNS}
-                    rows={rows}
-                    totalRow={totalRow}
-                    onRowClick={handleRowClick}
-                    showTotalRow={!isDraft && showTotalRow}
-                />
+            <CustomTableCompoent
+                maxHeight="h-[60vh]"
+                headers={BILLINGHISTORY_COLOUMNS}
+                rows={rows}
+                totalRow={totalRow}
+                onRowClick={handleRowClick}
+                showTotalRow={!isDraft && showTotalRow}
+            />
             {/* </div> */}
             {!isDraft && (
                 <div className="flex justify-end">

@@ -54,7 +54,7 @@ export default function Customer() {
     const getCustomerCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
-            const customerFormttedRows = response.data.map((customer) => ({
+            const customerFormttedRows = response.data.users.map((customer) => ({
                 "Customer Name": customer.name,
                 "Contact No": customer.contact_number,
                 "Firm Name": customer.firm_name,

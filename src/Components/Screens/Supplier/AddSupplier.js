@@ -129,9 +129,9 @@ function AddSupplier() {
     const getSupplierDataCallback = (response) => {
         if (response.status === 200) {
             setSupplierData({
-                name: response.data.name, address: response.data.address,
-                state: response.data.state, contact_number: response.data.contact_number, contact_number2: response.data.contact_number2, gst_number: response.data.gst_number,
-                firm_name: response.data.firm_name,
+                name: response.data.user.name, address: response.data.user.address,
+                state: response.data.user.state, contact_number: response.data.user.contact_number, contact_number2: response.data.user.contact_number2, gst_number: response.data.user.gst_number,
+                firm_name: response.data.user.firm_name,
             });
         } else {
             // error("Failed to fetch customer data");

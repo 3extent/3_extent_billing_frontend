@@ -149,7 +149,7 @@ export default function SingleBillHistory() {
                 gstno: bill.customer?.gst_number,
                 firmname: bill.customer?.firm_name,
                 amount: bill.payable_amount,
-                netTotal: bill.net_total,
+                netTotal: bill?.net_total,
                 cGst: bill.c_gst,
                 sGst: bill.s_gst,
                 date: moment((bill.created_at)).format('ll')
@@ -452,10 +452,10 @@ export default function SingleBillHistory() {
                 {customerInfo && (
                     <div className="">
                         <div className="text-[16px] font-semibold">
-                            Customer Name :<span className="font-normal text-[14px]">{customerInfo.name}</span>
+                            Customer Name : <span className="font-normal text-[14px]">{customerInfo.name}</span>
                         </div>
                         <div className="text-[16px] font-semibold">
-                            Firm Name :<span className="font-normal text-[14px]">{customerInfo.firmname || "-"}</span>
+                            Firm Name : <span className="font-normal text-[14px]">{customerInfo.firmname || "-"}</span>
                         </div>
 
                         <div className="text-[16px] font-semibold">

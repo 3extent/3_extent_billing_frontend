@@ -68,7 +68,7 @@ export default function SalesBilling() {
             if (columnName === "Supplier Name" || columnName === "QC-Remark") {
                 const actionIndex = newHeaders.indexOf("Action");
                 if (actionIndex !== +1) {
-                    newHeaders.splice(actionIndex , 0, columnName);
+                    newHeaders.splice(actionIndex, 0, columnName);
                 } else {
                     newHeaders.push(columnName);
                 }
@@ -121,8 +121,8 @@ export default function SalesBilling() {
     };
     const getCustomersCallback = (response) => {
         if (response.status === 200) {
-            setCustomers(response.data);
-            const contactNos = response.data.map(customer => customer.contact_number);
+            setCustomers(response.data.users);
+            const contactNos = response.data.users.map(customer => customer.contact_number);
             setContactNoOptions(contactNos);
         } else {
             console.error("Customer contact numbers fetching error");
@@ -152,7 +152,7 @@ export default function SalesBilling() {
     };
     const getImeisCallback = (response) => {
         if (response.status === 200) {
-            const imeis = response.data.map(item => item.imei_number);
+            const imeis = response.data.products.map(item => item.imei_number);
             setImeiOptions(imeis);
         } else {
             console.error("IMEI numbers fetching error");
@@ -161,7 +161,7 @@ export default function SalesBilling() {
     const getsalesbillingCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
-            const filteredData = response.data.filter(
+            const filteredData = response.data.products.filter(
                 (product) => product.status === "AVAILABLE" || product.status === "RETURN"
             );
             if (filteredData.length === 0) {
@@ -172,7 +172,7 @@ export default function SalesBilling() {
                 setSelectedImei("");
                 return;
             }
-            const productFormattedRows = response.data.map((product, index) => ({
+            const productFormattedRows = response.data.products.map((product, index) => ({
                 "Sr.No": rows.length + index + 1,
                 "Date": moment(Number(product.created_at)).format('ll'),
                 "IMEI NO": product.imei_number,
@@ -185,6 +185,7 @@ export default function SalesBilling() {
                 "QC-Remark": product.qc_remark,
                 "Supplier Name": product?.supplier?.name,
                 "Status": product.status,
+                is_repaired: product.is_repaired,
                 "Action": (
                     <div className="flex justify-end">
                         <div
@@ -207,8 +208,6 @@ export default function SalesBilling() {
                 setRows(Rows => [...Rows, ...newUniqueRows]);
             }
             setSelectedImei("");
-            setCustomerName("");
-            setSelectedContactNo("");
         } else {
             console.log("Error");
         }
@@ -358,7 +357,7 @@ export default function SalesBilling() {
         })
     };
     const handleExportToExcel = () => {
-        exportToExcel(rows, "salesbillingData.xlsx", null,dynamicHeaders);
+        exportToExcel(rows, "salesbillingData.xlsx", null, dynamicHeaders);
     };
     const navigateAddCustomer = () => {
         if (rows.length > 0) handleDraftData(false);
