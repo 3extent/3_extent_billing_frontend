@@ -89,7 +89,10 @@ function AddRepairers() {
     };
     const addRepairerCallback = (response) => {
         if (response.status === 200) {
-            toast.success("Repairer added successfully!");
+            toast.success("Repairer added successfully!", {
+                position: "top-center",
+                autoClose: 2000,
+            });
             setRepairerData({
                 name: "",
                 firm_name: "",
@@ -101,7 +104,11 @@ function AddRepairers() {
             });
             navigate("/repairers");
         } else {
-            toast.error("Failed to add repairer", response?.data?.error);
+            const errorMsg = response?.data?.error || "Failed to add repairer";
+            toast.error(errorMsg, {
+                position: "top-center",
+                autoClose: 2000,
+            });
         }
     };
     const addRepairerData = () => {
@@ -122,7 +129,10 @@ function AddRepairers() {
             navigate("/repairers");
         } else {
             const errorMsg = response?.data?.error || "Failed to update repairer";
-            toast.error(errorMsg);
+            toast.error(errorMsg, {
+                position: "top-center",
+                autoClose: 2000,
+            });
         }
     };
 

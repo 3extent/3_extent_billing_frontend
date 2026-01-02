@@ -165,11 +165,17 @@ function Repairers() {
     };
     const handleRepairerPaymentCallback = (response) => {
         if (response.status === 200) {
-            toast.success("Repairer payment updated successfully!");
+            toast.success("Repairer payment updated successfully!", {
+                position: "top-center",
+                autoClose: 2000,
+            });
             handleCancelPopup();
             getAllRepairers();
         } else {
-            toast.error("Repairer payment failed");
+            toast.error("Repairer payment failed", {
+                position: "top-center",
+                autoClose: 2000,
+            });
         }
     };
 

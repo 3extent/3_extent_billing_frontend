@@ -10,6 +10,7 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit }) {
         repairerCost: repair?.repairer_cost || "",
         grade: repair?.grade || "",
         remark: repair?.repair_remark || "",
+        qc_remark: repair?.qc_remark || "",
         imei: repair?.imei_number || "",
     });
     const [errors, setErrors] = useState({});
@@ -20,7 +21,8 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit }) {
                 partCost: repair.part_cost || "",
                 repairerCost: repair.repairer_cost || "",
                 grade: repair.grade || "",
-                remark: repair.repair_remark || ""
+                remark: repair.repair_remark || "",
+                qc_remark: repair?.qc_remark || "",
             });
             setErrors({});
         }
@@ -37,13 +39,16 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit }) {
         } else if (repairData.imei.length !== 15) {
             newErrors.imei = "IMEI must be 15 digits";
         }
-        if (!repairData.partCost.trim()) {
-            newErrors.partCost = "Please enter part cost";
-        }
-        if (!repairData.repairerCost.trim()) {
+        if (!repairData.partCost) newErrors.partCost = "Please enter part cost";
+        if (!repairData.repairerCost) {
             newErrors.repairerCost = "Please enter repairer cost";
         }
-        if (!repairData.remark.trim()) newErrors.remark = "Please enter repair remark";
+        if (!repairData.remark || !repairData.remark.trim()) {
+            newErrors.remark = "Please enter repair remark";
+        }
+        if (!repairData.qc_remark || !repairData.qc_remark.trim()) {
+            newErrors.qc_remark = "Please enter QC remark";
+        }
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -111,6 +116,18 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit }) {
                             labelClassName="font-bold"
                             error={errors.remark}
                         />
+                        <InputComponent
+                            label="QC Remark"
+                            type="text"
+                            name="qc_remark"
+                            placeholder="QC Remark"
+                            inputClassName="w-full"
+                            labelClassName="font-bold"
+                            value={repairData.qc_remark}
+                            onChange={handleInputChange}
+                            error={errors.qc_remark}
+                        />
+
 
                     </div>
                     <div className="mt-3 flex justify-end gap-2 p-2">

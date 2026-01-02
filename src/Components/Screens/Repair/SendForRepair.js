@@ -153,7 +153,10 @@ function SendForRepair() {
                 repairer_contact_number: productData.repairer_contact_number || ""
             });
         } else {
-            toast.error("This IMEI number is not Available.");
+            toast.error("This IMEI number is not Available.", {
+                position: "top-center",
+                autoClose: 2000,
+            });
             setProductData({
                 id: "",
                 imei_number: "",
@@ -173,7 +176,10 @@ function SendForRepair() {
         setLoading(false);
         console.log("Response from PUT request:", response);
         if (response.status === 200) {
-            toast.success("Repair details updated successfully!");
+            toast.success("Repair details updated successfully!", {
+                position: "top-center",
+                autoClose: 2000,
+            });
             navigate("/repair");
         } else {
             toast.error("Failed to update repair details");
