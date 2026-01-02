@@ -13,10 +13,38 @@ function BulkOfProduct() {
     const [showTable, setShowTable] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const requiredFields = [
+        "Brand Name",
+        "Model Name",
+        "IMEI",
+        "Sales Price",
+        "Purchase Price",
+        "Grade",
+        "Engineer Name",
+        "Accessories",
+        "Supplier",
+        "QC Remark"
+    ];
+    const isEmptyValue = (value) => {
+        if (!value) return true;
+        const val = String(value).trim().toLowerCase();
+        return val === "" || val === "-" || val === "na" || val === "n/a" || val === "null" || val === "undefined";
+    };
     const handleAddProductData = () => {
         if (excelData.length === 0) {
             setError("Please upload an Excel file.");
             return;
+        }
+        for (let colIndex = 0; colIndex < requiredFields.length; colIndex++) {
+            let columnName = requiredFields[colIndex];
+            for (let rowIndex = 0; rowIndex < excelData.length; rowIndex++) {
+                let row = excelData[rowIndex];
+
+                if (isEmptyValue(row[columnName])) {
+                    setError(`${columnName} column: missing or invalid value in row ${rowIndex + 1}`);
+                    return;
+                }
+            }
         }
         setError("");
         const bulkOfProductformatteddata = excelData.map((row) => ({
@@ -95,9 +123,6 @@ function BulkOfProduct() {
         <div className="w-full">
             {loading && <Spinner />}
             <div className='flex gap-10 items-center'>
-                {error && (
-                    <div className="text-red-600 text-sm ">{error}</div>
-                )}
                 <InputComponent
                     label="Upload Excel File"
                     type="file"
@@ -113,6 +138,9 @@ function BulkOfProduct() {
                 />
 
             </div>
+            {error && (
+                <div className="text-red-600 text-sm ">{error}</div>
+            )}
             {showTable && excelData.length > 0 && (
                 <div className=" mt-6 h-[44vh]">
                     <CustomTableCompoent headers={tableHeaders} rows={excelData} />
