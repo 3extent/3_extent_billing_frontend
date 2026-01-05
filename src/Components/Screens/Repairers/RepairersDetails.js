@@ -68,7 +68,12 @@ export default function RepairersDetails() {
             console.log("Formatted Repairer Rows:", repairedFormattedRows);
             setRows(repairedFormattedRows);
         } else {
-            toast.error("Failed to fetch repairer details");
+            const errorMsg = response?.data?.error || "Failed to fetch repairer details";
+            toast.error(errorMsg, {
+                position: "top-center",
+                autoClose: 2000,
+            });
+
         }
     };
     const getRepairerDetails = ({ imeiNumber, status, from, to, selectAllDates } = {}) => {

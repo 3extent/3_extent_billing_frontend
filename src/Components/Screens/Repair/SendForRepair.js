@@ -207,6 +207,7 @@ function SendForRepair() {
         setLoading(true);
         const payload = {
             issue: productData.issue,
+            accessories: productData.accessories,
             repairer_name: productData.repairer_name,
             repairer_contact_number: productData.repairer_contact_number,
             status: "IN_REPAIRING",
@@ -360,7 +361,6 @@ function SendForRepair() {
                     options={ACCESSORIES_OPTIONS}
                     value={productData.accessories}
                     onChange={handleInputChange}
-                    disabled={productData.id}
                     error={errors.accessories}
                 />
                 <CustomDropdownInputComponent

@@ -174,7 +174,10 @@ function RepairDashboard() {
         setSelectedRepair(null);
 
         if (response.status === 200) {
-            toast.success("Repair accepted successfully!");
+            toast.success("Repair accepted successfully!", {
+                position: "top-center",
+                autoClose: 2000,
+            });
             if (selectedRepair.imei_number !== response.data.imei_number) {
 
                 handleBarcodePrint([{
@@ -188,11 +191,14 @@ function RepairDashboard() {
             }
 
         } else {
-            toast.error("Failed to accept repair");
+            toast.error("Failed to accept repair!", {
+                position: "top-center",
+                autoClose: 2000,
+            });
             console.error(response);
         }
     };
-    const handleAcceptSubmit = ({ partCost, repairerCost, grade, remark, imei }) => {
+    const handleAcceptSubmit = ({ partCost, repairerCost, grade, remark, imei, qc_remark, }) => {
         if (!selectedRepair?._id) {
             toast.error("Repair ID missing!");
             return;
@@ -206,6 +212,7 @@ function RepairDashboard() {
             repair_remark: remark,
             status: "REPAIRED",
             grade: grade,
+            qc_remark: qc_remark,
             imei_number: imei,
             repair_by: selectedRepair.repair_by?._id,
         };

@@ -396,7 +396,7 @@ function SingleProductStockIn() {
           <PrimaryButtonComponent
             label="Delete"
             icon="fa fa-trash"
-            buttonClassName="border border-red-500 !text-red-500 bg-transparent hover:bg-red-500 hover:text-white"
+            buttonClassName="border border-red-500 !text-red-500 bg-transparent hover:bg-red-500 hover:!text-white"
             onClick={deleteProduct}
           />
         )}
