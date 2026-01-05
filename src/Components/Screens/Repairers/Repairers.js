@@ -114,7 +114,11 @@ function Repairers() {
             setRows(RepairedFormattedRows);
             console.log("Formatted Rows:", RepairedFormattedRows);
         } else {
-            toast.error("Failed to fetch repairers");
+            const errorMsg = response?.data?.error || "Failed to fetch repairers";
+            toast.error(errorMsg, {
+                position: "top-center",
+                autoClose: 2000,
+            });
         }
     }, []);
     const getAllRepairers = useCallback(({ repairerName, contactNo } = {}) => {
@@ -184,13 +188,13 @@ function Repairers() {
             handleCancelPopup();
             getAllRepairers();
         } else {
-            toast.error("Repairer payment failed", {
+            const errorMsg = response?.data?.error || "Repairer payment failed";
+            toast.error(errorMsg, {
                 position: "top-center",
                 autoClose: 2000,
             });
         }
     };
-
     const handleSaveRepairerPayment = () => {
         if (!selectedRepairer) return;
 
