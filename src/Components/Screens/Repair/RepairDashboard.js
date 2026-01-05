@@ -129,9 +129,9 @@ function RepairDashboard() {
         console.log("Status selected:", status, "IMEI:", imeiNumber);
         let url = `${API_URLS.PRODUCTS}?`;
         if (status === "AVAILABLE & REPAIRED") {
-            url += "status=AVAILABLE&is_repaired=true";
+            url += "&status=AVAILABLE&is_repaired=true";
         } else if (status === "IN_REPAIRING") {
-            url += "status=IN_REPAIRING";
+            url += "&status=IN_REPAIRING";
         }
         if (imeiNumber) {
             url += `&imei_number=${imeiNumber}`
