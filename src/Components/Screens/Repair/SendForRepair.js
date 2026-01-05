@@ -153,10 +153,7 @@ function SendForRepair() {
                 repairer_contact_number: productData.repairer_contact_number || ""
             });
         } else {
-            toast.error("This IMEI number is not Available.", {
-                position: "top-center",
-                autoClose: 2000,
-            });
+            toast.error("This IMEI number is not Available.");
             setProductData({
                 id: "",
                 imei_number: "",
@@ -176,10 +173,7 @@ function SendForRepair() {
         setLoading(false);
         console.log("Response from PUT request:", response);
         if (response.status === 200) {
-            toast.success("Repair details updated successfully!", {
-                position: "top-center",
-                autoClose: 2000,
-            });
+            toast.success("Repair details updated successfully!");
             navigate("/repair");
         } else {
             toast.error("Failed to update repair details");
@@ -213,6 +207,7 @@ function SendForRepair() {
         setLoading(true);
         const payload = {
             issue: productData.issue,
+            accessories: productData.accessories,
             repairer_name: productData.repairer_name,
             repairer_contact_number: productData.repairer_contact_number,
             status: "IN_REPAIRING",
@@ -366,7 +361,6 @@ function SendForRepair() {
                     options={ACCESSORIES_OPTIONS}
                     value={productData.accessories}
                     onChange={handleInputChange}
-                    disabled={productData.id}
                     error={errors.accessories}
                 />
                 <CustomDropdownInputComponent
