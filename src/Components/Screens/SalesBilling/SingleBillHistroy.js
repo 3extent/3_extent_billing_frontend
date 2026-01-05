@@ -16,23 +16,23 @@ export default function SingleBillHistory() {
     const [rows, setRows] = useState([]);
     const [singleBill, setSingleBill] = useState([])
     const [customerInfo, setCustomerInfo] = useState();
-    const [imeiOptions, setImeiOptions] = useState([]);
-    const [selectedImei, setSelectedImei] = useState("");
-    const [selectedContactNo, setSelectedContactNo] = useState("");
-    const [customerName, setCustomerName] = useState("");
-    const [showPaymentPopup, setShowPaymentPopup] = useState(false);
+    // const [imeiOptions, setImeiOptions] = useState([]);
+    // const [selectedImei, setSelectedImei] = useState("");
+    // const [selectedContactNo, setSelectedContactNo] = useState("");
+    // const [customerName, setCustomerName] = useState("");
+    // const [showPaymentPopup, setShowPaymentPopup] = useState(false);
 
-    const [cashPaid, setCashPaid] = useState(0);
-    const [onlinePaid, setOnlinePaid] = useState(0);
-    const [cardPaid, setCardPaid] = useState(0);
-    const [totalAmount, setTotalAmount] = useState(0);
-    const [payableAmount, setPayableAmount] = useState(0);
-    const [pendingAmount, setPendingAmount] = useState(0);
-    const [paidAmount, setPaidAmount] = useState(0);
+    // const [cashPaid, setCashPaid] = useState(0);
+    // const [onlinePaid, setOnlinePaid] = useState(0);
+    // const [cardPaid, setCardPaid] = useState(0);
+    // const [totalAmount, setTotalAmount] = useState(0);
+    // const [payableAmount, setPayableAmount] = useState(0);
+    // const [pendingAmount, setPendingAmount] = useState(0);
+    // const [paidAmount, setPaidAmount] = useState(0);
 
-    const [cashPaidPopup, setCashPaidPopup] = useState(0);
-    const [onlinePaidPopup, setOnlinePaidPopup] = useState(0);
-    const [cardPaidPopup, setCardPaidPopup] = useState(0);
+    // const [cashPaidPopup, setCashPaidPopup] = useState(0);
+    // const [onlinePaidPopup, setOnlinePaidPopup] = useState(0);
+    // const [cardPaidPopup, setCardPaidPopup] = useState(0);
 
     const [totalRow, setTotalRow] = useState(null);
 
@@ -76,56 +76,56 @@ export default function SingleBillHistory() {
 
     useEffect(() => {
         if (billId) {
-            getAllImeis();
+            // getAllImeis();
             getSingleBillHistroyAllData(billId);
         }
     }, [billId]);
 
-    useEffect(() => {
-        if (selectedImei.length === 15) {
-            addRow(selectedImei);
-        }
-    }, [selectedImei]);
+    // useEffect(() => {
+    //     if (selectedImei.length === 15) {
+    //         addRow(selectedImei);
+    //     }
+    // }, [selectedImei]);
 
-    useEffect(() => {
-        const pending = payableAmount - (Number(cashPaidPopup) + Number(onlinePaidPopup) + Number(cardPaidPopup));
-        setPendingAmount(pending);
-    }, [cashPaidPopup, cardPaidPopup, onlinePaidPopup]);
+    // useEffect(() => {
+    //     const pending = payableAmount - (Number(cashPaidPopup) + Number(onlinePaidPopup) + Number(cardPaidPopup));
+    //     setPendingAmount(pending);
+    // }, [cashPaidPopup, cardPaidPopup, onlinePaidPopup]);
 
-    useEffect(() => {
-        const total = rows.reduce((sum, row) => {
-            if (!row["IMEI NO"]) return sum;
-            const rate = parseFloat(
-                String(row["Rate"]).replace(/\D/g, ""),
-            );
-            return sum + (isNaN(rate) ? 0 : rate);
-        }, 0);
-        setTotalAmount(total);
-        setPayableAmount(total - paidAmount);
-        console.log('total: ', total);
+    // useEffect(() => {
+    //     const total = rows.reduce((sum, row) => {
+    //         if (!row["IMEI NO"]) return sum;
+    //         const rate = parseFloat(
+    //             String(row["Rate"]).replace(/\D/g, ""),
+    //         );
+    //         return sum + (isNaN(rate) ? 0 : rate);
+    //     }, 0);
+    //     setTotalAmount(total);
+    //     setPayableAmount(total - paidAmount);
+    //     console.log('total: ', total);
 
-        const pending = total - paidAmount;
-        setPendingAmount(pending);
-    }, [rows]);
+    //     const pending = total - paidAmount;
+    //     setPendingAmount(pending);
+    // }, [rows]);
 
-    const getAllImeis = () => {
-        let url = `${API_URLS.PRODUCTS}?status=AVAILABLE,RETURN`;
-        apiCall({
-            method: "GET",
-            url: url,
-            data: {},
-            callback: getImeisCallback,
-        });
-    };
+    // const getAllImeis = () => {
+    //     let url = `${API_URLS.PRODUCTS}?status=AVAILABLE,RETURN`;
+    //     apiCall({
+    //         method: "GET",
+    //         url: url,
+    //         data: {},
+    //         callback: getImeisCallback,
+    //     });
+    // };
 
-    const getImeisCallback = (response) => {
-        if (response.status === 200) {
-            const imeis = response.data.map(item => item.imei_number);
-            setImeiOptions(imeis);
-        } else {
-            console.error("IMEI numbers fetching error");
-        }
-    };
+    // const getImeisCallback = (response) => {
+    //     if (response.status === 200) {
+    //         const imeis = response.data.map(item => item.imei_number);
+    //         setImeiOptions(imeis);
+    //     } else {
+    //         console.error("IMEI numbers fetching error");
+    //     }
+    // };
 
     const getSingleBillHistroyAllData = (id) => {
         apiCall({
@@ -154,21 +154,21 @@ export default function SingleBillHistory() {
                 sGst: bill.s_gst,
                 date: moment((bill.created_at)).format('ll')
             });
-            setCustomerName(bill.customer?.name || "");
-            setSelectedContactNo(bill.customer?.contact_number || "");
-            setTotalAmount(Number(bill.payable_amount || 0));
-            setPayableAmount(Number(bill.payable_amount || 0));
-            setPendingAmount(Number(bill.pending_amount || 0));
+            // setCustomerName(bill.customer?.name || "");
+            // setSelectedContactNo(bill.customer?.contact_number || "");
+            // setTotalAmount(Number(bill.payable_amount || 0));
+            // setPayableAmount(Number(bill.payable_amount || 0));
+            // setPendingAmount(Number(bill.pending_amount || 0));
 
-            const cashPaid = Number(bill.paid_amount.find(p => p.method === "cash")?.amount || "0");
-            const onlinePaid = Number(bill.paid_amount.find(p => p.method === "online")?.amount || "0");
-            const cardPaid = Number(bill.paid_amount.find(p => p.method === "card")?.amount || "0");
+            // const cashPaid = Number(bill.paid_amount.find(p => p.method === "cash")?.amount || "0");
+            // const onlinePaid = Number(bill.paid_amount.find(p => p.method === "online")?.amount || "0");
+            // const cardPaid = Number(bill.paid_amount.find(p => p.method === "card")?.amount || "0");
 
-            setCashPaid(cashPaid);
-            setOnlinePaid(onlinePaid);
-            setCardPaid(cardPaid);
+            // setCashPaid(cashPaid);
+            // setOnlinePaid(onlinePaid);
+            // setCardPaid(cardPaid);
 
-            setPaidAmount(cashPaid + onlinePaid + cardPaid);
+            // setPaidAmount(cashPaid + onlinePaid + cardPaid);
 
             const singleBillHistrotFormattedRows = bill.products.map((product, index) => ({
                 "Sr.No": index + 1,
@@ -187,13 +187,13 @@ export default function SingleBillHistory() {
                 status: product.status,
                 "Action": (
                     <div className="flex justify-end">
-                        <div
+                        {/* <div
                             title="delete"
                             onClick={() => handleDeleteRow(product.imei_number)}
                             className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
                         >
                             <i className="fa fa-trash text-gray-700 text-sm" />
-                        </div>
+                        </div> */}
                     </div>
                 ),
             }));
@@ -216,94 +216,94 @@ export default function SingleBillHistory() {
         }
     }
 
-    const handleRateChange = (index, newRate) => {
-        console.log('newRate: ', newRate);
-        const updatedRows = [...rows];
-        updatedRows[index]["Rate"] = Number(newRate);
-        setRows(updatedRows);
-        console.log('updatedRows: ', updatedRows);
-    };
+    // const handleRateChange = (index, newRate) => {
+    //     console.log('newRate: ', newRate);
+    //     const updatedRows = [...rows];
+    //     updatedRows[index]["Rate"] = Number(newRate);
+    //     setRows(updatedRows);
+    //     console.log('updatedRows: ', updatedRows);
+    // };
 
-    const handleDeleteRow = (imeiNumber) => {
-        setRows((currentRows) => {
-            const updatedRows = [...currentRows];
-            const index = updatedRows.findIndex(row => row["IMEI NO"] === imeiNumber);
-            if (index !== -1) {
-                updatedRows.splice(index, 1);
-            }
-            const newRows = updatedRows.map((row, index) => ({
-                ...row,
-                "Sr.No": index + 1,
-            }));
-            return newRows;
-        });
-    };
+    // const handleDeleteRow = (imeiNumber) => {
+    //     setRows((currentRows) => {
+    //         const updatedRows = [...currentRows];
+    //         const index = updatedRows.findIndex(row => row["IMEI NO"] === imeiNumber);
+    //         if (index !== -1) {
+    //             updatedRows.splice(index, 1);
+    //         }
+    //         const newRows = updatedRows.map((row, index) => ({
+    //             ...row,
+    //             "Sr.No": index + 1,
+    //         }));
+    //         return newRows;
+    //     });
+    // };
 
-    const addRowCallback = (response) => {
-        if (response.status === 200 && response.data.length > 0) {
-            const product = response.data[0];
-            if (!product || (product.status !== "AVAILABLE" && product.status !== "RETURN")) {
-                toast.warning("Product is already sold !", { position: "top-center", autoClose: 2000 });
-                setSelectedImei("");
-                return;
-            }
-            const newRow = {
-                "Sr.No": rows.length + 1,
-                "IMEI NO": product.imei_number,
-                "Brand": product.model?.brand?.name,
-                "Model": product.model?.name,
-                "Rate": product.sales_price,
-                "Sale Price": product.sales_price,
-                "Purchase Price": product.purchase_price,
-                "GST Purchase Price": product.gst_purchase_price,
-                "QC-Remark": product.qc_remark,
-                "Grade": product.grade,
-                "Accessories": product.accessories,
-                "Action": (
-                    <div className="flex justify-end">
-                        <div
-                            title="delete"
-                            onClick={() => handleDeleteRow(product.imei_number)}
-                            className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
-                        >
-                            <i className="fa fa-trash text-gray-700 text-sm" />
-                        </div>
-                    </div>
-                ),
-            };
+    // const addRowCallback = (response) => {
+    //     if (response.status === 200 && response.data.length > 0) {
+    //         const product = response.data[0];
+    //         if (!product || (product.status !== "AVAILABLE" && product.status !== "RETURN")) {
+    //             toast.warning("Product is already sold !", { position: "top-center", autoClose: 2000 });
+    //             setSelectedImei("");
+    //             return;
+    //         }
+    //         const newRow = {
+    //             "Sr.No": rows.length + 1,
+    //             "IMEI NO": product.imei_number,
+    //             "Brand": product.model?.brand?.name,
+    //             "Model": product.model?.name,
+    //             "Rate": product.sales_price,
+    //             "Sale Price": product.sales_price,
+    //             "Purchase Price": product.purchase_price,
+    //             "GST Purchase Price": product.gst_purchase_price,
+    //             "QC-Remark": product.qc_remark,
+    //             "Grade": product.grade,
+    //             "Accessories": product.accessories,
+    //             "Action": (
+    //                 <div className="flex justify-end">
+    //                     <div
+    //                         title="delete"
+    //                         onClick={() => handleDeleteRow(product.imei_number)}
+    //                         className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
+    //                     >
+    //                         <i className="fa fa-trash text-gray-700 text-sm" />
+    //                     </div>
+    //                 </div>
+    //             ),
+    //         };
 
-            setRows(Rows => [...Rows, newRow]);
-            setSelectedImei("");
-        }
-    }
+    //         setRows(Rows => [...Rows, newRow]);
+    //         setSelectedImei("");
+    //     }
+    // }
 
-    const addRow = (imei) => {
-        apiCall({
-            method: "GET",
-            url: `${API_URLS.PRODUCTS}?imei_number=${imei}`,
-            data: {},
-            callback: addRowCallback,
-            setLoading: setLoading
-        });
-    };
+    // const addRow = (imei) => {
+    //     apiCall({
+    //         method: "GET",
+    //         url: `${API_URLS.PRODUCTS}?imei_number=${imei}`,
+    //         data: {},
+    //         callback: addRowCallback,
+    //         setLoading: setLoading
+    //     });
+    // };
 
-    const handleSaveData = () => {
-        if (payableAmount <= 0) {
-            toast.warning("Please add products before proceeding to payment.", {
-                position: "top-center",
-                autoClose: 2000,
-            });
-            return;
-        }
-        handleBillSaveData();
-    }
+    // const handleSaveData = () => {
+    //     if (payableAmount <= 0) {
+    //         toast.warning("Please add products before proceeding to payment.", {
+    //             position: "top-center",
+    //             autoClose: 2000,
+    //         });
+    //         return;
+    //     }
+    //     handleBillSaveData();
+    // }
 
-    const handleCancelPopup = () => {
-        setCashPaidPopup(0);
-        setOnlinePaidPopup(0);
-        setCardPaidPopup(0);
-        setShowPaymentPopup(false);
-    };
+    // const handleCancelPopup = () => {
+    //     setCashPaidPopup(0);
+    //     setOnlinePaidPopup(0);
+    //     setCardPaidPopup(0);
+    //     setShowPaymentPopup(false);
+    // };
 
     const handleGenaratePdf = () => {
         generateAndSavePdf(
@@ -321,99 +321,99 @@ export default function SingleBillHistory() {
         );
     }
 
-    const saveBillCallback = (response) => {
-        if (response.status === 200) {
-            setShowPaymentPopup(true);
-        } else {
-            const errorMsg = response?.data?.error || "Something went wrong while saving bill.";
-            toast.error(errorMsg, {
-                position: "top-center",
-                autoClose: 3000,
-            });
-        }
-    }
+    // const saveBillCallback = (response) => {
+    //     if (response.status === 200) {
+    //         setShowPaymentPopup(true);
+    //     } else {
+    //         const errorMsg = response?.data?.error || "Something went wrong while saving bill.";
+    //         toast.error(errorMsg, {
+    //             position: "top-center",
+    //             autoClose: 3000,
+    //         });
+    //     }
+    // }
 
-    const handleBillSaveData = () => {
-        if (!billId) return;
-        const billsData = {
-            customer_name: customerName,
-            contact_number: selectedContactNo,
-            products: rows.map((row) => ({
-                imei_number: row["IMEI NO"],
-                rate: row["Rate"],
-            })),
-            paid_amount: [
-                { method: "cash", amount: Number(cashPaid) },
-                { method: "online", amount: Number(onlinePaid) },
-                { method: "card", amount: Number(cardPaid) },
-            ],
-            payable_amount: totalAmount,
-            pending_amount: pendingAmount,
-        };
-        apiCall({
-            method: 'PUT',
-            url: `${API_URLS.BILLING}/${billId}`,
-            data: billsData,
-            callback: saveBillCallback,
-        })
-    };
+    // const handleBillSaveData = () => {
+    //     if (!billId) return;
+    //     const billsData = {
+    //         customer_name: customerName,
+    //         contact_number: selectedContactNo,
+    //         products: rows.map((row) => ({
+    //             imei_number: row["IMEI NO"],
+    //             rate: row["Rate"],
+    //         })),
+    //         paid_amount: [
+    //             { method: "cash", amount: Number(cashPaid) },
+    //             { method: "online", amount: Number(onlinePaid) },
+    //             { method: "card", amount: Number(cardPaid) },
+    //         ],
+    //         payable_amount: totalAmount,
+    //         pending_amount: pendingAmount,
+    //     };
+    //     apiCall({
+    //         method: 'PUT',
+    //         url: `${API_URLS.BILLING}/${billId}`,
+    //         data: billsData,
+    //         callback: saveBillCallback,
+    //     })
+    // };
 
-    const paymentUpdateCallback = (response) => {
-        if (response.status === 200) {
-            toast.success("Payment updated successfully!", {
-                position: "top-center",
-                autoClose: 2000,
-            });
-            setShowPaymentPopup(false);
-            navigate("/billinghistory");
-            generateAndSavePdf(
-                response.data.customer?.name,
-                response.data.invoice_number,
-                response.data.customer?.contact_number,
-                response.data.customer?.address,
-                response.data.customer?.gst_number,
-                response.data.products,
-                response.data.payable_amount,
-                response.data.customer?.firm_name,
-                response.data.net_total,
-                response.data.c_gst,
-                response.data.s_gst
-            );
+    // const paymentUpdateCallback = (response) => {
+    //     if (response.status === 200) {
+    //         toast.success("Payment updated successfully!", {
+    //             position: "top-center",
+    //             autoClose: 2000,
+    //         });
+    //         setShowPaymentPopup(false);
+    //         navigate("/billinghistory");
+    //         generateAndSavePdf(
+    //             response.data.customer?.name,
+    //             response.data.invoice_number,
+    //             response.data.customer?.contact_number,
+    //             response.data.customer?.address,
+    //             response.data.customer?.gst_number,
+    //             response.data.products,
+    //             response.data.payable_amount,
+    //             response.data.customer?.firm_name,
+    //             response.data.net_total,
+    //             response.data.c_gst,
+    //             response.data.s_gst
+    //         );
 
-        } else {
-            const errorMsg = response?.data?.error || "Something went wrong while saving bill.";
-            toast.error(errorMsg, {
-                position: "top-center",
-                autoClose: 3000,
-            });
-            setShowPaymentPopup(false);
-        }
-    };
+    //     } else {
+    //         const errorMsg = response?.data?.error || "Something went wrong while saving bill.";
+    //         toast.error(errorMsg, {
+    //             position: "top-center",
+    //             autoClose: 3000,
+    //         });
+    //         setShowPaymentPopup(false);
+    //     }
+    // };
 
-    const handlePrintButton = () => {
-        if (!billId) return;
-        const cash = Number(cashPaidPopup || 0);
-        const online = Number(onlinePaidPopup || 0);
-        const cardAmt = Number(cardPaidPopup || 0);
-        const totalPaid = cash + online + cardAmt;
+    // const handlePrintButton = () => {
+    //     if (!billId) return;
+    //     const cash = Number(cashPaidPopup || 0);
+    //     const online = Number(onlinePaidPopup || 0);
+    //     const cardAmt = Number(cardPaidPopup || 0);
+    //     const totalPaid = cash + online + cardAmt;
 
-        const paymentData = {
-            payable_amount: totalAmount,
-            paid_amount: [
-                { method: "cash", amount: cash },
-                { method: "online", amount: online },
-                { method: "card", amount: cardAmt },
-            ],
-            pending_amount: payableAmount - totalPaid,
-        };
-        apiCall({
-            method: "PUT",
-            url: `${API_URLS.BILLING}/payment/${billId}`,
-            data: paymentData,
-            callback: paymentUpdateCallback,
-            setLoading: setLoading,
-        });
-    };
+    //     const paymentData = {
+    //         payable_amount: totalAmount,
+    //         paid_amount: [
+    //             { method: "cash", amount: cash },
+    //             { method: "online", amount: online },
+    //             { method: "card", amount: cardAmt },
+    //         ],
+    //         pending_amount: payableAmount - totalPaid,
+    //     };
+    //     apiCall({
+    //         method: "PUT",
+    //         url: `${API_URLS.BILLING}/payment/${billId}`,
+    //         data: paymentData,
+    //         callback: paymentUpdateCallback,
+    //         setLoading: setLoading,
+    //     });
+    // };
 
     const handleNavigateBillHistroy = () => {
         navigate(-1);
@@ -467,7 +467,7 @@ export default function SingleBillHistory() {
                     </div>
                 )}
             </div>
-            <div className="flex items-center gap-3 mb-6">
+            {/* <div className="flex items-center gap-3 mb-6">
                 <CustomDropdownInputComponent
                     label="IMEI No :"
                     dropdownClassName="w-[190px]"
@@ -482,13 +482,13 @@ export default function SingleBillHistory() {
                             : []
                     }
                 />
-            </div>
+            </div> */}
             <CustomTableCompoent
                 maxHeight="h-[34vh]"
                 headers={dynamicHeaders}
                 rows={rows}
                 totalRow={totalRow}
-                onRateChange={handleRateChange}
+                // onRateChange={handleRateChange}
                 editable={true}
                 toggleableColumns={toggleableColumns}
                 hiddenColumns={hiddenColumns}
@@ -503,11 +503,11 @@ export default function SingleBillHistory() {
                     <i className="fa fa-circle-o" aria-hidden="true"></i>
                 </button>
             </div>
-            <div className=" fixed bottom-16 right-5 font-bold gap-4 text-[22px]  flex justify-end">
+            {/* <div className=" fixed bottom-16 right-5 font-bold gap-4 text-[22px]  flex justify-end">
                 <div>Total Amount: {Number(totalAmount).toLocaleString("en-IN")}</div>
                 <div>Remaining Amount: {Number(payableAmount).toLocaleString("en-IN")}</div>
-            </div>
-            <div className=" fixed bottom-5 right-5 flex gap-4 mt-3">
+            </div> */}
+            {/* <div className=" fixed bottom-5 right-5 flex gap-4 mt-3">
                 <PrimaryButtonComponent
                     label="Save"
                     icon="fa fa-cloud-download"
@@ -528,7 +528,7 @@ export default function SingleBillHistory() {
                     handleCancelButton={handleCancelPopup}
                     handlePrintButton={handlePrintButton}
                 />
-            )}
+            )} */}
         </div>
     );
 }

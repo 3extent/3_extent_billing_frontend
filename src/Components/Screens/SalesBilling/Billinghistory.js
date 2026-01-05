@@ -82,37 +82,37 @@ function Billinghistory({ isDraft = false }) {
         const pending = selectedBill.pending_amount - paidTotal;
         setPendingAmount(pending);
     }, [cashAmount, card, onlineAmount, selectedBill]);
-    const handleDeleteBillCallback = (response) => {
-        if (response.status === 200) {
-            toast.success("Bill deleted successfully!", {
-                position: "top-center",
-                autoClose: 2000,
-            });
-            getBillData();
-        } else {
-            const errorMsg = response?.data?.error || "Failed to delete bill";
-            toast.error(errorMsg, {
-                position: "top-center",
-                autoClose: 2000,
-            });
-        }
-    };
-    const handleDeleteBill = (billId) => {
-        if (!billId) return;
+    // const handleDeleteBillCallback = (response) => {
+    //     if (response.status === 200) {
+    //         toast.success("Bill deleted successfully!", {
+    //             position: "top-center",
+    //             autoClose: 2000,
+    //         });
+    //         getBillData();
+    //     } else {
+    //         const errorMsg = response?.data?.error || "Failed to delete bill";
+    //         toast.error(errorMsg, {
+    //             position: "top-center",
+    //             autoClose: 2000,
+    //         });
+    //     }
+    // };
+    // const handleDeleteBill = (billId) => {
+    //     if (!billId) return;
 
-        apiCall({
-            method: "DELETE",
-            url: `${API_URLS.BILLING}/${billId}`,
-            data: {},
-            setLoading: setLoading,
-            callback: handleDeleteBillCallback,
-        });
-    };
+    //     apiCall({
+    //         method: "DELETE",
+    //         url: `${API_URLS.BILLING}/${billId}`,
+    //         data: {},
+    //         setLoading: setLoading,
+    //         callback: handleDeleteBillCallback,
+    //     });
+    // };
 
     const getBillCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
-            setBillingProductData(response.data.billings);
+            setBillingProductData(response.data.billings)
             const billingformattedRows = response.data.billings.map((bill, index) => ({
                 "Bill id": index + 1,
                 "Date": moment(bill.created_at).format('ll'),
@@ -126,7 +126,7 @@ function Billinghistory({ isDraft = false }) {
                 _id: bill._id,
                 "Actions": (
                     <div className="flex items-center justify-end gap-2">
-                        <div
+                        {/* <div
                             title="delete"
                             className="flex items-center justify-center rounded-full bg-gray-300 hover:bg-gray-400 cursor-pointer w-10 h-10 min-w-[40px] min-h-[40px]"
                             onClick={(e) => {
@@ -135,7 +135,7 @@ function Billinghistory({ isDraft = false }) {
                             }}
                         >
                             <i className="fa fa-trash text-gray-700 text-lg" />
-                        </div>
+                        </div> */}
                         {Number(bill.pending_amount) > 0 && (
                             <PrimaryButtonComponent
                                 label="Pay"
@@ -350,6 +350,7 @@ function Billinghistory({ isDraft = false }) {
             Object.keys(exportData[0])
         );
     };
+    console.log('rows: ', rows);
     return (
         <div>
             {loading && <Spinner />}
@@ -446,10 +447,13 @@ function Billinghistory({ isDraft = false }) {
             {/* <div className="h-[60vh]"> */}
             <CustomTableCompoent
                 maxHeight="h-[60vh]"
-                headers={BILLINGHISTORY_COLOUMNS}
+                headers={dynamicHeaders}
                 rows={rows}
                 totalRow={totalRow}
                 onRowClick={handleRowClick}
+                toggleableColumns={toggleableColumns}
+                hiddenColumns={hiddenColumns}
+                onToggleColumn={toggleColumn}
                 showTotalRow={!isDraft && showTotalRow}
             />
             {/* </div> */}

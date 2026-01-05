@@ -19,7 +19,7 @@ export default function RepairersDetails() {
     const [loading, setLoading] = useState(false);
     const [rows, setRows] = useState([]);
     const [imeiNumber, setIMEINumber] = useState('');
-
+    const [totalRow, setTotalRow] = useState(null);
     const fromDate = moment().format("YYYY-MM-DD");
     const toDate = moment().format("YYYY-MM-DD");
 
@@ -59,7 +59,7 @@ export default function RepairersDetails() {
                 Status: item.status,
                 id: item._id
             }));
-            repairedFormattedRows.push({
+            setTotalRow({
                 _id: "total",
                 "Purchase Price": Number(response.data.purchase_total_of_all_products || 0).toLocaleString("en-IN"),
                 "Part Cost": Number(response.data.total_parts_cost_used || 0).toLocaleString("en-IN"),
@@ -176,6 +176,7 @@ export default function RepairersDetails() {
                 <CustomTableCompoent
                     headers={REPAIRER_DETAILS_HEADERS}
                     rows={rows}
+                    totalRow={totalRow}
                     showTotalRow={showTotalRow}
                 />
             </div>

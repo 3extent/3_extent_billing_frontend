@@ -27,17 +27,26 @@ function RepairDashboard() {
     const [from, setFrom] = useState(fromDate);
     const [to, setTo] = useState(toDate);
     const [selectAllDates, setSelectAllDates] = useState(false);
+    const [totalRow, setTotalRow] = useState(null);
     const [showTotalRow, setShowTotalRow] = useState(false);
-    const [showDropdown, setShowDropdown] = useState(false);
-    const toggleableColumns = ["Engineer Name", "Repairer Remark"];
-    const [hiddenColumns, setHiddenColumns] = useState([...toggleableColumns]);
-    const [dynamicHeaders, setDynamicHeaders] = useState(() => {
-        return REPAIR_OPTIONS.filter(col => !toggleableColumns.includes(col));
-    });
+    const toggleableColumns = [
+        "Purchase Price",
+        "Repairer Remark",
+        "Engineer Name"
+    ];
 
-    const navigateAddRepair = () => {
-        navigate("/sendforrepair")
-    }
+    const [hiddenColumns, setHiddenColumns] = useState([
+        "Purchase Price",
+        "Repairer Remark",
+        "Engineer Name"
+    ]);
+
+    const [dynamicHeaders, setDynamicHeaders] = useState(() => {
+        return REPAIR_OPTIONS.filter(
+            (col) =>
+                !["Purchase Price", "Repairer Remark", "Engineer Name"].includes(col)
+        );
+    });
     const toggleColumn = (columnName) => {
         if (!toggleableColumns.includes(columnName)) return;
 
@@ -46,16 +55,24 @@ function RepairDashboard() {
             setHiddenColumns([...hiddenColumns, columnName]);
         } else {
             let newHeaders = [...dynamicHeaders];
+
             const actionIndex = newHeaders.indexOf("Action");
             if (actionIndex !== -1) {
                 newHeaders.splice(actionIndex, 0, columnName);
             } else {
                 newHeaders.push(columnName);
             }
+
             setDynamicHeaders(newHeaders);
             setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
         }
     };
+
+
+    const navigateAddRepair = () => {
+        navigate("/sendforrepair")
+    }
+
 
     const getRepairsCallBack = (response) => {
         console.log("API Response:", response);
@@ -93,12 +110,14 @@ function RepairDashboard() {
                     />
                 ),
             }));
-            repairFormattedRows.push({
+            setTotalRow({
                 _id: "total",
                 "Purchase Price": Number(response.data.purchase_total_of_all_products || 0).toLocaleString("en-IN"),
                 "Part Cost": Number(response.data.part_cost_of_all_products || 0).toLocaleString("en-IN"),
                 "Repairer Cost": Number(response.data.repairer_cost_of_all_products || 0).toLocaleString("en-IN"),
             });
+            setRows(repairFormattedRows);
+
             console.log("Formatted Rows:", repairFormattedRows);
             setRows(repairFormattedRows);
         } else {
@@ -165,7 +184,7 @@ function RepairDashboard() {
                 }])
                 getAllRepairs({ imeiNumber, status, from, to, selectAllDates });
             } else {
-            getAllRepairs({ imeiNumber, status, from, to, selectAllDates });
+                getAllRepairs({ imeiNumber, status, from, to, selectAllDates });
             }
 
         } else {
@@ -266,43 +285,15 @@ function RepairDashboard() {
                     buttonClassName="mt-1 py-1 px-5"
                 />
             </div>
-            {rows.length > 0 && (
-                <div className="relative mb-2">
-                    <button
-                        onClick={() => setShowDropdown(!showDropdown)}
-                        className="px-2 py-1 border rounded hover:bg-gray-200"
-                        title="Show columns"
-                    >
-                        <i className="fa fa-ellipsis-h" aria-hidden="true"></i>
-                    </button>
-                    {showDropdown && (
-                        <div className="absolute bg-white border shadow-md mt-1 rounded w-48 z-10 max-h-48 overflow-auto">
-                            {toggleableColumns.map((col) => (
-                                <label
-                                    key={col}
-                                    className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                >
-                                    <input
-                                        type="checkbox"
-                                        checked={dynamicHeaders.includes(col)}
-                                        onChange={() => toggleColumn(col)}
-                                        className="mr-2"
-                                        onFocus={() => setShowDropdown(true)}
-                                        onBlur={() => setTimeout(() => setShowDropdown(false), 300)}
-                                    />
-                                    {col}
-                                </label>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            )}
-
             <div className="h-[60vh]">
                 <CustomTableCompoent
                     headers={dynamicHeaders}
                     rows={rows}
+                    totalRow={totalRow}
                     showTotalRow={showTotalRow}
+                    toggleableColumns={toggleableColumns}
+                    hiddenColumns={hiddenColumns}
+                    onToggleColumn={toggleColumn}
                 />
             </div>
             <div className="flex justify-end">

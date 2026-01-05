@@ -11,7 +11,8 @@ export default function CustomTableCompoent({
     autoScrollBottom = false,
     toggleableColumns = [],
     hiddenColumns = [],
-    onToggleColumn
+    onToggleColumn,
+    totalRow
 }) {
     const [tableHeaders, setTableHeaders] = useState(headers);
     const [tableRows, setTableRows] = useState(rows);
@@ -48,14 +49,22 @@ export default function CustomTableCompoent({
         }
     }, [tableRows, isAtBottom, autoScrollBottom]);
 
-    const normalRows = tableRows.filter((row) => row._id !== "total");
-    const totalRowData = tableRows.find((row) => row._id === "total");
+    // const normalRows = tableRows.filter((row) => row._id !== "total");
+    // const totalRowData = tableRows.find((row) => row._id === "total");
 
+    // const getTotalRowBg = () => {
+    //     if (!totalRowData) return "bg-white";
+    //     if (totalRowData.Profit != null) {
+    //         if (totalRowData.Profit > 0) return "bg-green-200";
+    //         if (totalRowData.Profit < 0) return "bg-red-200";
+    //     }
+    //     return "bg-green-200";
+    // };
     const getTotalRowBg = () => {
-        if (!totalRowData) return "bg-white";
-        if (totalRowData.Profit != null) {
-            if (totalRowData.Profit > 0) return "bg-green-200";
-            if (totalRowData.Profit < 0) return "bg-red-200";
+        if (!totalRow) return "bg-white";
+        if (totalRow.Profit != null) {
+            if (totalRow.Profit > 0) return "bg-green-200";
+            if (totalRow.Profit < 0) return "bg-red-200";
         }
         return "bg-green-200";
     };
@@ -100,9 +109,9 @@ export default function CustomTableCompoent({
                 {tableRows.length > 0 ? (
                     <div
                         ref={tableRef}
-                        className={`w-full relative ${maxHeight} overflow-x-auto overflow-y-auto`}
+                    //  className={`w-full relative ${maxHeight} overflow-x-auto overflow-y-auto`}
                     >
-                        {normalRows.length > 0 ? (
+                        {tableRows.length > 0 ? (
                             <div className="border border-slate-800">
                                 <table className="table-fixed w-full">
                                     <thead className="sticky top-0 bg-slate-800 text-white text-sm font-semibold">
@@ -111,8 +120,8 @@ export default function CustomTableCompoent({
                                                 <th
                                                     key={i}
                                                     className={`px-4 py-2 ${header === "Action"
-                                                            ? "text-right"
-                                                            : "text-left"
+                                                        ? "text-right"
+                                                        : "text-left"
                                                         }`}
                                                 >
                                                     {header}
@@ -130,8 +139,8 @@ export default function CustomTableCompoent({
                                                         : null
                                                 }
                                                 className={`border-b text-left text-[12px] ${row.is_repaired
-                                                        ? "bg-red-100 hover:bg-red-300"
-                                                        : "border-slate-300 hover:bg-slate-100"
+                                                    ? "bg-red-100 hover:bg-red-300"
+                                                    : "border-slate-300 hover:bg-slate-100"
                                                     } ${onRowClick ? "cursor-pointer " : ""
                                                     }`}
                                                 onClick={() => onRowClick && onRowClick(row)}
@@ -182,7 +191,7 @@ export default function CustomTableCompoent({
                 )}
 
                 {/* Total Row */}
-                {totalRowData && showTotalRow && (
+                {totalRow && showTotalRow && (
                     <div
                         className={`mt-5 sticky bottom-0 font-extrabold text-[20px] z-20 ${getTotalRowBg()}`}
                     >
@@ -201,9 +210,18 @@ export default function CustomTableCompoent({
                                                         "Total Products",
                                                         "Purchase Price",
                                                         "Sale Price",
-                                                        "Rate"
+                                                        "Total Supplier Cost",
+                                                        "Total Supplier Paid",
+                                                        "Total Supplier Remaining",
+                                                        "Rate",
+                                                        "Part Cost",
+                                                        "Repairer Cost",
+                                                        "Total Part Cost",
+                                                        "Total Repairer Cost",
+                                                        "Total Paid",
+                                                        "Total Repairer Remaining"
                                                     ].includes(header)
-                                                        ? totalRowData[header]?.toLocaleString()
+                                                        ? totalRow[header]?.toLocaleString()
                                                         : ""}
                                             </td>
                                         ))}

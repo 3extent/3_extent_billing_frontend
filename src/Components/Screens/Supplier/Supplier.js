@@ -15,7 +15,7 @@ function Supplier() {
     const [supplierName, setSupplierName] = useState('');
     const [contactNo, setContactNo] = useState('');
     const [loading, setLoading] = useState(false);
-
+    const [totalRow, setTotalRow] = useState(null);
     const toggleableColumns = ["Address", "Contact No 2", "Firm Name"];
 
     const [hiddenColumns, setHiddenColumns] = useState([
@@ -112,7 +112,7 @@ function Supplier() {
                 ),
                 id: supplier._id
             }));
-            supplierFormattedRows.push({
+            setTotalRow({
                 _id: "total",
                 "Bill id": "Total",
                 "Supplier Name": "",
@@ -269,9 +269,12 @@ function Supplier() {
                 maxHeight="h-[65vh]"
                 headers={dynamicHeaders}
                 rows={rows}
+                totalRow={totalRow}
                 toggleableColumns={toggleableColumns}
                 hiddenColumns={hiddenColumns}
                 onToggleColumn={toggleColumn}
+                onRowClick={handleRowClick}
+                showTotalRow={showTotalRow}
 
             />
             <div className="flex justify-end">

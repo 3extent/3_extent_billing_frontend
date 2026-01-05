@@ -16,12 +16,13 @@ export default function SalesBilling() {
     const [loading, setLoading] = useState(false);
     const [hiddenColumns, setHiddenColumns] = useState([
         "Purchase Price",
-        "QC-Remark",
-        "Supplier Name"
+        "QC Remark",
+        "Supplier Name",
+        "purchase cost including expenses",
     ]);
     const [dynamicHeaders, setDynamicHeaders] = useState(() => {
         return SALESBILLING_COLOUMNS.filter(
-            (col) => !["Purchase Price", "QC-Remark", "Supplier Name"].includes(col)
+            (col) => !["Purchase Price", "QC Remark", "Supplier Name", "purchase cost including expenses"].includes(col)
         );
     });
     const navigate = useNavigate();
@@ -37,7 +38,7 @@ export default function SalesBilling() {
     const [card, setCard] = useState("");
     const [totalAmount, setTotalAmount] = useState(0);
     const [pendingAmount, setPendingAmount] = useState(0);
-    const toggleableColumns = ["Purchase Price", "QC-Remark", "Supplier Name"];
+    const toggleableColumns = ["Purchase Price", "QC Remark", "Supplier Name", "purchase cost including expenses"];
     const handleDeleteRow = (imeiNumber) => {
         setRows((currentRows) => {
             const updatedRows = [...currentRows];
@@ -65,7 +66,7 @@ export default function SalesBilling() {
                 if (rateIndex !== -1) newHeaders.splice(rateIndex + 1, 0, "Purchase Price");
                 else newHeaders.push("Purchase Price");
             }
-            if (columnName === "Supplier Name" || columnName === "QC-Remark") {
+            if (columnName === "Supplier Name" || columnName === "QC Remark" || columnName === "purchase cost including expenses") {
                 const actionIndex = newHeaders.indexOf("Action");
                 if (actionIndex !== +1) {
                     newHeaders.splice(actionIndex, 0, columnName);
@@ -77,6 +78,7 @@ export default function SalesBilling() {
             setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
         };
     };
+
     const [imeiOptions, setImeiOptions] = useState([]);
     const [selectedImei, setSelectedImei] = useState("");
     const [contactNoOptions, setContactNoOptions] = useState([]);
@@ -182,8 +184,9 @@ export default function SalesBilling() {
                 "Purchase Price": product.purchase_price,
                 "Grade": product.grade,
                 "Accessories": product.accessories,
-                "QC-Remark": product.qc_remark,
+                "QC Remark": product.qc_remark,
                 "Supplier Name": product?.supplier?.name,
+                "purchase cost including expenses": product.purchase_cost_including_expenses,
                 "Status": product.status,
                 is_repaired: product.is_repaired,
                 "Action": (
@@ -257,8 +260,6 @@ export default function SalesBilling() {
                 response.data.billing.net_total,
                 response.data.billing.c_gst,
                 response.data.billing.s_gst,
-
-
             );
         } else {
             const errorMsg = response?.data?.error || "Something went wrong while saving bill.";
@@ -442,10 +443,10 @@ export default function SalesBilling() {
                 onToggleColumn={toggleColumn}
 
             />
-            <div className=" fixed bottom-16 right-5 font-bold gap-4 text-[22px]  flex justify-end">
+            <div className="fixed bottom-16 right-5 font-bold gap-4 text-[22px]  flex justify-end">
                 Total Amount : {Number(totalAmount).toLocaleString("en-IN")}
             </div>
-            <div className=" fixed bottom-5 right-5 flex gap-4 mt-3">
+            <div className="fixed bottom-5 right-5 flex gap-4 mt-3">
                 <PrimaryButtonComponent
                     label="Save"
                     icon="fa fa-cloud-download"

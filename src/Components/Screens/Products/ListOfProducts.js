@@ -31,16 +31,16 @@ function ListOfProducts() {
     const navigate = useNavigate();
 
     const toggleableColumns = ["GST Purchase Price", "Accessories", "Engineer Name", "Part Cost",
-        "Repairer Cost", "Repair Name", "Repair Contact No", "Repair Remark", "After purchase"];
+        "Repairer Cost", "Repair Name", "Repair Contact No", "Repair Remark", "purchase cost including expenses"];
 
     const [hiddenColumns, setHiddenColumns] = useState([
         "GST Purchase Price", "Accessories", "Engineer Name", "Part Cost",
-        "Repairer Cost", "Repair Name", "Repair Contact No", "Repair Remark", "After purchase"
+        "Repairer Cost", "Repair Name", "Repair Contact No", "Repair Remark", "purchase cost including expenses"
     ]);
     const [dynamicHeaders, setDynamicHeaders] = useState(() => {
         return PRODUCT_COLOUMNS.filter(
             (col) => !["GST Purchase Price", "Accessories", "Engineer Name", "Part Cost",
-                "Repairer Cost", "Repair Name", "Repair Contact No", "Repair Remark", "After purchase"].includes(col)
+                "Repairer Cost", "Repair Name", "Repair Contact No", "Repair Remark", "purchase cost including expenses"].includes(col)
         );
     });
 
@@ -109,6 +109,7 @@ function ListOfProducts() {
                 "Repair Name": product.repair_by?.name,
                 "Repair Contact No": product.repair_by?.contact_number,
                 "Repair Remark": product.repair_remark,
+                "purchase cost including expenses": product.purchase_cost_including_expenses,
                 id: product._id,
                 "Actions": (
                     <div className='flex items-center justify-end gap-2'>

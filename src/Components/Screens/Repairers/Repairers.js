@@ -15,13 +15,8 @@ function Repairers() {
     const navigateAddRepairers = () => {
         navigate("/addrepairers")
     }
-    const toggleableColumns = ["GST Number", "Address", "State"];
-    const [hiddenColumns, setHiddenColumns] = useState([...toggleableColumns]);
-    const [dynamicHeaders, setDynamicHeaders] = useState(() => {
-        return REPAIRERS_OPTIONS.filter(col => !toggleableColumns.includes(col));
-    });
-    const [showDropdown, setShowDropdown] = useState(false);
 
+    const [totalRow, setTotalRow] = useState(null);
     const [rows, setRows] = useState([]);
     const [repairerName, setRepairerName] = useState('');
     const [contactNo, setContactNo] = useState('');
@@ -33,7 +28,19 @@ function Repairers() {
     const [card, setCard] = useState("");
     const [pendingAmount, setPendingAmount] = useState(0);
     const [showTotalRow, setShowTotalRow] = useState(false);
+    const toggleableColumns = ["State", "Address", "GST Number"];
 
+    const [hiddenColumns, setHiddenColumns] = useState([
+        "State",
+        "Address",
+        "GST Number"
+    ]);
+
+    const [dynamicHeaders, setDynamicHeaders] = useState(() => {
+        return REPAIRERS_OPTIONS.filter(
+            (col) => !["State", "Address", "GST Number"].includes(col)
+        );
+    });
     const toggleColumn = (columnName) => {
         if (!toggleableColumns.includes(columnName)) return;
 
@@ -42,16 +49,20 @@ function Repairers() {
             setHiddenColumns([...hiddenColumns, columnName]);
         } else {
             let newHeaders = [...dynamicHeaders];
+
             const actionIndex = newHeaders.indexOf("Actions");
             if (actionIndex !== -1) {
                 newHeaders.splice(actionIndex, 0, columnName);
             } else {
                 newHeaders.push(columnName);
             }
+
             setDynamicHeaders(newHeaders);
             setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
         }
     };
+
+
     const getRepairersCallback = useCallback((response) => {
         console.log("API Response:", response);
         if (response.status === 200) {
@@ -91,7 +102,7 @@ function Repairers() {
 
                 id: repairer._id
             }));
-            RepairedFormattedRows.push({
+            setTotalRow({
                 _id: "total",
                 "Repairer Name": "Total",
                 "Total Part Cost": Number(response.data.part_cost_of_all_users || 0).toLocaleString("en-IN"),
@@ -99,6 +110,7 @@ function Repairers() {
                 "Total Paid": Number(response.data.paid_amount_of_all_users || 0).toLocaleString("en-IN"),
                 "Total Repairer Remaining": Number(response.data.pending_amount_of_all_users || 0).toLocaleString("en-IN"),
             });
+
             setRows(RepairedFormattedRows);
             console.log("Formatted Rows:", RepairedFormattedRows);
         } else {
@@ -250,45 +262,17 @@ function Repairers() {
                     onClick={handleResetFilter}
                 />
             </div>
-            {rows.length > 0 && (
-                <div className="relative mb-2">
-                    <button
-                        onClick={() => setShowDropdown(!showDropdown)}
-                        className="px-2 py-1 border rounded hover:bg-gray-200"
-                        title="Show columns"
-                    >
-                        <i className="fa fa-ellipsis-h" aria-hidden="true"></i>
-                    </button>
-                    {showDropdown && (
-                        <div className="absolute bg-white border shadow-md mt-1 rounded w-48 z-10 max-h-48 overflow-auto">
-                            {toggleableColumns.map((col) => (
-                                <label
-                                    key={col}
-                                    className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                >
-                                    <input
-                                        type="checkbox"
-                                        checked={dynamicHeaders.includes(col)}
-                                        onChange={() => toggleColumn(col)}
-                                        className="mr-2"
-                                        onFocus={() => setShowDropdown(true)}
-                                        onBlur={() => setTimeout(() => setShowDropdown(false), 300)}
-                                    />
-                                    {col}
-                                </label>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            )}
-            <div className="h-[60vh]">
-                <CustomTableCompoent
-                    headers={dynamicHeaders}
-                    rows={rows}
-                    onRowClick={handleRowClick}
-                    showTotalRow={showTotalRow}
-                />
-            </div>
+            <CustomTableCompoent
+                maxHeight="h-[65vh]"
+                headers={dynamicHeaders}
+                rows={rows}
+                onRowClick={handleRowClick}
+                totalRow={totalRow}
+                showTotalRow={showTotalRow}
+                toggleableColumns={toggleableColumns}
+                hiddenColumns={hiddenColumns}
+                onToggleColumn={toggleColumn}
+            />
             <div className="flex justify-end">
                 <button className="rounded-full" onClick={() => setShowTotalRow(!showTotalRow)}>
                     <i className="fa fa-circle-o" aria-hidden="true"></i>
