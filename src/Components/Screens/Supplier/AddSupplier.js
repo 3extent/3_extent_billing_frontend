@@ -12,8 +12,11 @@ function AddSupplier() {
         navigate(-1);
     };
     useEffect(() => {
-        getSupplierData();
-    }, [supplier_id])
+        if (supplier_id) {
+            getSupplierData();
+        }
+    }, [supplier_id]);
+
     const [supplierData, setSupplierData] = useState({
         name: "",
         firm_name: "",

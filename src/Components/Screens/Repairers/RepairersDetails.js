@@ -19,7 +19,7 @@ export default function RepairersDetails() {
     const [loading, setLoading] = useState(false);
     const [rows, setRows] = useState([]);
     const [imeiNumber, setIMEINumber] = useState('');
-
+    const [totalRow, setTotalRow] = useState(null);
     const fromDate = moment().format("YYYY-MM-DD");
     const toDate = moment().format("YYYY-MM-DD");
 
@@ -59,7 +59,7 @@ export default function RepairersDetails() {
                 Status: item.status,
                 id: item._id
             }));
-            repairedFormattedRows.push({
+            setTotalRow({
                 _id: "total",
                 "Purchase Price": Number(response.data.purchase_total_of_all_products || 0).toLocaleString("en-IN"),
                 "Part Cost": Number(response.data.total_parts_cost_used || 0).toLocaleString("en-IN"),
@@ -176,14 +176,13 @@ export default function RepairersDetails() {
                     onClick={handleResetFilter}
                 />
             </div>
-
-            <div className="h-[60vh]">
-                <CustomTableCompoent
-                    headers={REPAIRER_DETAILS_HEADERS}
-                    rows={rows}
-                    showTotalRow={showTotalRow}
-                />
-            </div>
+            <CustomTableCompoent
+                maxHeight="h-[60vh]"
+                headers={REPAIRER_DETAILS_HEADERS}
+                rows={rows}
+                totalRow={totalRow}
+                showTotalRow={showTotalRow}
+            />
             <div className="flex justify-end">
                 <button className="rounded-full" onClick={() => setShowTotalRow(!showTotalRow)}>
                     <i className="fa fa-circle-o" aria-hidden="true"></i>

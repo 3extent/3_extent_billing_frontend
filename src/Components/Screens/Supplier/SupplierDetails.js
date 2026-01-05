@@ -34,6 +34,7 @@ export default function SupplierDetails() {
     const [rows, setRows] = useState([]);
 
     const [showTotalRow, setShowTotalRow] = useState(false);
+    const [totalRow, setTotalRow] = useState(null);
 
     const handleBack = () => {
         navigate(-1);
@@ -81,14 +82,14 @@ export default function SupplierDetails() {
                 "Status": product.status,
                 id: product._id
             }));
-            formattedRows.push({
+            setTotalRow({
                 _id: "total",
                 "Bill id": "Total",
                 "Date": "",
                 "IMEI Number": "",
                 "Model Name": "",
                 "Brand Name": "",
-                "Purchase Price": Number(response.data.purchase_total_of_all_products|| 0).toLocaleString("en-IN"),
+                "Purchase Price": Number(response.data.purchase_total_of_all_products || 0).toLocaleString("en-IN"),
                 "Grade": "",
                 "Qc-Remark": "",
                 "Status": ""
@@ -254,6 +255,7 @@ export default function SupplierDetails() {
                 headers={SINGLE_SUPPLIER_DETAILS}
                 rows={rows}
                 showTotalRow={showTotalRow}
+                totalRow={totalRow}
             />
             <div className="flex justify-end">
                 <button className="rounded-full" onClick={() => setShowTotalRow(!showTotalRow)}>

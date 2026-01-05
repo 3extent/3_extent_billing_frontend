@@ -29,6 +29,40 @@ function ListOfProducts() {
 
     const [selectAllDates, setSelectAllDates] = useState(false);
     const navigate = useNavigate();
+
+    const toggleableColumns = ["GST Purchase Price", "Accessories", "Engineer Name", "Part Cost",
+        "Repairer Cost", "Repairer Name", "Repairer Contact No", "Repair Remark", "Purchase Cost Including Expenses"];
+
+    const [hiddenColumns, setHiddenColumns] = useState([
+        "GST Purchase Price", "Accessories", "Engineer Name", "Part Cost",
+        "Repairer Cost", "Repairer Name", "Repairer Contact No", "Repair Remark", "Purchase Cost Including Expenses"
+    ]);
+    const [dynamicHeaders, setDynamicHeaders] = useState(() => {
+        return PRODUCT_COLOUMNS.filter(
+            (col) => !["GST Purchase Price", "Accessories", "Engineer Name", "Part Cost",
+                "Repairer Cost", "Repairer Name", "Repairer Contact No", "Repair Remark", "Purchase Cost Including Expenses"].includes(col)
+        );
+    });
+
+    const toggleColumn = (columnName) => {
+        if (!toggleableColumns.includes(columnName)) return;
+        if (dynamicHeaders.includes(columnName)) {
+            setDynamicHeaders(dynamicHeaders.filter(col => col !== columnName));
+            setHiddenColumns([...hiddenColumns, columnName]);
+        } else {
+            let newHeaders = [...dynamicHeaders];
+            const actionIndex = newHeaders.indexOf("Actions");
+            if (actionIndex !== +1) {
+                newHeaders.splice(actionIndex, 0, columnName);
+
+            } else {
+                newHeaders.push(columnName);
+            }
+            setDynamicHeaders(newHeaders);
+            setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
+        };
+    };
+
     useEffect(() => {
         setFrom(fromDate);
         setTo(toDate);
@@ -67,6 +101,15 @@ function ListOfProducts() {
                 "Sales Price": product.sales_price,
                 "Purchase Price": product.purchase_price,
                 "Grade": product.grade,
+                "Engineer Name": product.engineer_name,
+                "Accessories": product.accessories,
+                "GST Purchase Price": product.gst_purchase_price,
+                "Part Cost": product.part_cost,
+                "Repairer Cost": product.repairer_cost,
+                "Repairer Name": product.repair_by?.name,
+                "Repairer Contact No": product.repair_by?.contact_number,
+                "Repair Remark": product.repair_remark,
+                "Purchase Cost Including Expenses": product.purchase_cost_including_expenses,
                 id: product._id,
                 "Actions": (
                     <div className='flex items-center justify-end gap-2'>
@@ -177,7 +220,7 @@ function ListOfProducts() {
 
     }
     const handleExportToExcel = () => {
-        exportToExcel(rows, "ProductList.xlsx");
+        exportToExcel(rows, "ProductList.xlsx", null, dynamicHeaders);
     };
     return (
         <div className='w-full'>
@@ -214,7 +257,6 @@ function ListOfProducts() {
                     value={supplierName}
                     onChange={(value) => setSupplierName(value)}
                     options={supplierOptions}
-
                 />
                 <InputComponent
                     type="text"
@@ -272,13 +314,14 @@ function ListOfProducts() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <div className="h-[60vh]">
-                <CustomTableCompoent
-                    headers={PRODUCT_COLOUMNS}
-                    rows={rows}
-                />
-            </div>
-
+            <CustomTableCompoent
+                maxHeight="h-[50vh]"
+                headers={dynamicHeaders}
+                rows={rows}
+                toggleableColumns={toggleableColumns}
+                hiddenColumns={hiddenColumns}
+                onToggleColumn={toggleColumn}
+            />
         </div>
     );
 }

@@ -426,14 +426,13 @@ export default function SingleDraftBillHistory() {
                     inputClassName="w-[190px] mb-6"
                 />
             </div>
-            <div className="h-[64vh]">
-                <CustomTableCompoent
-                    headers={SINGLEDRAFTBILLHISTORY_COLOUMNS}
-                    rows={rows}
-                    onRateChange={handleRateChange}
-                    editable={true}
-                />
-            </div>
+            <CustomTableCompoent
+                maxHeight="h-[60vh]"
+                headers={SINGLEDRAFTBILLHISTORY_COLOUMNS}
+                rows={rows}
+                onRateChange={handleRateChange}
+                editable={true}
+            />
             <div className=" fixed bottom-16 right-5 font-bold gap-4 text-[22px]  flex justify-end">
                 Total Amount : {Number(totalAmount).toLocaleString("en-IN")}
             </div>

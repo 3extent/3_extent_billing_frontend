@@ -15,7 +15,37 @@ function Supplier() {
     const [supplierName, setSupplierName] = useState('');
     const [contactNo, setContactNo] = useState('');
     const [loading, setLoading] = useState(false);
+    const [totalRow, setTotalRow] = useState(null);
+    const toggleableColumns = ["Address", "Contact No 2", "Firm Name"];
 
+    const [hiddenColumns, setHiddenColumns] = useState([
+        "Address", "Contact No 2", "Firm Name",
+    ]);
+
+    const [dynamicHeaders, setDynamicHeaders] = useState(() => {
+        return SUPPLIER_COLUMNS.filter(
+            (col) => !["Address", "Contact No 2", "Firm Name"].includes(col)
+        );
+    });
+
+    const toggleColumn = (columnName) => {
+        if (!toggleableColumns.includes(columnName)) return;
+        if (dynamicHeaders.includes(columnName)) {
+            setDynamicHeaders(dynamicHeaders.filter(col => col !== columnName));
+            setHiddenColumns([...hiddenColumns, columnName]);
+        } else {
+            let newHeaders = [...dynamicHeaders];
+            const actionIndex = newHeaders.indexOf("Action");
+            if (actionIndex !== +1) {
+                newHeaders.splice(actionIndex, 0, columnName);
+
+            } else {
+                newHeaders.push(columnName);
+            }
+            setDynamicHeaders(newHeaders);
+            setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
+        };
+    };
     const [showPaymentPopup, setShowPaymentPopup] = useState(false);
     const [selectedSupplier, setSelectedSupplier] = useState(null);
     const [cashAmount, setCashAmount] = useState("");
@@ -51,6 +81,9 @@ function Supplier() {
                 "Contact No": supplier.contact_number,
                 "GST No": supplier.gst_number,
                 "State": supplier.state,
+                "Address": supplier.address,
+                "Contact No 2": supplier.contact_number2,
+                "Firm Name": supplier.firm_name,
                 "Supplier Type": supplier.type,
                 "Total Supplier Cost": supplier.payable_amount,
                 "Total Supplier Paid": supplier.paid_amount?.reduce((sum, payment) => sum + Number(payment.amount || 0), 0),
@@ -79,7 +112,7 @@ function Supplier() {
                 ),
                 id: supplier._id
             }));
-            supplierFormattedRows.push({
+            setTotalRow({
                 _id: "total",
                 "Bill id": "Total",
                 "Supplier Name": "",
@@ -97,7 +130,7 @@ function Supplier() {
             console.log("Error");
         }
     }, [navigate]);
-    const getSupplierAllData = useCallback(({ supplierName, contactNo }={}) => {
+    const getSupplierAllData = useCallback(({ supplierName, contactNo } = {}) => {
         let url = `${API_URLS.USERS}?role=SUPPLIER`;
         if (supplierName) {
             url += `&name=${supplierName}`
@@ -164,7 +197,7 @@ function Supplier() {
         const online = Number(onlineAmount || 0);
         const cardAmt = Number(card || 0);
         const paidTotal = cash + online + cardAmt;
-        
+
         const updatedPayment = {
             payable_amount: selectedSupplier.payable_amount,
             paid_amount: [
@@ -232,14 +265,18 @@ function Supplier() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <div className="h-[60vh]">
-                <CustomTableCompoent
-                    headers={SUPPLIER_COLUMNS}
-                    rows={rows}
-                    onRowClick={handleRowClick}
-                    showTotalRow={showTotalRow}
-                />
-            </div>
+            <CustomTableCompoent
+                maxHeight="h-[65vh]"
+                headers={dynamicHeaders}
+                rows={rows}
+                totalRow={totalRow}
+                toggleableColumns={toggleableColumns}
+                hiddenColumns={hiddenColumns}
+                onToggleColumn={toggleColumn}
+                onRowClick={handleRowClick}
+                showTotalRow={showTotalRow}
+
+            />
             <div className="flex justify-end">
                 <button className="rounded-full" onClick={() => setShowTotalRow(!showTotalRow)}>
                     <i className="fa fa-circle-o" aria-hidden="true"></i>
@@ -259,7 +296,6 @@ function Supplier() {
                     handleSaveButton={handleSavePayment}
                 />
             )}
-
         </div>
     );
 }
