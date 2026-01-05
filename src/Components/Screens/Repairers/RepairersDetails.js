@@ -171,15 +171,13 @@ export default function RepairersDetails() {
                     onClick={handleResetFilter}
                 />
             </div>
-
-            <div className="h-[60vh]">
-                <CustomTableCompoent
-                    headers={REPAIRER_DETAILS_HEADERS}
-                    rows={rows}
-                    totalRow={totalRow}
-                    showTotalRow={showTotalRow}
-                />
-            </div>
+            <CustomTableCompoent
+                maxHeight="h-[60vh]"
+                headers={REPAIRER_DETAILS_HEADERS}
+                rows={rows}
+                totalRow={totalRow}
+                showTotalRow={showTotalRow}
+            />
             <div className="flex justify-end">
                 <button className="rounded-full" onClick={() => setShowTotalRow(!showTotalRow)}>
                     <i className="fa fa-circle-o" aria-hidden="true"></i>

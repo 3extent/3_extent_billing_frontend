@@ -31,16 +31,16 @@ function ListOfProducts() {
     const navigate = useNavigate();
 
     const toggleableColumns = ["GST Purchase Price", "Accessories", "Engineer Name", "Part Cost",
-        "Repairer Cost", "Repair Name", "Repair Contact No", "Repair Remark", "purchase cost including expenses"];
+        "Repairer Cost", "Repairer Name", "Repairer Contact No", "Repair Remark", "Purchase Cost Including Expenses"];
 
     const [hiddenColumns, setHiddenColumns] = useState([
         "GST Purchase Price", "Accessories", "Engineer Name", "Part Cost",
-        "Repairer Cost", "Repair Name", "Repair Contact No", "Repair Remark", "purchase cost including expenses"
+        "Repairer Cost", "Repairer Name", "Repairer Contact No", "Repair Remark", "Purchase Cost Including Expenses"
     ]);
     const [dynamicHeaders, setDynamicHeaders] = useState(() => {
         return PRODUCT_COLOUMNS.filter(
             (col) => !["GST Purchase Price", "Accessories", "Engineer Name", "Part Cost",
-                "Repairer Cost", "Repair Name", "Repair Contact No", "Repair Remark", "purchase cost including expenses"].includes(col)
+                "Repairer Cost", "Repairer Name", "Repairer Contact No", "Repair Remark", "Purchase Cost Including Expenses"].includes(col)
         );
     });
 
@@ -106,10 +106,10 @@ function ListOfProducts() {
                 "GST Purchase Price": product.gst_purchase_price,
                 "Part Cost": product.part_cost,
                 "Repairer Cost": product.repairer_cost,
-                "Repair Name": product.repair_by?.name,
-                "Repair Contact No": product.repair_by?.contact_number,
+                "Repairer Name": product.repair_by?.name,
+                "Repairer Contact No": product.repair_by?.contact_number,
                 "Repair Remark": product.repair_remark,
-                "purchase cost including expenses": product.purchase_cost_including_expenses,
+                "Purchase Cost Including Expenses": product.purchase_cost_including_expenses,
                 id: product._id,
                 "Actions": (
                     <div className='flex items-center justify-end gap-2'>

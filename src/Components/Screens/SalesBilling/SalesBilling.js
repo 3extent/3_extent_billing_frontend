@@ -18,11 +18,11 @@ export default function SalesBilling() {
         "Purchase Price",
         "QC Remark",
         "Supplier Name",
-        "purchase cost including expenses",
+        "Purchase Cost Including Expenses",
     ]);
     const [dynamicHeaders, setDynamicHeaders] = useState(() => {
         return SALESBILLING_COLOUMNS.filter(
-            (col) => !["Purchase Price", "QC Remark", "Supplier Name", "purchase cost including expenses"].includes(col)
+            (col) => !["Purchase Price", "QC Remark", "Supplier Name", "Purchase Cost Including Expenses"].includes(col)
         );
     });
     const navigate = useNavigate();
@@ -38,7 +38,7 @@ export default function SalesBilling() {
     const [card, setCard] = useState("");
     const [totalAmount, setTotalAmount] = useState(0);
     const [pendingAmount, setPendingAmount] = useState(0);
-    const toggleableColumns = ["Purchase Price", "QC Remark", "Supplier Name", "purchase cost including expenses"];
+    const toggleableColumns = ["Purchase Price", "QC Remark", "Supplier Name", "Purchase Cost Including Expenses"];
     const handleDeleteRow = (imeiNumber) => {
         setRows((currentRows) => {
             const updatedRows = [...currentRows];
@@ -66,7 +66,7 @@ export default function SalesBilling() {
                 if (rateIndex !== -1) newHeaders.splice(rateIndex + 1, 0, "Purchase Price");
                 else newHeaders.push("Purchase Price");
             }
-            if (columnName === "Supplier Name" || columnName === "QC Remark" || columnName === "purchase cost including expenses") {
+            if (columnName === "Supplier Name" || columnName === "QC Remark" || columnName === "Purchase Cost Including Expenses") {
                 const actionIndex = newHeaders.indexOf("Action");
                 if (actionIndex !== +1) {
                     newHeaders.splice(actionIndex, 0, columnName);
@@ -186,7 +186,7 @@ export default function SalesBilling() {
                 "Accessories": product.accessories,
                 "QC Remark": product.qc_remark,
                 "Supplier Name": product?.supplier?.name,
-                "purchase cost including expenses": product.purchase_cost_including_expenses,
+                "Purchase Cost Including Expenses": product.purchase_cost_including_expenses,
                 "Status": product.status,
                 is_repaired: product.is_repaired,
                 "Action": (
@@ -437,10 +437,12 @@ export default function SalesBilling() {
                 headers={dynamicHeaders}
                 rows={rows}
                 onRateChange={handleRateChange}
+                autoScrollBottom={true}
                 editable={true}
                 toggleableColumns={toggleableColumns}
                 hiddenColumns={hiddenColumns}
                 onToggleColumn={toggleColumn}
+
 
             />
             <div className="fixed bottom-16 right-5 font-bold gap-4 text-[22px]  flex justify-end">

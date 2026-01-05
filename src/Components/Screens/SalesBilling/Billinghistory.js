@@ -444,7 +444,6 @@ function Billinghistory({ isDraft = false }) {
                     onClick={handleResetFilter}
                 />
             </div>
-            {/* <div className="h-[60vh]"> */}
             <CustomTableCompoent
                 maxHeight="h-[60vh]"
                 headers={dynamicHeaders}
@@ -456,7 +455,6 @@ function Billinghistory({ isDraft = false }) {
                 onToggleColumn={toggleColumn}
                 showTotalRow={!isDraft && showTotalRow}
             />
-            {/* </div> */}
             {!isDraft && (
                 <div className="flex justify-end">
                     <button className="rounded-full" onClick={() => setShowTotalRow(!showTotalRow)}>

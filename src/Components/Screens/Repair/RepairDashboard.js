@@ -285,17 +285,16 @@ function RepairDashboard() {
                     buttonClassName="mt-1 py-1 px-5"
                 />
             </div>
-            <div className="h-[60vh]">
-                <CustomTableCompoent
-                    headers={dynamicHeaders}
-                    rows={rows}
-                    totalRow={totalRow}
-                    showTotalRow={showTotalRow}
-                    toggleableColumns={toggleableColumns}
-                    hiddenColumns={hiddenColumns}
-                    onToggleColumn={toggleColumn}
-                />
-            </div>
+            <CustomTableCompoent
+                maxHeight="h-[60vh]"
+                headers={dynamicHeaders}
+                rows={rows}
+                totalRow={totalRow}
+                showTotalRow={showTotalRow}
+                toggleableColumns={toggleableColumns}
+                hiddenColumns={hiddenColumns}
+                onToggleColumn={toggleColumn}
+            />
             <div className="flex justify-end">
                 <button className="rounded-full" onClick={() => setShowTotalRow(!showTotalRow)}>
                     <i className="fa fa-circle-o" aria-hidden="true"></i>

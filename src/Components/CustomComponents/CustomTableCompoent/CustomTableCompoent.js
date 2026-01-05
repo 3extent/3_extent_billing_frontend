@@ -47,7 +47,7 @@ export default function CustomTableCompoent({
                 lastRowRef.current.scrollIntoView({ behavior: "smooth" });
             }, 50);
         }
-    }, [tableRows, isAtBottom, autoScrollBottom]);
+    }, [tableRows, isAtBottom]);
 
     // const normalRows = tableRows.filter((row) => row._id !== "total");
     // const totalRowData = tableRows.find((row) => row._id === "total");
@@ -103,135 +103,126 @@ export default function CustomTableCompoent({
                     </div>
                 </div>
             )}
-
-            {/* Table Body */}
-            <div className={`w-full relative ${maxHeight} overflow-x-auto`}>
+            <div
+                ref={tableRef}
+                className={`w-full relative ${maxHeight} overflow-x-auto overflow-y-auto`}
+            >
                 {tableRows.length > 0 ? (
-                    <div
-                        ref={tableRef}
-                    //  className={`w-full relative ${maxHeight} overflow-x-auto overflow-y-auto`}
-                    >
-                        {tableRows.length > 0 ? (
-                            <div className="border border-slate-800">
-                                <table className="table-fixed w-full">
-                                    <thead className="sticky top-0 bg-slate-800 text-white text-sm font-semibold">
-                                        <tr>
-                                            {tableHeaders.map((header, i) => (
-                                                <th
-                                                    key={i}
-                                                    className={`px-4 py-2 ${header === "Action"
-                                                        ? "text-right"
-                                                        : "text-left"
-                                                        }`}
-                                                >
-                                                    {header}
-                                                </th>
-                                            ))}
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {tableRows.map((row, rowIndex) => (
-                                            <tr
-                                                key={rowIndex}
-                                                ref={
-                                                    rowIndex === tableRows.length - 1
-                                                        ? lastRowRef
-                                                        : null
-                                                }
-                                                className={`border-b text-left text-[12px] ${row.is_repaired
-                                                    ? "bg-red-100 hover:bg-red-300"
-                                                    : "border-slate-300 hover:bg-slate-100"
-                                                    } ${onRowClick ? "cursor-pointer " : ""
-                                                    }`}
-                                                onClick={() => onRowClick && onRowClick(row)}
+                    <div className="border border-slate-800">
+                        <table className="table-fixed w-full">
+                            <thead className="sticky top-0 bg-slate-800 text-white text-sm font-semibold">
+                                <tr>
+                                    {tableHeaders.map((header, i) => (
+                                        <th
+                                            key={i}
+                                            className={`px-4 py-2 ${header === "Action"
+                                                ? "text-right"
+                                                : "text-left"
+                                                }`}
+                                        >
+                                            {header}
+                                        </th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {tableRows.map((row, rowIndex) => (
+                                    <tr
+                                        key={rowIndex}
+                                        ref={
+                                            rowIndex === tableRows.length - 1
+                                                ? lastRowRef
+                                                : null
+                                        }
+                                        className={`border-b text-left text-[12px] ${row.is_repaired
+                                            ? "bg-red-100 hover:bg-red-300"
+                                            : "border-slate-300 hover:bg-slate-100"
+                                            } ${onRowClick ? "cursor-pointer " : ""
+                                            }`}
+                                        onClick={() => onRowClick && onRowClick(row)}
+                                    >
+                                        {tableHeaders.map((header, colIndex) => (
+                                            <td
+                                                key={colIndex}
+                                                className="px-4 py-2 text-left"
                                             >
-                                                {tableHeaders.map((header, colIndex) => (
-                                                    <td
-                                                        key={colIndex}
-                                                        className="px-4 py-2 text-left"
-                                                    >
-                                                        {editable && header === "Rate" && row.status !== "SOLD" ? (
-                                                            <input
-                                                                type="text"
-                                                                value={
-                                                                    row[header] === 0
-                                                                        ? ""
-                                                                        : row[header]
-                                                                }
-                                                                onChange={(e) =>
-                                                                    onRateChange(
-                                                                        rowIndex,
-                                                                        e.target.value === ""
-                                                                            ? ""
-                                                                            : Number(e.target.value)
-                                                                    )
-                                                                }
-                                                                className="border border-gray-300 px-2 py-1 w-24"
-                                                            />
-                                                        ) : (
-                                                            row[header] ?? "-"
-                                                        )}
-                                                    </td>
-                                                ))}
-                                            </tr>
+                                                {editable && header === "Rate" && row.status !== "SOLD" ? (
+                                                    <input
+                                                        type="text"
+                                                        value={
+                                                            row[header] === 0
+                                                                ? ""
+                                                                : row[header]
+                                                        }
+                                                        onChange={(e) =>
+                                                            onRateChange(
+                                                                rowIndex,
+                                                                e.target.value === ""
+                                                                    ? ""
+                                                                    : Number(e.target.value)
+                                                            )
+                                                        }
+                                                        className="border border-gray-300 px-2 py-1 w-24"
+                                                    />
+                                                ) : (
+                                                    row[header] ?? "-"
+                                                )}
+                                            </td>
                                         ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        ) : (
-                            <div className="flex items-center justify-center h-full w-full text-red-600 font-bold text-[25px] text-center">
-                                No Records Found
-                            </div>
-                        )}
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
                     </div>
                 ) : (
                     <div className="flex items-center justify-center h-full w-full text-red-600 font-bold text-[25px] text-center">
                         No Records Found
                     </div>
                 )}
-
-                {/* Total Row */}
-                {totalRow && showTotalRow && (
-                    <div
-                        className={`mt-5 sticky bottom-0 font-extrabold text-[20px] z-20 ${getTotalRowBg()}`}
-                    >
-                        <div className="overflow-x-auto">
-                            <table className="table-fixed w-full">
-                                <tbody>
-                                    <tr>
-                                        {tableHeaders.map((header, index) => (
-                                            <td key={index} className="px-4 py-2 text-left">
-                                                {header === "Bill id" || header === "Sr.No"
-                                                    ? "Total"
-                                                    : [
-                                                        "Total Amount",
-                                                        "Remaining Amount",
-                                                        "Profit",
-                                                        "Total Products",
-                                                        "Purchase Price",
-                                                        "Sale Price",
-                                                        "Total Supplier Cost",
-                                                        "Total Supplier Paid",
-                                                        "Total Supplier Remaining",
-                                                        "Rate",
-                                                        "Part Cost",
-                                                        "Repairer Cost",
-                                                        "Total Part Cost",
-                                                        "Total Repairer Cost",
-                                                        "Total Paid",
-                                                        "Total Repairer Remaining"
-                                                    ].includes(header)
-                                                        ? totalRow[header]?.toLocaleString()
-                                                        : ""}
-                                            </td>
-                                        ))}
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                )}
             </div>
+
+
+            {/* Total Row */}
+            {totalRow && showTotalRow && (
+                <div
+                    className={`mt-5 sticky bottom-0 font-extrabold text-[20px] z-20 ${getTotalRowBg()}`}
+                >
+                    <div className="overflow-x-auto">
+                        <table className="table-fixed w-full">
+                            <tbody>
+                                <tr>
+                                    {tableHeaders.map((header, index) => (
+                                        <td key={index} className="px-4 py-2 text-left">
+                                            {header === "Bill id" || header === "Sr.No"
+                                                ? "Total"
+                                                : [
+                                                    "Total Amount",
+                                                    "Remaining Amount",
+                                                    "Profit",
+                                                    "Total Products",
+                                                    "Purchase Price",
+                                                    "Sale Price",
+                                                    "Total Supplier Cost",
+                                                    "Total Supplier Paid",
+                                                    "Total Supplier Remaining",
+                                                    "Rate",
+                                                    "Part Cost",
+                                                    "Repairer Cost",
+                                                    "Total Part Cost",
+                                                    "Total Repairer Cost",
+                                                    "Total Paid",
+                                                    "Total Repairer Remaining"
+                                                ].includes(header)
+                                                    ? totalRow[header]?.toLocaleString()
+                                                    : ""}
+                                        </td>
+                                    ))}
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
