@@ -74,8 +74,8 @@ export default function SingleDraftBillHistory() {
     };
     const getCustomersCallback = (response) => {
         if (response.status === 200) {
-            setCustomers(response.data);
-            const contactNos = response.data.map(customer => customer.contact_number);
+            setCustomers(response.data.users);
+            const contactNos = response.data.users.map(customer => customer.contact_number);
             setContactNoOptions(contactNos);
         } else {
             console.error("Customer contact numbers fetching error");
@@ -169,7 +169,7 @@ export default function SingleDraftBillHistory() {
     };
     const getImeisCallback = (response) => {
         if (response.status === 200) {
-            const imeis = response.data.map(item => item.imei_number);
+            const imeis = response.data.products.map(item => item.imei_number);
             setImeiOptions(imeis);
         } else {
             console.error("IMEI numbers fetching error");
@@ -330,8 +330,8 @@ export default function SingleDraftBillHistory() {
             url: `${API_URLS.PRODUCTS}?imei_number=${imei}`,
             data: {},
             callback: (response) => {
-                if (response.status === 200 && response.data.length > 0) {
-                    const product = response.data[0];
+                if (response.status === 200 && response.data.products.length > 0) {
+                    const product = response.data.products[0];
                     if (!product || (product.status !== "AVAILABLE" && product.status !== "RETURN")) {
                         toast.warning("Product is already sold !", { position: "top-center", autoClose: 2000 });
                         setSelectedImei("");
@@ -426,14 +426,13 @@ export default function SingleDraftBillHistory() {
                     inputClassName="w-[190px] mb-6"
                 />
             </div>
-            <div className="h-[64vh]">
-                <CustomTableCompoent
-                    headers={SINGLEDRAFTBILLHISTORY_COLOUMNS}
-                    rows={rows}
-                    onRateChange={handleRateChange}
-                    editable={true}
-                />
-            </div>
+            <CustomTableCompoent
+                maxHeight="h-[60vh]"
+                headers={SINGLEDRAFTBILLHISTORY_COLOUMNS}
+                rows={rows}
+                onRateChange={handleRateChange}
+                editable={true}
+            />
             <div className=" fixed bottom-16 right-5 font-bold gap-4 text-[22px]  flex justify-end">
                 Total Amount : {Number(totalAmount).toLocaleString("en-IN")}
             </div>

@@ -12,6 +12,38 @@ export default function Customer() {
     const [customerName, setCustomerName] = useState();
     const [contactNo, setContactNumber] = useState();
     const [loading, setLoading] = useState(false);
+
+    const toggleableColumns = ["Address"];
+
+    const [hiddenColumns, setHiddenColumns] = useState([
+        "Address",
+    ]);
+
+    const [dynamicHeaders, setDynamicHeaders] = useState(() => {
+        return CUSTOMER_COLOUMS.filter(
+            (col) => !["Address"].includes(col)
+        );
+    });
+
+    const toggleColumn = (columnName) => {
+        if (!toggleableColumns.includes(columnName)) return;
+        if (dynamicHeaders.includes(columnName)) {
+            setDynamicHeaders(dynamicHeaders.filter(col => col !== columnName));
+            setHiddenColumns([...hiddenColumns, columnName]);
+        } else {
+            let newHeaders = [...dynamicHeaders];
+            const actionIndex = newHeaders.indexOf("Action");
+            if (actionIndex !== +1) {
+                newHeaders.splice(actionIndex, 0, columnName);
+
+            } else {
+                newHeaders.push(columnName);
+            }
+            setDynamicHeaders(newHeaders);
+            setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
+        };
+    };
+
     const navigateAddCustomer = () => {
         navigate("/addcustomer")
     }
@@ -22,7 +54,7 @@ export default function Customer() {
     const getCustomerCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
-            const customerFormttedRows = response.data.map((customer) => ({
+            const customerFormttedRows = response.data.users.map((customer) => ({
                 "Customer Name": customer.name,
                 "Contact No": customer.contact_number,
                 "Firm Name": customer.firm_name,
@@ -111,12 +143,14 @@ export default function Customer() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <div className="h-[75vh]">
-                <CustomTableCompoent
-                    headers={CUSTOMER_COLOUMS}
-                    rows={rows}
-                />
-            </div>
+            <CustomTableCompoent
+                maxHeight="h-[65vh]"
+                headers={dynamicHeaders}
+                rows={rows}
+                toggleableColumns={toggleableColumns}
+                hiddenColumns={hiddenColumns}
+                onToggleColumn={toggleColumn}
+            />
         </div>
     );
 }

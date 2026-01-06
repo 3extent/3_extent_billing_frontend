@@ -16,12 +16,13 @@ export default function SalesBilling() {
     const [loading, setLoading] = useState(false);
     const [hiddenColumns, setHiddenColumns] = useState([
         "Purchase Price",
-        "QC-Remark",
-        "Supplier Name"
+        "QC Remark",
+        "Supplier Name",
+        "Purchase Cost Including Expenses",
     ]);
     const [dynamicHeaders, setDynamicHeaders] = useState(() => {
         return SALESBILLING_COLOUMNS.filter(
-            (col) => !["Purchase Price", "QC-Remark", "Supplier Name"].includes(col)
+            (col) => !["Purchase Price", "QC Remark", "Supplier Name", "Purchase Cost Including Expenses"].includes(col)
         );
     });
     const navigate = useNavigate();
@@ -31,14 +32,13 @@ export default function SalesBilling() {
     const navigateBillingHistory = () => {
         navigate("/billinghistory")
     }
-    const [showDropdown, setShowDropdown] = useState(false);
     const [showPaymentPopup, setShowPaymentPopup] = useState(false);
     const [cashAmount, setCashAmount] = useState("");
     const [onlineAmount, setOnlineAmount] = useState("");
     const [card, setCard] = useState("");
     const [totalAmount, setTotalAmount] = useState(0);
     const [pendingAmount, setPendingAmount] = useState(0);
-    const toggleableColumns = ["Purchase Price", "QC-Remark", "Supplier Name"];
+    const toggleableColumns = ["Purchase Price", "QC Remark", "Supplier Name", "Purchase Cost Including Expenses"];
     const handleDeleteRow = (imeiNumber) => {
         setRows((currentRows) => {
             const updatedRows = [...currentRows];
@@ -66,19 +66,28 @@ export default function SalesBilling() {
                 if (rateIndex !== -1) newHeaders.splice(rateIndex + 1, 0, "Purchase Price");
                 else newHeaders.push("Purchase Price");
             }
-            else
-                newHeaders.push(columnName);
+            if (columnName === "Supplier Name" || columnName === "QC Remark" || columnName === "Purchase Cost Including Expenses") {
+                const actionIndex = newHeaders.indexOf("Action");
+                if (actionIndex !== +1) {
+                    newHeaders.splice(actionIndex, 0, columnName);
+                } else {
+                    newHeaders.push(columnName);
+                }
+            }
             setDynamicHeaders(newHeaders);
             setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
         };
     };
+
     const [imeiOptions, setImeiOptions] = useState([]);
     const [selectedImei, setSelectedImei] = useState("");
     const [contactNoOptions, setContactNoOptions] = useState([]);
     const [selectedContactNo, setSelectedContactNo] = useState("");
     const [customers, setCustomers] = useState([]);
     const [customerName, setCustomerName] = useState("");
+
     const handleRateChange = (index, newRate) => {
+        console.log('newRate: ', newRate);
         const updatedRows = [...rows];
         updatedRows[index]["Rate"] = Number(newRate);
         setRows(updatedRows);
@@ -114,8 +123,8 @@ export default function SalesBilling() {
     };
     const getCustomersCallback = (response) => {
         if (response.status === 200) {
-            setCustomers(response.data);
-            const contactNos = response.data.map(customer => customer.contact_number);
+            setCustomers(response.data.users);
+            const contactNos = response.data.users.map(customer => customer.contact_number);
             setContactNoOptions(contactNos);
         } else {
             console.error("Customer contact numbers fetching error");
@@ -145,7 +154,7 @@ export default function SalesBilling() {
     };
     const getImeisCallback = (response) => {
         if (response.status === 200) {
-            const imeis = response.data.map(item => item.imei_number);
+            const imeis = response.data.products.map(item => item.imei_number);
             setImeiOptions(imeis);
         } else {
             console.error("IMEI numbers fetching error");
@@ -154,7 +163,7 @@ export default function SalesBilling() {
     const getsalesbillingCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
-            const filteredData = response.data.filter(
+            const filteredData = response.data.products.filter(
                 (product) => product.status === "AVAILABLE" || product.status === "RETURN"
             );
             if (filteredData.length === 0) {
@@ -165,7 +174,7 @@ export default function SalesBilling() {
                 setSelectedImei("");
                 return;
             }
-            const productFormattedRows = response.data.map((product, index) => ({
+            const productFormattedRows = response.data.products.map((product, index) => ({
                 "Sr.No": rows.length + index + 1,
                 "Date": moment(Number(product.created_at)).format('ll'),
                 "IMEI NO": product.imei_number,
@@ -175,9 +184,11 @@ export default function SalesBilling() {
                 "Purchase Price": product.purchase_price,
                 "Grade": product.grade,
                 "Accessories": product.accessories,
-                "QC-Remark": product.qc_remark,
+                "QC Remark": product.qc_remark,
                 "Supplier Name": product?.supplier?.name,
+                "Purchase Cost Including Expenses": product.purchase_cost_including_expenses,
                 "Status": product.status,
+                is_repaired: product.is_repaired,
                 "Action": (
                     <div className="flex justify-end">
                         <div
@@ -249,8 +260,6 @@ export default function SalesBilling() {
                 response.data.billing.net_total,
                 response.data.billing.c_gst,
                 response.data.billing.s_gst,
-
-
             );
         } else {
             const errorMsg = response?.data?.error || "Something went wrong while saving bill.";
@@ -349,7 +358,7 @@ export default function SalesBilling() {
         })
     };
     const handleExportToExcel = () => {
-        exportToExcel(rows, "salesbillingData.xlsx");
+        exportToExcel(rows, "salesbillingData.xlsx", null, dynamicHeaders);
     };
     const navigateAddCustomer = () => {
         if (rows.length > 0) handleDraftData(false);
@@ -385,7 +394,7 @@ export default function SalesBilling() {
                 <div className="flex items-center gap-3">
                     <CustomDropdownInputComponent
                         label="IMEI No :"
-                        dropdownClassName="w-[190px]"
+                        dropdownClassName="w-[190px] z-[999]"
                         placeholder="Scan IMEI No"
                         value={selectedImei}
                         maxLength={15}
@@ -398,7 +407,7 @@ export default function SalesBilling() {
                         }
                     />
                     <CustomDropdownInputComponent
-                        dropdownClassName="w-[190px] "
+                        dropdownClassName="w-[190px]  z-[999]"
                         placeholder="Select Contact No"
                         value={selectedContactNo}
                         maxLength={10}
@@ -423,52 +432,23 @@ export default function SalesBilling() {
                     />
                 </div>
             </div>
-            {rows.length > 0 && (
-                <div className="relative mb-2">
-                    <button
-                        onClick={() => setShowDropdown(!showDropdown)}
-                        className="px-2 py-1 border rounded hover:bg-gray-200"
-                        title="Show columns"
-                    >
-                        <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
-                    </button>
-                    {showDropdown && (
-                        <div className="absolute bg-white border shadow-md mt-1 rounded w-48 z-10 max-h-48 overflow-auto">
-                            {["Purchase Price", "QC-Remark", "Supplier Name"].map((col) => (
-                                <label
-                                    key={col}
-                                    className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                >
-                                    <input
-                                        type="checkbox"
-                                        checked={dynamicHeaders.includes(col)}
-                                        onChange={() => toggleColumn(col)}
-                                        className="mr-2"
-                                        onFocus={() => setShowDropdown(true)}
-                                        onBlur={() => setTimeout(() => setShowDropdown(false), 300)}
-                                    />
-                                    {col}
-                                </label>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            )}
-            <div className="h-[54vh]">
-                <CustomTableCompoent
-                    headers={dynamicHeaders}
-                    rows={rows}
-                    onRateChange={handleRateChange}
-                    editable={true}
-                    autoScrollBottom={true}
-                    maxHeight="h-[54vh]"
+            <CustomTableCompoent
+                maxHeight="h-[54vh]"
+                headers={dynamicHeaders}
+                rows={rows}
+                onRateChange={handleRateChange}
+                autoScrollBottom={true}
+                editable={true}
+                toggleableColumns={toggleableColumns}
+                hiddenColumns={hiddenColumns}
+                onToggleColumn={toggleColumn}
 
-                />
-            </div>
-            <div className=" fixed bottom-16 right-5 font-bold gap-4 text-[22px]  flex justify-end">
+
+            />
+            <div className="fixed bottom-16 right-5 font-bold gap-4 text-[22px]  flex justify-end">
                 Total Amount : {Number(totalAmount).toLocaleString("en-IN")}
             </div>
-            <div className=" fixed bottom-5 right-5 flex gap-4 mt-3">
+            <div className="fixed bottom-5 right-5 flex gap-4 mt-3">
                 <PrimaryButtonComponent
                     label="Save"
                     icon="fa fa-cloud-download"

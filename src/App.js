@@ -19,6 +19,12 @@ import { ToastContainer } from 'react-toastify';
 import SingleDraftBillHistory from './Components/Screens/SalesBilling/SingleDraftBillHistroy';
 import PrivacyPolicy from './Components/Screens/Policies/PrivacyPolicy';
 import TermAndCondition from './Components/Screens/Policies/TermAndCondition';
+import Repairers from './Components/Screens/Repairers/Repairers';
+import AddRepairers from './Components/Screens/Repairers/AddRepairers';
+import RepairersDetails from './Components/Screens/Repairers/RepairersDetails';
+import SupplierDetails from './Components/Screens/Supplier/SupplierDetails';
+import RepairDashboard from './Components/Screens/Repair/RepairDashboard';
+import SendForRepair from './Components/Screens/Repair/SendForRepair';
 
 
 
@@ -118,6 +124,21 @@ function App() {
                 <Models />
               </ProtectedRoute>
             } />
+            <Route path="/repair" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <RepairDashboard />
+              </ProtectedRoute>
+            } />
+            {/* <Route path="/acceptrepair/:id" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <AcceptRepair />
+              </ProtectedRoute>
+            } /> */}
+            <Route path="/repairers" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <Repairers />
+              </ProtectedRoute>
+            } />
             <Route path="/stockin/:product_id?" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <StockIn />
@@ -146,18 +167,39 @@ function App() {
             } />
             <Route path="/billinghistory" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
-                <Billinghistory isDraft={false}/>
+                <Billinghistory isDraft={false} />
               </ProtectedRoute>
             } />
             <Route path="/draftbillhistroy" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
-                <Billinghistory isDraft={true}/>
+                <Billinghistory isDraft={true} />
               </ProtectedRoute>
             } />
-            <Route path="/singleBillHistory/:billId" element={<SingleBillHistory  />} />
+            <Route path="/singleBillHistory/:billId" element={<SingleBillHistory />} />
             <Route path="/singleDraftBillHistroy/:draftBillId" element={<SingleDraftBillHistory />} />
 
             <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="/sendforrepair/" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <SendForRepair />
+              </ProtectedRoute>
+            } />
+            <Route path="/addrepairers/:repairer_id?" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <AddRepairers />
+              </ProtectedRoute>
+            } />
+            <Route path="/repairerDetails/:repairer_id" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <RepairersDetails />
+              </ProtectedRoute>
+            } />
+            <Route path="/supplierDetails/:supplier_id" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <SupplierDetails />  
+              </ProtectedRoute>
+            } />
+
           </Routes>
         </div>
       </div>

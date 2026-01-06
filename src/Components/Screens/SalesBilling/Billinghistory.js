@@ -7,15 +7,24 @@ import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCo
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
-import { generateAndSavePdf } from "../../../Util/Utility";
+import { exportToExcel, generateAndSavePdf } from "../../../Util/Utility";
 import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
 import { API_URLS } from "../../../Util/AppConst";
 import { toast } from "react-toastify";
+import CustomConfirmationPopup from "../../CustomComponents/CustomPopUpCompoent/CustomConfirmationPopup";
 function Billinghistory({ isDraft = false }) {
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
+
+    const [billingProductData, setBillingProductData] = useState([]);
+
     const [loading, setLoading] = useState(false)
+
     const [showPaymentPopup, setShowPaymentPopup] = useState(false);
+    const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
+
+    const [billDelete, setBillDelete] = useState(null)
+
     const [cashAmount, setCashAmount] = useState("");
     const [onlineAmount, setOnlineAmount] = useState("");
     const [card, setCard] = useState("");
@@ -31,6 +40,37 @@ function Billinghistory({ isDraft = false }) {
     const [to, setTo] = useState(toDate);
     const [selectAllDates, setSelectAllDates] = useState(false);
     const [showTotalRow, setShowTotalRow] = useState(false);
+    const [totalRow, setTotalRow] = useState(null);
+    const toggleableColumns = ["Profit"];
+
+    const [hiddenColumns, setHiddenColumns] = useState([
+        "Profit",
+    ]);
+
+    const [dynamicHeaders, setDynamicHeaders] = useState(() => {
+        return BILLINGHISTORY_COLOUMNS.filter(
+            (col) => !["Profit",].includes(col)
+        );
+    });
+
+    const toggleColumn = (columnName) => {
+        if (!toggleableColumns.includes(columnName)) return;
+        if (dynamicHeaders.includes(columnName)) {
+            setDynamicHeaders(dynamicHeaders.filter(col => col !== columnName));
+            setHiddenColumns([...hiddenColumns, columnName]);
+        } else {
+            let newHeaders = [...dynamicHeaders];
+            const gradeIndex = newHeaders.indexOf("Grade");
+            if (gradeIndex !== +1) {
+                newHeaders.splice(gradeIndex, 0, columnName);
+
+            } else {
+                newHeaders.push(columnName);
+            }
+            setDynamicHeaders(newHeaders);
+            setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
+        };
+    };
     useEffect(() => {
         getBillData();
     }, [isDraft]);
@@ -62,22 +102,30 @@ function Billinghistory({ isDraft = false }) {
                 autoClose: 2000,
             });
         }
+        setShowConfirmationPopup(false);
+        setBillDelete(null);
     };
-    const handleDeleteBill = (billId) => {
-        if (!billId) return;
+    const handleDeleteBill = () => {
+        if (!billDelete) return;
 
         apiCall({
             method: "DELETE",
-            url: `${API_URLS.BILLING}/${billId}`,
+            url: `${API_URLS.BILLING}/${billDelete}`,
             data: {},
             setLoading: setLoading,
             callback: handleDeleteBillCallback,
         });
     };
 
+    const handleCancelConfirmPopup = () => {
+        setShowConfirmationPopup(false);
+        setBillDelete(null);
+    }
+
     const getBillCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
+            setBillingProductData(response.data.billings)
             const billingformattedRows = response.data.billings.map((bill, index) => ({
                 "Bill id": index + 1,
                 "Date": moment(bill.created_at).format('ll'),
@@ -91,16 +139,17 @@ function Billinghistory({ isDraft = false }) {
                 _id: bill._id,
                 "Actions": (
                     <div className="flex items-center justify-end gap-2">
-                            <div
-                                title="delete"
-                                className="flex items-center justify-center rounded-full bg-gray-300 hover:bg-gray-400 cursor-pointer w-10 h-10 min-w-[40px] min-h-[40px]"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDeleteBill(bill._id);
-                                }}
-                            >
-                                <i className="fa fa-trash text-gray-700 text-lg" />
-                            </div>
+                        <div
+                            title="delete"
+                            className="flex items-center justify-center rounded-full bg-gray-300 hover:bg-gray-400 cursor-pointer w-10 h-10 min-w-[40px] min-h-[40px]"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setBillDelete(bill._id);
+                                setShowConfirmationPopup(true)
+                            }}
+                        >
+                            <i className="fa fa-trash text-gray-700 text-lg" />
+                        </div>
                         {Number(bill.pending_amount) > 0 && (
                             <PrimaryButtonComponent
                                 label="Pay"
@@ -139,7 +188,7 @@ function Billinghistory({ isDraft = false }) {
             }));
             console.log('billingformattedRows: ', billingformattedRows);
             if (!isDraft) {
-                billingformattedRows.push({
+                setTotalRow({
                     _id: "total",
                     "Bill id": "Total",
                     "Date": "",
@@ -159,25 +208,27 @@ function Billinghistory({ isDraft = false }) {
     }
     const getBillData = () => {
         let url = `${API_URLS.BILLING}?`;
-        if (isDraft) url += `status=DRAFTED`;
-        else {
-            if (customerName) {
-                url += `&customer_name=${customerName}`
-            }
-            if (contactNo) {
-                url += `&contact_number=${contactNo}`
-            }
-            if (paymentStatus) {
-                url += `&status=${paymentStatus}`
-            }
-            if (imeiNumber) {
-                url += `&imei_number=${imeiNumber}`
-            }
-            if (!selectAllDates) {
-                if (from) url += `&from=${moment.utc(from).valueOf(from)}`;
-                if (to) url += `&to=${moment.utc(to).endOf('day').valueOf(to)}`;
-            }
+        if (isDraft) {
+            url += `status=DRAFTED`;
         }
+
+        if (customerName) {
+            url += `&customer_name=${customerName}`
+        }
+        if (contactNo) {
+            url += `&contact_number=${contactNo}`
+        }
+        if (!isDraft && paymentStatus) {
+            url += `&status=${paymentStatus}`;
+        }
+        if (imeiNumber) {
+            url += `&imei_number=${imeiNumber}`
+        }
+        if (!selectAllDates) {
+            if (from) url += `&from=${moment.utc(from).startOf('day').valueOf()}`;
+            if (to) url += `&to=${moment.utc(to).endOf('day').valueOf()}`;
+        }
+
         apiCall({
             method: 'GET',
             url: url,
@@ -202,6 +253,10 @@ function Billinghistory({ isDraft = false }) {
             navigate(path);
         }
     };
+
+    const handleNavigateBillHistroy = () => {
+        navigate(-1);
+    }
     const handlepaymentMethod = (bill) => {
         if (Number(bill.pending_amount) === 0) {
             return;
@@ -267,91 +322,153 @@ function Billinghistory({ isDraft = false }) {
         setSelectAllDates(false);
         getBillData({ from, to });
     }
+
+    const ProductExportData = () => {
+        const data = [];
+
+        billingProductData.map((bill) => {
+            bill.products.map((product) => {
+                data.push({
+                    "Date": moment(bill.created_at).format('ll'),
+                    "Invoice No": bill.invoice_number,
+                    "Customer Name": bill.customer?.name,
+                    "Contact No": bill.customer?.contact_number,
+                    "IMEI No": product.imei_number,
+                    "Model": product.model?.name,
+                    "Grade": product.grade,
+                    "Engineer": product.engineer_name,
+                    "Sale Price": product.sold_at_price,
+                    "Purchase Price": product.purchase_price,
+                    "Repair Cost": product.repair_cost,
+                    "Profit": product.profitToShow,
+                    "Payment Status": bill.status,
+                });
+            });
+        });
+
+        return data;
+    };
+
+    const handleExportToExcel = () => {
+        if (!billingProductData.length) {
+            toast.error("No data to export");
+            return;
+        }
+
+        const exportData = ProductExportData();
+
+        exportToExcel(
+            exportData,
+            `Product_datewise_${from}_to_${to}.xlsx`,
+            null,
+            Object.keys(exportData[0])
+        );
+    };
+    console.log('rows: ', rows);
     return (
         <div>
             {loading && <Spinner />}
-            <div className="text-xl font-serif">{isDraft ? "Drafted Bill History" : "Billing History"}</div>
-            {!isDraft && (
-                <>
-                    <div className="flex items-center gap-4 ">
-                        <InputComponent
-                            type="text"
-                            placeholder="Customer Name"
-                            inputClassName="w-[190px] mb-2"
-                            value={customerName}
-                            onChange={(e) => setCustomerName(e.target.value)}
-                        />
-                        <InputComponent
-                            type="text"
-                            placeholder="Contact No"
-                            inputClassName="w-[180px] mb-2"
-                            value={contactNo}
-                            maxLength={10}
-                            onChange={(e) => setContactNo(e.target.value)}
-                        />
-                        <DropdownCompoent
-                            placeholder="Select status"
-                            value={paymentStatus}
-                            onChange={(e) => setPaymentStatus(e.target.value)}
-                            options={PAYMENTSTATUS_OPTIONS}
-                            className="w-[180px] mt-3"
-                        />
-                        <InputComponent
-                            type="date"
-                            placeholder="Start Date"
-                            inputClassName="w-[190px] mb-2"
-                            value={from}
-                            onChange={(e) => handleDateChange(e.target.value, setFrom)}
-                            disabled={selectAllDates}
-                        />
-                        <InputComponent
-                            type="date"
-                            placeholder="End Date"
-                            inputClassName="w-[190px] mb-2"
-                            value={to}
-                            onChange={(e) => handleDateChange(e.target.value, setTo)}
-                            disabled={selectAllDates}
-                        />
-                        <label className='flex items-center gap-2 text-sm'>
-                            <input
-                                type="checkbox"
-                                checked={selectAllDates}
-                                onChange={(e) => setSelectAllDates(e.target.checked)}
-                            />
-                            All Data
-                        </label>
-                    </div>
-                    <div className='flex items-center gap-4'>
-                        <InputComponent
-                            type="text"
-                            placeholder="IMEI NO"
-                            inputClassName="mb-5 w-[190px] "
-                            value={imeiNumber}
-                            numericOnly={true}
-                            maxLength={15}
-                            onChange={(e) => setIMEINumber(e.target.value)}
-                        />
+            <div className="flex justify-between items-center">
+                <div className="text-xl font-serif">{isDraft ? "Drafted Bill History" : "Billing History"}</div>
+                <div className="flex gap-3">
+                    <PrimaryButtonComponent
+                        label="Back"
+                        icon="fa fa-arrow-left"
+                        buttonClassName="py-1 px-3 text-[12px] font-semibold"
+                        onClick={handleNavigateBillHistroy}
+                    />
+                    {!isDraft && (
                         <PrimaryButtonComponent
-                            label="Search"
-                            icon="fa fa-search"
-                            onClick={handleSearchFilter}
+                            label="Export to Excel"
+                            icon="fa fa-file-excel-o"
+                            onClick={handleExportToExcel}
                         />
-                        <PrimaryButtonComponent
-                            label="Reset"
-                            icon="fa fa-refresh"
-                            onClick={handleResetFilter}
-                        />
-                    </div>
-                </>
-            )}
-            <div className="h-[60vh]">
-                <CustomTableCompoent
-                    headers={BILLINGHISTORY_COLOUMNS}
-                    rows={rows}
-                    onRowClick={handleRowClick}
-                    showTotalRow={!isDraft && showTotalRow}
+                    )}
+
+                </div>
+            </div>
+            <div className="flex items-center gap-4 ">
+                <InputComponent
+                    type="text"
+                    placeholder="Customer Name"
+                    inputClassName="w-[190px] mb-2"
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                />
+                <InputComponent
+                    type="text"
+                    placeholder="Contact No"
+                    inputClassName="w-[180px] mb-2"
+                    value={contactNo}
+                    maxLength={10}
+                    onChange={(e) => setContactNo(e.target.value)}
+                />
+                {!isDraft && (
+                    <DropdownCompoent
+                        placeholder="Select status"
+                        value={paymentStatus}
+                        onChange={(e) => setPaymentStatus(e.target.value)}
+                        options={PAYMENTSTATUS_OPTIONS}
+                        className="w-[180px] mt-3"
+                    />
+                )}
+                <InputComponent
+                    type="date"
+                    placeholder="Start Date"
+                    inputClassName="w-[190px] mb-2"
+                    value={from}
+                    onChange={(e) => handleDateChange(e.target.value, setFrom)}
+                    disabled={selectAllDates}
+                />
+                <InputComponent
+                    type="date"
+                    placeholder="End Date"
+                    inputClassName="w-[190px] mb-2"
+                    value={to}
+                    onChange={(e) => handleDateChange(e.target.value, setTo)}
+                    disabled={selectAllDates}
+                />
+                <label className='flex items-center gap-2 text-sm'>
+                    <input
+                        type="checkbox"
+                        checked={selectAllDates}
+                        onChange={(e) => setSelectAllDates(e.target.checked)}
+                    />
+                    All Data
+                </label>
+            </div>
+            <div className='flex items-center gap-4'>
+                <InputComponent
+                    type="text"
+                    placeholder="IMEI NO"
+                    inputClassName="mb-5 w-[190px] "
+                    value={imeiNumber}
+                    numericOnly={true}
+                    maxLength={15}
+                    onChange={(e) => setIMEINumber(e.target.value)}
+                />
+                <PrimaryButtonComponent
+                    label="Search"
+                    icon="fa fa-search"
+                    onClick={handleSearchFilter}
+                />
+                <PrimaryButtonComponent
+                    label="Reset"
+                    icon="fa fa-refresh"
+                    onClick={handleResetFilter}
                 />
             </div>
+            <CustomTableCompoent
+                maxHeight="h-[60vh]"
+                headers={dynamicHeaders}
+                rows={rows}
+                totalRow={totalRow}
+                onRowClick={handleRowClick}
+                toggleableColumns={toggleableColumns}
+                hiddenColumns={hiddenColumns}
+                onToggleColumn={toggleColumn}
+                showTotalRow={!isDraft && showTotalRow}
+            />
             {!isDraft && (
                 <div className="flex justify-end">
                     <button className="rounded-full" onClick={() => setShowTotalRow(!showTotalRow)}>
@@ -359,8 +476,6 @@ function Billinghistory({ isDraft = false }) {
                     </button>
                 </div>
             )}
-
-
             {showPaymentPopup && selectedBill && (
                 <CustomPopUpComponet
                     totalAmount={selectedBill.pending_amount}
@@ -377,6 +492,15 @@ function Billinghistory({ isDraft = false }) {
                     handlePrintButton={isDraft ? handleSavePayment : handleSavePayment}
                 />
             )}
+
+            {showConfirmationPopup && (
+                <CustomConfirmationPopup
+                    handleCancelButton={handleCancelConfirmPopup}
+                    handleDeleteButton={handleDeleteBill}
+                />
+            )}
+
+
         </div>
     )
 }

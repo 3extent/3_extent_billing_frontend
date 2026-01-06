@@ -142,8 +142,11 @@ function BulkOfProduct() {
                 <div className="text-red-600 text-sm ">{error}</div>
             )}
             {showTable && excelData.length > 0 && (
-                <div className=" mt-6 h-[44vh]">
-                    <CustomTableCompoent headers={tableHeaders} rows={excelData} />
+                <div className=" mt-6">
+                    <CustomTableCompoent
+                        maxHeight="h-[44vh]"
+                        headers={tableHeaders}
+                        rows={excelData} />
                 </div>
             )}
             <div className='flex justify-center gap-4 mt-10'>

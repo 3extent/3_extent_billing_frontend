@@ -29,7 +29,7 @@ function SingleProductStockIn() {
     supplier_name: '',
     qc_remark: '',
     status: STATUS_OPTIONS[0] || ''
-  });
+  });       
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setErrors((prev) => ({ ...prev, [name]: "" }));
@@ -174,7 +174,7 @@ function SingleProductStockIn() {
   const getSupplierCallBack = (response) => {
     console.log('response: ', response);
     if (response.status === 200) {
-      const suppliers = response.data.map(Supplier => Supplier.name);
+      const suppliers = response.data.users.map(Supplier => Supplier.name);
       setSupplierNameOPtions(suppliers);
     } else {
       console.log("Error");
@@ -396,7 +396,7 @@ function SingleProductStockIn() {
           <PrimaryButtonComponent
             label="Delete"
             icon="fa fa-trash"
-            buttonClassName="border border-red-500 !text-red-500 bg-transparent hover:bg-red-500 hover:text-white"
+            buttonClassName="border border-red-500 !text-red-500 bg-transparent hover:bg-red-500 hover:!text-white"
             onClick={deleteProduct}
           />
         )}
