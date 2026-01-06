@@ -6,8 +6,8 @@ import { apiCall } from "../../../Util/AxiosUtils";
 import { API_URLS } from "../../../Util/AppConst";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import TextareaComponent from "../../CustomComponents/TextareaComponent/TextareaComponent";
 import moment from "moment";
+import CustomTextAreaComponent from "../../CustomComponents/CustomTextAreaComponent/CustomTextAreaComponent";
 
 function AddExpense() {
 
@@ -120,7 +120,7 @@ function AddExpense() {
                     inputClassName="w-[80%]"
                     labelClassName="font-serif font-bold"
                 />
-                <TextareaComponent
+                <CustomTextAreaComponent
                     label="Description"
                     name="description"
                     value={maintenanceData.description}
