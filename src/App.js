@@ -25,6 +25,8 @@ import RepairersDetails from './Components/Screens/Repairers/RepairersDetails';
 import SupplierDetails from './Components/Screens/Supplier/SupplierDetails';
 import RepairDashboard from './Components/Screens/Repair/RepairDashboard';
 import SendForRepair from './Components/Screens/Repair/SendForRepair';
+import Maintenance from './Components/Screens/Maintenance/Maintenance';
+import AddExpense from './Components/Screens/Maintenance/AddExpense';
 
 
 
@@ -196,7 +198,19 @@ function App() {
             } />
             <Route path="/supplierDetails/:supplier_id" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
-                <SupplierDetails />  
+                <SupplierDetails />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/maintenance" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <Maintenance />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/addExpense" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <AddExpense />
               </ProtectedRoute>
             } />
 
