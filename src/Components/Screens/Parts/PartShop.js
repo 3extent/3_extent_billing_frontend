@@ -14,12 +14,10 @@ function PartShop() {
     const [rows] = useState([
         {
             "Shop Name": "ABC PARTS",
-            // "Owner Name": "RAHUL",
             "Contact": "9876543210",
             "State": "MAHARASHTRA",
             "GST Number": "27ABCDE1234F1Z5",
-            "Actions": "Edit",
-            id: 1
+            "Actions": "",
         }
     ]);
     return (

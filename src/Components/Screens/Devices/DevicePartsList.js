@@ -12,9 +12,8 @@ function DevicePartsList() {
     };
     const [rows] = useState([
         {
-            "Shop Name": "ABC PARTS",
-            // "Owner Name": "RAHUL",
-            "Contact NO": "9876543210",
+            // "Shop Name": "ABC PARTS",
+            // "Contact No": "9876543210",
             "Part Name": "abc",
         }
     ]);
