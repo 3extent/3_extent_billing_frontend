@@ -10,12 +10,12 @@ import moment from "moment";
 import CustomTextAreaComponent from "../../CustomComponents/CustomTextAreaComponent/CustomTextAreaComponent";
 
 function AddExpense() {
-
+    const today = moment().format("YYYY-MM-DD");
     const [maintenanceData, setMaintenanceData] = useState({
         title: "",
         description: "",
         paid_by: "",
-        date: "",
+        date: today,
         amount: ""
     });
 
@@ -23,7 +23,7 @@ function AddExpense() {
 
     const [imageBase64, setImageBase64] = useState("");
     const [paidByOptions, setPaidByOptions] = useState([]);
-    const [date, setDate] = useState();
+    // const [date, setDate] = useState();
 
 
     const handleInputChange = (event) => {
@@ -31,14 +31,13 @@ function AddExpense() {
         setMaintenanceData({ ...maintenanceData, [name]: value });
     };
 
-    const handleDateChange = (value, setDate) => {
-        const today = moment().format('YYYY-MM-DD');
-        if (value > today) {
-            setDate(today);
-        } else {
-            setDate(value);
-        }
+    const handleDateChange = (e) => {
+        setMaintenanceData({
+            ...maintenanceData,
+            date: e.target.value
+        });
     };
+    
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -73,9 +72,10 @@ function AddExpense() {
         if (response.status === 200) {
             toast.success("Maintenance added successfully!");
             navigate("/maintenance");
-        } else {
-            toast.error("Failed to add maintenance");
-        }
+        } 
+        // else {
+        //     toast.error("Failed to add maintenance");
+        // }
     };
 
     useEffect(() => {
@@ -83,10 +83,10 @@ function AddExpense() {
     }, [getAdmins]);
 
     const saveMaintenance = () => {
-        if (!maintenanceData.title || !maintenanceData.paid_by || !maintenanceData.date || !maintenanceData.amount) {
-            toast.error("Please fill all required fields");
-            return;
-        }
+        // if (!maintenanceData.title || !maintenanceData.paid_by || !maintenanceData.date || !maintenanceData.amount) {
+        //     toast.error("Please fill all required fields");
+        //     return;
+        // }
         if (!imageBase64) {
             toast.error("Please upload an image");
             return;
