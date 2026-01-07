@@ -25,6 +25,10 @@ import RepairersDetails from './Components/Screens/Repairers/RepairersDetails';
 import SupplierDetails from './Components/Screens/Supplier/SupplierDetails';
 import RepairDashboard from './Components/Screens/Repair/RepairDashboard';
 import SendForRepair from './Components/Screens/Repair/SendForRepair';
+import AddPart from './Components/Screens/Devices/AddPart';
+import DevicePartsList from './Components/Screens/Devices/DevicePartsList';
+import AddShop from './Components/Screens/Parts/AddShop';
+import PartShop from './Components/Screens/Parts/PartShop';
 
 
 
@@ -196,9 +200,33 @@ function App() {
             } />
             <Route path="/supplierDetails/:supplier_id" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
-                <SupplierDetails />  
+                <SupplierDetails />
               </ProtectedRoute>
             } />
+            <Route path="/partshop" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <PartShop />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/addshop" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <AddShop />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/deviceparts" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <DevicePartsList />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/addpart" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <AddPart />
+              </ProtectedRoute>
+            } />
+
 
           </Routes>
         </div>

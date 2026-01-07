@@ -10,7 +10,10 @@ export default function DashboardSidebar({ onLogout }) {
         { icon: "fa fa-android", label: "Brands", path: "/brands" },
         { icon: "fa fa-th-large", label: "Models", path: "/models" },
         { icon: "fa fa-cogs", label: "Repair Dashboard", path: "/repair" },
-        { icon: "fa fa-wrench", label: "Repairers", path: "/repairers" }
+        { icon: "fa fa-wrench", label: "Repairers", path: "/repairers" },
+        { icon: "fa fa-microchip", label: "Device Parts", path: "/deviceparts" },
+        { icon: "fa fa-shopping-cart", label: "Part Shop", path: "/partshop" },
+
     ])
     const navigate = useNavigate();
     const handleLogout = () => {
