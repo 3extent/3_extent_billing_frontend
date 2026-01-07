@@ -30,6 +30,9 @@ function BulkOfProduct() {
         const val = String(value).trim().toLowerCase();
         return val === "" || val === "-" || val === "na" || val === "n/a" || val === "null" || val === "undefined";
     };
+    const isValidIMEI = (imei) => {
+        return /^\d{15}$/.test(String(imei).trim());
+    };
     const handleAddProductData = () => {
         if (excelData.length === 0) {
             setError("Please upload an Excel file.");
@@ -44,13 +47,17 @@ function BulkOfProduct() {
                     setError(`${columnName} column: missing or invalid value in row ${rowIndex + 1}`);
                     return;
                 }
+                if (columnName === "IMEI" && !isValidIMEI(row[columnName])) {
+                    setError(`Please Enter 15 digit IMEI Number On Row ${rowIndex + 1}`);
+                    return;
+                }
             }
         }
         setError("");
         const bulkOfProductformatteddata = excelData.map((row) => ({
             brand_name: row["Brand Name"] ? row["Brand Name"].trim().toUpperCase() : "",
             model_name: row["Model Name"] ? row["Model Name"].trim().toUpperCase() : "",
-            imei_number: row["IMEI"],
+            imei_number: String(row["IMEI"]).trim(),
             sales_price: row["Sales Price"],
             purchase_price: row["Purchase Price"],
             grade: row["Grade"],
