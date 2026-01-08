@@ -11,7 +11,13 @@ import CustomTextAreaComponent from "../../CustomComponents/CustomTextAreaCompon
 import { EXPENSETITLE_COLOUMNS } from "./Constant";
 
 function AddExpense() {
+
+    const navigate = useNavigate();
+    const [imageBase64, setImageBase64] = useState("");
+    const [paidByOptions, setPaidByOptions] = useState([]);
     const today = moment().format("YYYY-MM-DD");
+    const [errors, setErrors] = useState("");
+
     const [maintenanceData, setMaintenanceData] = useState({
         title: "",
         description: "",
@@ -20,15 +26,9 @@ function AddExpense() {
         amount: ""
     });
 
-    const navigate = useNavigate();
-
-    const [imageBase64, setImageBase64] = useState("");
-    const [paidByOptions, setPaidByOptions] = useState([]);
-    // const [date, setDate] = useState();
-
-
     const handleInputChange = (event) => {
         const { name, value } = event.target;
+        setErrors(prev => ({ ...prev, [name]: "" }));
         setMaintenanceData({ ...maintenanceData, [name]: value });
     };
 
@@ -38,7 +38,7 @@ function AddExpense() {
             date: e.target.value
         });
     };
-    
+
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -52,7 +52,7 @@ function AddExpense() {
 
     const getAdminCallBack = (response) => {
         if (response.status === 200) {
-            const admins = response.data.map(user => user.name);
+            const admins = response.data.users.map(user => user.name);
             setPaidByOptions(admins);
         } else {
             console.log("Failed to fetch admin users");
@@ -68,51 +68,73 @@ function AddExpense() {
         });
     }, []);
 
-
-    const addMaintenanceCallback = (response) => {
-        if (response.status === 200) {
-            toast.success("Maintenance added successfully!");
-            navigate("/maintenance");
-        } 
-        // else {
-        //     toast.error("Failed to add maintenance");
-        // }
-    };
-
     useEffect(() => {
         getAdmins();
     }, [getAdmins]);
 
-    const saveMaintenance = () => {
-        // if (!maintenanceData.title || !maintenanceData.paid_by || !maintenanceData.date || !maintenanceData.amount) {
-        //     toast.error("Please fill all required fields");
-        //     return;
-        // }
-        if (!imageBase64) {
-            toast.error("Please upload an image");
-            return;
+
+    const handleValidation = () => {
+        const newErrors = {};
+        if (!maintenanceData.title.trim()) {
+            newErrors.title = "Please select expense title";
         }
+        if (!maintenanceData.description.trim()) {
+            newErrors.description = "Description is required";
+        }
+        if (!maintenanceData.paid_by.trim()) {
+            newErrors.paid_by = "Please select paid by required";
+        }
+        if (!maintenanceData.amount.trim()) {
+            newErrors.amount = "Amount is required";
+        }
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const addMaintenanceCallback = (response) => {
+        if (response.status === 200) {
+            toast.success("Expense added successfully!!", {
+                position: "top-center",
+                autoClose: 2000,
+            });
+            navigate(-1);
+        }
+        else {
+            const errorMsg = response?.data?.error || "Failed to add Expense";
+            toast.error(errorMsg, {
+                position: "top-center",
+                autoClose: 2000,
+            });
+        }
+    };
+
+
+    const saveMaintenance = () => {
+        if (!handleValidation()) return;
         const requestData = {
             ...maintenanceData,
+            date: moment.utc(maintenanceData.date, "YYYY-MM-DD").valueOf(),
             image: imageBase64,
         };
         apiCall({
             method: "POST",
             url: API_URLS.MAINTENANCE,
-            // data: maintenanceData,
             data: requestData,
             callback: addMaintenanceCallback,
         });
     };
+
     const handleBack = () => {
         navigate(-1);
     };
+    
     return (
         <div className="w-full">
+
             <div className="text-xl font-serif mb-6">Add Expense</div>
 
             <div className="grid grid-cols-2 gap-x-5 gap-y-2">
-                  <DropdownCompoent
+                <DropdownCompoent
                     label="Expense Title"
                     name="title"
                     options={EXPENSETITLE_COLOUMNS}
@@ -121,16 +143,9 @@ function AddExpense() {
                     onChange={handleInputChange}
                     className="w-[80%]"
                     labelClassName="font-serif font-bold"
+                    error={errors.title}
                 />
-                {/* <InputComponent
-                    label="Expense Title"
-                    name="title"
-                    type="text"
-                    value={maintenanceData.title}
-                    onChange={handleInputChange}
-                    inputClassName="w-[80%]"
-                    labelClassName="font-serif font-bold"
-                /> */}
+
                 <CustomTextAreaComponent
                     label="Description"
                     name="description"
@@ -140,7 +155,9 @@ function AddExpense() {
                     rows={1}
                     inputClassName="w-[80%]"
                     labelClassName="font-serif font-bold"
+                    error={errors.description}
                 />
+
                 <InputComponent
                     label="Amount"
                     name="amount"
@@ -149,6 +166,7 @@ function AddExpense() {
                     onChange={handleInputChange}
                     inputClassName="w-[80%]"
                     labelClassName="font-serif font-bold"
+                    error={errors.amount}
                 />
 
                 <InputComponent
@@ -170,7 +188,9 @@ function AddExpense() {
                     onChange={handleInputChange}
                     className="w-[80%]"
                     labelClassName="font-serif font-bold"
+                    error={errors.paid_by}
                 />
+
                 <InputComponent
                     label="Upload Image"
                     name="image"
@@ -180,12 +200,14 @@ function AddExpense() {
                     labelClassName="font-serif font-bold"
                 />
             </div>
+
             <div className="mt-10 flex justify-center gap-5">
                 <PrimaryButtonComponent
                     label="Back"
                     icon="fa fa-arrow-left"
                     onClick={handleBack}
                 />
+
                 <PrimaryButtonComponent
                     label="Submit"
                     icon="fa fa-save"

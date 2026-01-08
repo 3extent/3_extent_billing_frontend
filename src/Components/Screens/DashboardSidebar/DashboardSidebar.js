@@ -43,7 +43,7 @@ export default function DashboardSidebar({ onLogout }) {
             navigate("/repairers");
         }
         if (item.name === "Maintenance") {
-            navigate("/maintenance");
+            navigate("/maintenanceDashboard");
         }
 
     }
