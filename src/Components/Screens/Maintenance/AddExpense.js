@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import CustomTextAreaComponent from "../../CustomComponents/CustomTextAreaComponent/CustomTextAreaComponent";
+import { EXPENSETITLE_COLOUMNS } from "./Constant";
 
 function AddExpense() {
     const today = moment().format("YYYY-MM-DD");
@@ -111,7 +112,17 @@ function AddExpense() {
             <div className="text-xl font-serif mb-6">Add Expense</div>
 
             <div className="grid grid-cols-2 gap-x-5 gap-y-2">
-                <InputComponent
+                  <DropdownCompoent
+                    label="Expense Title"
+                    name="title"
+                    options={EXPENSETITLE_COLOUMNS}
+                    placeholder="Select expense title"
+                    value={maintenanceData.title}
+                    onChange={handleInputChange}
+                    className="w-[80%]"
+                    labelClassName="font-serif font-bold"
+                />
+                {/* <InputComponent
                     label="Expense Title"
                     name="title"
                     type="text"
@@ -119,7 +130,7 @@ function AddExpense() {
                     onChange={handleInputChange}
                     inputClassName="w-[80%]"
                     labelClassName="font-serif font-bold"
-                />
+                /> */}
                 <CustomTextAreaComponent
                     label="Description"
                     name="description"

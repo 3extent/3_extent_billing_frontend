@@ -67,13 +67,9 @@ function RepairDashboard() {
             setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
         }
     };
-
-
     const navigateAddRepair = () => {
         navigate("/sendforrepair")
     }
-
-
     const getRepairsCallBack = (response) => {
         console.log("API Response:", response);
         if (response.status === 200) {
@@ -124,7 +120,6 @@ function RepairDashboard() {
             console.log("Error fetching repairs");
         }
     };
-    // const getAllRepairs = ({ imeiNumber, }) => {
     const getAllRepairs = ({ imeiNumber, status, from, to, selectAllDates } = {}) => {
         console.log("Status selected:", status, "IMEI:", imeiNumber);
         let url = `${API_URLS.PRODUCTS}?`;
@@ -189,9 +184,9 @@ function RepairDashboard() {
             } else {
                 getAllRepairs({ imeiNumber, status, from, to, selectAllDates });
             }
-
         } else {
-            toast.error("Failed to accept repair!", {
+            const errorMsg = response?.data?.error || "Failed to accept repair!";
+            toast.error(errorMsg, {
                 position: "top-center",
                 autoClose: 2000,
             });

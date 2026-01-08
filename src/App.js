@@ -40,8 +40,13 @@ const ProtectedRoute = ({ children, isAuthenticated }) => {
 
 // Public Route Component (redirects if already authenticated)
 const PublicRoute = ({ children, isAuthenticated }) => {
+  let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
   if (isAuthenticated) {
-    return <Navigate to="/salesbilling" replace />;
+    if (loggedInUser.role.name==="ADMIN"){
+      return <Navigate to="/salesbilling" replace />;
+    }else if(loggedInUser.role.name==="REPAIRER"){
+      return <Navigate to="/repair" replace />;
+    }
   }
   return children;
 };

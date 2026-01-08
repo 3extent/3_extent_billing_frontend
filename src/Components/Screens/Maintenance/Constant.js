@@ -1,1 +1,2 @@
 export const MAINTENANCE_COLOUMNS = [ "Sr.NO","Date","Expense Title", "Paid By",  "Amount"];
+export const EXPENSETITLE_COLOUMNS=["Salary","Rent","Repair Part Payment","Repairer Payment","Personal Expense","Stock Purchase","Other"]
