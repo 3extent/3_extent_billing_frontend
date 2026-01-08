@@ -1,32 +1,53 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 export default function DashboardSidebar({ onLogout }) {
-    const [menuItems, setMenuItems] = useState([
-        { icon: "fa fa-calculator", label: "Sales Billing", path: "/salesbilling" },
-        { icon: "fa fa-plus-circle", label: "Stock In", path: "/stockin" },
-        { icon: "fa fa-list-alt", label: "Products", path: "/products" },
-        { icon: "fa fa-blind", label: "Supplier", path: "/supplier" },
-        { icon: "fa fa-user-circle-o", label: "Customer", path: "/customer" },
-        { icon: "fa fa-android", label: "Brands", path: "/brands" },
-        { icon: "fa fa-th-large", label: "Models", path: "/models" },
-        { icon: "fa fa-cogs", label: "Repair Dashboard", path: "/repair" },
-        { icon: "fa fa-wrench", label: "Repairers", path: "/repairers" },
-        { icon: "fa fa-microchip", label: "Device Parts", path: "/deviceparts" },
-        { icon: "fa fa-shopping-cart", label: "Part Shop", path: "/partshop" },
-
-    ])
+    let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
+    console.log('loggedInUser: ', loggedInUser);
+    const [menuItems, setMenuItems] = useState(loggedInUser?.role?.menu_items)
     const navigate = useNavigate();
     const handleLogout = () => {
         localStorage.removeItem("isAuthenticated");
-        localStorage.removeItem("user");
+        localStorage.removeItem("loggedInUser");
         // Call the callback to update parent state
         if (onLogout) {
             onLogout();
         }
         navigate("/");
     };
-    const handleMenuClick = (path) => {
-        navigate(path);
+    const handleMenuClick = (item) => {
+        if (item.name === "Sales Billing") {
+            navigate("/salesbilling");
+        }
+        if (item.name === "Stock In") {
+            navigate("/stockin");
+        }
+        if (item.name === "Products") {
+            navigate("/products");
+        }
+        if (item.name === "Supplier") {
+            navigate("/supplier");
+        }
+        if (item.name === "Customer") {
+            navigate("/customer");
+        }
+        if (item.name === "Brands") {
+            navigate("/brands");
+        }
+        if (item.name === "Models") {
+            navigate("/models");
+        }
+        if (item.name === "Repair Dashboard") {
+            navigate("/repair");
+        }
+        if (item.name === "Repairers") {
+            navigate("/repairers");
+        }
+         if (item.name === "Device Parts") {
+            navigate("/deviceparts")
+        }
+        if (item.name === "Parts Shops") {
+            navigate("/partshop")
+        }
     }
     return (
         <div>
@@ -38,12 +59,12 @@ export default function DashboardSidebar({ onLogout }) {
                     </div>
                     {menuItems.map((item, index) => (
                         <div key={index}
-                            onClick={() => handleMenuClick(item.path)}
+                            onClick={() => handleMenuClick(item)}
                             className="flex items-center cursor-pointer pl-4 py-2  hover:bg-slate-600 rounded transform hover:scale-110 hover:font-blod">
                             <span className="mr-3">
                                 <i className={item.icon} aria-hidden="true"></i>
                             </span>
-                            <span className="hover:font-bold text-sm">{item.label}</span>
+                            <span className="hover:font-bold text-sm">{item.name}</span>
                         </div>
                     ))}
                     <div className="bottom-10 fixed justify-center cursor-pointer pl-4 text-sm transform hover:scale-110" onClick={handleLogout}><i class="fa fa-sign-out mr-2" aria-hidden="true"></i>Logout</div>
