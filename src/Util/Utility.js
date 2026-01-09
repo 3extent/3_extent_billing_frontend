@@ -379,7 +379,7 @@ export const generateAndSavePdf = (
   // Generate the table in the PDF
   let pageFinalYs = {};
   autoTable(doc, {
-    startY: 96,
+    startY: 105,
     head: [tableColumn],
     body: tableRows,
     theme: "plain",

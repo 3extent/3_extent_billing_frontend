@@ -162,6 +162,7 @@ function AddCustomer() {
                     placeholder="Customer Name"
                     inputClassName="w-[80%]"
                     labelClassName="font-serif font-bold"
+                    maxLength={35}
                     value={customerData.name}
                     onChange={handleInputChange}
                     error={errors.name}
@@ -172,6 +173,7 @@ function AddCustomer() {
                     name="address"
                     placeholder="Address"
                     inputClassName="w-[80%]"
+                    maxLength={100}
                     labelClassName="font-serif font-bold"
                     value={customerData.address}
                     onChange={handleInputChange}
@@ -230,6 +232,7 @@ function AddCustomer() {
                     placeholder="Shop Name"
                     inputClassName="w-[80%]"
                     labelClassName="font-serif font-bold"
+                    maxLength={35}
                     value={customerData.firm_name}
                     onChange={handleInputChange}
                     error={errors.firm_name}
