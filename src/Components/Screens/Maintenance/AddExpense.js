@@ -121,7 +121,7 @@ function AddExpense() {
                 position: "top-center",
                 autoClose: 2000,
             });
-            navigate(-1);
+            navigate("/maintenanceDashboard");
         }
         else {
             const errorMsg = response?.data?.error || "Failed to add Expense";
@@ -172,7 +172,6 @@ function AddExpense() {
                 />
             </div>
 
-           {/* <div className="text-xl font-serif mb-6">Add Expense</div> */}
 
             <div className="grid grid-cols-2 gap-x-5 gap-y-2">
                 <DropdownCompoent
