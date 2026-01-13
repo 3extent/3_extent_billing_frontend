@@ -25,6 +25,9 @@ import RepairersDetails from './Components/Screens/Repairers/RepairersDetails';
 import SupplierDetails from './Components/Screens/Supplier/SupplierDetails';
 import RepairDashboard from './Components/Screens/Repair/RepairDashboard';
 import SendForRepair from './Components/Screens/Repair/SendForRepair';
+import AddShop from './Components/Screens/Parts/AddShop';
+import PartShop from './Components/Screens/Parts/PartShop';
+import PartsDetails from './Components/Screens/Parts/PartsDetails';
 
 
 
@@ -40,9 +43,9 @@ const ProtectedRoute = ({ children, isAuthenticated }) => {
 const PublicRoute = ({ children, isAuthenticated }) => {
   let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
   if (isAuthenticated) {
-    if (loggedInUser.role.name==="ADMIN"){
+    if (loggedInUser.role.name === "ADMIN") {
       return <Navigate to="/salesbilling" replace />;
-    }else if(loggedInUser.role.name==="REPAIRER"){
+    } else if (loggedInUser.role.name === "REPAIRER") {
       return <Navigate to="/repair" replace />;
     }
   }
@@ -134,11 +137,6 @@ function App() {
                 <RepairDashboard />
               </ProtectedRoute>
             } />
-            {/* <Route path="/acceptrepair/:id" element={
-              <ProtectedRoute isAuthenticated={loginStatus}>
-                <AcceptRepair />
-              </ProtectedRoute>
-            } /> */}
             <Route path="/repairers" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <Repairers />
@@ -204,7 +202,22 @@ function App() {
                 <SupplierDetails />
               </ProtectedRoute>
             } />
+            <Route path="/partshop" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <PartShop />
+              </ProtectedRoute>
+            } />
 
+            <Route path="/addshop" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <AddShop />
+              </ProtectedRoute>
+            } />
+            <Route path="/partshopDetails/:shop_id?" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <PartsDetails />
+              </ProtectedRoute>
+            } />
           </Routes>
         </div>
       </div>

@@ -88,7 +88,7 @@ export default function RepairersDetails() {
 
         if (imeiNumber) url += `&imei_number=${imeiNumber}`;
         if (!selectAllDates) {
-            if (from) url += `&repair_from=${moment.utc(from).valueOf()}`;
+            if (from) url += `&repair_from=${moment.utc(from).startOf("day").valueOf()}`;
             if (to) url += `&repair_to=${moment.utc(to).endOf("day").valueOf()}`;
         }
         apiCall({

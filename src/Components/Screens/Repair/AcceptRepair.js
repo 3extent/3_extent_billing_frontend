@@ -3,26 +3,29 @@ import InputComponent from "../../CustomComponents/InputComponent/InputComponent
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { GRADE_OPTIONS } from "./Constants";
-
-export default function AcceptRepair({ open, repair, onClose, onSubmit }) {
+export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOptions }) {
     const [repairData, setRepairData] = useState({
-        partCost: repair?.part_cost || "",
+        // partCost: repair?.part_cost || "",
         repairerCost: repair?.repairer_cost || "",
         grade: repair?.grade || "",
         remark: repair?.repair_remark || "",
         qc_remark: repair?.qc_remark || "",
         imei: repair?.imei_number || "",
+        parts: [{ name: "", cost: "", shopName: "" }]
     });
     const [errors, setErrors] = useState({});
     useEffect(() => {
         if (repair) {
             setRepairData({
                 imei: repair.imei_number || "",
-                partCost: repair.part_cost || "",
+                // partCost: repair.part_cost || "",
                 repairerCost: repair.repairer_cost || "",
                 grade: repair.grade || "",
                 remark: repair.repair_remark || "",
                 qc_remark: repair?.qc_remark || "",
+                parts: [{ name: "", cost: "", shopName: "" }]
+
+
             });
             setErrors({});
         }
@@ -39,7 +42,7 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit }) {
         } else if (repairData.imei.length !== 15) {
             newErrors.imei = "IMEI must be 15 digits";
         }
-        if (!repairData.partCost) newErrors.partCost = "Please enter part cost";
+        // if (!repairData.partCost) newErrors.partCost = "Please enter part cost";
         if (!repairData.repairerCost) {
             newErrors.repairerCost = "Please enter repairer cost";
         }
@@ -52,6 +55,24 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit }) {
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
+    const handlePartChange = (index, field, value) => {
+        const updatedParts = [...repairData.parts];
+        updatedParts[index][field] = value;
+        setRepairData({ ...repairData, parts: updatedParts });
+    };
+
+    const addPart = () => {
+        setRepairData({
+            ...repairData,
+            parts: [...repairData.parts, { name: "", cost: "", shopName: "" }]
+        });
+    };
+
+    const removePart = (index) => {
+        const updatedParts = repairData.parts.filter((_, i) => i !== index);
+        setRepairData({ ...repairData, parts: updatedParts });
+    };
+
     const handleSubmit = () => {
         if (!handleValidation()) return;
         onSubmit({ ...repairData });
@@ -60,10 +81,11 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit }) {
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div className="bg-white shadow-lg w-[40%] rounded-[10px]">
+            <div className="bg-white shadow-lg w-[60%] rounded-[10px]  max-h-[90vh]  overflow-y-auto">
                 <div className="text-lg py-5 font-bold  pl-7 bg-slate-900 text-white font-serif rounded-t-[10px]">Accept Repair</div>
                 <div className="pb-3">
-                    <div className="flex flex-col gap-3 p-6">
+                    {/* <div className="flex flex-col gap-3 p-6"> */}
+                    <div className="grid grid-cols-2 gap-4 p-6">
                         <InputComponent
                             label="IMEI Number"
                             name="imei"
@@ -75,7 +97,7 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit }) {
                             maxLength={15}
                             error={errors.imei}
                         />
-                        <InputComponent
+                        {/* <InputComponent
                             label="Part Cost"
                             name="partCost"
                             numericOnly
@@ -84,7 +106,7 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit }) {
                             error={errors.partCost}
                             inputClassName="w-full"
                             labelClassName="font-bold"
-                        />
+                        /> */}
 
                         <InputComponent
                             label="Repairer Cost"
@@ -127,8 +149,63 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit }) {
                             onChange={handleInputChange}
                             error={errors.qc_remark}
                         />
+                        <div className="col-span-2">
+                            <label className="font-bold mb-2 block">Parts</label>
+
+                            {repairData.parts.map((part, idx) => (
+                                <div key={idx} className="flex gap-3 items-end mb-2">
+                                    <DropdownCompoent
+                                        label="Shop Name"
+                                        value={part.shopName}
+                                        options={shopOptions}
+                                        onChange={(e) =>
+                                            handlePartChange(idx, "shopName", e.target.value)
+                                        }
+                                        labelClassName="font-bold"
+                                    />
 
 
+                                    <InputComponent
+                                        label="Part Name"
+                                        value={part.name}
+                                        onChange={(e) =>
+                                            handlePartChange(idx, "name", e.target.value)
+                                        }
+                                        inputClassName="w-full"
+                                        containerClassName="w-1/2 flex flex-col"
+                                        labelClassName="font-bold"
+
+                                    />
+
+                                    <InputComponent
+                                        label="Part Cost"
+                                        numericOnly
+                                        value={part.cost}
+                                        onChange={(e) =>
+                                            handlePartChange(idx, "cost", e.target.value)
+                                        }
+                                        inputClassName="w-full"
+                                        labelClassName="font-bold"
+                                    />
+                                    {repairData.parts.length > 1 && (
+                                        <button
+                                            type="button"
+                                            onClick={() => removePart(idx)}
+                                            className="text-black px-3 py-1 rounded flex items-center justify-center"
+                                        >
+                                            <i className="fa fa-times"></i>
+                                        </button>
+                                    )}
+
+                                </div>
+                            ))}
+
+                            <PrimaryButtonComponent
+                                label="Add Part"
+                                onClick={addPart}
+                                className="bg-blue-500 text-white px-4 py-1"
+                            />
+                        </div>
                     </div>
                     <div className="mt-3 flex justify-end gap-2 p-2">
                         <PrimaryButtonComponent
