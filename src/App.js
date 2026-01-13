@@ -28,6 +28,7 @@ import SendForRepair from './Components/Screens/Repair/SendForRepair';
 import AddExpense from './Components/Screens/Maintenance/AddExpense';
 import MaintenanceDashboard from './Components/Screens/Maintenance/MaintenanceDashboard';
 import SingleExpenseDetails from './Components/Screens/Maintenance/SingleExpenseDetails';
+import AddMaintenanceCriteria from './Components/Screens/Maintenance/AddMaintenanceCriteria';
 
 
 
@@ -193,7 +194,27 @@ function App() {
               </ProtectedRoute>
             } />
 
-            <Route path="/singleExpenseDetails" element={
+            <Route path="/maintenanceDashboard" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <MaintenanceDashboard />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/addExpense" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <AddExpense />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/addMaintenanceCriteria" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <AddMaintenanceCriteria />
+              </ProtectedRoute>
+            } />
+
+            
+
+            <Route path="/singleExpenseDetails/:expense_id" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <SingleExpenseDetails />
               </ProtectedRoute>
@@ -227,24 +248,6 @@ function App() {
                 <SupplierDetails />
               </ProtectedRoute>
             } />
-
-            <Route path="/maintenanceDashboard" element={
-              <ProtectedRoute isAuthenticated={loginStatus}>
-                <MaintenanceDashboard />
-              </ProtectedRoute>
-            } />
-
-            <Route path="/addExpense" element={
-              <ProtectedRoute isAuthenticated={loginStatus}>
-                <AddExpense />
-              </ProtectedRoute>
-            } />
-
-            {/* <Route path="/singleExpenseDetails/:expense_id" element={
-              <ProtectedRoute isAuthenticated={loginStatus}>
-                <SingleExpenseDetails />
-              </ProtectedRoute>
-            } /> */}
 
           </Routes>
         </div>

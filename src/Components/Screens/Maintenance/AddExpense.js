@@ -2,21 +2,23 @@ import { useCallback, useEffect, useState } from "react";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
-import { apiCall } from "../../../Util/AxiosUtils";
+import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { API_URLS } from "../../../Util/AppConst";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import CustomTextAreaComponent from "../../CustomComponents/CustomTextAreaComponent/CustomTextAreaComponent";
-import { EXPENSETITLE_COLOUMNS } from "./Constant";
+import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 
 function AddExpense() {
 
     const navigate = useNavigate();
     const [imageBase64, setImageBase64] = useState("");
     const [paidByOptions, setPaidByOptions] = useState([]);
+    const [MaintenanceCriteriaOptions, setmaintenanceCriteriaOptions] = useState([]);
     const today = moment().format("YYYY-MM-DD");
     const [errors, setErrors] = useState("");
+    const [loading,setLoading]=useState(false);
 
     const [maintenanceData, setMaintenanceData] = useState({
         title: "",
@@ -32,15 +34,15 @@ function AddExpense() {
         setMaintenanceData({ ...maintenanceData, [name]: value });
     };
 
-    const handleDateChange = (e) => {
+    const handleDateChange = (event) => {
         setMaintenanceData({
             ...maintenanceData,
-            date: e.target.value
+            date: event.target.value
         });
     };
 
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
         if (!file) return;
 
         const reader = new FileReader();
@@ -68,8 +70,30 @@ function AddExpense() {
         });
     }, []);
 
+    const getMaintenanceCriteriaCallBack = (response) => {
+        if (response.status === 200) {
+            const Criteria = response.data.map(criteria => criteria.title);
+            setmaintenanceCriteriaOptions(Criteria);
+        } else {
+            console.log("Failed to fetch admin users");
+        }
+    };
+
+
+
+    const getMaintenanceCriteria = useCallback(() => {
+        apiCall({
+            method: 'GET',
+            url: API_URLS.MAINTENANCE_CRITERIA,
+            data: {},
+            callback: getMaintenanceCriteriaCallBack,
+        });
+    }, []);
+
+
     useEffect(() => {
         getAdmins();
+        getMaintenanceCriteria();
     }, [getAdmins]);
 
 
@@ -116,28 +140,45 @@ function AddExpense() {
             date: moment.utc(maintenanceData.date, "YYYY-MM-DD").valueOf(),
             image: imageBase64,
         };
+
         apiCall({
             method: "POST",
-            url: API_URLS.MAINTENANCE,
+            url: API_URLS.MAINTENANCE_ACTIVITY,
             data: requestData,
             callback: addMaintenanceCallback,
+            setLoading:setLoading
         });
     };
 
     const handleBack = () => {
         navigate(-1);
     };
-    
+
+    const navigateAddMaintenanceCriteria=()=>{
+        navigate("/addMaintenanceCriteria")
+    }
+
     return (
         <div className="w-full">
+             {loading && <Spinner />}
 
-            <div className="text-xl font-serif mb-6">Add Expense</div>
+            <div>
+                <CustomHeaderComponent
+                    name="Add Expense"
+                    label="Add Criteria"
+                    icon="fa fa-plus-circle"
+                    onClick={navigateAddMaintenanceCriteria}
+                    buttonClassName="py-1 px-3 text-sm font-bold"
+                />
+            </div>
+
+           {/* <div className="text-xl font-serif mb-6">Add Expense</div> */}
 
             <div className="grid grid-cols-2 gap-x-5 gap-y-2">
                 <DropdownCompoent
                     label="Expense Title"
                     name="title"
-                    options={EXPENSETITLE_COLOUMNS}
+                    options={MaintenanceCriteriaOptions}
                     placeholder="Select expense title"
                     value={maintenanceData.title}
                     onChange={handleInputChange}
