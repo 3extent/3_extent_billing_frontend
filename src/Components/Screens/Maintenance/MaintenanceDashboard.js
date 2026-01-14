@@ -18,7 +18,7 @@ function MaintenanceDashboard() {
     const [selectAllDates, setSelectAllDates] = useState(false);
     const [totalRow, setTotalRow] = useState(null);
     const [showTotalRow, setShowTotalRow] = useState(false);
-    const [loading,setLoading]=useState(false);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const navigateAddMaintanance = () => {
         navigate("/addExpense")
@@ -46,7 +46,7 @@ function MaintenanceDashboard() {
         }
     };
 
-    const getMaintenanceData = ({ title, from, to, selectAllDates }={}) => {
+    const getMaintenanceData = ({ title, from, to, selectAllDates } = {}) => {
 
         let url = `${API_URLS.MAINTENANCE_CRITERIA}?`;
         if (title) {
@@ -63,7 +63,7 @@ function MaintenanceDashboard() {
             url: url,
             data: {},
             callback: getMaintenanceCallBack,
-            setLoading:setLoading
+            setLoading: setLoading
         });
 
     };
@@ -84,14 +84,14 @@ function MaintenanceDashboard() {
     // };
 
     const handleSearchFilter = () => {
-        getMaintenanceData({title, from, to, selectAllDates });
+        getMaintenanceData({ title, from, to, selectAllDates });
     }
 
     const handleResetFilter = () => {
         setFrom(fromDate);
         setTo(toDate);
         setSelectAllDates(false);
-        getMaintenanceData({ title,from, to });
+        getMaintenanceData({ title, from, to });
     }
 
     const handleRowClick = (row) => {
@@ -100,7 +100,7 @@ function MaintenanceDashboard() {
 
     return (
         <div>
-             {loading && <Spinner />}
+            {loading && <Spinner />}
             <div className="mb-5">
 
                 <CustomHeaderComponent
@@ -172,12 +172,13 @@ function MaintenanceDashboard() {
                 onRowClick={handleRowClick}
                 showTotalRow={showTotalRow}
             />
-
-            <div className="flex justify-end">
-                <button className="rounded-full" onClick={() => setShowTotalRow(!showTotalRow)}>
-                    <i className="fa fa-circle-o" aria-hidden="true"></i>
-                </button>
-            </div>
+            {rows.length > 0 && (
+                <div className="flex justify-end">
+                    <button className="rounded-full" onClick={() => setShowTotalRow(!showTotalRow)}>
+                        <i className="fa fa-circle-o" aria-hidden="true"></i>
+                    </button>
+                </div>
+            )}
 
         </div>
     )

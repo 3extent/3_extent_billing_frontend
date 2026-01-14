@@ -14,12 +14,14 @@ function SingleExpenseDetails() {
     const [rows, setRows] = useState([]);
     const [expenseTitle, setExpenseTitle] = useState("");
     const [paidByOptions, setPaidByOptions] = useState();
-    const [paidBy,setPaidBy]=useState("");
+    const [paidBy, setPaidBy] = useState("");
     const fromDate = moment().subtract('days').format('YYYY-MM-DD');
     const toDate = moment().format('YYYY-MM-DD');
     const [from, setFrom] = useState(fromDate);
     const [to, setTo] = useState(toDate);
     const [selectAllDates, setSelectAllDates] = useState(false);
+    const [totalRow, setTotalRow] = useState(null);
+    const [showTotalRow, setShowTotalRow] = useState(false);
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false)
     const { expense_id } = useParams();
@@ -45,6 +47,10 @@ function SingleExpenseDetails() {
                 "Paid By": expense.paid_by?.name,
                 id: expense._id
             }));
+            setTotalRow({
+                _id: "total",
+                "Amount": Number(response.data.total_expense_amount || 0).toLocaleString("en-IN"),
+            });
             setRows(singleExpenseTitleFormattedRows);
         } else {
             console.log("Failed to fetch maintenance data");
@@ -127,7 +133,7 @@ function SingleExpenseDetails() {
             </div>
 
             <div className='flex items-center gap-4'>
-    
+
                 <DropdownCompoent
                     placeholder="select Paid By"
                     value={paidBy}
@@ -176,10 +182,19 @@ function SingleExpenseDetails() {
             </div>
 
             <CustomTableCompoent
-                maxHeight="h-60vh"
+                maxHeight="h-75vh"
                 headers={SINGLE_EXPENSE_DETAILS_COLUMNS}
                 rows={rows}
+                totalRow={totalRow}
+                showTotalRow={showTotalRow}
             />
+            {rows.length > 0 && (
+                <div className="flex justify-end">
+                    <button className="rounded-full" onClick={() => setShowTotalRow(!showTotalRow)}>
+                        <i className="fa fa-circle-o" aria-hidden="true"></i>
+                    </button>
+                </div>
+            )}
 
         </div>
     )
