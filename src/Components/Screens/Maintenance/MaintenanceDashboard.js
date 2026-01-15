@@ -118,7 +118,7 @@ function MaintenanceDashboard() {
 
                     <InputComponent
                         type="text"
-                        placeholder="Enter expense title"
+                        placeholder="Enter Expense Title"
                         inputClassName="mb-5 w-[190px]"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
