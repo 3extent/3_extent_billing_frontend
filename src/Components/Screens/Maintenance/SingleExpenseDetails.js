@@ -135,7 +135,7 @@ function SingleExpenseDetails() {
             <div className='flex items-center gap-4'>
 
                 <DropdownCompoent
-                    placeholder="select Paid By"
+                    placeholder="Paid By"
                     value={paidBy}
                     onChange={(e) => setPaidBy(e.target.value)}
                     options={paidByOptions}

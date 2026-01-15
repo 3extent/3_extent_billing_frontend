@@ -53,10 +53,10 @@ function MaintenanceDashboard() {
             url += `&title=${title}`
         }
 
-        // if (!selectAllDates) {
-        //     if (from) url += `&from=${moment.utc(from).startOf('day').valueOf()}`;
-        //     if (to) url += `&to=${moment.utc(to).endOf('day').valueOf()}`;
-        // }
+        if (!selectAllDates) {
+            if (from) url += `&from=${moment.utc(from).startOf('day').valueOf()}`;
+            if (to) url += `&to=${moment.utc(to).endOf('day').valueOf()}`;
+        }
 
         apiCall({
             method: "GET",
@@ -74,14 +74,14 @@ function MaintenanceDashboard() {
         getMaintenanceData();
     }, []);
 
-    // const handleDateChange = (value, setDate) => {
-    //     const today = moment().format('YYYY-MM-DD');
-    //     if (value > today) {
-    //         setDate(today);
-    //     } else {
-    //         setDate(value);
-    //     }
-    // };
+    const handleDateChange = (value, setDate) => {
+        const today = moment().format('YYYY-MM-DD');
+        if (value > today) {
+            setDate(today);
+        } else {
+            setDate(value);
+        }
+    };
 
     const handleSearchFilter = () => {
         getMaintenanceData({ title, from, to, selectAllDates });
@@ -124,30 +124,30 @@ function MaintenanceDashboard() {
                         onChange={(e) => setTitle(e.target.value)}
                     />
 
-                    {/* <label className='flex items-center gap-2 text-sm'>
+                    <label className='flex items-center gap-2 text-sm'>
                         <input
                             type="checkbox"
                             checked={selectAllDates}
-                            //  onChange={(e) => setSelectAllDates(e.target.checked)}
+                         onChange={(e) => setSelectAllDates(e.target.checked)}
                         />
                         All Data
-                    </label> */}
+                    </label>
 
-                    {/* <InputComponent
+                    <InputComponent
                         type="date"
                         inputClassName="w-[190px] mb-5"
                         value={from}
-                        // onChange={(e) => handleDateChange(e.target.value, setFrom)}
+                        onChange={(e) => handleDateChange(e.target.value, setFrom)}
                         disabled={selectAllDates}
-                    /> */}
+                    />
 
-                    {/* <InputComponent
+                    <InputComponent
                         type="date"
                         inputClassName="w-[190px] mb-5"
                         value={to}
-                        // onChange={(e) => handleDateChange(e.target.value, setTo)}
+                        onChange={(e) => handleDateChange(e.target.value, setTo)}
                         disabled={selectAllDates}
-                    /> */}
+                    />
 
                     <PrimaryButtonComponent
                         label="Search"
