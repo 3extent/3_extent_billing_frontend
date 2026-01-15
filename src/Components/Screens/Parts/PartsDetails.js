@@ -16,8 +16,11 @@ function PartsDetails() {
     const [rows, setRows] = useState([]);
     const [totalRow, setTotalRow] = useState(null);
     const [imeiNumber, setIMEINumber] = useState("");
-    const [from, setFrom] = useState(moment().format("YYYY-MM-DD"));
-    const [to, setTo] = useState(moment().format("YYYY-MM-DD"));
+    const [repairerName, setRepairerName] = useState('');
+    const fromDate = moment().format("YYYY-MM-DD");
+    const toDate = moment().format("YYYY-MM-DD");
+    const [from, setFrom] = useState(fromDate);
+    const [to, setTo] = useState(toDate);
     const [selectAllDates, setSelectAllDates] = useState(false);
     const [showTotalRow, setShowTotalRow] = useState(false);
     const handleBack = () => {
@@ -31,8 +34,15 @@ function PartsDetails() {
     const getPartsDetailsCallback = (response) => {
         setLoading(false);
         if (response.status === 200) {
+            console.log('response: ', response);
             const shop = response.data.user;
             const partsRows = shop.repair_activities.map((activity) => ({
+                "Repair Started": activity.product.repair_started_at
+                    ? moment(activity.product.repair_started_at).format("ll")
+                    : "-",
+                "Repair Completed": activity.product.repair_completed_at
+                    ? moment(activity.product.repair_completed_at).format("ll")
+                    : "-",
                 "IMEI NO": activity.product.imei_number,
                 Model: activity.product.model.name,
                 "Part Name": activity.part_name,
@@ -42,20 +52,21 @@ function PartsDetails() {
             }));
             setTotalRow({
                 _id: "total",
-                "Amount": Number(response.data.total_parts_cost_used || 0).toLocaleString("en-IN"),
+                "Amount": Number(response.data.total_payable_amount_of_parts || 0).toLocaleString("en-IN"),
 
             });
             setRows(partsRows);
         }
     }
-    const getPartsDetails = useCallback(() => {
+    const getPartsDetails = ({ imeiNumber, repairerName, from, to, selectAllDates } = {}) => {
         if (!shop_id) return;
         setLoading(true);
-        let url = `${API_URLS.USERS}/${shop_id}?role=PARTS_SHOP`;
+        let url = `${API_URLS.USERS}/${shop_id}?`;
         if (imeiNumber) url += `&imei_number=${imeiNumber}`;
+        if (repairerName) url += `&repairer_name=${repairerName}`;
         if (!selectAllDates) {
-            if (from) url += `&from_date=${moment.utc(from).startOf("day").valueOf()}`;
-            if (to) url += `&to_date=${moment.utc(to).endOf("day").valueOf()}`;
+            if (from) url += `&repair_from=${moment.utc(from).startOf("day").valueOf()}`;
+            if (to) url += `&repair_to=${moment.utc(to).endOf("day").valueOf()}`;
         }
 
         apiCall({
@@ -65,21 +76,21 @@ function PartsDetails() {
             callback: getPartsDetailsCallback,
             setLoading,
         });
-    }, [shop_id, imeiNumber, from, to, selectAllDates]);
+    };
     useEffect(() => {
-        getPartsDetails();
-    }, [getPartsDetails]);
-
+        getPartsDetails({ from, to, selectAllDates });
+    }, [shop_id]);
     const handleSearchFilter = () => {
-        getPartsDetails();
+        getPartsDetails({ imeiNumber, repairerName, from, to, selectAllDates });
     };
 
     const handleResetFilter = () => {
         setIMEINumber("");
-        setFrom(moment().format("YYYY-MM-DD"));
-        setTo(moment().format("YYYY-MM-DD"));
+        setRepairerName("");
+        setFrom(fromDate);
+        setTo(toDate);
         setSelectAllDates(false);
-        getPartsDetails();
+        getPartsDetails({ from: fromDate, to: toDate });
     };
     return (
         <div className="w-full">
@@ -101,6 +112,13 @@ function PartsDetails() {
                     value={imeiNumber}
                     onChange={(e) => setIMEINumber(e.target.value)}
                     inputClassName="mb-2 w-[190px]"
+                />
+                <InputComponent
+                    type="text"
+                    placeholder="Repairer Name"
+                    value={repairerName}
+                    onChange={(e) => setRepairerName(e.target.value)}
+                    inputClassName="w-[190px] mb-2"
                 />
                 <label className="flex items-center gap-2 text-sm">
                     <input

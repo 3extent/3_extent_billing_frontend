@@ -4,12 +4,14 @@ export const PART_SHOP_OPTIONS = [
     "Contact",
     "State",
     "GST Number",
-    "Total Amount",
-    "Total Remaining",
-    "Total Paid",
+    "Total Shop Cost",
+    "Total Shop Paid",
+    "Total Shop Remaining",
     "Actions"
 ];
 export const PARTS_DETAILS_HEADERS = [
+    "Repair Started",
+    "Repair Completed",
     "IMEI NO",
     "Model",
     "Part Name",

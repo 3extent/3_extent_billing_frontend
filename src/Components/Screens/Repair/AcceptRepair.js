@@ -52,6 +52,14 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
         if (!repairData.qc_remark || !repairData.qc_remark.trim()) {
             newErrors.qc_remark = "Please enter QC remark";
         }
+        repairData.parts.map((part) => {
+            if (part.shopName || part.name || part.cost) {
+                if (!part.shopName || !part.name || !part.cost) {
+                    newErrors.parts = "Please fill all part details";
+                }
+            }
+            return null;
+        });
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -59,6 +67,9 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
         const updatedParts = [...repairData.parts];
         updatedParts[index][field] = value;
         setRepairData({ ...repairData, parts: updatedParts });
+        if (errors.parts) {
+            setErrors({ ...errors, parts: "" });
+        }
     };
 
     const addPart = () => {
@@ -191,7 +202,7 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
                                         <button
                                             type="button"
                                             onClick={() => removePart(idx)}
-                                            className="text-black px-3 py-1 rounded flex items-center justify-center"
+                                            className="text-black px-3 py-1 rounded flex items-center justify-center mb-3"
                                         >
                                             <i className="fa fa-times"></i>
                                         </button>
@@ -200,6 +211,9 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
                                 </div>
                             ))}
 
+                            {errors.parts && (
+                                <div className="text-red-500 text-sm">{errors.parts}</div>
+                            )}
                             <PrimaryButtonComponent
                                 label="Add Part"
                                 onClick={addPart}

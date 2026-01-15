@@ -31,17 +31,13 @@ function PartShop() {
     };
     useEffect(() => {
         if (!selectedShop) return;
-
         const cash = Number(cashAmount || 0);
         const online = Number(onlineAmount || 0);
         const cardAmt = Number(card || 0);
-
         const paidTotal = cash + online + cardAmt;
-        setPendingAmount(
-            Number(selectedShop.pending_amount) - paidTotal
-        );
+        const pending = Number(selectedShop.pending_amount) - paidTotal;
+        setPendingAmount(pending);
     }, [cashAmount, onlineAmount, card, selectedShop]);
-
     const getShopsCallback = useCallback((response) => {
         if (response.status === 200) {
             const formattedRows = response.data.users.map((shop) => ({
@@ -51,22 +47,39 @@ function PartShop() {
                 "State": shop.state,
                 "Address": shop.address,
                 "GST Number": shop.gst_number,
+                "Total Shop Cost": shop.payable_amount,
+                "Total Shop Paid": shop.paid_amount?.reduce(
+                    (sum, payment) => sum + Number(payment.amount || 0),
+                    0
+                ),
+                "Total Shop Remaining": shop.pending_amount,
                 "Actions": (
                     <div className="flex justify-end gap-2">
-                        <PrimaryButtonComponent
-                            label="Pay"
-                            buttonClassName="py-1 px-3 text-[12px]"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                handlePayClick(shop);
-                            }}
-                        />
+                        {Number(shop.pending_amount) > 0 && (
+                            <PrimaryButtonComponent
+                                label="Pay"
+                                buttonClassName="py-1 px-3 text-[12px]"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handlePayClick(shop);
+                                }}
+                                disabled={Number(shop.pending_amount) === 0}
+                            />
+                        )}
                     </div>
                 )
             }))
             setTotalRow({
                 _id: "total",
-                "Total Paid": Number(response.data.paid_amount_of_all_users || 0).toLocaleString("en-IN"),
+                "Shop Name": "Total",
+                "Contact": "",
+                "State": "",
+                "Address": "",
+                "GST Number": "",
+                "Total Shop Cost": Number(response.data.payable_amount_of_all_users || 0).toLocaleString("en-IN"),
+                "Total Shop Paid": Number(response.data.paid_amount_of_all_users || 0).toLocaleString("en-IN"),
+                "Total Shop Remaining": Number(response.data.pending_amount_of_all_users || 0).toLocaleString("en-IN"),
+                "Actions": "",
             });
             setRows(formattedRows);
         } else {
@@ -144,9 +157,9 @@ function PartShop() {
         const online = Number(onlineAmount || 0);
         const cardAmt = Number(card || 0);
         const paidTotal = cash + online + cardAmt;
-
+        console.log('selectedShop: ', selectedShop);
         const payload = {
-            payable_amount: Number(selectedShop.pending_amount),
+            payable_amount: Number(selectedShop.payable_amount),
             paid_amount: [
                 { method: "cash", amount: cash },
                 { method: "online", amount: online },
