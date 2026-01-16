@@ -212,7 +212,8 @@ export default function CustomTableCompoent({
                                                     "Total Repairer Cost",
                                                     "Total Paid",
                                                     "Total Repairer Remaining",
-                                                    "Amount"
+                                                    "Amount",
+                                                    "Total Amount"
                                                 ].includes(header)
                                                     ? totalRow[header]?.toLocaleString()
                                                     : ""}

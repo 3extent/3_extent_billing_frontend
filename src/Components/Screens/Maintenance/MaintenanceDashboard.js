@@ -26,18 +26,16 @@ function MaintenanceDashboard() {
     const [rows, setRows] = useState([]);
     const getMaintenanceCallBack = (response) => {
         if (response.status === 200) {
-            const maintenanceFormattedRows = response.data.map((expense, index) => ({
+            const maintenanceFormattedRows = response.data?.maintenanceCriteriaList.map((expense, index) => ({
                 "Sr.No": index + 1,
-                // "Date": moment(expense.created_at).format('ll'),
                 "Expense Title": expense.title,
-                // "Description": expense.description,
-                "Total Amount": expense.amount,
+                "Total Amount": expense.total_expenses_of_maintenance_criteria,
                 id: expense._id
             }));
 
             setTotalRow({
                 _id: "total",
-                "Total Amount": Number(response.data.total_expense_amount || 0).toLocaleString("en-IN"),
+                "Total Amount": Number(response.data.total_expenses_of_maintenance || 0).toLocaleString("en-IN"),
             });
 
             setRows(maintenanceFormattedRows);

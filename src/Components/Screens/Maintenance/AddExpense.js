@@ -72,7 +72,7 @@ function AddExpense() {
 
     const getMaintenanceCriteriaCallBack = (response) => {
         if (response.status === 200) {
-            const Criteria = response.data.map(criteria => criteria.title);
+            const Criteria = response.data?.maintenanceCriteriaList.map(criteria => criteria.title);
             setmaintenanceCriteriaOptions(Criteria);
         } else {
             console.log("Failed to fetch admin users");

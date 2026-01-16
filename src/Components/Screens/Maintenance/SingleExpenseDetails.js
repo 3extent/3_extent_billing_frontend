@@ -37,11 +37,10 @@ function SingleExpenseDetails() {
 
     const getSingleExpenseTitlecallback = (response) => {
         if (response.status === 200) {
-            setExpenseTitle(response.data.title);
-            const singleExpenseTitleFormattedRows = response.data.activities.map((expense, index) => ({
+            setExpenseTitle(response.data.maintenanceCriteria?.title);
+            const singleExpenseTitleFormattedRows = response.data?.maintenanceCriteria?.activities.map((expense, index) => ({
                 "Sr.No": index + 1,
                 "Date": moment(expense.created_at).format('ll'),
-                // "Expense Title": expense.title,
                 "Description": expense.description,
                 "Amount": expense.amount,
                 "Paid By": expense.paid_by?.name,
@@ -49,7 +48,7 @@ function SingleExpenseDetails() {
             }));
             setTotalRow({
                 _id: "total",
-                "Amount": Number(response.data.total_expense_amount || 0).toLocaleString("en-IN"),
+                 "Amount": Number(response.data.total_expenses_of_maintenance_criteria || 0).toLocaleString("en-IN"),
             });
             setRows(singleExpenseTitleFormattedRows);
         } else {
