@@ -69,7 +69,7 @@ function MaintenanceDashboard() {
     useEffect(() => {
         setFrom(fromDate);
         setTo(toDate);
-        getMaintenanceData();
+        getMaintenanceData({ from, to });
     }, []);
 
     const handleDateChange = (value, setDate) => {
@@ -163,7 +163,7 @@ function MaintenanceDashboard() {
             </div>
 
             <CustomTableCompoent
-                maxHeight="h-60vh"
+                maxHeight="h-[55vh]"
                 headers={MAINTENANCE_COLOUMNS}
                 rows={rows}
                 totalRow={totalRow}

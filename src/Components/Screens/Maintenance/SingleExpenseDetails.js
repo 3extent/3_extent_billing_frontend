@@ -181,7 +181,7 @@ function SingleExpenseDetails() {
             </div>
 
             <CustomTableCompoent
-                maxHeight="h-75vh"
+                maxHeight="h-[55vh]"
                 headers={SINGLE_EXPENSE_DETAILS_COLUMNS}
                 rows={rows}
                 totalRow={totalRow}
