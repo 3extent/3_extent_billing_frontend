@@ -21,9 +21,7 @@ function AddMaintenanceCriteria() {
     };
 
     const addExpenseTitleCallback = (response) => {
-        console.log('response: ', response);
         if (response.status === 200) {
-            console.log('response: ', response);
             toast.success("Criteria added successfully!", {
                 position: "top-center",
                 autoClose: 2000,
