@@ -42,6 +42,10 @@ export default function DashboardSidebar({ onLogout }) {
         if (item.name === "Repairers") {
             navigate("/repairers");
         }
+        if (item.name === "Maintenance") {
+            navigate("/maintenanceDashboard");
+        }
+
     }
     return (
         <div>
