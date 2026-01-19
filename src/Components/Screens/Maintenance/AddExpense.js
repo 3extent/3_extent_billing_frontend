@@ -94,7 +94,7 @@ function AddExpense() {
     useEffect(() => {
         getAdmins();
         getMaintenanceCriteria();
-    }, [getAdmins]);
+    }, []);
 
 
     const handleValidation = () => {
