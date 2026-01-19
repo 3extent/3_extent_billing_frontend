@@ -48,7 +48,7 @@ function SingleExpenseDetails() {
             }));
             setTotalRow({
                 _id: "total",
-                 "Amount": Number(response.data.total_expenses_of_maintenance_criteria || 0).toLocaleString("en-IN"),
+                "Amount": Number(response.data.total_expenses_of_maintenance_criteria || 0).toLocaleString("en-IN"),
             });
             setRows(singleExpenseTitleFormattedRows);
         } else {
@@ -102,6 +102,7 @@ function SingleExpenseDetails() {
     }
 
     const handleResetFilter = () => {
+        setPaidBy("");
         setFrom(fromDate);
         setTo(toDate);
         setSelectAllDates(false);
