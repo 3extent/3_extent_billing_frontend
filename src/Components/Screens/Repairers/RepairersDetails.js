@@ -113,7 +113,6 @@ export default function RepairersDetails() {
         setFrom(fromDate);
         setTo(toDate);
         setSelectAllDates(false);
-
         getRepairerDetails({ from: fromDate, to: toDate });
     };
     return (

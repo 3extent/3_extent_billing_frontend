@@ -25,6 +25,11 @@ import RepairersDetails from './Components/Screens/Repairers/RepairersDetails';
 import SupplierDetails from './Components/Screens/Supplier/SupplierDetails';
 import RepairDashboard from './Components/Screens/Repair/RepairDashboard';
 import SendForRepair from './Components/Screens/Repair/SendForRepair';
+import AddExpense from './Components/Screens/Maintenance/AddExpense';
+import MaintenanceDashboard from './Components/Screens/Maintenance/MaintenanceDashboard';
+import SingleExpenseDetails from './Components/Screens/Maintenance/SingleExpenseDetails';
+import AddMaintenanceCriteria from './Components/Screens/Maintenance/AddMaintenanceCriteria';
+
 
 
 
@@ -40,9 +45,9 @@ const ProtectedRoute = ({ children, isAuthenticated }) => {
 const PublicRoute = ({ children, isAuthenticated }) => {
   let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
   if (isAuthenticated) {
-    if (loggedInUser.role.name==="ADMIN"){
+    if (loggedInUser.role.name === "ADMIN") {
       return <Navigate to="/salesbilling" replace />;
-    }else if(loggedInUser.role.name==="REPAIRER"){
+    } else if (loggedInUser.role.name === "REPAIRER") {
       return <Navigate to="/repair" replace />;
     }
   }
@@ -104,51 +109,55 @@ function App() {
                 <SalesBilling />
               </ProtectedRoute>
             } />
+
             <Route path="/products" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <ListOfProducts />
               </ProtectedRoute>
             } />
+
             <Route path="/supplier" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <Supplier />
               </ProtectedRoute>
             } />
+
             <Route path="/customer" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <Customer />
               </ProtectedRoute>
             } />
+
             <Route path="/brands" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <Brands />
               </ProtectedRoute>
             } />
+
             <Route path="/models" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <Models />
               </ProtectedRoute>
             } />
+
             <Route path="/repair" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <RepairDashboard />
               </ProtectedRoute>
             } />
-            {/* <Route path="/acceptrepair/:id" element={
-              <ProtectedRoute isAuthenticated={loginStatus}>
-                <AcceptRepair />
-              </ProtectedRoute>
-            } /> */}
+
             <Route path="/repairers" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <Repairers />
               </ProtectedRoute>
             } />
+
             <Route path="/stockin/:product_id?" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <StockIn />
               </ProtectedRoute>
             } />
+
             <Route path="/addbrands/:brand_id?" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <AddBrands />
@@ -160,26 +169,58 @@ function App() {
                 <AddModels />
               </ProtectedRoute>
             } />
+
             <Route path="/addcustomer/:customer_id?" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <AddCustomer />
               </ProtectedRoute>
             } />
+
             <Route path="/addsupplier/:supplier_id?" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <AddSupplier />
               </ProtectedRoute>
             } />
+
             <Route path="/billinghistory" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <Billinghistory isDraft={false} />
               </ProtectedRoute>
             } />
+
             <Route path="/draftbillhistroy" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <Billinghistory isDraft={true} />
               </ProtectedRoute>
             } />
+
+            <Route path="/maintenanceDashboard" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <MaintenanceDashboard />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/addExpense" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <AddExpense />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/addMaintenanceCriteria" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <AddMaintenanceCriteria />
+              </ProtectedRoute>
+            } />
+
+            
+
+            <Route path="/singleExpenseDetails/:expense_id" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <SingleExpenseDetails />
+              </ProtectedRoute>
+            } />
+
+
             <Route path="/singleBillHistory/:billId" element={<SingleBillHistory />} />
             <Route path="/singleDraftBillHistroy/:draftBillId" element={<SingleDraftBillHistory />} />
 
@@ -189,16 +230,19 @@ function App() {
                 <SendForRepair />
               </ProtectedRoute>
             } />
+
             <Route path="/addrepairers/:repairer_id?" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <AddRepairers />
               </ProtectedRoute>
             } />
+
             <Route path="/repairerDetails/:repairer_id" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <RepairersDetails />
               </ProtectedRoute>
             } />
+
             <Route path="/supplierDetails/:supplier_id" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <SupplierDetails />

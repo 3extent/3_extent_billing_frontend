@@ -88,16 +88,19 @@ function ListOfProducts() {
             console.log("Error fetching suppliers");
         }
     };
+
+    
     const getProductsCallBack = (response) => {
         console.log('response: ', response);
+
         if (response.status === 200) {
             const productFormattedRows = response.data.products.map((product) => ({
                 "Date": moment(product.created_at).format('ll'),
                 "IMEI NO": product.imei_number,
                 "Model": typeof product.model === 'object' ? product.model.name : product.model,
                 "Brand": typeof product.brand === 'object' ? product.model.brand : product.model.brand.name,
-                "Supplier": typeof product.supplier === 'object' ? product.supplier.name : product.supplier || '-',
-                "QC Remark": product.qc_remark || '-',
+                "Supplier":product.supplier?.name,
+                "QC Remark": product.qc_remark ,
                 "Sales Price": product.sales_price,
                 "Purchase Price": product.purchase_price,
                 "Grade": product.grade,
@@ -136,11 +139,14 @@ function ListOfProducts() {
                     </div>
                 )
             }));
+            
             setRows(productFormattedRows);
+            console.log('productFormattedRows: ', productFormattedRows);
         } else {
             console.log("Error");
         }
     }
+
     const getProductsAllData = ({ imeiNumber, grade, modelName, brandName, supplierName, status, from, to, selectAllDates }) => {
         let url = `${API_URLS.PRODUCTS}?`;
         if (imeiNumber) {
