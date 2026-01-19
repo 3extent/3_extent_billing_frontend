@@ -30,16 +30,16 @@ function ListOfProducts() {
     const [selectAllDates, setSelectAllDates] = useState(false);
     const navigate = useNavigate();
 
-    const toggleableColumns = ["GST Purchase Price", "Accessories", "Engineer Name", "Part Cost",
+    const toggleableColumns = ["GST Purchase Price", "Accessories", "Engineer Name", "Total Part Cost",
         "Repairer Cost", "Repairer Name", "Repairer Contact No", "Repair Remark", "Purchase Cost Including Expenses"];
 
     const [hiddenColumns, setHiddenColumns] = useState([
-        "GST Purchase Price", "Accessories", "Engineer Name", "Part Cost",
+        "GST Purchase Price", "Accessories", "Engineer Name", "Total Part Cost",
         "Repairer Cost", "Repairer Name", "Repairer Contact No", "Repair Remark", "Purchase Cost Including Expenses"
     ]);
     const [dynamicHeaders, setDynamicHeaders] = useState(() => {
         return PRODUCT_COLOUMNS.filter(
-            (col) => !["GST Purchase Price", "Accessories", "Engineer Name", "Part Cost",
+            (col) => !["GST Purchase Price", "Accessories", "Engineer Name", "Total Part Cost",
                 "Repairer Cost", "Repairer Name", "Repairer Contact No", "Repair Remark", "Purchase Cost Including Expenses"].includes(col)
         );
     });
@@ -96,7 +96,8 @@ function ListOfProducts() {
                 "IMEI NO": product.imei_number,
                 "Model": typeof product.model === 'object' ? product.model.name : product.model,
                 "Brand": typeof product.brand === 'object' ? product.model.brand : product.model.brand.name,
-                "Supplier": typeof product.supplier === 'object' ? product.supplier.name : product.supplier || '-',
+                // "Supplier": typeof product.supplier === 'object' ? product.supplier.name : product.supplier || '-',
+                "Supplier": product.supplier?.name,
                 "QC Remark": product.qc_remark || '-',
                 "Sales Price": product.sales_price,
                 "Purchase Price": product.purchase_price,
@@ -104,7 +105,7 @@ function ListOfProducts() {
                 "Engineer Name": product.engineer_name,
                 "Accessories": product.accessories,
                 "GST Purchase Price": product.gst_purchase_price,
-                "Part Cost": product.part_cost,
+                "Total Part Cost": product.repair_by?.total_part_cost,
                 "Repairer Cost": product.repairer_cost,
                 "Repairer Name": product.repair_by?.name,
                 "Repairer Contact No": product.repair_by?.contact_number,
