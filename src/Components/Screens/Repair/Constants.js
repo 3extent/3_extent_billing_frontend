@@ -16,6 +16,7 @@ export const REPAIRER_DETAILS_HEADERS = [
     "IMEI NO",
     "Model",
     "Purchase Price",
-    "Part Cost",
+    // "Part Cost",
+    "Amount",
     "Repairer Cost"
 ];
