@@ -46,13 +46,13 @@ function PartsDetails() {
                 "IMEI NO": activity.product.imei_number,
                 Model: activity.product.model.name,
                 "Part Name": activity.part_name,
-                "Amount": activity.cost,
+                "Part Cost": activity.cost,
                 "Repairer Name": activity.repairer?.name || "",
                 id: activity._id,
             }));
             setTotalRow({
                 _id: "total",
-                "Amount": Number(response.data.total_payable_amount_of_parts || 0).toLocaleString("en-IN"),
+                "Part Cost": Number(response.data.total_payable_amount_of_parts || 0).toLocaleString("en-IN"),
 
             });
             setRows(partsRows);

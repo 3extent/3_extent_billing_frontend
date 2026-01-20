@@ -54,8 +54,10 @@ export default function RepairersDetails() {
                 "IMEI NO": item.imei_number,
                 Model: item.model.name,
                 "Purchase Price": item.purchase_price,
-                // "Part Cost": item.part_cost,
-                "Amount": item.repair_parts?.[0]?.cost || 0,
+                "Part Cost": item.repair_parts?.reduce(
+                    (sum, part) => sum + Number(part.cost || 0),
+                    0
+                ),
                 "Repairer Cost": item.repairer_cost,
                 Status: item.status,
                 id: item._id
@@ -63,8 +65,7 @@ export default function RepairersDetails() {
             setTotalRow({
                 _id: "total",
                 "Purchase Price": Number(response.data.purchase_total_of_all_products || 0).toLocaleString("en-IN"),
-                "Amount": Number(response.data.total_payable_amount_of_parts || 0).toLocaleString("en-IN"),
-                // "Part Cost": Number(response.data.total_parts_cost_used || 0).toLocaleString("en-IN"),
+                "Part Cost": Number(response.data.total_payable_amount_of_parts || 0).toLocaleString("en-IN"),
                 "Repairer Cost": Number(response.data.total_payable_amount || 0).toLocaleString("en-IN"),
             });
             console.log("Formatted Repairer Rows:", repairedFormattedRows);

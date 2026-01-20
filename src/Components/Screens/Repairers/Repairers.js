@@ -214,7 +214,7 @@ function Repairers() {
         console.log("Repairer's Total Paid Already:", selectedRepairer.total_paid);
         console.log("Calculated Pending Amount:", pendingAmount);
         const payload = {
-            payable_amount: Number(selectedRepairer.pending_amount),
+            payable_amount: Number(selectedRepairer.payable_amount),
             total_part_cost: Number(selectedRepairer.total_part_cost),
             paid_amount: [
                 { method: "cash", amount: cash },
