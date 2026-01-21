@@ -145,9 +145,9 @@ function SingleProductStockIn() {
       newErrors.model_name = "Please select Model Name";
     if (!productData.imei_number.trim())
       newErrors.imei_number = "Please enter IMEI Number";
-    if (!productData.purchase_price.trim() || isNaN(productData.purchase_price))
+    if (!productData.purchase_price)
       newErrors.purchase_price = "Please enter valid Purchase Price";
-    if (!productData.sales_price.trim() || isNaN(productData.sales_price))
+    if (!productData.sales_price)
       newErrors.sales_price = "Please enter valid Sales Price";
     if (!productData.grade.trim())
       newErrors.grade = "Please select Grade";
