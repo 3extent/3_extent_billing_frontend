@@ -495,6 +495,7 @@ function Billinghistory({ isDraft = false }) {
 
             {showConfirmationPopup && (
                 <CustomConfirmationPopup
+                    label="Are you sure you want to delete this Records."
                     handleCancelButton={handleCancelConfirmPopup}
                     handleDeleteButton={handleDeleteBill}
                 />

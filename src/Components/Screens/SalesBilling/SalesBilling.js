@@ -89,7 +89,7 @@ export default function SalesBilling() {
     const handleRateChange = (index, newRate) => {
         console.log('newRate: ', newRate);
         const updatedRows = [...rows];
-        updatedRows[index]["Rate"] = Number(newRate);
+        updatedRows[index]["Rate"] = Number(newRate) || 0;
         setRows(updatedRows);
     };
     useEffect(() => {

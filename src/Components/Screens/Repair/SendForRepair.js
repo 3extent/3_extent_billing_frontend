@@ -153,7 +153,12 @@ function SendForRepair() {
                 repairer_contact_number: productData.repairer_contact_number || ""
             });
         } else {
-            toast.error("This IMEI number is not Available.");
+            const errorMsg = response?.data?.error || "This IMEI number is not Available.";
+            toast.error(errorMsg, {
+                position: "top-center",
+                autoClose: 2000,
+            });
+
             setProductData({
                 id: "",
                 imei_number: "",
@@ -173,10 +178,17 @@ function SendForRepair() {
         setLoading(false);
         console.log("Response from PUT request:", response);
         if (response.status === 200) {
-            toast.success("Repair details updated successfully!");
+            toast.success("Repair details updated successfully!", {
+                position: "top-center",
+                autoClose: 2000,
+            });
             navigate("/repair");
         } else {
-            toast.error("Failed to update repair details");
+            const errorMsg = response?.data?.error || "Failed to update repair details";
+            toast.error(errorMsg, {
+                position: "top-center",
+                autoClose: 2000,
+            });
             console.error(response);
         }
     };
@@ -184,13 +196,6 @@ function SendForRepair() {
         const newErrors = {};
 
         if (!selectedImei.trim()) newErrors.imei_number = "Please select IMEI Number";
-        if (!productData.brand_name.trim()) newErrors.brand_name = "Please select Brand Name";
-        if (!productData.model_name.trim()) newErrors.model_name = "Please select Model Name";
-        if (!productData.grade.trim()) newErrors.grade = "Please select Grade";
-        if (!productData.purchase_price.trim() || isNaN(productData.purchase_price))
-            newErrors.purchase_price = "Please enter valid Purchase Price";
-        if (!productData.engineer_name.trim()) newErrors.engineer_name = "Please enter Engineer Name";
-        if (!productData.issue.trim()) newErrors.issue = "Please describe the Issue";
         if (!productData.accessories.trim()) newErrors.accessories = "Please select Accessories";
         if (!productData.repairer_name.trim()) newErrors.repairer_name = "Please select Repairer";
         if (!productData.repairer_contact_number.trim()) newErrors.repairer_contact_number = "Repair contact is required";
@@ -288,7 +293,6 @@ function SendForRepair() {
                     options={brandOptions}
                     value={productData.brand_name}
                     onChange={handleBrandProductData}
-                    error={errors.brand_name}
                     disabled={productData.id}
 
                 />
@@ -300,7 +304,6 @@ function SendForRepair() {
                     options={modelOptions}
                     value={productData.model_name}
                     onChange={handleModelProductData}
-                    error={errors.model_name}
                     disabled={productData.id}
 
                 />
@@ -313,7 +316,6 @@ function SendForRepair() {
                     options={GRADE_OPTIONS}
                     value={productData.grade}
                     onChange={handleInputChange}
-                    error={errors.grade}
                     disabled={productData.id}
                 />
                 <InputComponent
@@ -326,7 +328,6 @@ function SendForRepair() {
                     labelClassName="font-serif font-bold"
                     value={productData.purchase_price}
                     onChange={handleInputChange}
-                    error={errors.purchase_price}
                     disabled={productData.id}
                 />
                 <InputComponent
@@ -338,7 +339,6 @@ function SendForRepair() {
                     labelClassName="font-serif font-bold"
                     value={productData.engineer_name}
                     onChange={handleInputChange}
-                    error={errors.engineer_name}
                     disabled={productData.id}
                 />
                 <InputComponent
@@ -350,7 +350,6 @@ function SendForRepair() {
                     labelClassName="font-serif font-bold"
                     value={productData.issue}
                     onChange={handleInputChange}
-                    error={errors.issue}
                 />
                 <DropdownCompoent
                     label="Accessories"

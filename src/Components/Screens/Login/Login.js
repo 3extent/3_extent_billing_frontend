@@ -22,13 +22,12 @@ export default function Login({ onLoginSuccess }) {
         if (response.status === 200) {
             localStorage.setItem('isAuthenticated', 'true');
             console.log("Success");
-            // localStorage.setItem('user', JSON.stringify(response.data.user));
+            localStorage.setItem('loggedInUser', JSON.stringify(response.data.user));
 
             // Call the callback to update parent state
             if (onLoginSuccess) {
                 onLoginSuccess();
             }
-            navigate('/salesbilling');
         } else {
             console.log("login failed");
         }

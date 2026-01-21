@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import { REPAIR_OPTIONS, STATUS_OPTIONS } from "./Constants";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { API_URLS } from "../../../Util/AppConst";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
@@ -20,6 +20,7 @@ function RepairDashboard() {
     const [selectedRepair, setSelectedRepair] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
     const [imeiNumber, setIMEINumber] = useState();
+    const [shopOptions, setShopOptions] = useState([]);
 
     const fromDate = moment().format("YYYY-MM-DD");
     const toDate = moment().format("YYYY-MM-DD");
@@ -67,13 +68,9 @@ function RepairDashboard() {
             setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
         }
     };
-
-
     const navigateAddRepair = () => {
         navigate("/sendforrepair")
     }
-
-
     const getRepairsCallBack = (response) => {
         console.log("API Response:", response);
         if (response.status === 200) {
@@ -91,7 +88,10 @@ function RepairDashboard() {
                 Model: repair.model?.name,
                 Grade: repair.grade,
                 "Purchase Price": repair.purchase_price,
-                "Part Cost": repair.part_cost,
+                "Part Cost": repair.repair_parts?.reduce(
+                    (sum, part) => sum + Number(part.cost || 0),
+                    0
+                ),
                 "Repairer Cost": repair.repairer_cost,
                 "Engineer Name": repair.engineer_name,
                 "Repairer Remark": repair.repair_remark,
@@ -124,7 +124,6 @@ function RepairDashboard() {
             console.log("Error fetching repairs");
         }
     };
-    // const getAllRepairs = ({ imeiNumber, }) => {
     const getAllRepairs = ({ imeiNumber, status, from, to, selectAllDates } = {}) => {
         console.log("Status selected:", status, "IMEI:", imeiNumber);
         let url = `${API_URLS.PRODUCTS}?`;
@@ -189,16 +188,16 @@ function RepairDashboard() {
             } else {
                 getAllRepairs({ imeiNumber, status, from, to, selectAllDates });
             }
-
         } else {
-            toast.error("Failed to accept repair!", {
+            const errorMsg = response?.data?.error || "Failed to accept repair!";
+            toast.error(errorMsg, {
                 position: "top-center",
                 autoClose: 2000,
             });
             console.error(response);
         }
     };
-    const handleAcceptSubmit = ({ partCost, repairerCost, grade, remark, imei, qc_remark, }) => {
+    const handleAcceptSubmit = ({ partCost, repairerCost, grade, remark, imei, qc_remark, shopName, parts }) => {
         if (!selectedRepair?._id) {
             toast.error("Repair ID missing!");
             return;
@@ -207,13 +206,17 @@ function RepairDashboard() {
         setLoading(true);
 
         const payload = {
-            part_cost: partCost,
             repairer_cost: repairerCost,
             repair_remark: remark,
             status: "REPAIRED",
             grade: grade,
             qc_remark: qc_remark,
             imei_number: imei,
+            repair_parts: parts.map(part => ({
+                shop_name: part.shopName,
+                part_name: part.name,
+                cost: part.cost,
+            })),
             repair_by: selectedRepair.repair_by?._id,
         };
         apiCall({
@@ -223,6 +226,28 @@ function RepairDashboard() {
             callback: acceptRepairCallback,
         });
     };
+    const getShopCallBack = (response) => {
+        if (response.status === 200) {
+            const shops = response.data.users.map(shop => shop.name);
+            setShopOptions(shops);
+        } else {
+            console.log("Error fetching shops");
+        }
+    };
+
+    const getShopAllData = useCallback(() => {
+        apiCall({
+            method: 'GET',
+            url: `${API_URLS.USERS}?role=PARTS_SHOP`,
+            data: {},
+            callback: getShopCallBack,
+        });
+    }, []);
+
+    useEffect(() => {
+        getShopAllData();
+    }, [getShopAllData]);
+
     useEffect(() => {
         getAllRepairs({ from, to, selectAllDates, status });
     }, []);
@@ -312,6 +337,7 @@ function RepairDashboard() {
                 repair={selectedRepair}
                 onClose={() => setModalOpen(false)}
                 onSubmit={handleAcceptSubmit}
+                shopOptions={shopOptions}
             />
         </div>
 

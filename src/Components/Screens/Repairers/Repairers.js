@@ -89,14 +89,17 @@ function Repairers() {
                         >
                             <i className="fa fa-pencil text-gray-700 text-sm" />
                         </div>
-                        <PrimaryButtonComponent
-                            label="Pay"
-                            buttonClassName="py-1 px-3 text-[12px] font-semibold"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                handlePayClick(repairer);
-                            }}
-                        />
+                        {Number(repairer.pending_amount) > 0 && (
+                            <PrimaryButtonComponent
+                                label="Pay"
+                                buttonClassName="py-1 px-3 text-[12px] font-semibold"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handlePayClick(repairer);
+                                }}
+                                disabled={Number(repairer.pending_amount) === 0}
+                            />
+                        )}
                     </div>
                 ),
 
@@ -114,7 +117,11 @@ function Repairers() {
             setRows(RepairedFormattedRows);
             console.log("Formatted Rows:", RepairedFormattedRows);
         } else {
-            toast.error("Failed to fetch repairers");
+            const errorMsg = response?.data?.error || "Failed to fetch repairers";
+            toast.error(errorMsg, {
+                position: "top-center",
+                autoClose: 2000,
+            });
         }
     }, []);
     const getAllRepairers = useCallback(({ repairerName, contactNo } = {}) => {
@@ -184,13 +191,13 @@ function Repairers() {
             handleCancelPopup();
             getAllRepairers();
         } else {
-            toast.error("Repairer payment failed", {
+            const errorMsg = response?.data?.error || "Repairer payment failed";
+            toast.error(errorMsg, {
                 position: "top-center",
                 autoClose: 2000,
             });
         }
     };
-
     const handleSaveRepairerPayment = () => {
         if (!selectedRepairer) return;
 
@@ -207,7 +214,7 @@ function Repairers() {
         console.log("Repairer's Total Paid Already:", selectedRepairer.total_paid);
         console.log("Calculated Pending Amount:", pendingAmount);
         const payload = {
-            payable_amount: Number(selectedRepairer.pending_amount),
+            payable_amount: Number(selectedRepairer.payable_amount),
             total_part_cost: Number(selectedRepairer.total_part_cost),
             paid_amount: [
                 { method: "cash", amount: cash },

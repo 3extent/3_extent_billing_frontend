@@ -1,13 +1,13 @@
 import PrimaryButtonComponent from "../PrimaryButtonComponent/PrimaryButtonComponent";
 
-export default function CustomConfirmationPopup({handleCancelButton,handleDeleteButton}) {
+export default function CustomConfirmationPopup({handleCancelButton,handleDeleteButton,label}) {
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center ">
             <div className="bg-white shadow-lg w-[40%] rounded-[10px]">
                 <div className="text-lg py-2 pl-5 font-bold  bg-slate-900  text-white font-serif rounded-t-[10px]">
                     Confirmation </div>
                 <div className="p-5">
-                    <div className="font-semibold mb-5 text-[18px]">Are you sure you want to delete this Records.</div>
+                    <div className="font-semibold mb-5 text-[18px]">{label}</div>
                     <div className="flex justify-end gap-3">
                         <PrimaryButtonComponent
                             label="Cancel"

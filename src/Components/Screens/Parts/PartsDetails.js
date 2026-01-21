@@ -1,147 +1,124 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { apiCall } from "../../../Util/AxiosUtils";
-import { API_URLS } from "../../../Util/AppConst";
-import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
-import { Spinner } from "../../../Util/AxiosUtils";
-import { REPAIRER_DETAILS_HEADERS, STATUS_OPTIONS } from "../Repair/Constants";
-import { toast } from "react-toastify";
-import moment from "moment";
+import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
+import { PARTS_DETAILS_HEADERS } from "./Constants";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
-import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
+import { useCallback, useEffect, useState } from "react";
+import moment from "moment";
+import { API_URLS } from "../../../Util/AppConst";
+import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 
-export default function RepairersDetails() {
+function PartsDetails() {
     const navigate = useNavigate();
-    const { repairer_id } = useParams();
-    const [status, setStatus] = useState("");
+    const { shop_id } = useParams();
     const [loading, setLoading] = useState(false);
     const [rows, setRows] = useState([]);
-    const [imeiNumber, setIMEINumber] = useState('');
     const [totalRow, setTotalRow] = useState(null);
+    const [imeiNumber, setIMEINumber] = useState("");
+    const [repairerName, setRepairerName] = useState('');
     const fromDate = moment().format("YYYY-MM-DD");
     const toDate = moment().format("YYYY-MM-DD");
-
     const [from, setFrom] = useState(fromDate);
     const [to, setTo] = useState(toDate);
     const [selectAllDates, setSelectAllDates] = useState(false);
     const [showTotalRow, setShowTotalRow] = useState(false);
-
     const handleBack = () => {
         navigate(-1);
     };
-
     const handleDateChange = (value, setDate) => {
-        const today = moment().format('YYYY-MM-DD');
-        if (value > today) {
-            setDate(today);
-        } else {
-            setDate(value);
-        }
+        const today = moment().format("YYYY-MM-DD");
+        if (value > today) setDate(today);
+        else setDate(value);
     };
-    const getRepairerDetailsCallback = (response) => {
+    const getPartsDetailsCallback = (response) => {
         setLoading(false);
         if (response.status === 200) {
-            const repairer = response.data.user;
-            const repairedFormattedRows = repairer.products.map((item) => ({
-                "Repair Started": item.repair_started_at
-                    ? moment(item.repair_started_at).format("ll")
+            console.log('response: ', response);
+            const shop = response.data.user;
+            const partsRows = shop.repair_activities.map((activity) => ({
+                "Repair Started": activity.product.repair_started_at
+                    ? moment(activity.product.repair_started_at).format("ll")
                     : "-",
-                "Repair Completed": item.repair_completed_at
-                    ? moment(item.repair_completed_at).format("ll")
+                "Repair Completed": activity.product.repair_completed_at
+                    ? moment(activity.product.repair_completed_at).format("ll")
                     : "-",
-                "IMEI NO": item.imei_number,
-                Model: item.model.name,
-                "Purchase Price": item.purchase_price,
-                "Part Cost": item.repair_parts?.reduce(
-                    (sum, part) => sum + Number(part.cost || 0),
-                    0
-                ),
-                "Repairer Cost": item.repairer_cost,
-                Status: item.status,
-                id: item._id
+                "IMEI NO": activity.product.imei_number,
+                Model: activity.product.model.name,
+                "Part Name": activity.part_name,
+                "Part Cost": activity.cost,
+                "Repairer Name": activity.repairer?.name || "",
+                id: activity._id,
             }));
             setTotalRow({
                 _id: "total",
-                "Purchase Price": Number(response.data.purchase_total_of_all_products || 0).toLocaleString("en-IN"),
                 "Part Cost": Number(response.data.total_payable_amount_of_parts || 0).toLocaleString("en-IN"),
-                "Repairer Cost": Number(response.data.total_payable_amount || 0).toLocaleString("en-IN"),
-            });
-            console.log("Formatted Repairer Rows:", repairedFormattedRows);
-            setRows(repairedFormattedRows);
-        } else {
-            const errorMsg = response?.data?.error || "Failed to fetch repairer details";
-            toast.error(errorMsg, {
-                position: "top-center",
-                autoClose: 2000,
-            });
 
+            });
+            setRows(partsRows);
         }
-    };
-    const getRepairerDetails = ({ imeiNumber, status, from, to, selectAllDates } = {}) => {
-        if (!repairer_id) return;
+    }
+    const getPartsDetails = ({ imeiNumber, repairerName, from, to, selectAllDates } = {}) => {
+        if (!shop_id) return;
         setLoading(true);
-        let url = `${API_URLS.USERS}/${repairer_id}?`;
-        if (status === "AVAILABLE & REPAIRED") {
-            url += "&status=AVAILABLE&is_repaired=true";
-        } else if (status === "IN_REPAIRING") {
-            url += "&status=IN_REPAIRING";
-        }
-
+        let url = `${API_URLS.USERS}/${shop_id}?`;
         if (imeiNumber) url += `&imei_number=${imeiNumber}`;
+        if (repairerName) url += `&repairer_name=${repairerName}`;
         if (!selectAllDates) {
             if (from) url += `&repair_from=${moment.utc(from).startOf("day").valueOf()}`;
             if (to) url += `&repair_to=${moment.utc(to).endOf("day").valueOf()}`;
         }
+
         apiCall({
             method: "GET",
-            // url: `${API_URLS.USERS}/${repairer_id}`,
-            url: url,
+            url,
             data: {},
-            callback: getRepairerDetailsCallback,
-            setLoading: setLoading
+            callback: getPartsDetailsCallback,
+            setLoading,
         });
     };
-
     useEffect(() => {
-        getRepairerDetails({ from, to, selectAllDates, status });
-    }, [repairer_id]);
+        getPartsDetails({ from, to, selectAllDates });
+    }, [shop_id]);
     const handleSearchFilter = () => {
-        getRepairerDetails({ imeiNumber, status, from, to, selectAllDates });
+        getPartsDetails({ imeiNumber, repairerName, from, to, selectAllDates });
     };
+
     const handleResetFilter = () => {
         setIMEINumber("");
-        setStatus("");
+        setRepairerName("");
         setFrom(fromDate);
         setTo(toDate);
         setSelectAllDates(false);
-        getRepairerDetails({ from: fromDate, to: toDate });
+        getPartsDetails({ from: fromDate, to: toDate });
     };
     return (
-        <div>
+        <div className="w-full">
             {loading && <Spinner />}
             <CustomHeaderComponent
-                name="Repairer Details"
+                name="Single Shop Details"
                 label="Back"
                 icon="fa fa-arrow-left"
                 onClick={handleBack}
                 buttonClassName="py-1 px-3 text-sm font-bold"
+
             />
-            <div className="flex items-center gap-4 mt-4">
-                <input
+            <div className="flex items-center gap-4 mt-4 mb-4">
+                <InputComponent
                     type="text"
                     placeholder="Enter IMEI NO"
+                    numericOnly
+                    maxLength={15}
                     value={imeiNumber}
                     onChange={(e) => setIMEINumber(e.target.value)}
-                    className="border p-2 rounded w-[180px]"
+                    inputClassName="mb-2 w-[190px]"
                 />
-                <DropdownCompoent
-                    placeholder="Select status"
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value)}
-                    options={STATUS_OPTIONS}
-                    className="w-[190px] mt-2"
+                <InputComponent
+                    type="text"
+                    placeholder="Repairer Name"
+                    value={repairerName}
+                    onChange={(e) => setRepairerName(e.target.value)}
+                    inputClassName="w-[190px] mb-2"
                 />
                 <label className="flex items-center gap-2 text-sm">
                     <input
@@ -151,7 +128,6 @@ export default function RepairersDetails() {
                     />
                     All Data
                 </label>
-
                 <InputComponent
                     type="date"
                     inputClassName="w-[180px] mb-5"
@@ -159,7 +135,6 @@ export default function RepairersDetails() {
                     onChange={(e) => handleDateChange(e.target.value, setFrom)}
                     disabled={selectAllDates}
                 />
-
                 <InputComponent
                     type="date"
                     inputClassName="w-[180px] mb-5"
@@ -179,9 +154,9 @@ export default function RepairersDetails() {
                 />
             </div>
             <CustomTableCompoent
-                maxHeight="h-[60vh]"
-                headers={REPAIRER_DETAILS_HEADERS}
+                headers={PARTS_DETAILS_HEADERS}
                 rows={rows}
+                maxHeight="h-[60vh]"
                 totalRow={totalRow}
                 showTotalRow={showTotalRow}
             />
@@ -191,5 +166,5 @@ export default function RepairersDetails() {
                 </button>
             </div>
         </div>
-    );
-}
+    )
+} export default PartsDetails;
