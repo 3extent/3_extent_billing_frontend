@@ -107,7 +107,7 @@ function PartShop() {
 
     useEffect(() => {
         getAllShops();
-    }, [getAllShops]);
+    }, []);
 
     const handleSearchFilter = () => getAllShops({ shopName, contactNo });
     const handleResetFilter = () => {
