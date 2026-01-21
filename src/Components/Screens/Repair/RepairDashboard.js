@@ -88,7 +88,10 @@ function RepairDashboard() {
                 Model: repair.model?.name,
                 Grade: repair.grade,
                 "Purchase Price": repair.purchase_price,
-                "Part Cost": repair.part_cost,
+                "Part Cost": repair.repair_parts?.reduce(
+                    (sum, part) => sum + Number(part.cost || 0),
+                    0
+                ),
                 "Repairer Cost": repair.repairer_cost,
                 "Engineer Name": repair.engineer_name,
                 "Repairer Remark": repair.repair_remark,
@@ -203,14 +206,12 @@ function RepairDashboard() {
         setLoading(true);
 
         const payload = {
-            // part_cost: partCost,
             repairer_cost: repairerCost,
             repair_remark: remark,
             status: "REPAIRED",
             grade: grade,
             qc_remark: qc_remark,
             imei_number: imei,
-            // shop_name: shopName,
             repair_parts: parts.map(part => ({
                 shop_name: part.shopName,
                 part_name: part.name,
