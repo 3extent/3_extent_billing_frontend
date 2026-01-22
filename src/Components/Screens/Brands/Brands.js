@@ -12,6 +12,8 @@ function Brands() {
     const [rows, setRows] = useState([]);
     const [brandName, setBrandName] = useState('');
     const [loading, setLoading] = useState(false);
+    let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
+     const [columns, setColumns] = useState([]);
     const navigate = useNavigate();
     const navigateAddBrands = () => {
         navigate("/addbrands")
@@ -23,9 +25,9 @@ function Brands() {
         console.log('response: ', response);
         if (response.status === 200) {
             const brandsFormattedRows = response.data.map((brand, index) => ({
-                "No": index + 1,
-                "Brand Name": brand.name,
-                "Action": (
+                "Serial Number": index + 1,
+                "Brand": brand.name,
+                "Actions": (
                     <div className="flex justify-end">
                         <div
                             title="Edit"
@@ -40,6 +42,17 @@ function Brands() {
                 id: brand._id
             }));
             setRows(brandsFormattedRows);
+             const brandsMenuItem = loggedInUser?.role?.menu_items?.find(
+                item => item.name?.name === "Brands"
+            );
+
+            if (brandsMenuItem) {
+                const headers = brandsMenuItem.show_table_columns.map(col => col.name);
+                setColumns(headers);
+            } else {
+                setColumns([]);
+            }
+
         } else {
             console.log("Error");
         }
@@ -97,7 +110,7 @@ function Brands() {
             </div>
             <CustomTableCompoent
                 maxHeight="h-[75vh]"
-                headers={BRANDS_COLOUMNS}
+                headers={columns}
                 rows={rows}
             />
         </div>
