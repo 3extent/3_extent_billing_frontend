@@ -15,37 +15,38 @@ export default function DashboardSidebar({ onLogout }) {
         navigate("/");
     };
     const handleMenuClick = (item) => {
-        if (item.name === "Sales Billing") {
+        const menuName = item.name?.name;
+        if (menuName === "Sales Billing") {
             navigate("/salesbilling");
         }
-        if (item.name === "Stock In") {
+        if (menuName === "Stock In") {
             navigate("/stockin");
         }
-        if (item.name === "Products") {
+        if (menuName === "Products") {
             navigate("/products");
         }
-        if (item.name === "Supplier") {
+        if (menuName === "Supplier") {
             navigate("/supplier");
         }
-        if (item.name === "Customer") {
+        if (menuName === "Customer") {
             navigate("/customer");
         }
-        if (item.name === "Brands") {
+        if (menuName === "Brands") {
             navigate("/brands");
         }
-        if (item.name === "Models") {
+        if (menuName === "Models") {
             navigate("/models");
         }
-        if (item.name === "Repair Dashboard") {
+        if (menuName === "Repair Dashboard") {
             navigate("/repair");
         }
-        if (item.name === "Repairers") {
+        if (menuName === "Repairers") {
             navigate("/repairers");
         }
-        if (item.name === "Parts Shops") {
+        if (menuName === "Parts Shops") {
             navigate("/partshop")
         }
-        if (item.name === "Maintenance") {
+        if (menuName === "Maintenance") {
             navigate("/maintenanceDashboard");
         }
 
