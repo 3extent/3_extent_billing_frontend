@@ -13,7 +13,7 @@ function Brands() {
     const [brandName, setBrandName] = useState('');
     const [loading, setLoading] = useState(false);
     let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
-     const [columns, setColumns] = useState([]);
+    const [columns, setColumns] = useState([]);
     const navigate = useNavigate();
     const navigateAddBrands = () => {
         navigate("/addbrands")
@@ -42,7 +42,7 @@ function Brands() {
                 id: brand._id
             }));
             setRows(brandsFormattedRows);
-             const brandsMenuItem = loggedInUser?.role?.menu_items?.find(
+            const brandsMenuItem = loggedInUser?.role?.menu_items?.find(
                 item => item.name?.name === "Brands"
             );
 

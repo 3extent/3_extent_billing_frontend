@@ -28,6 +28,8 @@ function Repairers() {
     const [card, setCard] = useState("");
     const [pendingAmount, setPendingAmount] = useState(0);
     const [showTotalRow, setShowTotalRow] = useState(false);
+    let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
+    const [columns, setColumns] = useState([]);
     const toggleableColumns = ["State", "Address", "GST Number"];
 
     const [hiddenColumns, setHiddenColumns] = useState([
@@ -67,16 +69,16 @@ function Repairers() {
         console.log("API Response:", response);
         if (response.status === 200) {
             const RepairedFormattedRows = response.data.users.map((repairer) => ({
-                "Repairer Name": repairer.name,
+                "Name": repairer.name,
                 "Firm Name": repairer.firm_name,
                 "GST Number": repairer.gst_number,
-                "Contact": repairer.contact_number,
+                "Contact Number": repairer.contact_number,
                 "State": repairer.state,
                 "Address": repairer.address,
                 "Total Part Cost": repairer.total_part_cost,
-                "Total Repairer Cost": repairer.payable_amount,
+                "Total Amount": repairer.payable_amount,
                 "Total Paid": repairer.paid_amount?.reduce((sum, payment) => sum + Number(payment.amount || 0), 0),
-                "Total Repairer Remaining": repairer.pending_amount,
+                "Remaining Amount": repairer.pending_amount,
                 "Actions": (
                     <div className="flex gap-2 justify-end">
                         <div
@@ -116,6 +118,16 @@ function Repairers() {
 
             setRows(RepairedFormattedRows);
             console.log("Formatted Rows:", RepairedFormattedRows);
+            const repairersMenuItem = loggedInUser?.role?.menu_items?.find(
+                item => item.name?.name === "Repairers"
+            );
+
+            if (repairersMenuItem) {
+                const headers = repairersMenuItem.show_table_columns.map(col => col.name);
+                setColumns(headers);
+            } else {
+                setColumns([]);
+            }
         } else {
             const errorMsg = response?.data?.error || "Failed to fetch repairers";
             toast.error(errorMsg, {
@@ -277,7 +289,8 @@ function Repairers() {
             </div>
             <CustomTableCompoent
                 maxHeight="h-[65vh]"
-                headers={dynamicHeaders}
+                // headers={dynamicHeaders}
+                headers={columns}
                 rows={rows}
                 onRowClick={handleRowClick}
                 totalRow={totalRow}
