@@ -63,9 +63,9 @@ export default function DashboardSidebar({ onLogout }) {
                             onClick={() => handleMenuClick(item)}
                             className="flex items-center cursor-pointer pl-4 py-2  hover:bg-slate-600 rounded transform hover:scale-110 hover:font-blod">
                             <span className="mr-3">
-                                <i className={item.icon} aria-hidden="true"></i>
+                                <i className={item.name?.icon} aria-hidden="true"></i>
                             </span>
-                            <span className="hover:font-bold text-sm">{item.name}</span>
+                            <span className="hover:font-bold text-sm">{item.name?.name}</span>
                         </div>
                     ))}
                     <div className="bottom-10 fixed justify-center cursor-pointer pl-4 text-sm transform hover:scale-110" onClick={handleLogout}><i class="fa fa-sign-out mr-2" aria-hidden="true"></i>Logout</div>
