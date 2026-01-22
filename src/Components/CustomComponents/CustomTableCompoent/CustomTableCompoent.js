@@ -61,7 +61,7 @@ export default function CustomTableCompoent({
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    
+
     const getTotalRowBg = () => {
         if (!totalRow) return "bg-white";
         if (totalRow.Profit != null) {
@@ -119,7 +119,7 @@ export default function CustomTableCompoent({
                                     {tableHeaders?.map((header, i) => (
                                         <th
                                             key={i}
-                                            className={`px-4 py-2 ${header === "Action"
+                                            className={`px-4 py-2 ${header === "Actions"
                                                 ? "text-right"
                                                 : "text-left"
                                                 }`}

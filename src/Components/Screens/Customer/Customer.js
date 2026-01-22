@@ -12,6 +12,8 @@ export default function Customer() {
     const [customerName, setCustomerName] = useState();
     const [contactNo, setContactNumber] = useState();
     const [loading, setLoading] = useState(false);
+    let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
+    const [columns, setColumns] = useState([]);
 
     const toggleableColumns = ["Address"];
 
@@ -48,21 +50,23 @@ export default function Customer() {
         navigate("/addcustomer")
     }
     const [rows, setRows] = useState([]);
+
     useEffect(() => {
         getCustomerAllData({});
     }, []);
+    
     const getCustomerCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
             const customerFormttedRows = response.data.users.map((customer) => ({
-                "Customer Name": customer.name,
-                "Contact No": customer.contact_number,
+                "Name": customer.name,
+                "Contact Number": customer.contact_number,
                 "Firm Name": customer.firm_name,
                 "Address": customer.address,
                 "State": customer.state,
-                "GST No": customer.gst_number,
-                "PAN No": customer.pan_number,
-                "Action": (
+                "GST Number": customer.gst_number,
+                "PAN Number": customer.pan_number,
+                "Actions": (
                     <div className="flex justify-end">
                         <div
                             title="Edit"
@@ -76,6 +80,16 @@ export default function Customer() {
                 id: customer._id
             }))
             setRows(customerFormttedRows);
+
+            const customersMenuItem = loggedInUser?.role?.menu_items?.find(
+                item => item.name?.name === "Customer"
+            );
+
+            if (customersMenuItem) {
+                const headers = customersMenuItem.show_table_columns.map(col => col.name);
+                setColumns(headers);
+            }
+
         } else {
             console.log("Error");
         }
@@ -145,7 +159,7 @@ export default function Customer() {
             </div>
             <CustomTableCompoent
                 maxHeight="h-[65vh]"
-                headers={dynamicHeaders}
+                headers={columns}
                 rows={rows}
                 toggleableColumns={toggleableColumns}
                 hiddenColumns={hiddenColumns}

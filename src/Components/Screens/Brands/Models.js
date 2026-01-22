@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
-import { MODELS_COLOUMNS } from "./Constants";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
@@ -14,6 +13,8 @@ export default function Models() {
     const [modelName, setModelName] = useState();
     const [brandName, setBrandName] = useState("");
     const [brandOptions, setBrandOptions] = useState([]);
+    let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
+    const [columns, setColumns] = useState([]);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const navigateAddModels = () => {
@@ -27,10 +28,10 @@ export default function Models() {
         console.log('response: ', response);
         if (response.status === 200) {
             const modelFormattedaRows = response.data.map((model, index) => ({
-                "No": index + 1,
-                "Model Name": model.name,
-                "Brand Name": model.brand.name,
-                "Action": (
+                "Serial Number": index + 1,
+                "Model": model.name,
+                "Brand": model.brand.name,
+                "Actions": (
                     <div className="flex justify-end">
                         <div
                             title="Edit"
@@ -45,6 +46,15 @@ export default function Models() {
                 id: model._id
             }))
             setRows(modelFormattedaRows);
+             const modelsMenuItem = loggedInUser?.role?.menu_items?.find(
+                item => item.name?.name === "Models"
+            );
+
+            if (modelsMenuItem) {
+                const headers = modelsMenuItem.show_table_columns.map(col => col.name);
+                setColumns(headers);
+            }
+
         } else {
             console.log("Error");
         }
@@ -135,7 +145,7 @@ export default function Models() {
             </div>
             <CustomTableCompoent
                 maxHeight="h-[75vh]"
-                headers={MODELS_COLOUMNS}
+                headers={columns}
                 rows={rows}
             />
         </div>
