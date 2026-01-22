@@ -2,9 +2,8 @@
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
-import { BRANDS_COLOUMNS } from "./Constants";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { API_URLS } from "../../../Util/AppConst";
@@ -15,12 +14,15 @@ function Brands() {
     let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
     const [columns, setColumns] = useState([]);
     const navigate = useNavigate();
+
     const navigateAddBrands = () => {
         navigate("/addbrands")
     }
+
     useEffect(() => {
         getBrandsAllData({});
     }, []);
+
     const getBrandsCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
@@ -49,14 +51,13 @@ function Brands() {
             if (brandsMenuItem) {
                 const headers = brandsMenuItem.show_table_columns.map(col => col.name);
                 setColumns(headers);
-            } else {
-                setColumns([]);
             }
 
         } else {
             console.log("Error");
         }
     }
+
     const getBrandsAllData = ({ brandName }) => {
         let url = API_URLS.BRANDS;
         if (brandName) {
@@ -70,16 +71,22 @@ function Brands() {
             setLoading: setLoading
         })
     };
+
     const handleSearchFilter = () => {
         getBrandsAllData({ brandName });
     }
+
     const handleResetFilter = () => {
         setBrandName('');
         getBrandsAllData({});
     }
+
     return (
+
         <div className='w-full'>
+
             {loading && <Spinner />}
+
             <CustomHeaderComponent
                 name="Brands"
                 label="Add Brands"
@@ -87,7 +94,9 @@ function Brands() {
                 onClick={navigateAddBrands}
                 buttonClassName="py-1 px-3 text-sm font-bold"
             />
+
             <div className='flex items-center gap-4'>
+
                 <InputComponent
                     type="text"
                     placeholder="Enter Brand Name"
@@ -95,12 +104,14 @@ function Brands() {
                     value={brandName}
                     onChange={(e) => setBrandName(e.target.value)}
                 />
+
                 <PrimaryButtonComponent
                     label="Search"
                     icon="fa fa-search"
                     buttonClassName="mt-1 py-1 px-5"
                     onClick={handleSearchFilter}
                 />
+
                 <PrimaryButtonComponent
                     label="Reset"
                     icon="fa fa-refresh"
@@ -108,6 +119,7 @@ function Brands() {
                     onClick={handleResetFilter}
                 />
             </div>
+
             <CustomTableCompoent
                 maxHeight="h-[75vh]"
                 headers={columns}
@@ -115,4 +127,5 @@ function Brands() {
             />
         </div>
     );
+
 } export default Brands;

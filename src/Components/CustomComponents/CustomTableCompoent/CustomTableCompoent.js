@@ -60,6 +60,17 @@ export default function CustomTableCompoent({
     //     }
     //     return "bg-green-200";
     // };
+
+    useEffect(() => {
+        function handleClickOutside(e) {
+            if (menuRef.current && !menuRef.current.contains(e.target)) {
+                setShowDropdown(false);
+            }
+        }
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
     const getTotalRowBg = () => {
         if (!totalRow) return "bg-white";
         if (totalRow.Profit != null) {
@@ -115,7 +126,7 @@ export default function CustomTableCompoent({
                                     {tableHeaders.map((header, i) => (
                                         <th
                                             key={i}
-                                            className={`px-4 py-2 ${header === "Action"
+                                            className={`px-4 py-2 ${header === "Actions"
                                                 ? "text-right"
                                                 : "text-left"
                                                 }`}
