@@ -17,6 +17,7 @@ export default function CustomTableCompoent({
     const [tableHeaders, setTableHeaders] = useState(headers);
     const [tableRows, setTableRows] = useState(rows);
     const [showDropdown, setShowDropdown] = useState(false);
+    const menuRef = useRef();
 
     const tableRef = useRef(null);
     const lastRowRef = useRef(null);
@@ -49,17 +50,18 @@ export default function CustomTableCompoent({
         }
     }, [tableRows, isAtBottom]);
 
-    // const normalRows = tableRows.filter((row) => row._id !== "total");
-    // const totalRowData = tableRows.find((row) => row._id === "total");
+    useEffect(() => {
+        function handleClickOutside(e) {
+            if (menuRef.current && !menuRef.current.contains(e.target)) {
+                setShowDropdown(false);
+            }
+        }
 
-    // const getTotalRowBg = () => {
-    //     if (!totalRowData) return "bg-white";
-    //     if (totalRowData.Profit != null) {
-    //         if (totalRowData.Profit > 0) return "bg-green-200";
-    //         if (totalRowData.Profit < 0) return "bg-red-200";
-    //     }
-    //     return "bg-green-200";
-    // };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    
     const getTotalRowBg = () => {
         if (!totalRow) return "bg-white";
         if (totalRow.Profit != null) {
@@ -76,14 +78,16 @@ export default function CustomTableCompoent({
                 <div className="w-full flex justify-start bg-white py-2 pl-2 top-0 z-30">
                     <div className="relative">
                         <button
-                            onClick={() => setShowDropdown(!showDropdown)}
+                            onClick={() => setShowDropdown((prev) => !prev)}
                             className="px-2 py-1 border rounded hover:bg-gray-200"
                         >
                             <i className="fa fa-ellipsis-h"></i>
                         </button>
 
                         {showDropdown && (
-                            <div className="absolute left-0 bg-white border rounded shadow-md mt-1 w-48 z-40">
+                            <div
+                                ref={menuRef}
+                                className="absolute left-0 bg-white border rounded shadow-md mt-1 w-48 z-40">
                                 {toggleableColumns.map((col) => (
                                     <label
                                         key={col}
