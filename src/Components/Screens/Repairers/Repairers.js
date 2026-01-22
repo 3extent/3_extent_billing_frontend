@@ -89,14 +89,17 @@ function Repairers() {
                         >
                             <i className="fa fa-pencil text-gray-700 text-sm" />
                         </div>
-                        <PrimaryButtonComponent
-                            label="Pay"
-                            buttonClassName="py-1 px-3 text-[12px] font-semibold"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                handlePayClick(repairer);
-                            }}
-                        />
+                        {Number(repairer.pending_amount) > 0 && (
+                            <PrimaryButtonComponent
+                                label="Pay"
+                                buttonClassName="py-1 px-3 text-[12px] font-semibold"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handlePayClick(repairer);
+                                }}
+                                disabled={Number(repairer.pending_amount) === 0}
+                            />
+                        )}
                     </div>
                 ),
 
@@ -211,7 +214,7 @@ function Repairers() {
         console.log("Repairer's Total Paid Already:", selectedRepairer.total_paid);
         console.log("Calculated Pending Amount:", pendingAmount);
         const payload = {
-            payable_amount: Number(selectedRepairer.pending_amount),
+            payable_amount: Number(selectedRepairer.payable_amount),
             total_part_cost: Number(selectedRepairer.total_part_cost),
             paid_amount: [
                 { method: "cash", amount: cash },

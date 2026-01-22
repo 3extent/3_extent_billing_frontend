@@ -108,7 +108,7 @@ function AddExpense() {
         if (!maintenanceData.paid_by.trim()) {
             newErrors.paid_by = "Please select paid by required";
         }
-        if (!maintenanceData.amount.trim()) {
+        if (!maintenanceData.amount) {
             newErrors.amount = "Amount is required";
         }
         setErrors(newErrors);

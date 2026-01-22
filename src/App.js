@@ -29,8 +29,9 @@ import AddExpense from './Components/Screens/Maintenance/AddExpense';
 import MaintenanceDashboard from './Components/Screens/Maintenance/MaintenanceDashboard';
 import SingleExpenseDetails from './Components/Screens/Maintenance/SingleExpenseDetails';
 import AddMaintenanceCriteria from './Components/Screens/Maintenance/AddMaintenanceCriteria';
-
-
+import AddShop from './Components/Screens/Parts/AddShop';
+import PartShop from './Components/Screens/Parts/PartShop';
+import PartsDetails from './Components/Screens/Parts/PartsDetails';
 
 
 // Protected Route Component
@@ -145,7 +146,6 @@ function App() {
                 <RepairDashboard />
               </ProtectedRoute>
             } />
-
             <Route path="/repairers" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <Repairers />
@@ -248,11 +248,26 @@ function App() {
                 <SupplierDetails />
               </ProtectedRoute>
             } />
+            <Route path="/partshop" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <PartShop />
+              </ProtectedRoute>
+            } />
 
-          </Routes>
-        </div>
-      </div>
-    </Router>
+            <Route path="/addshop" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <AddShop />
+              </ProtectedRoute>
+            } />
+            <Route path="/partshopDetails/:shop_id?" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <PartsDetails />
+              </ProtectedRoute>
+            } />
+          </Routes >
+        </div >
+      </div >
+    </Router >
   );
 }
 

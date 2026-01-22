@@ -100,14 +100,18 @@ function Supplier() {
                         >
                             <i className="fa fa-pencil text-gray-700 text-sm" />
                         </div>
-                        <PrimaryButtonComponent
-                            label="Pay"
-                            buttonClassName="py-1 px-3 text-[12px] font-semibold"
-                            onClick={(event) => {
-                                event.stopPropagation();
-                                handlePayClick(supplier);
-                            }}
-                        />
+                        {Number(supplier.pending_amount) > 0 && (
+                            <PrimaryButtonComponent
+                                label="Pay"
+                                buttonClassName="py-1 px-3 text-[12px] font-semibold"
+                                onClick={(event) => {
+                                    event.stopPropagation();
+                                    handlePayClick(supplier);
+                                }}
+                                disabled={Number(supplier.pending_amount) === 0}
+
+                            />
+                        )}
                     </div>
                 ),
                 id: supplier._id
