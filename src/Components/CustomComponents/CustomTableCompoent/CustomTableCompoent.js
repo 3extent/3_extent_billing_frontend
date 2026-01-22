@@ -21,7 +21,7 @@ export default function CustomTableCompoent({
     const tableRef = useRef(null);
     const lastRowRef = useRef(null);
     const [isAtBottom, setIsAtBottom] = useState(true);
-
+    const menuRef = useRef();
     useEffect(() => setTableHeaders(headers), [headers]);
     useEffect(() => setTableRows(rows), [rows]);
 
@@ -94,7 +94,9 @@ export default function CustomTableCompoent({
                         </button>
 
                         {showDropdown && (
-                            <div className="absolute left-0 bg-white border rounded shadow-md mt-1 w-48 z-40">
+                            <div
+                                ref={menuRef}
+                                className="absolute left-0 bg-white border rounded shadow-md mt-1 w-48 z-40">
                                 {toggleableColumns.map((col) => (
                                     <label
                                         key={col}
