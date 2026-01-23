@@ -24,7 +24,8 @@ function RepairDashboard() {
 
     const fromDate = moment().format("YYYY-MM-DD");
     const toDate = moment().format("YYYY-MM-DD");
-
+    let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
+    const [columns, setColumns] = useState([]);
     const [from, setFrom] = useState(fromDate);
     const [to, setTo] = useState(toDate);
     const [selectAllDates, setSelectAllDates] = useState(false);
@@ -76,14 +77,14 @@ function RepairDashboard() {
         if (response.status === 200) {
             const repairFormattedRows = response.data.products.map((repair) => ({
                 _id: repair._id,
-                "Repair Started": repair.repair_started_at
+                "Repair Started Date": repair.repair_started_at
                     ? moment(repair.repair_started_at).format("ll")
                     : "-",
-                "Repair Completed": repair.repair_completed_at
+                "Repair Completed Date": repair.repair_completed_at
                     ? moment(repair.repair_completed_at).format("ll")
                     : "-",
 
-                IMEI: repair.imei_number,
+                "IMEI Number": repair.imei_number,
                 Brand: repair.model?.brand?.name,
                 Model: repair.model?.name,
                 Grade: repair.grade,
@@ -120,6 +121,16 @@ function RepairDashboard() {
 
             console.log("Formatted Rows:", repairFormattedRows);
             setRows(repairFormattedRows);
+            const repairMenuItem = loggedInUser?.role?.menu_items?.find(
+                item => item.name?.name === "Repair Dashboard"
+            );
+
+            if (repairMenuItem) {
+                const headers = repairMenuItem.show_table_columns.map(col => col.name);
+                setColumns(headers);
+            } else {
+                setColumns([]);
+            }
         } else {
             console.log("Error fetching repairs");
         }
@@ -319,7 +330,8 @@ function RepairDashboard() {
             </div>
             <CustomTableCompoent
                 maxHeight="h-[60vh]"
-                headers={dynamicHeaders}
+                // headers={dynamicHeaders}
+                headers={columns}
                 rows={rows}
                 totalRow={totalRow}
                 showTotalRow={showTotalRow}
