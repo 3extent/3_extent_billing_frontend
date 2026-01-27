@@ -106,6 +106,8 @@ function Supplier() {
                         {Number(supplier.pending_amount) > 0 && (
                             <PrimaryButtonComponent
                                 label="Pay"
+                                icon="fa fa-inr"
+                                iconOnly={true}
                                 buttonClassName="py-1 px-3 text-[12px] font-semibold"
                                 onClick={(event) => {
                                     event.stopPropagation();

@@ -131,6 +131,7 @@ function ListOfProducts() {
                         )}
                         <PrimaryButtonComponent
                             label="Barcode"
+                            iconOnly={true}
                             icon="fa fa-print"
                             buttonClassName="py-1 px-3 text-[12px] font-semibold"
                             onClick={
