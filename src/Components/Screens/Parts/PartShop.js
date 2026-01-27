@@ -65,6 +65,8 @@ function PartShop() {
                                     e.stopPropagation();
                                     handlePayClick(shop);
                                 }}
+                                iconOnly={true}
+                                icon="fa fa-inr"
                                 disabled={Number(shop.pending_amount) === 0}
                             />
                         )}
