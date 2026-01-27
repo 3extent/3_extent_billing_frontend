@@ -9,7 +9,7 @@ export default function CustomTableCompoent({
     editable = false,
     showTotalRow = false,
     autoScrollBottom = false,
-    toggleableColumns = [],
+    hiddenDropdownColumns=[],
     hiddenColumns = [],
     onToggleColumn,
     totalRow
@@ -74,7 +74,7 @@ export default function CustomTableCompoent({
     return (
         <div>
             {/* Toggleable Columns Dropdown */}
-            {toggleableColumns.length > 0 && tableRows.length > 0 && (
+            {hiddenDropdownColumns.length > 0 && tableRows.length > 0 && (
                 <div className="w-full flex justify-start bg-white py-2 pl-2 top-0 z-30">
                     <div className="relative">
                         <button
@@ -88,7 +88,7 @@ export default function CustomTableCompoent({
                             <div
                                 ref={menuRef}
                                 className="absolute left-0 bg-white border rounded shadow-md mt-1 w-48 z-40">
-                                {toggleableColumns.map((col) => (
+                                {hiddenDropdownColumns.map((col) => (
                                     <label
                                         key={col}
                                         className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
@@ -97,6 +97,7 @@ export default function CustomTableCompoent({
                                             type="checkbox"
                                             checked={!hiddenColumns.includes(col)}
                                             onChange={() => onToggleColumn(col)}
+                                            
                                             className="mr-2"
                                         />
                                         {col}

@@ -112,8 +112,8 @@ function Billinghistory({ isDraft = false }) {
             method: "DELETE",
             url: `${API_URLS.BILLING}/${billDelete}`,
             data: {},
-            setLoading: setLoading,
             callback: handleDeleteBillCallback,
+            setLoading: setLoading,
         });
     };
 

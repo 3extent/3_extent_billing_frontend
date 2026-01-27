@@ -28,6 +28,8 @@ function ListOfProducts() {
     const [supplierOptions, setSupplierOptions] = useState([]);
 
     const [selectAllDates, setSelectAllDates] = useState(false);
+    let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
+    const [columns, setColumns] = useState([]);
     const navigate = useNavigate();
 
     const toggleableColumns = ["GST Purchase Price", "Accessories", "Engineer Name", "Part Cost",
@@ -96,7 +98,7 @@ function ListOfProducts() {
         if (response.status === 200) {
             const productFormattedRows = response.data.products.map((product) => ({
                 "Date": moment(product.created_at).format('ll'),
-                "IMEI NO": product.imei_number,
+                "IMEI Number": product.imei_number,
                 "Model": typeof product.model === 'object' ? product.model.name : product.model,
                 "Brand": typeof product.brand === 'object' ? product.model.brand : product.model.brand.name,
                 "Supplier": product.supplier?.name,
@@ -145,6 +147,14 @@ function ListOfProducts() {
 
             setRows(productFormattedRows);
             console.log('productFormattedRows: ', productFormattedRows);
+            const ProductsMenuItem = loggedInUser?.role?.menu_items?.find(
+                item => item.name?.name === "Products"
+            );
+
+            if (ProductsMenuItem) {
+                const headers = ProductsMenuItem.show_table_columns.map(col => col.name);
+                setColumns(headers);
+            }
         } else {
             console.log("Error");
         }
@@ -325,7 +335,8 @@ function ListOfProducts() {
             </div>
             <CustomTableCompoent
                 maxHeight="h-[50vh]"
-                headers={dynamicHeaders}
+                // headers={dynamicHeaders}
+                headers={columns}
                 rows={rows}
                 toggleableColumns={toggleableColumns}
                 hiddenColumns={hiddenColumns}

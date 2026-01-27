@@ -54,7 +54,7 @@ export default function Customer() {
     useEffect(() => {
         getCustomerAllData({});
     }, []);
-    
+
     const getCustomerCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
