@@ -114,7 +114,7 @@ export default function CustomTableCompoent({
                         <table className="table-fixed w-full">
                             <thead className="sticky top-0 bg-slate-800 text-white text-sm font-semibold">
                                 <tr>
-                                    {tableHeaders.map((header, i) => (
+                                    {tableHeaders?.map((header, i) => (
                                         <th
                                             key={i}
                                             className={`px-4 py-2 ${header === "Actions"
@@ -143,7 +143,7 @@ export default function CustomTableCompoent({
                                             }`}
                                         onClick={() => onRowClick && onRowClick(row)}
                                     >
-                                        {tableHeaders.map((header, colIndex) => (
+                                        {tableHeaders?.map((header, colIndex) => (
                                             <td
                                                 key={colIndex}
                                                 className="px-4 py-2 text-left"

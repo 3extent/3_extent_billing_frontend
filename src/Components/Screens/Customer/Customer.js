@@ -13,37 +13,30 @@ export default function Customer() {
     const [contactNo, setContactNumber] = useState();
     const [loading, setLoading] = useState(false);
     let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
+    const [allColumns, setAllColumns] = useState([]);
     const [columns, setColumns] = useState([]);
-
-    const toggleableColumns = ["Address"];
-
-    const [hiddenColumns, setHiddenColumns] = useState([
-        "Address",
-    ]);
-
-    const [dynamicHeaders, setDynamicHeaders] = useState(() => {
-        return CUSTOMER_COLOUMS.filter(
-            (col) => !["Address"].includes(col)
-        );
-    });
-
+    const [hiddenDropdownColumns, setHiddenDropdownColumns] = useState([]);
+    const [hiddenColumns, setHiddenColumns] = useState([]);
     const toggleColumn = (columnName) => {
-        if (!toggleableColumns.includes(columnName)) return;
-        if (dynamicHeaders.includes(columnName)) {
-            setDynamicHeaders(dynamicHeaders.filter(col => col !== columnName));
-            setHiddenColumns([...hiddenColumns, columnName]);
-        } else {
-            let newHeaders = [...dynamicHeaders];
-            const actionIndex = newHeaders.indexOf("Action");
-            if (actionIndex !== +1) {
-                newHeaders.splice(actionIndex, 0, columnName);
-
-            } else {
-                newHeaders.push(columnName);
+        setColumns(columns => {
+            if (columns.includes(columnName)) {
+                return columns.filter(col => col !== columnName);
             }
-            setDynamicHeaders(newHeaders);
-            setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
-        };
+            let newColumns = [...columns];
+            const actionIndex = newColumns.indexOf("Actions");
+            if (actionIndex !== -1) {
+                newColumns.splice(actionIndex, 0, columnName);
+            } else {
+                newColumns.push(columnName);
+            }
+            return newColumns;
+        });
+
+        setHiddenColumns(columns =>
+            columns.includes(columnName)
+                ? columns.filter(col => col !== columnName)
+                : [...columns, columnName]
+        );
     };
 
     const navigateAddCustomer = () => {
@@ -84,10 +77,17 @@ export default function Customer() {
             const customersMenuItem = loggedInUser?.role?.menu_items?.find(
                 item => item.name?.name === "Customer"
             );
-
             if (customersMenuItem) {
-                const headers = customersMenuItem.show_table_columns.map(col => col.name);
-                setColumns(headers);
+                const showCols =
+                    customersMenuItem.show_table_columns.map(col => col.name);
+
+                const hiddenCols =
+                    customersMenuItem.hidden_dropdown_table_columns?.map(col => col.name);
+
+                setAllColumns([...showCols, ...hiddenCols]);
+                setColumns(showCols);
+                setHiddenColumns(hiddenCols);
+                setHiddenDropdownColumns(hiddenCols);
             }
 
         } else {
@@ -161,7 +161,7 @@ export default function Customer() {
                 maxHeight="h-[65vh]"
                 headers={columns}
                 rows={rows}
-                toggleableColumns={toggleableColumns}
+                hiddenDropdownColumns={hiddenDropdownColumns}
                 hiddenColumns={hiddenColumns}
                 onToggleColumn={toggleColumn}
             />
