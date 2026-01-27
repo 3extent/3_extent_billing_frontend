@@ -19,6 +19,8 @@ function MaintenanceDashboard() {
     const [totalRow, setTotalRow] = useState(null);
     const [showTotalRow, setShowTotalRow] = useState(false);
     const [loading, setLoading] = useState(false);
+    let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
+    const [columns, setColumns] = useState([]);
     const navigate = useNavigate();
     const navigateAddMaintanance = () => {
         navigate("/addExpense")
@@ -27,7 +29,7 @@ function MaintenanceDashboard() {
     const getMaintenanceCallBack = (response) => {
         if (response.status === 200) {
             const maintenanceFormattedRows = response.data?.maintenanceCriteriaList.map((expense, index) => ({
-                "Sr.No": index + 1,
+                "Serial Number": index + 1,
                 "Expense Title": expense.title,
                 "Total Amount": expense.total_expenses_of_maintenance_criteria,
                 id: expense._id
@@ -39,6 +41,17 @@ function MaintenanceDashboard() {
             });
 
             setRows(maintenanceFormattedRows);
+            const maintenanceDashboardMenuItem = loggedInUser?.role?.menu_items?.find(
+                item => item.name?.name === "Maintenance"
+            );
+
+            if (maintenanceDashboardMenuItem) {
+                const headers = maintenanceDashboardMenuItem.show_table_columns.map(col => col.name);
+                setColumns(headers);
+            } else {
+                setColumns([]);
+            }
+
         } else {
             console.log("Failed to fetch maintenance data");
         }
@@ -126,7 +139,7 @@ function MaintenanceDashboard() {
                         <input
                             type="checkbox"
                             checked={selectAllDates}
-                         onChange={(e) => setSelectAllDates(e.target.checked)}
+                            onChange={(e) => setSelectAllDates(e.target.checked)}
                         />
                         All Data
                     </label>
@@ -164,7 +177,8 @@ function MaintenanceDashboard() {
 
             <CustomTableCompoent
                 maxHeight="h-[55vh]"
-                headers={MAINTENANCE_COLOUMNS}
+                // headers={MAINTENANCE_COLOUMNS}
+                headers={columns}
                 rows={rows}
                 totalRow={totalRow}
                 onRowClick={handleRowClick}

@@ -16,6 +16,8 @@ function Supplier() {
     const [contactNo, setContactNo] = useState('');
     const [loading, setLoading] = useState(false);
     const [totalRow, setTotalRow] = useState(null);
+    let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
+    const [columns, setColumns] = useState([]);
     const toggleableColumns = ["Address", "Contact No 2", "Firm Name"];
 
     const [hiddenColumns, setHiddenColumns] = useState([
@@ -77,17 +79,17 @@ function Supplier() {
 
         if (response.status === 200) {
             const supplierFormattedRows = response.data.users.map((supplier) => ({
-                "Supplier Name": supplier.name,
-                "Contact No": supplier.contact_number,
-                "GST No": supplier.gst_number,
+                "Name": supplier.name,
+                "Contact Number": supplier.contact_number,
+                "GST Number": supplier.gst_number,
                 "State": supplier.state,
                 "Address": supplier.address,
                 "Contact No 2": supplier.contact_number2,
                 "Firm Name": supplier.firm_name,
                 "Supplier Type": supplier.type,
-                "Total Supplier Cost": supplier.payable_amount,
-                "Total Supplier Paid": supplier.paid_amount?.reduce((sum, payment) => sum + Number(payment.amount || 0), 0),
-                "Total Supplier Remaining": supplier.pending_amount,
+                "Total Amount": supplier.payable_amount,
+                "Paid Amount": supplier.paid_amount?.reduce((sum, payment) => sum + Number(payment.amount || 0), 0),
+                "Remaining Amount": supplier.pending_amount,
                 "Action": (
                     <div className="flex gap-2 justify-end">
                         <div
@@ -124,12 +126,22 @@ function Supplier() {
                 "GST No": "",
                 "State": "",
                 "Supplier Type": "",
-                "Total Supplier Cost": Number(response.data.payable_amount_of_all_users || 0).toLocaleString("en-IN"),
-                "Total Supplier Paid": Number(response.data.paid_amount_of_all_users || 0).toLocaleString("en-IN"),
-                "Total Supplier Remaining": Number(response.data.pending_amount_of_all_users || 0).toLocaleString("en-IN"),
+                "Total Amount": Number(response.data.payable_amount_of_all_users || 0).toLocaleString("en-IN"),
+                "Paid Amount": Number(response.data.paid_amount_of_all_users || 0).toLocaleString("en-IN"),
+                "Remaining Amount": Number(response.data.pending_amount_of_all_users || 0).toLocaleString("en-IN"),
                 "Action": ""
             });
             setRows(supplierFormattedRows);
+            const supplierMenuItem = loggedInUser?.role?.menu_items?.find(
+                item => item.name?.name === "Supplier"
+            );
+
+            if (supplierMenuItem) {
+                const headers = supplierMenuItem.show_table_columns.map(col => col.name);
+                setColumns(headers);
+            } else {
+                setColumns([]);
+            }
         } else {
             console.log("Error");
         }
@@ -271,7 +283,8 @@ function Supplier() {
             </div>
             <CustomTableCompoent
                 maxHeight="h-[65vh]"
-                headers={dynamicHeaders}
+                // headers={dynamicHeaders}
+                headers={columns}
                 rows={rows}
                 totalRow={totalRow}
                 toggleableColumns={toggleableColumns}

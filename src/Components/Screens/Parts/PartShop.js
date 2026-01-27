@@ -25,6 +25,8 @@ function PartShop() {
     const [onlineAmount, setOnlineAmount] = useState("");
     const [card, setCard] = useState("");
     const [pendingAmount, setPendingAmount] = useState(0);
+    let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
+    const [columns, setColumns] = useState([]);
 
     const navigateAddShop = () => {
         navigate("/addshop");
@@ -42,17 +44,17 @@ function PartShop() {
         if (response.status === 200) {
             const formattedRows = response.data.users.map((shop) => ({
                 id: shop._id,
-                "Shop Name": shop.name,
-                "Contact": shop.contact_number,
+                "Name": shop.name,
+                "Contact Number": shop.contact_number,
                 "State": shop.state,
                 "Address": shop.address,
                 "GST Number": shop.gst_number,
-                "Total Shop Cost": shop.payable_amount,
-                "Total Shop Paid": shop.paid_amount?.reduce(
+                "Total Amount": shop.payable_amount,
+                "Paid Amount": shop.paid_amount?.reduce(
                     (sum, payment) => sum + Number(payment.amount || 0),
                     0
                 ),
-                "Total Shop Remaining": shop.pending_amount,
+                "Remaining Amount": shop.pending_amount,
                 "Actions": (
                     <div className="flex justify-end gap-2">
                         {Number(shop.pending_amount) > 0 && (
@@ -76,12 +78,22 @@ function PartShop() {
                 "State": "",
                 "Address": "",
                 "GST Number": "",
-                "Total Shop Cost": Number(response.data.payable_amount_of_all_users || 0).toLocaleString("en-IN"),
-                "Total Shop Paid": Number(response.data.paid_amount_of_all_users || 0).toLocaleString("en-IN"),
-                "Total Shop Remaining": Number(response.data.pending_amount_of_all_users || 0).toLocaleString("en-IN"),
+                "Total Amount": Number(response.data.payable_amount_of_all_users || 0).toLocaleString("en-IN"),
+                "Paid Amount": Number(response.data.paid_amount_of_all_users || 0).toLocaleString("en-IN"),
+                "Remaining Amount": Number(response.data.pending_amount_of_all_users || 0).toLocaleString("en-IN"),
                 "Actions": "",
             });
             setRows(formattedRows);
+            const partShopMenuItem = loggedInUser?.role?.menu_items?.find(
+                item => item.name?.name === "Parts Shops"
+            );
+
+            if (partShopMenuItem) {
+                const headers = partShopMenuItem.show_table_columns.map(col => col.name);
+                setColumns(headers);
+            } else {
+                setColumns([]);
+            }
         } else {
             const errorMsg = response?.data?.error || "Failed to add shop";
             toast.error(errorMsg, {
@@ -222,8 +234,9 @@ function PartShop() {
                 />
             </div>
             <CustomTableCompoent
-                headers={PART_SHOP_OPTIONS}
+                // headers={PART_SHOP_OPTIONS}
                 rows={rows}
+                headers={columns}
                 maxHeight="h-[65vh]"
                 totalRow={totalRow}
                 showTotalRow={showTotalRow}
