@@ -1,12 +1,12 @@
 
 import React, { useState } from 'react';
-import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import SingleProductStockIn from './SingleProductStockIn';
 import BulkOfProduct from "./BulkOfProduct";
 import { STOCK_TYPE_OPTIONS } from './Constants';
 import { useParams } from 'react-router-dom';
 import { excelDownload } from '../../../Util/Utility';
 import CustomHeaderComponent from '../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent';
+import DropdownComponent from '../../CustomComponents/DropdownComponent/DropdownComponent';
 function StockIn() {
     const [stockType, setStockType] = useState('Single Product');
     const { product_id } = useParams();
@@ -33,7 +33,7 @@ function StockIn() {
                         <label className="text-xl font-serif font-bold text-gray-800 mb-1 text-center">
                             Type Of Stock In
                         </label>
-                        <DropdownCompoent
+                        <DropdownComponent
                             options={STOCK_TYPE_OPTIONS}
                             placeholder="Select Type"
                             value={stockType}

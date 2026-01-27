@@ -9,8 +9,8 @@ import { SINGLE_SUPPLIER_DETAILS, STATUS_OPTIONS } from "./Constants";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import moment from "moment";
-import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import { exportToExcel } from "../../../Util/Utility";
+import DropdownComponent from "../../CustomComponents/DropdownComponent/DropdownComponent";
 
 export default function SupplierDetails() {
     const [imeiNumber, setIMEINumber] = useState();
@@ -177,7 +177,7 @@ export default function SupplierDetails() {
                     maxLength={15}
                     onChange={(e) => setIMEINumber(e.target.value)}
                 />
-                <DropdownCompoent
+                <DropdownComponent
                     placeholder="Select Brands"
                     value={brandName}
                     onChange={(e) => setBrandName(e.target.value)}
@@ -191,7 +191,7 @@ export default function SupplierDetails() {
                     value={modelName}
                     onChange={(e) => setModelName(e.target.value)}
                 />
-                <DropdownCompoent
+                <DropdownComponent
                     placeholder="Select status"
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}

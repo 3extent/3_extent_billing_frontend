@@ -3,7 +3,6 @@ import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/Cust
 import { BILLINGHISTORY_COLOUMNS, PAYMENTSTATUS_OPTIONS } from "./Constants";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
-import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
@@ -12,6 +11,7 @@ import { API_URLS } from "../../../Util/AppConst";
 import { toast } from "react-toastify";
 import CustomConfirmationPopup from "../../CustomComponents/CustomPopUpComponent/CustomConfirmationPopup";
 import CustomPopUpComponent from "../../CustomComponents/CustomPopUpComponent/CustomPopUpComponent";
+import DropdownComponent from "../../CustomComponents/DropdownComponent/DropdownComponent";
 function Billinghistory({ isDraft = false }) {
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
@@ -407,7 +407,7 @@ function Billinghistory({ isDraft = false }) {
                     onChange={(e) => setContactNo(e.target.value)}
                 />
                 {!isDraft && (
-                    <DropdownCompoent
+                    <DropdownComponent
                         placeholder="Select status"
                         value={paymentStatus}
                         onChange={(e) => setPaymentStatus(e.target.value)}

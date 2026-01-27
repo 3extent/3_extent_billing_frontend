@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
-import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
 import { ACCESSORIES_OPTIONS, GRADE_OPTIONS, STATUS_OPTIONS, } from './Constants';
 import CustomDropdownInputComponent from '../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent';
@@ -9,6 +8,7 @@ import { handleBarcodePrint } from '../../../Util/Utility';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { API_URLS } from '../../../Util/AppConst';
+import DropdownComponent from '../../CustomComponents/DropdownComponent/DropdownComponent';
 function SingleProductStockIn() {
   const [modelOptions, setModelOptions] = useState([]);
   const [brandOptions, setBrandOptions] = useState([]);
@@ -276,7 +276,7 @@ function SingleProductStockIn() {
         labelClassName="font-serif font-bold"
         error={errors.model_name}
       />
-      <DropdownCompoent
+      <DropdownComponent
         label="Grade"
         name="grade"
         options={GRADE_OPTIONS}
@@ -347,7 +347,7 @@ function SingleProductStockIn() {
         value={productData.qc_remark}
         onChange={handleInputChange}
       />
-      <DropdownCompoent
+      <DropdownComponent
         label="Supplier"
         name="supplier_name"
         options={supplierNameOptions}
@@ -358,7 +358,7 @@ function SingleProductStockIn() {
         labelClassName="font-serif font-bold"
         error={errors.supplier_name}
       />
-      <DropdownCompoent
+      <DropdownComponent
         label="Accessories"
         name="accessories"
         options={ACCESSORIES_OPTIONS}

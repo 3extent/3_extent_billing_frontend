@@ -8,7 +8,7 @@ import { API_URLS } from "../../../Util/AppConst";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate, useParams } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
-import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
+import DropdownComponent from "../../CustomComponents/DropdownComponent/DropdownComponent";
 
 function SingleExpenseDetails() {
     const [rows, setRows] = useState([]);
@@ -134,7 +134,7 @@ function SingleExpenseDetails() {
 
             <div className='flex items-center gap-4'>
 
-                <DropdownCompoent
+                <DropdownComponent
                     placeholder="Paid By"
                     value={paidBy}
                     onChange={(e) => setPaidBy(e.target.value)}
