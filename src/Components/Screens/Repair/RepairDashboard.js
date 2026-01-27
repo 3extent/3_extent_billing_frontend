@@ -88,6 +88,8 @@ function RepairDashboard() {
                     <PrimaryButtonComponent
                         label="Accept"
                         buttonClassName="py-1 px-3 text-sm bg-green-600 text-white rounded"
+                        icon="fa fa-retweet"
+                        iconOnly={true}
                         onClick={() => {
                             console.log("Selected repair object:", repair);
                             setSelectedRepair(repair);

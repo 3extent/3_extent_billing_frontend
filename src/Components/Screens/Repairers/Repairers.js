@@ -88,6 +88,8 @@ function Repairers() {
                                     e.stopPropagation();
                                     handlePayClick(repairer);
                                 }}
+                                iconOnly={true}
+                                icon="fa fa-inr"
                                 disabled={Number(repairer.pending_amount) === 0}
                             />
                         )}
