@@ -8,10 +8,10 @@ import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { exportToExcel, generateAndSavePdf } from "../../../Util/Utility";
-import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
 import { API_URLS } from "../../../Util/AppConst";
 import { toast } from "react-toastify";
-import CustomConfirmationPopup from "../../CustomComponents/CustomPopUpCompoent/CustomConfirmationPopup";
+import CustomConfirmationPopup from "../../CustomComponents/CustomPopUpComponent/CustomConfirmationPopup";
+import CustomPopUpComponent from "../../CustomComponents/CustomPopUpComponent/CustomPopUpComponent";
 function Billinghistory({ isDraft = false }) {
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
@@ -477,7 +477,7 @@ function Billinghistory({ isDraft = false }) {
                 </div>
             )}
             {showPaymentPopup && selectedBill && (
-                <CustomPopUpComponet
+                <CustomPopUpComponent
                     totalAmount={selectedBill.pending_amount}
                     cashAmount={cashAmount}
                     onlineAmount={onlineAmount}

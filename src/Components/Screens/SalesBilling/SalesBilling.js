@@ -6,10 +6,10 @@ import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
 import { useNavigate } from "react-router-dom";
 import { exportToExcel, generateAndSavePdf } from "../../../Util/Utility";
-import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
 import moment from "moment";
 import { toast } from "react-toastify";
 import { API_URLS } from "../../../Util/AppConst";
+import CustomPopUpComponent from "../../CustomComponents/CustomPopUpComponent/CustomPopUpComponent";
 export default function SalesBilling() {
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -504,7 +504,7 @@ export default function SalesBilling() {
             </div>
 
             {showPaymentPopup && (
-                <CustomPopUpComponet
+                <CustomPopUpComponent
                     isbillingHistory={true}
                     totalAmount={totalAmount}
                     cashAmount={cashAmount}

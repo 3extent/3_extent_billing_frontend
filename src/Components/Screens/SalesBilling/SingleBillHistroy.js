@@ -7,7 +7,7 @@ import moment from "moment";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { exportToExcel, generateAndSavePdf } from "../../../Util/Utility";
 import { API_URLS } from "../../../Util/AppConst";
-import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
+import CustomPopUpComponent from "../../CustomComponents/CustomPopUpComponent/CustomPopUpComponent";
 import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
 import { toast } from "react-toastify";
 export default function SingleBillHistory() {
@@ -515,7 +515,7 @@ export default function SingleBillHistory() {
                 />
             </div>
             {showPaymentPopup && (
-                <CustomPopUpComponet
+                <CustomPopUpComponent
                     isbillingHistory={true}
                     totalAmount={payableAmount}
                     cashAmount={cashPaidPopup}

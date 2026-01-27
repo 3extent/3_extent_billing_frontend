@@ -8,9 +8,9 @@ import { API_URLS } from "../../../Util/AppConst";
 import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
 import { toast } from "react-toastify";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
-import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
 import { generateAndSavePdf } from "../../../Util/Utility";
 import { SINGLEDRAFTBILLHISTORY_COLOUMNS } from "./Constants";
+import CustomPopUpComponent from "../../CustomComponents/CustomPopUpComponent/CustomPopUpComponent";
 export default function SingleDraftBillHistory() {
     const { draftBillId } = useParams();
     const navigate = useNavigate();
@@ -449,7 +449,7 @@ export default function SingleDraftBillHistory() {
                 />
             </div>
             {showPaymentPopup && (
-                <CustomPopUpComponet
+                <CustomPopUpComponent
                     isbillingHistory={true}
                     totalAmount={totalAmount}
                     cashAmount={cashAmount}

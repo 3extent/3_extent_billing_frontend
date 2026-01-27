@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import { API_URLS } from "../../../Util/AppConst";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
-import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
+import CustomPopUpComponent from "../../CustomComponents/CustomPopUpComponent/CustomPopUpComponent";
 
 function PartShop() {
     const navigate = useNavigate();
@@ -248,7 +248,7 @@ function PartShop() {
                 </button>
             </div>
             {showPaymentPopup && selectedShop && (
-                <CustomPopUpComponet
+                <CustomPopUpComponent
                     totalAmount={Number(selectedShop.pending_amount)}
                     pendingAmount={pendingAmount}
                     cashAmount={cashAmount}

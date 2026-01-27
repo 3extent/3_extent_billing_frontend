@@ -8,7 +8,8 @@ import { API_URLS } from "../../../Util/AppConst";
 import { toast } from "react-toastify";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
-import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
+import CustomPopUpComponent from "../../CustomComponents/CustomPopUpComponent/CustomPopUpComponent";
+
 
 function Repairers() {
     const navigate = useNavigate();
@@ -305,7 +306,7 @@ function Repairers() {
                 </button>
             </div>
             {showPaymentPopup && selectedRepairer && (
-                <CustomPopUpComponet
+                <CustomPopUpComponent
                     totalAmount={Number(selectedRepairer.pending_amount)}
                     pendingAmount={pendingAmount}
                     cashAmount={cashAmount}

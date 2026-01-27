@@ -1,14 +1,13 @@
 import { useEffect, useState, useCallback } from "react";
 import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
-import { SUPPLIER_COLUMNS } from "./Constants";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { API_URLS } from "../../../Util/AppConst";
-import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
 import { toast } from "react-toastify";
+import CustomPopUpComponent from "../../CustomComponents/CustomPopUpComponent/CustomPopUpComponent";
 function Supplier() {
     const [rows, setRows] = useState([]);
     const navigate = useNavigate();
@@ -301,7 +300,7 @@ function Supplier() {
                 </button>
             </div>
             {showPaymentPopup && selectedSupplier && (
-                <CustomPopUpComponet
+                <CustomPopUpComponent
                     totalAmount={selectedSupplier.pending_amount}
                     pendingAmount={pendingAmount}
                     cashAmount={cashAmount}
