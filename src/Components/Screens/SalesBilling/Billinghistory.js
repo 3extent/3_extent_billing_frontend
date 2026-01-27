@@ -153,17 +153,20 @@ function Billinghistory({ isDraft = false }) {
                         {Number(bill.pending_amount) > 0 && (
                             <PrimaryButtonComponent
                                 label="Pay"
+                                icon="fa fa-inr"
                                 buttonClassName="py-1 px-3 text-[12px] font-semibold"
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     handlepaymentMethod(bill);
                                 }}
+                                iconOnly={true}
                                 disabled={Number(bill.pending_amount) === 0}
                             />
                         )}
                         <PrimaryButtonComponent
                             label="Print"
                             icon="fa fa-print"
+                            iconOnly={true}
                             buttonClassName="py-1 px-3 text-[12px] font-semibold"
                             onClick={(e) => {
                                 e.stopPropagation();
