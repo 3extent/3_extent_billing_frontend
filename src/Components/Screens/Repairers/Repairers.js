@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import { REPAIRERS_OPTIONS } from "../Repair/Constants";
-import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useCallback, useEffect, useState } from "react";
 import { API_URLS } from "../../../Util/AppConst";
@@ -9,6 +8,7 @@ import { toast } from "react-toastify";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import CustomPopUpComponent from "../../CustomComponents/CustomPopUpComponent/CustomPopUpComponent";
+import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
 
 
 function Repairers() {
@@ -281,7 +281,7 @@ function Repairers() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <CustomTableCompoent
+            <CustomTableComponent
                 maxHeight="h-[65vh]"
                 rows={rows}
                 onRowClick={handleRowClick}

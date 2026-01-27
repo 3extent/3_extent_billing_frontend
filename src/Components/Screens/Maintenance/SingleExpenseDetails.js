@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import { SINGLE_EXPENSE_DETAILS_COLUMNS } from "./Constant";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
@@ -9,6 +8,7 @@ import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate, useParams } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
+import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
 
 function SingleExpenseDetails() {
     const [rows, setRows] = useState([]);
@@ -181,7 +181,7 @@ function SingleExpenseDetails() {
 
             </div>
 
-            <CustomTableCompoent
+            <CustomTableComponent
                 maxHeight="h-[55vh]"
                 headers={SINGLE_EXPENSE_DETAILS_COLUMNS}
                 rows={rows}

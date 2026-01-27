@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
-import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useCallback, useEffect, useState } from "react";
 import { API_URLS } from "../../../Util/AppConst";
@@ -8,6 +7,7 @@ import { MAINTENANCE_COLOUMNS } from "./Constant";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import moment from "moment";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
+import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
 
 function MaintenanceDashboard() {
     const [title, setTitle] = useState();
@@ -175,9 +175,8 @@ function MaintenanceDashboard() {
                 </div>
             </div>
 
-            <CustomTableCompoent
+            <CustomTableComponent
                 maxHeight="h-[55vh]"
-                // headers={MAINTENANCE_COLOUMNS}
                 headers={columns}
                 rows={rows}
                 totalRow={totalRow}

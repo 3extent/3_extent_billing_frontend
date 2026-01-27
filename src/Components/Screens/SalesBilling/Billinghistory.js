@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import { BILLINGHISTORY_COLOUMNS, PAYMENTSTATUS_OPTIONS } from "./Constants";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
@@ -12,6 +11,7 @@ import { API_URLS } from "../../../Util/AppConst";
 import { toast } from "react-toastify";
 import CustomConfirmationPopup from "../../CustomComponents/CustomPopUpComponent/CustomConfirmationPopup";
 import CustomPopUpComponent from "../../CustomComponents/CustomPopUpComponent/CustomPopUpComponent";
+import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
 function Billinghistory({ isDraft = false }) {
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
@@ -461,7 +461,7 @@ function Billinghistory({ isDraft = false }) {
                     onClick={handleResetFilter}
                 />
             </div>
-            <CustomTableCompoent
+            <CustomTableComponent
                 maxHeight="h-[60vh]"
                 headers={dynamicHeaders}
                 rows={rows}

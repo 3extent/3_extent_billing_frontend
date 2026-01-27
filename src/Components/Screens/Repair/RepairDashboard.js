@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
-import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import { REPAIR_OPTIONS, STATUS_OPTIONS } from "./Constants";
 import { useCallback, useEffect, useState } from "react";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
@@ -12,6 +11,7 @@ import { toast } from "react-toastify";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import moment from "moment";
 import { handleBarcodePrint } from "../../../Util/Utility";
+import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
 function RepairDashboard() {
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
@@ -318,7 +318,7 @@ function RepairDashboard() {
                     buttonClassName="mt-1 py-1 px-5"
                 />
             </div>
-            <CustomTableCompoent
+            <CustomTableComponent
                 maxHeight="h-[60vh]"
                 headers={columns}
                 rows={rows}

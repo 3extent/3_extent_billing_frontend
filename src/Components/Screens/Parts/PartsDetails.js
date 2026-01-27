@@ -1,6 +1,5 @@
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
-import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import { PARTS_DETAILS_HEADERS } from "./Constants";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
@@ -8,6 +7,7 @@ import { useCallback, useEffect, useState } from "react";
 import moment from "moment";
 import { API_URLS } from "../../../Util/AppConst";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
+import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
 
 function PartsDetails() {
     const navigate = useNavigate();
@@ -153,7 +153,7 @@ function PartsDetails() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <CustomTableCompoent
+            <CustomTableComponent
                 headers={PARTS_DETAILS_HEADERS}
                 rows={rows}
                 maxHeight="h-[60vh]"

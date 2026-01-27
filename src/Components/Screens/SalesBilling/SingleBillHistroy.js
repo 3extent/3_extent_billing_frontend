@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import { SINGLEBILLHISTORY_COLOUMNS } from "./Constants";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate, useParams } from "react-router-dom";
@@ -10,6 +9,7 @@ import { API_URLS } from "../../../Util/AppConst";
 import CustomPopUpComponent from "../../CustomComponents/CustomPopUpComponent/CustomPopUpComponent";
 import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
 import { toast } from "react-toastify";
+import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
 export default function SingleBillHistory() {
     const { billId } = useParams();
     const navigate = useNavigate();
@@ -483,7 +483,7 @@ export default function SingleBillHistory() {
                     }
                 />
             </div> */}
-            <CustomTableCompoent
+            <CustomTableComponent
                 maxHeight="h-[34vh]"
                 headers={dynamicHeaders}
                 rows={rows}
