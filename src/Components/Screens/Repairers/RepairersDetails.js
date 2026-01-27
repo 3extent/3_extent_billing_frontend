@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 import moment from "moment";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
-import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
+import DropdownComponent from "../../CustomComponents/DropdownComponent/DropdownComponent";
 import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
 
 export default function RepairersDetails() {
@@ -96,7 +96,6 @@ export default function RepairersDetails() {
         }
         apiCall({
             method: "GET",
-            // url: `${API_URLS.USERS}/${repairer_id}`,
             url: url,
             data: {},
             callback: getRepairerDetailsCallback,
@@ -136,7 +135,7 @@ export default function RepairersDetails() {
                     onChange={(e) => setIMEINumber(e.target.value)}
                     className="border p-2 rounded w-[180px]"
                 />
-                <DropdownCompoent
+                <DropdownComponent
                     placeholder="Select status"
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}

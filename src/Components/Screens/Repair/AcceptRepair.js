@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
-import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { GRADE_OPTIONS } from "./Constants";
+import DropdownComponent from "../../CustomComponents/DropdownComponent/DropdownComponent";
 export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOptions }) {
     const [repairData, setRepairData] = useState({
-        // partCost: repair?.part_cost || "",
         repairerCost: repair?.repairer_cost || "",
         grade: repair?.grade || "",
         remark: repair?.repair_remark || "",
@@ -18,7 +17,6 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
         if (repair) {
             setRepairData({
                 imei: repair.imei_number || "",
-                // partCost: repair.part_cost || "",
                 repairerCost: repair.repairer_cost || "",
                 grade: repair.grade || "",
                 remark: repair.repair_remark || "",
@@ -42,7 +40,6 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
         } else if (repairData.imei.length !== 15) {
             newErrors.imei = "IMEI must be 15 digits";
         }
-        // if (!repairData.partCost) newErrors.partCost = "Please enter part cost";
         if (!repairData.repairerCost) {
             newErrors.repairerCost = "Please enter repairer cost";
         }
@@ -108,16 +105,6 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
                             maxLength={15}
                             error={errors.imei}
                         />
-                        {/* <InputComponent
-                            label="Part Cost"
-                            name="partCost"
-                            numericOnly
-                            value={repairData.partCost}
-                            onChange={handleInputChange}
-                            error={errors.partCost}
-                            inputClassName="w-full"
-                            labelClassName="font-bold"
-                        /> */}
 
                         <InputComponent
                             label="Repairer Cost"
@@ -130,7 +117,7 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
                             labelClassName="font-bold"
                         />
 
-                        <DropdownCompoent
+                        <DropdownComponent
                             label="Grade"
                             name="grade"
                             options={GRADE_OPTIONS}
@@ -165,7 +152,7 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
 
                             {repairData.parts.map((part, idx) => (
                                 <div key={idx} className="flex gap-3 items-end mb-2">
-                                    <DropdownCompoent
+                                    <DropdownComponent
                                         label="Shop Name"
                                         value={part.shopName}
                                         options={shopOptions}

@@ -5,13 +5,13 @@ import { useCallback, useEffect, useState } from "react";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { API_URLS } from "../../../Util/AppConst";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
-import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import AcceptRepair from "./AcceptRepair";
 import { toast } from "react-toastify";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import moment from "moment";
 import { handleBarcodePrint } from "../../../Util/Utility";
 import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
+import DropdownComponent from "../../CustomComponents/DropdownComponent/DropdownComponent";
 function RepairDashboard() {
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
@@ -162,7 +162,6 @@ function RepairDashboard() {
     const handleResetFilter = () => {
         setIMEINumber('');
         setStatus("IN_REPAIRING");
-        // getAllRepairs();
         setFrom(fromDate);
         setTo(toDate);
         setSelectAllDates(false);
@@ -273,7 +272,7 @@ function RepairDashboard() {
                     onChange={(e) => setIMEINumber(e.target.value)}
 
                 />
-                <DropdownCompoent
+                <DropdownComponent
                     placeholder="Select status"
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}

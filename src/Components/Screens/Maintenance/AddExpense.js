@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
-import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { API_URLS } from "../../../Util/AppConst";
 import { toast } from "react-toastify";
@@ -9,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import CustomTextAreaComponent from "../../CustomComponents/CustomTextAreaComponent/CustomTextAreaComponent";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
+import DropdownComponent from "../../CustomComponents/DropdownComponent/DropdownComponent";
 
 function AddExpense() {
 
@@ -174,7 +174,7 @@ function AddExpense() {
 
 
             <div className="grid grid-cols-2 gap-x-5 gap-y-2">
-                <DropdownCompoent
+                <DropdownComponent
                     label="Expense Title"
                     name="title"
                     options={MaintenanceCriteriaOptions}
@@ -219,7 +219,7 @@ function AddExpense() {
                     labelClassName="font-serif font-bold"
                 />
 
-                <DropdownCompoent
+                <DropdownComponent
                     label="Paid By"
                     name="paid_by"
                     options={paidByOptions}

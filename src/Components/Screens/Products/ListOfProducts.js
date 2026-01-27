@@ -1,7 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
 import InputComponent from '../../CustomComponents/InputComponent/InputComponent';
-import DropdownCompoent from '../../CustomComponents/DropdownCompoent/DropdownCompoent';
 import {  STATUS_OPTIONS } from './Constants';
 import { apiCall, Spinner } from '../../../Util/AxiosUtils';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
@@ -10,6 +9,7 @@ import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
 import CustomDropdownInputComponent from '../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent';
 import { API_URLS } from '../../../Util/AppConst';
+import DropdownComponent from '../../CustomComponents/DropdownComponent/DropdownComponent';
 import CustomTableComponent from '../../CustomComponents/CustomTableComponent/CustomTableComponent';
 function ListOfProducts() {
     const [rows, setRows] = useState([]);
@@ -269,7 +269,7 @@ function ListOfProducts() {
                     maxLength={15}
                     onChange={(e) => setIMEINumber(e.target.value)}
                 />
-                <DropdownCompoent
+                <DropdownComponent
                     placeholder="Select Brands"
                     value={brandName}
                     onChange={(e) => setBrandName(e.target.value)}
@@ -299,7 +299,7 @@ function ListOfProducts() {
                 />
             </div>
             <div className='flex items-center gap-4'>
-                <DropdownCompoent
+                <DropdownComponent
                     placeholder="Select status"
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
