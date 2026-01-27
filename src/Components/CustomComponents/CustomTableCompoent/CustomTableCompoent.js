@@ -49,18 +49,6 @@ export default function CustomTableCompoent({
         }
     }, [tableRows, isAtBottom]);
 
-    // const normalRows = tableRows.filter((row) => row._id !== "total");
-    // const totalRowData = tableRows.find((row) => row._id === "total");
-
-    // const getTotalRowBg = () => {
-    //     if (!totalRowData) return "bg-white";
-    //     if (totalRowData.Profit != null) {
-    //         if (totalRowData.Profit > 0) return "bg-green-200";
-    //         if (totalRowData.Profit < 0) return "bg-red-200";
-    //     }
-    //     return "bg-green-200";
-    // };
-
     useEffect(() => {
         function handleClickOutside(e) {
             if (menuRef.current && !menuRef.current.contains(e.target)) {
@@ -227,9 +215,6 @@ export default function CustomTableCompoent({
                                                     "Total Repairer Cost",
                                                     "Total Paid",
                                                     "Total Repairer Remaining",
-                                                    // "Total Shop Cost",
-                                                    // "Total Shop Paid",
-                                                    // "Total Shop Remaining",
                                                     "Total Amount",
                                                     "Amount"
                                                 ].includes(header)

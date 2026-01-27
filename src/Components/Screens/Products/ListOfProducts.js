@@ -29,40 +29,38 @@ function ListOfProducts() {
 
     const [selectAllDates, setSelectAllDates] = useState(false);
     let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
+    const [allColumns, setAllColumns] = useState([]);
     const [columns, setColumns] = useState([]);
+    const [hiddenDropdownColumns, setHiddenDropdownColumns] = useState([]);
     const navigate = useNavigate();
-
-    const toggleableColumns = ["GST Purchase Price", "Accessories", "Engineer Name", "Part Cost",
-        "Repairer Cost", "Repairer Name", "Repairer Contact No", "Repair Remark", "Purchase Cost Including Expenses"];
-
-    const [hiddenColumns, setHiddenColumns] = useState([
-        "GST Purchase Price", "Accessories", "Engineer Name", "Part Cost",
-        "Repairer Cost", "Repairer Name", "Repairer Contact No", "Repair Remark", "Purchase Cost Including Expenses"
-    ]);
-    const [dynamicHeaders, setDynamicHeaders] = useState(() => {
-        return PRODUCT_COLOUMNS.filter(
-            (col) => !["GST Purchase Price", "Accessories", "Engineer Name", "Part Cost",
-                "Repairer Cost", "Repairer Name", "Repairer Contact No", "Repair Remark", "Purchase Cost Including Expenses"].includes(col)
-        );
-    });
-
+    
+    const [hiddenColumns, setHiddenColumns] = useState([]);
     const toggleColumn = (columnName) => {
-        if (!toggleableColumns.includes(columnName)) return;
-        if (dynamicHeaders.includes(columnName)) {
-            setDynamicHeaders(dynamicHeaders.filter(col => col !== columnName));
-            setHiddenColumns([...hiddenColumns, columnName]);
-        } else {
-            let newHeaders = [...dynamicHeaders];
-            const actionIndex = newHeaders.indexOf("Actions");
-            if (actionIndex !== +1) {
-                newHeaders.splice(actionIndex, 0, columnName);
 
-            } else {
-                newHeaders.push(columnName);
+        setColumns(columns => {
+
+            if (columns.includes(columnName)) {
+                return columns.filter(col => col !== columnName);
             }
-            setDynamicHeaders(newHeaders);
-            setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
-        };
+
+            let newColumns = [...columns];
+
+            const actionIndex = newColumns.indexOf("Actions");
+            if (actionIndex !== -1) {
+                newColumns.splice(actionIndex, 0, columnName);
+            } else {
+                newColumns.push(columnName);
+            }
+
+
+            return newColumns;
+        });
+
+        setHiddenColumns(columns =>
+            columns.includes(columnName)
+                ? columns.filter(col => col !== columnName)
+                : [...columns, columnName]
+        );
     };
 
     useEffect(() => {
@@ -106,7 +104,7 @@ function ListOfProducts() {
                 "Sales Price": product.sales_price,
                 "Purchase Price": product.purchase_price,
                 "Grade": product.grade,
-                "Engineer Name": product.engineer_name,
+                "Engineer": product.engineer_name,
                 "Accessories": product.accessories,
                 "GST Purchase Price": product.gst_purchase_price,
                 "Part Cost": product.repair_parts?.reduce(
@@ -114,10 +112,9 @@ function ListOfProducts() {
                     0
                 ),
                 "Repairer Cost": product.repairer_cost,
-                "Repairer Name": product.repair_by?.name,
-                "Repairer Contact No": product.repair_by?.contact_number,
+                "Repairer": product.repair_by?.name,
                 "Repair Remark": product.repair_remark,
-                "Purchase Cost Including Expenses": product.purchase_cost_including_expenses,
+                "Purchase Price Including Expenses": product.purchase_cost_including_expenses,
                 id: product._id,
                 "Actions": (
                     <div className='flex items-center justify-end gap-2'>
@@ -150,11 +147,19 @@ function ListOfProducts() {
             const ProductsMenuItem = loggedInUser?.role?.menu_items?.find(
                 item => item.name?.name === "Products"
             );
-
             if (ProductsMenuItem) {
-                const headers = ProductsMenuItem.show_table_columns.map(col => col.name);
-                setColumns(headers);
+                const showCols =
+                    ProductsMenuItem.show_table_columns.map(col => col.name);
+
+                const hiddenCols =
+                    ProductsMenuItem.hidden_dropdown_table_columns?.map(col => col.name);
+
+                setAllColumns([...showCols, ...hiddenCols]); //  all
+                setColumns(showCols);                        //  only visible
+                setHiddenColumns(hiddenCols);                //  hidden
+                setHiddenDropdownColumns(hiddenCols);        // checkbox list
             }
+
         } else {
             console.log("Error");
         }
@@ -239,7 +244,7 @@ function ListOfProducts() {
 
     }
     const handleExportToExcel = () => {
-        exportToExcel(rows, "ProductList.xlsx", null, dynamicHeaders);
+        exportToExcel(rows, "ProductList.xlsx", null, columns);
     };
     return (
         <div className='w-full'>
@@ -335,10 +340,9 @@ function ListOfProducts() {
             </div>
             <CustomTableCompoent
                 maxHeight="h-[50vh]"
-                // headers={dynamicHeaders}
                 headers={columns}
                 rows={rows}
-                toggleableColumns={toggleableColumns}
+                hiddenDropdownColumns={hiddenDropdownColumns}
                 hiddenColumns={hiddenColumns}
                 onToggleColumn={toggleColumn}
             />
