@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import InputComponent from '../../CustomComponents/InputComponent/InputComponent';
 import CustomTableCompoent from '../../CustomComponents/CustomTableCompoent/CustomTableCompoent';
 import DropdownCompoent from '../../CustomComponents/DropdownCompoent/DropdownCompoent';
-import { PRODUCT_COLOUMNS, STATUS_OPTIONS } from './Constants';
+import {  STATUS_OPTIONS } from './Constants';
 import { apiCall, Spinner } from '../../../Util/AxiosUtils';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
 import { exportToExcel, handleBarcodePrint } from '../../../Util/Utility';
@@ -33,7 +33,7 @@ function ListOfProducts() {
     const [columns, setColumns] = useState([]);
     const [hiddenDropdownColumns, setHiddenDropdownColumns] = useState([]);
     const navigate = useNavigate();
-    
+
     const [hiddenColumns, setHiddenColumns] = useState([]);
     const toggleColumn = (columnName) => {
 
