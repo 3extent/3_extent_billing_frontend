@@ -236,6 +236,7 @@ function ListOfProducts() {
         setGrade('');
         setIMEINumber('');
         setBrandName('');
+        setSupplierName('');
         setStatus(STATUS_OPTIONS[0]);
         setFrom(fromDate);
         setTo(toDate);
