@@ -18,13 +18,13 @@ export default function SalesBilling() {
     const [columns, setColumns] = useState([]);
 
     const navigate = useNavigate();
-    const handlenavigatedraftBill = () => {
-        navigate("/draftbillhistroy")
-    }
+    // const handlenavigatedraftBill = () => {
+    //     navigate("/draftbillhistroy")
+    // }
 
-    const navigateBillingHistory = () => {
-        navigate("/billinghistory")
-    }
+    // const navigateBillingHistory = () => {
+    //     navigate("/billinghistory")
+    // }
 
     const [showPaymentPopup, setShowPaymentPopup] = useState(false);
     const [cashAmount, setCashAmount] = useState("");
@@ -408,7 +408,7 @@ export default function SalesBilling() {
                         onClick={navigateAddCustomer}
                     />
 
-                    <PrimaryButtonComponent
+                    {/* <PrimaryButtonComponent
                         label="Billing History"
                         icon="fa fa-history"
                         buttonClassName="py-1 px-3 text-[12px] font-semibold"
@@ -420,7 +420,7 @@ export default function SalesBilling() {
                         icon="fa fa-pencil-square-o"
                         buttonClassName="py-1 px-3 text-[12px] font-semibold"
                         onClick={handlenavigatedraftBill}
-                    />
+                    /> */}
                 </div>
             </div>
 

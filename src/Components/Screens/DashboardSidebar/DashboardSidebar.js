@@ -21,6 +21,13 @@ export default function DashboardSidebar({ onLogout }) {
         if (menuName === "Sales Billing") {
             navigate("/salesbilling");
         }
+        if (menuName === "Billing History") {
+            navigate("/billinghistory");
+        }
+        if (menuName === "Drafted Bills") {
+            navigate("/draftbillhistroy");
+        }
+
         if (menuName === "Stock In") {
             navigate("/stockin");
         }

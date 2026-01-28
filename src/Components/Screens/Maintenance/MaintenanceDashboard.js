@@ -1,9 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { API_URLS } from "../../../Util/AppConst";
-import { MAINTENANCE_COLOUMNS } from "./Constant";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import moment from "moment";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
@@ -99,6 +98,7 @@ function MaintenanceDashboard() {
     }
 
     const handleResetFilter = () => {
+        setTitle('');
         setFrom(fromDate);
         setTo(toDate);
         setSelectAllDates(false);

@@ -146,6 +146,8 @@ export default function SupplierDetails() {
         getSupplierDetails({ imeiNumber, modelName, brandName, grade, status, from, to, selectAllDates });
     }
     const handleResetFilter = () => {
+        setBrandName('')
+        setGrade('');
         setModelName('');
         setIMEINumber('');
         setFrom(fromDate);
