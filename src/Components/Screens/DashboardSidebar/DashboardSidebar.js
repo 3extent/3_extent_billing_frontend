@@ -8,6 +8,8 @@ export default function DashboardSidebar({ onLogout }) {
     const handleLogout = () => {
         localStorage.removeItem("isAuthenticated");
         localStorage.removeItem("loggedInUser");
+        localStorage.removeItem("token");
+
         // Call the callback to update parent state
         if (onLogout) {
             onLogout();
