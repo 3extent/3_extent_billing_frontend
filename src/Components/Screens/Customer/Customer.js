@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { CUSTOMER_COLOUMS } from "./Constants";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
@@ -7,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { API_URLS } from "../../../Util/AppConst";
+import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
 export default function Customer() {
     const navigate = useNavigate();
     const [customerName, setCustomerName] = useState();
@@ -157,7 +157,7 @@ export default function Customer() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <CustomTableCompoent
+            <CustomTableComponent
                 maxHeight="h-[65vh]"
                 headers={columns}
                 rows={rows}

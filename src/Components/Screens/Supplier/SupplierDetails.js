@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
-import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import { API_URLS } from "../../../Util/AppConst";
 import { toast } from "react-toastify";
 import { SINGLE_SUPPLIER_DETAILS, STATUS_OPTIONS } from "./Constants";
@@ -10,7 +9,9 @@ import InputComponent from "../../CustomComponents/InputComponent/InputComponent
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import moment from "moment";
 import { exportToExcel } from "../../../Util/Utility";
+import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
 import DropdownComponent from "../../CustomComponents/DropdownComponent/DropdownComponent";
+
 
 export default function SupplierDetails() {
     const [imeiNumber, setIMEINumber] = useState();
@@ -250,7 +251,7 @@ export default function SupplierDetails() {
                     />
                 </div>
             </div>
-            <CustomTableCompoent
+            <CustomTableComponent
                 maxHeight="h-[60vh]"
                 headers={SINGLE_SUPPLIER_DETAILS}
                 rows={rows}

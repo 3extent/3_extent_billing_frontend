@@ -1,13 +1,13 @@
 
 import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
-import CustomTableCompoent from '../../CustomComponents/CustomTableCompoent/CustomTableCompoent';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
 import InputComponent from '../../CustomComponents/InputComponent/InputComponent';
 import { apiCall, Spinner } from '../../../Util/AxiosUtils';
 import { handleBarcodePrint } from '../../../Util/Utility';
 import { toast } from 'react-toastify';
 import { API_URLS } from '../../../Util/AppConst';
+import CustomTableComponent from '../../CustomComponents/CustomTableComponent/CustomTableComponent';
 function BulkOfProduct() {
     const [excelData, setExcelData] = useState([]);
     const [showTable, setShowTable] = useState(false);
@@ -150,7 +150,7 @@ function BulkOfProduct() {
             )}
             {showTable && excelData.length > 0 && (
                 <div className=" mt-6">
-                    <CustomTableCompoent
+                    <CustomTableComponent
                         maxHeight="h-[44vh]"
                         headers={tableHeaders}
                         rows={excelData} />

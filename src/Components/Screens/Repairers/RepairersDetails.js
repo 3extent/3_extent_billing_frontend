@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { apiCall } from "../../../Util/AxiosUtils";
 import { API_URLS } from "../../../Util/AppConst";
-import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import { Spinner } from "../../../Util/AxiosUtils";
 import { REPAIRER_DETAILS_HEADERS, STATUS_OPTIONS } from "../Repair/Constants";
@@ -11,6 +10,7 @@ import moment from "moment";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import DropdownComponent from "../../CustomComponents/DropdownComponent/DropdownComponent";
+import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
 
 export default function RepairersDetails() {
     const navigate = useNavigate();
@@ -177,7 +177,7 @@ export default function RepairersDetails() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <CustomTableCompoent
+            <CustomTableComponent
                 maxHeight="h-[60vh]"
                 headers={REPAIRER_DETAILS_HEADERS}
                 rows={rows}

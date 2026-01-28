@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-export default function CustomTableCompoent({
+export default function CustomTableComponent({
     headers,
     rows,
     onRateChange,
@@ -9,7 +9,7 @@ export default function CustomTableCompoent({
     editable = false,
     showTotalRow = false,
     autoScrollBottom = false,
-    hiddenDropdownColumns=[],
+    hiddenDropdownColumns = [],
     hiddenColumns = [],
     onToggleColumn,
     totalRow
@@ -94,7 +94,7 @@ export default function CustomTableCompoent({
                                             type="checkbox"
                                             checked={!hiddenColumns.includes(col)}
                                             onChange={() => onToggleColumn(col)}
-                                            
+
                                             className="mr-2"
                                         />
                                         {col}

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
@@ -10,6 +9,7 @@ import moment from "moment";
 import { toast } from "react-toastify";
 import { API_URLS } from "../../../Util/AppConst";
 import CustomPopUpComponent from "../../CustomComponents/CustomPopUpComponent/CustomPopUpComponent";
+import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
 export default function SalesBilling() {
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -472,7 +472,7 @@ export default function SalesBilling() {
                 </div>
             </div>
 
-            <CustomTableCompoent
+            <CustomTableComponent
                 maxHeight="h-[54vh]"
                 headers={columns}
                 rows={rows}

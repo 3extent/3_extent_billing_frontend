@@ -1,7 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
 import InputComponent from '../../CustomComponents/InputComponent/InputComponent';
-import CustomTableCompoent from '../../CustomComponents/CustomTableCompoent/CustomTableCompoent';
 import {  STATUS_OPTIONS } from './Constants';
 import { apiCall, Spinner } from '../../../Util/AxiosUtils';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
@@ -11,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import CustomDropdownInputComponent from '../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent';
 import { API_URLS } from '../../../Util/AppConst';
 import DropdownComponent from '../../CustomComponents/DropdownComponent/DropdownComponent';
+import CustomTableComponent from '../../CustomComponents/CustomTableComponent/CustomTableComponent';
 function ListOfProducts() {
     const [rows, setRows] = useState([]);
     const [imeiNumber, setIMEINumber] = useState();
@@ -340,7 +340,7 @@ function ListOfProducts() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <CustomTableCompoent
+            <CustomTableComponent
                 maxHeight="h-[50vh]"
                 headers={columns}
                 rows={rows}

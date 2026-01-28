@@ -1,5 +1,4 @@
 import { useEffect, useState, useCallback } from "react";
-import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
@@ -8,6 +7,7 @@ import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponen
 import { API_URLS } from "../../../Util/AppConst";
 import { toast } from "react-toastify";
 import CustomPopUpComponent from "../../CustomComponents/CustomPopUpComponent/CustomPopUpComponent";
+import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
 function Supplier() {
     const [rows, setRows] = useState([]);
     const navigate = useNavigate();
@@ -284,7 +284,7 @@ function Supplier() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <CustomTableCompoent
+            <CustomTableComponent
                 maxHeight="h-[65vh]"
                 headers={columns}
                 rows={rows}

@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import moment from "moment";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
-import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import { API_URLS } from "../../../Util/AppConst";
 import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
 import { toast } from "react-toastify";
@@ -11,6 +10,7 @@ import InputComponent from "../../CustomComponents/InputComponent/InputComponent
 import { generateAndSavePdf } from "../../../Util/Utility";
 import { SINGLEDRAFTBILLHISTORY_COLOUMNS } from "./Constants";
 import CustomPopUpComponent from "../../CustomComponents/CustomPopUpComponent/CustomPopUpComponent";
+import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
 export default function SingleDraftBillHistory() {
     const { draftBillId } = useParams();
     const navigate = useNavigate();
@@ -426,7 +426,7 @@ export default function SingleDraftBillHistory() {
                     inputClassName="w-[190px] mb-6"
                 />
             </div>
-            <CustomTableCompoent
+            <CustomTableComponent
                 maxHeight="h-[60vh]"
                 headers={SINGLEDRAFTBILLHISTORY_COLOUMNS}
                 rows={rows}

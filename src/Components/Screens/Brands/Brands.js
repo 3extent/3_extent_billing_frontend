@@ -1,5 +1,3 @@
-
-import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import { useEffect, useState } from "react";
@@ -7,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { API_URLS } from "../../../Util/AppConst";
+import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
 function Brands() {
     const [rows, setRows] = useState([]);
     const [brandName, setBrandName] = useState('');
@@ -120,7 +119,7 @@ function Brands() {
                 />
             </div>
 
-            <CustomTableCompoent
+            <CustomTableComponent
                 maxHeight="h-[75vh]"
                 headers={columns}
                 rows={rows}

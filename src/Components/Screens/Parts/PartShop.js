@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import { PART_SHOP_OPTIONS } from "./Constants";
-import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import { useCallback, useEffect, useState } from "react";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { toast } from "react-toastify";
@@ -9,6 +8,7 @@ import { API_URLS } from "../../../Util/AppConst";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import CustomPopUpComponent from "../../CustomComponents/CustomPopUpComponent/CustomPopUpComponent";
+import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
 
 function PartShop() {
     const navigate = useNavigate();
@@ -235,8 +235,7 @@ function PartShop() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <CustomTableCompoent
-                // headers={PART_SHOP_OPTIONS}
+            <CustomTableComponent
                 rows={rows}
                 headers={columns}
                 maxHeight="h-[65vh]"
