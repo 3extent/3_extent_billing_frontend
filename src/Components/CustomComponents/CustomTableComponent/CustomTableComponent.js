@@ -204,7 +204,7 @@ export default function CustomTableComponent({
                                                     "Profit",
                                                     "Total Products",
                                                     "Purchase Price",
-                                                    "Sale Price",
+                                                    "Sales Price",
                                                     "Total Supplier Cost",
                                                     "Total Supplier Paid",
                                                     "Total Supplier Remaining",
