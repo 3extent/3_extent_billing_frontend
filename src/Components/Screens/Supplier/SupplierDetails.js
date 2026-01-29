@@ -36,11 +36,11 @@ export default function SupplierDetails() {
 
     const [showTotalRow, setShowTotalRow] = useState(false);
     const [totalRow, setTotalRow] = useState(null);
-
+    let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
+    const [columns, setColumns] = useState([]);
     const handleBack = () => {
         navigate(-1);
     };
-
     useEffect(() => {
         setFrom(fromDate);
         setTo(toDate);
@@ -75,28 +75,30 @@ export default function SupplierDetails() {
             const formattedRows = supplier.products.map((product) => ({
                 "Date": moment(product.created_at).format('ll'),
                 "IMEI Number": product.imei_number,
-                "Model Name": product.model?.name,
-                "Brand Name": product.model?.brand?.name,
+                "Model": product.model?.name,
+                "Brand": product.model?.brand?.name,
                 "Purchase Price": product.purchase_price,
                 "Grade": product.grade,
-                "Qc-Remark": product.qc_remark,
+                "QC Remark": product.qc_remark,
                 "Status": product.status,
                 id: product._id
             }));
             setTotalRow({
                 _id: "total",
                 "Bill id": "Total",
-                "Date": "",
-                "IMEI Number": "",
-                "Model Name": "",
-                "Brand Name": "",
                 "Purchase Price": Number(response.data.purchase_total_of_all_products || 0).toLocaleString("en-IN"),
-                "Grade": "",
-                "Qc-Remark": "",
-                "Status": ""
+
             });
 
             setRows(formattedRows);
+            const supplierSubMenuItem = loggedInUser?.role?.sub_menu_items?.find(
+                item => item.name?.name === "Single Supplier Details"
+            );
+
+            if (supplierSubMenuItem) {
+                const headers = supplierSubMenuItem.show_table_columns.map(col => col.name);
+                setColumns(headers);
+            }
         } else {
             toast.error("Failed to fetch supplier details");
         }
@@ -255,10 +257,11 @@ export default function SupplierDetails() {
             </div>
             <CustomTableComponent
                 maxHeight="h-[60vh]"
-                headers={SINGLE_SUPPLIER_DETAILS}
+                // headers={SINGLE_SUPPLIER_DETAILS}
                 rows={rows}
                 showTotalRow={showTotalRow}
                 totalRow={totalRow}
+                headers={columns}
             />
             <div className="flex justify-end">
                 <button className="rounded-full" onClick={() => setShowTotalRow(!showTotalRow)}>

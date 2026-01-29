@@ -102,9 +102,9 @@ function Repairers() {
                 _id: "total",
                 "Repairer Name": "Total",
                 "Total Part Cost": Number(response.data.part_cost_of_all_users || 0).toLocaleString("en-IN"),
-                "Total Repairer Cost": (response.data.payable_amount_of_all_users || 0).toLocaleString("en-IN"),
+                "Total Amount": (response.data.payable_amount_of_all_users || 0).toLocaleString("en-IN"),
                 "Total Paid": Number(response.data.paid_amount_of_all_users || 0).toLocaleString("en-IN"),
-                "Total Repairer Remaining": Number(response.data.pending_amount_of_all_users || 0).toLocaleString("en-IN"),
+                "Remaining Amount": Number(response.data.pending_amount_of_all_users || 0).toLocaleString("en-IN"),
             });
 
             setRows(RepairedFormattedRows);
