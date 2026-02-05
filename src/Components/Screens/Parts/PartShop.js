@@ -31,6 +31,9 @@ function PartShop() {
     const navigateAddShop = () => {
         navigate("/addshop");
     };
+    const navigateAddPartScreen = () => {
+        navigate("/addpart")
+    }
     useEffect(() => {
         if (!selectedShop) return;
         const cash = Number(cashAmount || 0);
@@ -198,12 +201,26 @@ function PartShop() {
     return (
         <div className="w-full">
             {loading && <Spinner />}
-            <CustomHeaderComponent
-                name="Part Shop List"
-                label="Add Shop"
-                icon="fa fa-plus-circle"
-                onClick={navigateAddShop}
-            />
+            <div className="flex justify-between items-center">
+                <div className="text-xl font-serif">Part Shop List</div>
+                <div className="flex gap-3">
+                    <PrimaryButtonComponent
+                        label="Add Part"
+                        icon="fa fa-plus-circle"
+                        buttonClassName="py-1 px-3 text-sm font-bold"
+                        onClick={navigateAddPartScreen}
+                    />
+                    <PrimaryButtonComponent
+                        label="Add Shop"
+                        icon="fa fa-plus-circle"
+                        onClick={navigateAddShop}
+                        buttonClassName="py-1 px-3 text-sm font-bold"
+                    />
+
+
+                </div>
+            </div>
+
             <div className="flex items-center gap-4 mb-5">
                 <InputComponent
                     type="text"

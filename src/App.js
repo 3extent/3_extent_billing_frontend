@@ -32,6 +32,7 @@ import AddMaintenanceCriteria from './Components/Screens/Maintenance/AddMaintena
 import AddShop from './Components/Screens/Parts/AddShop';
 import PartShop from './Components/Screens/Parts/PartShop';
 import PartsDetails from './Components/Screens/Parts/PartsDetails';
+import AddPart from './Components/Screens/Parts/AddPart';
 
 
 // Protected Route Component
@@ -262,6 +263,12 @@ function App() {
             <Route path="/partshopDetails/:shop_id?" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <PartsDetails />
+              </ProtectedRoute>
+            } />
+
+              <Route path="/addPart" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <AddPart />
               </ProtectedRoute>
             } />
           </Routes >
