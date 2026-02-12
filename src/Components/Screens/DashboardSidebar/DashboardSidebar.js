@@ -68,7 +68,7 @@ export default function DashboardSidebar({ onLogout }) {
                         <i class="fa fa-file-text-o mr-4" aria-hidden="true"></i>
                         3_EXTENT
                     </div>
-                    {menuItems.map((item, index) => (
+                    {menuItems?.map((item, index) => (
                         <div key={index}
                             onClick={() => handleMenuClick(item)}
                             className="flex items-center cursor-pointer pl-4 py-2  hover:bg-slate-600 rounded transform hover:scale-110 hover:font-blod">
