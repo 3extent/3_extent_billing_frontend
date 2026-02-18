@@ -165,7 +165,6 @@ function PartsDetails() {
                 />
             </div>
             <CustomTableComponent
-                // headers={PARTS_DETAILS_HEADERS}
                 rows={rows}
                 maxHeight="h-[60vh]"
                 totalRow={totalRow}

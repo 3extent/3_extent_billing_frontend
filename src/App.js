@@ -33,6 +33,7 @@ import AddShop from './Components/Screens/Parts/AddShop';
 import PartShop from './Components/Screens/Parts/PartShop';
 import PartsDetails from './Components/Screens/Parts/PartsDetails';
 import AddPart from './Components/Screens/Parts/AddPart';
+import PartList from './Components/Screens/Parts/PartList';
 
 
 // Protected Route Component
@@ -266,11 +267,19 @@ function App() {
               </ProtectedRoute>
             } />
 
-              <Route path="/addPart" element={
+             <Route path="/addPart" element={
               <ProtectedRoute isAuthenticated={loginStatus}>
                 <AddPart />
               </ProtectedRoute>
             } />
+
+             <Route path="/partList" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <PartList />
+              </ProtectedRoute>
+            } />
+
+            
           </Routes >
         </div >
       </div >
