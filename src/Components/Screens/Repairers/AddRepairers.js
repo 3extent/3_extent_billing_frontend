@@ -18,7 +18,7 @@ function AddRepairers() {
         address: "",
         contact_number: "",
         gst_number: "",
-        // role: "REPAIRER",
+        role: "REPAIRER",
     });
     useEffect(() => {
         if (repairer_id) {
