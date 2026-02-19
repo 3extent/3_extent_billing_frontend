@@ -2,14 +2,14 @@ import { useCallback, useEffect, useState } from "react";
 import DropdownComponent from "../../CustomComponents/DropdownComponent/DropdownComponent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
-import { apiCall } from "../../../Util/AxiosUtils";
+import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { API_URLS } from "../../../Util/AppConst";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
 
 function AddPart() {
-
+    const [loading, setLoading] = useState(false);
     const [shopNameOptions, setshopNameOptions] = useState([]);
     const [modelOptions, setModelOptions] = useState([])
     const [errors, setErrors] = useState("");
@@ -19,15 +19,14 @@ function AddPart() {
         part_name: "",
         part_cost: "",
         shop_name: "",
-        model_name: ""
-
+        model_name: "",
     });
 
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setErrors(prev => ({ ...prev, [name]: "" }));
-        setPartData({ ...PartData, [name]: value });
+        setPartData({ ...PartData, [name]: value.toUpperCase() });
     };
 
     const getShopCallBack = (response) => {
@@ -92,7 +91,7 @@ function AddPart() {
             url: API_URLS.PART,
             data: PartData,
             callback: addpartCallback,
-            // setLoading: setLoading
+            setLoading: setLoading
         });
     };
     const getModelsCallBack = (response) => {
@@ -124,6 +123,7 @@ function AddPart() {
     };
     return (
         <div>
+         {loading && <Spinner />}
             <div className="text-xl font-serif mb-4">Add Part</div>
             <div className="grid grid-cols-2">
                 <CustomDropdownInputComponent
@@ -134,7 +134,7 @@ function AddPart() {
                     options={modelOptions}
                     value={PartData.model_name}
                     onChange={(value) => {
-                        setPartData({ ...PartData, model_name: value });
+                        setPartData({ ...PartData, model_name: value.toUpperCase() });
                         setErrors((prev) => ({ ...prev, model_name: "" }));
                     }}
                     error={errors.model_name}
@@ -156,7 +156,7 @@ function AddPart() {
                     label="Part Name"
                     name="part_name"
                     type="text"
-                    value={PartData.part_cost.amount}
+                    value={PartData.part_name}
                     onChange={handleInputChange}
                     inputClassName="w-[90%]"
                     labelClassName="font-serif font-bold mb-1"
