@@ -4,16 +4,47 @@ import InputComponent from "../../CustomComponents/InputComponent/InputComponent
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { GRADE_OPTIONS } from "./Constants";
 import DropdownComponent from "../../CustomComponents/DropdownComponent/DropdownComponent";
+import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
+import { apiCall } from "../../../Util/AxiosUtils";
+import { API_URLS } from "../../../Util/AppConst";
 export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOptions }) {
+
     const [repairData, setRepairData] = useState({
-        repairerCost: repair?.repairer_cost || "",
-        grade: repair?.grade || "",
-        remark: repair?.repair_remark || "",
-        qc_remark: repair?.qc_remark || "",
-        imei: repair?.imei_number || "",
+
+        repairerCost: repair?.repairer_cost,
+        grade: repair?.grade,
+        remark: repair?.repair_remark,
+        qc_remark: repair?.qc_remark,
+        imei: repair?.imei_number,
         parts: [{ name: "", cost: "", shopName: "" }]
     });
+
     const [errors, setErrors] = useState({});
+    const [partNameOptions, setPartNameOptions] = useState([]);
+
+    const getPartAllData = () => {
+        apiCall({
+            method: 'GET',
+            url: `${API_URLS.BRANDS}?status=AVAILABLE`,
+            data: {},
+            callback: getPartsCallBack,
+        })
+    };
+
+    const getPartsCallBack = (response) => {
+        console.log('response: ', response);
+        if (response.status === 200) {
+            const parts = response.data.map(part => part.name);
+            setPartNameOptions(parts);
+        } else {
+            console.log("Error");
+        }
+    }
+
+    useEffect(() => {
+        getPartAllData();
+    }, []);
+
     useEffect(() => {
         if (repair) {
             setRepairData({
@@ -29,11 +60,13 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
             setErrors({});
         }
     }, [repair]);
+
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setRepairData({ ...repairData, [name]: value });
         setErrors({ ...errors, [name]: "" });
     };
+
     const handleValidation = () => {
         const newErrors = {};
         if (!repairData.imei || !repairData.imei.trim()) {
@@ -50,6 +83,7 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
         if (!repairData.qc_remark || !repairData.qc_remark.trim()) {
             newErrors.qc_remark = "Please enter QC remark";
         }
+
         repairData.parts.map((part) => {
             if (part.shopName || part.name || part.cost) {
                 if (!part.shopName || !part.name || !part.cost) {
@@ -58,9 +92,12 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
             }
             return null;
         });
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
+
     };
+
     const handlePartChange = (index, field, value) => {
         const updatedParts = [...repairData.parts];
         updatedParts[index][field] = value;
@@ -86,6 +123,7 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
         if (!handleValidation()) return;
         onSubmit({ ...repairData });
     };
+    
     if (!open) return null;
 
     return (
@@ -93,8 +131,9 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
             <div className="bg-white shadow-lg w-[60%] rounded-[10px]  max-h-[90vh]  overflow-y-auto">
                 <div className="text-lg py-5 font-bold  pl-7 bg-slate-900 text-white font-serif rounded-t-[10px]">Accept Repair</div>
                 <div className="pb-3">
-                    {/* <div className="flex flex-col gap-3 p-6"> */}
+
                     <div className="grid grid-cols-2 gap-4 p-6">
+
                         <InputComponent
                             label="IMEI Number"
                             name="imei"
@@ -127,6 +166,7 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
                             className="w-full"
                             labelClassName="font-bold"
                         />
+
                         <InputComponent
                             label="Repair Remark"
                             type="text"
@@ -137,6 +177,7 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
                             labelClassName="font-bold"
                             error={errors.remark}
                         />
+
                         <InputComponent
                             label="QC Remark"
                             type="text"
@@ -148,11 +189,14 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
                             onChange={handleInputChange}
                             error={errors.qc_remark}
                         />
+
                         <div className="col-span-2">
+
                             <label className="font-bold mb-2 block">Parts</label>
 
                             {repairData.parts.map((part, idx) => (
                                 <div key={idx} className="flex gap-3 items-end mb-2">
+
                                     <DropdownComponent
                                         label="Shop Name"
                                         value={part.shopName}
@@ -163,8 +207,17 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
                                         labelClassName="font-bold"
                                     />
 
+                                    <CustomDropdownInputComponent
+                                        name="Part Name"
+                                        value={part.name}
+                                        dropdownClassName="w-[100%]"
+                                        options={partNameOptions}
+                                        onChange={(value) =>
+                                            handlePartChange(idx, "name", value)
+                                        }
+                                    />
 
-                                    <InputComponent
+                                    {/* <InputComponent
                                         label="Part Name"
                                         value={part.name}
                                         onChange={(e) =>
@@ -174,7 +227,7 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
                                         containerClassName="w-1/2 flex flex-col"
                                         labelClassName="font-bold"
 
-                                    />
+                                    /> */}
 
                                     <InputComponent
                                         label="Part Cost"
@@ -186,6 +239,7 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
                                         inputClassName="w-full"
                                         labelClassName="font-bold"
                                     />
+
                                     {repairData.parts.length > 1 && (
                                         <button
                                             type="button"
@@ -202,24 +256,31 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
                             {errors.parts && (
                                 <div className="text-red-500 text-sm">{errors.parts}</div>
                             )}
+
                             <PrimaryButtonComponent
                                 label="Add Part"
                                 onClick={addPart}
                                 className="bg-blue-500 text-white px-4 py-1"
                             />
+
                         </div>
+
                     </div>
+
                     <div className="mt-3 flex justify-end gap-2 p-2">
+
                         <PrimaryButtonComponent
                             label="Cancel"
                             onClick={onClose}
                             className="bg-gray-300 text-black hover:bg-gray-400 px-3 py-1"
                         />
+
                         <PrimaryButtonComponent
                             label="Accept"
                             onClick={handleSubmit}
                             className="bg-green-500 text-white hover:bg-green-600 px-3 py-1"
                         />
+                        
                     </div>
                 </div>
 
