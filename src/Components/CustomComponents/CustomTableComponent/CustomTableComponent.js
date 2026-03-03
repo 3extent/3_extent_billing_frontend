@@ -17,6 +17,7 @@ export default function CustomTableComponent({
     const [tableHeaders, setTableHeaders] = useState(headers);
     const [tableRows, setTableRows] = useState(rows);
     const [showDropdown, setShowDropdown] = useState(false);
+    const menuRef = useRef();
 
     const tableRef = useRef(null);
     const lastRowRef = useRef(null);
@@ -75,7 +76,7 @@ export default function CustomTableComponent({
                 <div className="w-full flex justify-start bg-white py-2 pl-2 top-0 z-30">
                     <div className="relative">
                         <button
-                            onClick={() => setShowDropdown(!showDropdown)}
+                            onClick={() => setShowDropdown((prev) => !prev)}
                             className="px-2 py-1 border rounded hover:bg-gray-200"
                         >
                             <i className="fa fa-ellipsis-h"></i>
