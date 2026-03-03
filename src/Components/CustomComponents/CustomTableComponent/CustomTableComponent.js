@@ -22,7 +22,6 @@ export default function CustomTableComponent({
     const tableRef = useRef(null);
     const lastRowRef = useRef(null);
     const [isAtBottom, setIsAtBottom] = useState(true);
-    const menuRef = useRef();
     useEffect(() => setTableHeaders(headers), [headers]);
     useEffect(() => setTableRows(rows), [rows]);
 
