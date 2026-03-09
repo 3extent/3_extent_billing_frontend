@@ -64,7 +64,7 @@ export default function SalesBilling() {
         setRows(updatedRows);
     };
     useEffect(() => {
-        getAllImeis();
+        // getAllImeis();
         getCustomerAllData();
     }, []);
     useEffect(() => {

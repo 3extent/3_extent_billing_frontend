@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import InputComponent from '../../CustomComponents/InputComponent/InputComponent';
-import {  STATUS_OPTIONS } from './Constants';
+import { STATUS_OPTIONS } from './Constants';
 import { apiCall, Spinner } from '../../../Util/AxiosUtils';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
 import { exportToExcel, handleBarcodePrint } from '../../../Util/Utility';
@@ -145,9 +145,11 @@ function ListOfProducts() {
 
             setRows(productFormattedRows);
             console.log('productFormattedRows: ', productFormattedRows);
+            console.log('loggedInUser: ', loggedInUser);
             const ProductsMenuItem = loggedInUser?.role?.menu_items?.find(
-                item => item.name?.name === "Products"
+                item => item.name?.name === "Products" && item.name?.level !== 1
             );
+            console.log('ProductsMenuItem: ', ProductsMenuItem);
             if (ProductsMenuItem) {
                 const showCols =
                     ProductsMenuItem.show_table_columns.map(col => col.name);
