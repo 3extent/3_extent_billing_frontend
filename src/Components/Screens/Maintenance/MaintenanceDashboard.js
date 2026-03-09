@@ -41,7 +41,7 @@ function MaintenanceDashboard() {
 
             setRows(maintenanceFormattedRows);
             const maintenanceDashboardMenuItem = loggedInUser?.role?.menu_items?.find(
-                item => item.name?.name === "Maintenance"
+                item => item.name?.name === "Maintenance"  && item.name?.level !== 1
             );
 
             if (maintenanceDashboardMenuItem) {
