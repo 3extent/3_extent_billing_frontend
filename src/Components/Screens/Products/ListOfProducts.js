@@ -146,7 +146,7 @@ function ListOfProducts() {
             setRows(productFormattedRows);
             console.log('productFormattedRows: ', productFormattedRows);
             const ProductsMenuItem = loggedInUser?.role?.menu_items?.find(
-                item => item.name?.name === "Products"
+                item => item.name?.name === "Products"  && item.name?.level !== 1
             );
             if (ProductsMenuItem) {
                 const showCols =

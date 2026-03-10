@@ -30,7 +30,7 @@ export default function DashboardSidebar({ onLogout }) {
         const parents = [];
         const parentMap = {};
 
-        menuItems.forEach(item => {
+        menuItems.map(item => {
             if (item.name?.level === 1) {
                 parentMap[item.name._id] = {
                     parent: item,
@@ -40,9 +40,9 @@ export default function DashboardSidebar({ onLogout }) {
             }
         });
 
-        menuItems.forEach(item => {
-            if (item.name?.level === 2 && item.name?.parent) {
-                const parentId = item.name.parent;
+        menuItems.map(item => {
+            if (item.name?.level === 2 && item.name?.parent?._id) {
+                const parentId = item.name.parent._id;
                 if (parentMap[parentId]) {
                     parentMap[parentId].children.push(item);
                 }
