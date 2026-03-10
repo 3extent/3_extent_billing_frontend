@@ -91,7 +91,7 @@ export default function SupplierDetails() {
             });
 
             setRows(formattedRows);
-            const supplierSubMenuItem = loggedInUser?.role?.sub_menu_items?.find(
+            const supplierSubMenuItem = loggedInUser?.role?.menu_items?.find(
                 item => item.name?.name === "Single Supplier Details"
             );
 

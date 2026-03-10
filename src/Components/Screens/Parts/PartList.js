@@ -31,7 +31,7 @@ function PartList() {
             }));
 
             setRows(partshopsRows);
-            // const partsSubMenuItem = loggedInUser?.role?.sub_menu_items?.find(
+            // const partsSubMenuItem = loggedInUser?.role?.menu_items?.find(
             //     item => item.name?.name === "Single Shop Details"
             // );
 

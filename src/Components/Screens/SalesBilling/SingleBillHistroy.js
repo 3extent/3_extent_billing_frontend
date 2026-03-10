@@ -175,7 +175,7 @@ export default function SingleBillHistory() {
                 "Sales Price": response.data.totalSalesPrice?.toLocaleString("en-IN") || 0,
                 "Purchase Price": response.data.totalPurchasePrice?.toLocaleString("en-IN") || 0,
             });
-            const singleBillingsMenuItem = loggedInUser?.role?.sub_menu_items?.find(
+            const singleBillingsMenuItem = loggedInUser?.role?.menu_items?.find(
                 item => item.name?.name === "Single Bill Details"
             );
 

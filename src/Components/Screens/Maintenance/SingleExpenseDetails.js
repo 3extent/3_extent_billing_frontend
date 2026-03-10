@@ -52,7 +52,7 @@ function SingleExpenseDetails() {
                 "Amount": Number(response.data.total_expenses_of_maintenance_criteria || 0).toLocaleString("en-IN"),
             });
             setRows(singleExpenseTitleFormattedRows);
-            const singleExpenseSubMenuItem = loggedInUser?.role?.sub_menu_items?.find(
+            const singleExpenseSubMenuItem = loggedInUser?.role?.menu_items?.find(
                 item => item.name?.name === "Single Maintenance Criteria"
             );
 

@@ -165,7 +165,7 @@ export default function SingleDraftBillHistory() {
                 ),
             }));
 
-            const singleBillingsMenuItem = loggedInUser?.role?.sub_menu_items?.find(
+            const singleBillingsMenuItem = loggedInUser?.role?.menu_items?.find(
                 item => item.name?.name === "Single Bill Details"
             );
 

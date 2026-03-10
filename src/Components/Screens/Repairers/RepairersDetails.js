@@ -72,7 +72,7 @@ export default function RepairersDetails() {
             });
             console.log("Formatted Repairer Rows:", repairedFormattedRows);
             setRows(repairedFormattedRows);
-            const repairerSubMenuItem = loggedInUser?.role?.sub_menu_items?.find(
+            const repairerSubMenuItem = loggedInUser?.role?.menu_items?.find(
                 item => item.name?.name === "Single Repairer Details"
             );
 
