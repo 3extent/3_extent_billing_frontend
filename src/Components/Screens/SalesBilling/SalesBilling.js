@@ -192,9 +192,9 @@ export default function SalesBilling() {
             }
 
 
-            const existingImeis = rows.map(row => row["IMEI NO"]);
+            const existingImeis = rows.map(row => row["IMEI Number"]);
             const newUniqueRows = productFormattedRows.filter(
-                row => !existingImeis.includes(row["IMEI NO"])
+                row => !existingImeis.includes(row["IMEI Number"])
             );
 
             if (newUniqueRows.length > 0) {
