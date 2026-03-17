@@ -31,12 +31,12 @@ function PartShop() {
     const navigateAddShop = () => {
         navigate("/addshop");
     };
-    const navigateAddPartScreen = () => {
-        navigate("/addPart")
-    }
-    const navigatePartList = () => {
-        navigate("/partList")
-    }
+    // const navigateAddPartScreen = () => {
+    //     navigate("/addPart")
+    // }
+    // const navigatePartList = () => {
+    //     navigate("/partList")
+    // }
     useEffect(() => {
         if (!selectedShop) return;
         const cash = Number(cashAmount || 0);
@@ -207,7 +207,7 @@ function PartShop() {
             <div className="flex justify-between items-center">
                 <div className="text-xl font-serif">Part Shop List</div>
                 <div className="flex gap-3">
-                    <PrimaryButtonComponent
+                    {/* <PrimaryButtonComponent
                         label="Part List"
                         icon="fa fa-plus-circle"
                         onClick={navigatePartList}
@@ -218,7 +218,7 @@ function PartShop() {
                         icon="fa fa-plus-circle"
                         buttonClassName="py-1 px-3 text-sm font-bold"
                         onClick={navigateAddPartScreen}
-                    />
+                    /> */}
                     <PrimaryButtonComponent
                         label="Add Shop"
                         icon="fa fa-plus-circle"
