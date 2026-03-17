@@ -10,21 +10,15 @@ import { toast } from "react-toastify";
 import { API_URLS } from "../../../Util/AppConst";
 import CustomPopUpComponent from "../../CustomComponents/CustomPopUpComponent/CustomPopUpComponent";
 import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
+import * as XLSX from "xlsx";
 export default function SalesBilling() {
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false);
     let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
     const [allColumns, setAllColumns] = useState([]);
     const [columns, setColumns] = useState([]);
-
     const navigate = useNavigate();
-    // const handlenavigatedraftBill = () => {
-    //     navigate("/draftbillhistroy")
-    // }
 
-    // const navigateBillingHistory = () => {
-    //     navigate("/billinghistory")
-    // }
 
     const [showPaymentPopup, setShowPaymentPopup] = useState(false);
     const [cashAmount, setCashAmount] = useState("");
@@ -38,13 +32,13 @@ export default function SalesBilling() {
     const handleDeleteRow = (imeiNumber) => {
         setRows((currentRows) => {
             const updatedRows = [...currentRows];
-            const index = updatedRows.findIndex(row => row["IMEI NO"] === imeiNumber);
+            const index = updatedRows.findIndex(row => row["IMEI Number"] === imeiNumber);
             if (index !== -1) {
                 updatedRows.splice(index, 1);
             }
             const newRows = updatedRows.map((row, index) => ({
                 ...row,
-                "Sr.No": index + 1,
+                "Serial Number": index + 1,
             }));
             return newRows;
         });
@@ -382,7 +376,7 @@ export default function SalesBilling() {
             url: API_URLS.BILLING,
             data: billsData,
             callback: (response) => draftCallback(response, navigateAfterSave),
-            setLoading:setLoading,
+            setLoading: setLoading,
         })
     };
     const handleExportToExcel = () => {
@@ -391,6 +385,146 @@ export default function SalesBilling() {
     const navigateAddCustomer = () => {
         if (rows.length > 0) handleDraftData(false);
         navigate("/addcustomer");
+    };
+
+    const handleExcelUpload = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+
+        reader.onload = (evt) => {
+            const workbook = XLSX.read(evt.target.result, { type: "binary" });
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const jsonData = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+
+            if (!jsonData.length) {
+                toast.error("Excel is empty");
+                return;
+            }
+
+            processExcelData(jsonData);
+        };
+
+        reader.readAsBinaryString(file);
+        e.target.value = null;
+    };
+
+
+    const processExcelData = (data) => {
+        const imeiList = [];
+        const rateMap = {};
+        const errors = [];
+
+        data.forEach((row, index) => {
+            const imei = String(row["IMEI Number"] || "").trim();
+            const rate = Number(row["Rate"] || 0);
+
+            if (!/^\d{15}$/.test(imei)) {
+                errors.push(`Row ${index + 1}: Invalid IMEI`);
+                return;
+            }
+
+            if (!rate || rate <= 0) {
+                errors.push(`Row ${index + 1}: Invalid Rate`);
+                return;
+            }
+
+            imeiList.push(imei);
+            rateMap[imei] = rate;
+        });
+
+        if (errors.length) {
+            toast.error(errors[0]);
+            return;
+        }
+        fetchBulkProductsOneByOne(imeiList, rateMap);
+    };
+
+    const fetchBulkProductsOneByOne = async (imeiList, rateMap) => {
+
+        let allProducts = [];
+
+        for (let i = 0; i < imeiList.length; i++) {
+
+            const imei = imeiList[i];
+
+            let url = `${API_URLS.PRODUCTS}?status=AVAILABLE,RETURN&imei_number=${imei}`;
+
+            await new Promise((resolve) => {
+                apiCall({
+                    method: "GET",
+                    url,
+                    callback: (res) => {
+                        if (res.status === 200 && res.data.products.length > 0) {
+                            allProducts = [...allProducts, ...res.data.products];
+                        } else {
+                            toast.error(`IMEI ${imei} not found`);
+                        }
+                        resolve();
+                    },
+                    setLoading
+                });
+            });
+        }
+
+        handleBulkResponse(allProducts, rateMap);
+    };
+
+    const handleBulkResponse = (products, rateMap) => {
+
+        const salesBillingsMenuItem = loggedInUser?.role?.menu_items?.find(
+            item => item.name?.name === "Sales Billing"
+        );
+
+        if (salesBillingsMenuItem) {
+            const showCols = salesBillingsMenuItem.show_table_columns.map(col => col.name);
+            const hiddenCols = salesBillingsMenuItem.hidden_dropdown_table_columns?.map(col => col.name);
+
+            setAllColumns([...showCols, ...hiddenCols]);
+            setColumns(showCols);
+            setHiddenColumns(hiddenCols);
+            setHiddenDropdownColumns(hiddenCols);
+        }
+
+        const existingImeis = new Set(rows.map(row => row["IMEI Number"]));
+
+        const newRows = products
+            .filter(product =>
+                (product.status === "AVAILABLE" || product.status === "RETURN") &&
+                !existingImeis.has(product.imei_number)
+            )
+            .map((product, index) => ({
+                "Serial Number": rows.length + index + 1,
+                "Date": moment(Number(product.created_at)).format('ll'),
+                "IMEI Number": product.imei_number,
+                "Brand": product?.model?.brand?.name || product?.brand,
+                "Model": product?.model?.name || product?.model,
+                "Rate": rateMap[product.imei_number] || product.sales_price,
+                "Purchase Price": product.purchase_price,
+                "Grade": product.grade,
+                "Accessories": product.accessories,
+                "QC Remark": product.qc_remark,
+                "Supplier": product?.supplier?.name,
+                "Purchase Price Including Expenses": product.purchase_cost_including_expenses,
+                "Status": product.status,
+                is_repaired: product.is_repaired,
+                "Actions": (
+                    <div className="flex justify-end">
+                        <div
+                            title="delete"
+                            onClick={() => handleDeleteRow(product.imei_number)}
+                            className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
+                        >
+                            <i className="fa fa-trash text-gray-700 text-sm" />
+                        </div>
+                    </div>
+                ),
+            }));
+
+        setRows(prev => [...prev, ...newRows]);
+
+        toast.success("Bulk IMEI added successfully!");
     };
     return (
         <div>
@@ -408,19 +542,7 @@ export default function SalesBilling() {
                         onClick={navigateAddCustomer}
                     />
 
-                    {/* <PrimaryButtonComponent
-                        label="Billing History"
-                        icon="fa fa-history"
-                        buttonClassName="py-1 px-3 text-[12px] font-semibold"
-                        onClick={navigateBillingHistory}
-                    />
 
-                    <PrimaryButtonComponent
-                        label="Drafted Bill"
-                        icon="fa fa-pencil-square-o"
-                        buttonClassName="py-1 px-3 text-[12px] font-semibold"
-                        onClick={handlenavigatedraftBill}
-                    /> */}
                 </div>
             </div>
 
@@ -462,12 +584,23 @@ export default function SalesBilling() {
                     />
                 </div>
 
-                <div>
+                <div className="flex gap-3">
+                    <div>
                     <PrimaryButtonComponent
                         label="Export to Excel"
                         icon="fa fa-file-excel-o"
                         onClick={handleExportToExcel}
+                        buttonClassName="mt-7"
                     />
+                    </div>
+                        <div>
+                    <InputComponent
+                        type="file"
+                        accept=".xlsx, .xls"
+                        onChange={handleExcelUpload}
+                        inputClassName="w-[300px] mb-6"
+                    />
+                    </div>
 
                 </div>
             </div>
