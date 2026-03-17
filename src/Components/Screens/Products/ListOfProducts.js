@@ -99,7 +99,7 @@ function ListOfProducts() {
                 "IMEI Number": product.imei_number,
                 "Model": typeof product.model === 'object' ? product.model.name : product.model,
                 "Brand": typeof product.brand === 'object' ? product.model.brand : product.model.brand.name,
-                "Supplier": product.supplier?.name,
+                "Supplier": typeof product.supplier === 'object' ? product.supplier.name : product.supplier,
                 "QC Remark": product.qc_remark,
                 "Sales Price": product.sales_price,
                 "Purchase Price": product.purchase_price,
