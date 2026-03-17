@@ -585,22 +585,23 @@ export default function SalesBilling() {
                 </div>
 
                 <div className="flex gap-3">
+                    
                     <div>
-                    <PrimaryButtonComponent
-                        label="Export to Excel"
-                        icon="fa fa-file-excel-o"
-                        onClick={handleExportToExcel}
-                        buttonClassName="mt-7"
-                    />
+                        <InputComponent
+                            label="Upload Excel File :"
+                            type="file"
+                            accept=".xlsx, .xls"
+                            onChange={handleExcelUpload}
+                            inputClassName="w-[300px] mb-6"
+                        />
                     </div>
-                        <div>
-                    <InputComponent
-                     label="Upload Excel File :"
-                        type="file"
-                        accept=".xlsx, .xls"
-                        onChange={handleExcelUpload}
-                        inputClassName="w-[300px] mb-6"
-                    />
+                    <div>
+                        <PrimaryButtonComponent
+                            label="Export to Excel"
+                            icon="fa fa-file-excel-o"
+                            onClick={handleExportToExcel}
+                            buttonClassName="mt-7"
+                        />
                     </div>
 
                 </div>
