@@ -595,6 +595,7 @@ export default function SalesBilling() {
                     </div>
                         <div>
                     <InputComponent
+                     label="Upload Excel File :"
                         type="file"
                         accept=".xlsx, .xls"
                         onChange={handleExcelUpload}
