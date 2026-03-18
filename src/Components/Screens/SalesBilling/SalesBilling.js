@@ -545,8 +545,27 @@ export default function SalesBilling() {
 
                 </div>
             </div>
+            <div className="flex justify-between items-center">
+                <div>
+                    <InputComponent
+                        type="file"
+                        accept=".xlsx, .xls"
+                        onChange={handleExcelUpload}
+                        inputClassName="w-[230px] "
+                    />
+                </div>
+                <div>
+                    <PrimaryButtonComponent
+                        label="Export to Excel"
+                        icon="fa fa-file-excel-o"
+                        onClick={handleExportToExcel}
+                        buttonClassName="mt-7"
+                    />
+                </div>
+            </div>
 
             <div className="flex justify-between items-center ">
+
 
                 <div className="flex items-center gap-3">
 
@@ -582,29 +601,7 @@ export default function SalesBilling() {
                         onChange={(e) => setCustomerName(e.target.value)}
                         inputClassName="w-[190px] mb-6"
                     />
-                </div>
-
-                <div className="flex gap-3">
-                    
-                    <div>
-                        <InputComponent
-                            label="Upload Excel File :"
-                            type="file"
-                            accept=".xlsx, .xls"
-                            onChange={handleExcelUpload}
-                            inputClassName="w-[300px] mb-6"
-                        />
-                    </div>
-                    <div>
-                        <PrimaryButtonComponent
-                            label="Export to Excel"
-                            icon="fa fa-file-excel-o"
-                            onClick={handleExportToExcel}
-                            buttonClassName="mt-7"
-                        />
-                    </div>
-
-                </div>
+                </div>  
             </div>
 
             <CustomTableComponent
