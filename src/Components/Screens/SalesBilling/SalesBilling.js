@@ -444,6 +444,7 @@ export default function SalesBilling() {
     const fetchBulkProductsOneByOne = async (imeiList, rateMap) => {
 
         let allProducts = [];
+         setLoading(true); 
 
         for (let i = 0; i < imeiList.length; i++) {
 
@@ -463,12 +464,13 @@ export default function SalesBilling() {
                         }
                         resolve();
                     },
-                    setLoading
+                    
                 });
             });
         }
 
         handleBulkResponse(allProducts, rateMap);
+        setLoading(false);  
     };
 
     const handleBulkResponse = (products, rateMap) => {
@@ -523,8 +525,10 @@ export default function SalesBilling() {
             }));
 
         setRows(prev => [...prev, ...newRows]);
-
-        toast.success("Bulk IMEI added successfully!");
+        toast.success("Bulk IMEI added successfully!", {
+                position: "top-center",
+                autoClose: 2000,
+            });
     };
     return (
         <div>
