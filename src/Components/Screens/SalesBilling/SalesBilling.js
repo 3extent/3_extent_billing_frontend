@@ -438,40 +438,45 @@ export default function SalesBilling() {
             toast.error(errors[0]);
             return;
         }
-        fetchBulkProductsOneByOne(imeiList, rateMap);
+        fetchBulkProductsParallel(imeiList, rateMap);
     };
 
-    const fetchBulkProductsOneByOne = async (imeiList, rateMap) => {
+   const fetchBulkProductsParallel = async (imeiList, rateMap) => {
+    setLoading(true);
 
-        let allProducts = [];
-         setLoading(true); 
+    try {
+        const requests = imeiList.map((imei) => {
+            const url = `${API_URLS.PRODUCTS}?status=AVAILABLE,RETURN&imei_number=${imei}`;
 
-        for (let i = 0; i < imeiList.length; i++) {
-
-            const imei = imeiList[i];
-
-            let url = `${API_URLS.PRODUCTS}?status=AVAILABLE,RETURN&imei_number=${imei}`;
-
-            await new Promise((resolve) => {
+            return new Promise((resolve) => {
                 apiCall({
                     method: "GET",
                     url,
                     callback: (res) => {
                         if (res.status === 200 && res.data.products.length > 0) {
-                            allProducts = [...allProducts, ...res.data.products];
+                            resolve(res.data.products);
                         } else {
                             toast.error(`IMEI ${imei} not found`);
+                            resolve([]);
                         }
-                        resolve();
                     },
-                    
                 });
             });
-        }
+        });
+
+        const results = await Promise.all(requests);
+
+        const allProducts = results.flat();
 
         handleBulkResponse(allProducts, rateMap);
-        setLoading(false);  
-    };
+
+    } catch (error) {
+        console.error("Bulk fetch error:", error);
+        toast.error("Bulk fetch failed");
+    }
+
+    setLoading(false);
+};
 
     const handleBulkResponse = (products, rateMap) => {
 
@@ -525,10 +530,6 @@ export default function SalesBilling() {
             }));
 
         setRows(prev => [...prev, ...newRows]);
-        toast.success("Bulk IMEI added successfully!", {
-                position: "top-center",
-                autoClose: 2000,
-            });
     };
     return (
         <div>
@@ -609,7 +610,7 @@ export default function SalesBilling() {
             </div>
 
             <CustomTableComponent
-                maxHeight="h-[54vh]"
+                maxHeight="h-[45vh]  !lg:h-[65vh]"
                 headers={columns}
                 rows={rows}
                 onRateChange={handleRateChange}
