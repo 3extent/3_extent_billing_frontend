@@ -5,8 +5,8 @@ import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponen
 import { GRADE_OPTIONS } from "./Constants";
 import DropdownComponent from "../../CustomComponents/DropdownComponent/DropdownComponent";
 import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
-import { apiCall } from "../../../Util/AxiosUtils";
-import { API_URLS } from "../../../Util/AppConst";
+// import { apiCall } from "../../../Util/AxiosUtils";
+// import { API_URLS } from "../../../Util/AppConst";
 export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOptions }) {
 
     const [repairData, setRepairData] = useState({
@@ -22,28 +22,28 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
     const [errors, setErrors] = useState({});
     const [partNameOptions, setPartNameOptions] = useState([]);
 
-    const getPartAllData = () => {
-        apiCall({
-            method: 'GET',
-            url: `${API_URLS.BRANDS}?status=AVAILABLE`,
-            data: {},
-            callback: getPartsCallBack,
-        })
-    };
+    // const getPartAllData = () => {
+    //     apiCall({
+    //         method: 'GET',
+    //         url: `${API_URLS.BRANDS}?status=AVAILABLE`,
+    //         data: {},
+    //         callback: getPartsCallBack,
+    //     })
+    // };
 
-    const getPartsCallBack = (response) => {
-        console.log('response: ', response);
-        if (response.status === 200) {
-            const parts = response.data.map(part => part.name);
-            setPartNameOptions(parts);
-        } else {
-            console.log("Error");
-        }
-    }
+    // const getPartsCallBack = (response) => {
+    //     console.log('response: ', response);
+    //     if (response.status === 200) {
+    //         const parts = response.data.map(part => part.name);
+    //         setPartNameOptions(parts);
+    //     } else {
+    //         console.log("Error");
+    //     }
+    // }
 
-    useEffect(() => {
-        getPartAllData();
-    }, []);
+    // useEffect(() => {
+    //     getPartAllData();
+    // }, []);
 
     useEffect(() => {
         if (repair) {
@@ -207,7 +207,7 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
                                         labelClassName="font-bold"
                                     />
 
-                                    <CustomDropdownInputComponent
+                                    {/* <CustomDropdownInputComponent
                                         name="Part Name"
                                         value={part.name}
                                         dropdownClassName="w-[100%]"
@@ -215,9 +215,9 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
                                         onChange={(value) =>
                                             handlePartChange(idx, "name", value)
                                         }
-                                    />
+                                    /> */}
 
-                                    {/* <InputComponent
+                                    <InputComponent
                                         label="Part Name"
                                         value={part.name}
                                         onChange={(e) =>
@@ -227,7 +227,7 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
                                         containerClassName="w-1/2 flex flex-col"
                                         labelClassName="font-bold"
 
-                                    /> */}
+                                    />
 
                                     <InputComponent
                                         label="Part Cost"
