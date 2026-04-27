@@ -31,9 +31,9 @@ function PartShop() {
     const navigateAddShop = () => {
         navigate("/addshop");
     };
-    // const navigateAddPartScreen = () => {
-    //     navigate("/addPart")
-    // }
+    const navigateAddPartScreen = () => {
+        navigate("/addPart")
+    }
     // const navigatePartList = () => {
     //     navigate("/partList")
     // }
@@ -212,21 +212,19 @@ function PartShop() {
                         icon="fa fa-plus-circle"
                         onClick={navigatePartList}
                         buttonClassName="py-1 px-3 text-sm font-bold"
-                    />
+                    /> */}
                     <PrimaryButtonComponent
                         label="Add Part"
                         icon="fa fa-plus-circle"
                         buttonClassName="py-1 px-3 text-sm font-bold"
                         onClick={navigateAddPartScreen}
-                    /> */}
+                    />
                     <PrimaryButtonComponent
                         label="Add Shop"
                         icon="fa fa-plus-circle"
                         onClick={navigateAddShop}
                         buttonClassName="py-1 px-3 text-sm font-bold"
                     />
-
-
                 </div>
             </div>
 

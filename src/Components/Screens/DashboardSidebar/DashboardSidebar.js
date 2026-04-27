@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 export default function DashboardSidebar({ onLogout }) {
-    
+
     const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
     const menuItems = loggedInUser?.role?.menu_items || [];
 
@@ -64,50 +64,7 @@ export default function DashboardSidebar({ onLogout }) {
         }
         navigate("/");
     };
-    // const handleMenuClick = (item) => {
-    //     const menuName = item.name?.name;
-    //     if (menuName === "Sales Billing") {
-    //         navigate("/salesbilling");
-    //     }
-    //     if (menuName === "Billing History") {
-    //         navigate("/billinghistory");
-    //     }
-    //     if (menuName === "Drafted Bills") {
-    //         navigate("/draftbillhistroy");
-    //     }
-
-    //     if (menuName === "Stock In") {
-    //         navigate("/stockin");
-    //     }
-    //     if (menuName === "Products") {
-    //         navigate("/products");
-    //     }
-    //     if (menuName === "Supplier") {
-    //         navigate("/supplier");
-    //     }
-    //     if (menuName === "Customer") {
-    //         navigate("/customer");
-    //     }
-    //     if (menuName === "Brands") {
-    //         navigate("/brands");
-    //     }
-    //     if (menuName === "Models") {
-    //         navigate("/models");
-    //     }
-    //     if (menuName === "Repair Dashboard") {
-    //         navigate("/repair");
-    //     }
-    //     if (menuName === "Repairers") {
-    //         navigate("/repairers");
-    //     }
-    //     if (menuName === "Parts Shops") {
-    //         navigate("/partshop")
-    //     }
-    //     if (menuName === "Maintenance") {
-    //         navigate("/maintenanceDashboard");
-    //     }
-
-    // }
+   
     const handleMenuClick = (item) => {
         setOpenMenu(null);
 
@@ -126,6 +83,7 @@ export default function DashboardSidebar({ onLogout }) {
         else if (menuName === "Repairers") navigate("/repairers");
         else if (menuName === "Parts Shops") navigate("/partshop");
         else if (menuName === "Maintenance") navigate("/maintenanceDashboard");
+        else if (menuName === "Parts List") navigate("/partList");
     };
 
 

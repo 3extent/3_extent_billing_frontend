@@ -5,8 +5,8 @@ import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponen
 import { GRADE_OPTIONS } from "./Constants";
 import DropdownComponent from "../../CustomComponents/DropdownComponent/DropdownComponent";
 import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
-// import { apiCall } from "../../../Util/AxiosUtils";
-// import { API_URLS } from "../../../Util/AppConst";
+import { apiCall } from "../../../Util/AxiosUtils";
+import { API_URLS } from "../../../Util/AppConst";
 export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOptions }) {
 
     const [repairData, setRepairData] = useState({
@@ -16,34 +16,31 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
         remark: repair?.repair_remark,
         qc_remark: repair?.qc_remark,
         imei: repair?.imei_number,
-        parts: [{ name: "", cost: "", shopName: "" }]
+        parts: [{ name: "", cost: "", shopName: "", autoFilled: false }]
     });
 
     const [errors, setErrors] = useState({});
     const [partNameOptions, setPartNameOptions] = useState([]);
 
-    // const getPartAllData = () => {
-    //     apiCall({
-    //         method: 'GET',
-    //         url: `${API_URLS.BRANDS}?status=AVAILABLE`,
-    //         data: {},
-    //         callback: getPartsCallBack,
-    //     })
-    // };
+    const getPartAllData = () => {
+        apiCall({
+            method: "GET",
+            url: API_URLS.PART,
+            data: {},
+            callback: getPartsCallBack,
+        });
+    };
 
-    // const getPartsCallBack = (response) => {
-    //     console.log('response: ', response);
-    //     if (response.status === 200) {
-    //         const parts = response.data.map(part => part.name);
-    //         setPartNameOptions(parts);
-    //     } else {
-    //         console.log("Error");
-    //     }
-    // }
+    const getPartsCallBack = (response) => {
+        if (response.status === 200) {
+            const partData = response.data.parts || [];
+            setPartNameOptions(partData);
+        }
+    };
 
-    // useEffect(() => {
-    //     getPartAllData();
-    // }, []);
+    useEffect(() => {
+        getPartAllData();
+    }, []);
 
     useEffect(() => {
         if (repair) {
@@ -53,9 +50,7 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
                 grade: repair.grade || "",
                 remark: repair.repair_remark || "",
                 qc_remark: repair?.qc_remark || "",
-                parts: [{ name: "", cost: "", shopName: "" }]
-
-
+                parts: [{ name: "", cost: "", shopName: "", autoFilled: false }]
             });
             setErrors({});
         }
@@ -99,19 +94,48 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
     };
 
     const handlePartChange = (index, field, value) => {
-        const updatedParts = [...repairData.parts];
-        updatedParts[index][field] = value;
-        setRepairData({ ...repairData, parts: updatedParts });
-        if (errors.parts) {
-            setErrors({ ...errors, parts: "" });
+        const updated = [...repairData.parts];
+
+        if (field === "name") {
+
+            const selected = partNameOptions.find(
+                p => p.part_name === value
+            );
+
+            updated[index].name = value;
+
+
+            if (!value) {
+                updated[index].cost = "";
+                updated[index].autoFilled = false;
+            }
+
+            else {
+                updated[index].cost = selected?.part_cost || "";
+                updated[index].autoFilled = true;
+            }
+
+        } else if (field === "cost") {
+
+            updated[index].cost = value;
+            updated[index].autoFilled = false;
+
+        } else {
+            updated[index][field] = value;
         }
+
+        setRepairData(prev => ({ ...prev, parts: updated }));
     };
 
+    
     const addPart = () => {
-        setRepairData({
-            ...repairData,
-            parts: [...repairData.parts, { name: "", cost: "", shopName: "" }]
-        });
+        setRepairData(prev => ({
+            ...prev,
+            parts: [
+                ...prev.parts,
+                { name: "", cost: "", shopName: "", autoFilled: false }
+            ]
+        }));
     };
 
     const removePart = (index) => {
@@ -123,7 +147,7 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
         if (!handleValidation()) return;
         onSubmit({ ...repairData });
     };
-    
+
     if (!open) return null;
 
     return (
@@ -207,17 +231,17 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
                                         labelClassName="font-bold"
                                     />
 
-                                    {/* <CustomDropdownInputComponent
+                                    <CustomDropdownInputComponent
                                         name="Part Name"
-                                        value={part.name}
-                                        dropdownClassName="w-[100%]"
-                                        options={partNameOptions}
+                                        value={part.name || ""}
+                                        dropdownClassName="w-[100%]"    
+                                        options={partNameOptions.map(p => p.part_name)}
                                         onChange={(value) =>
                                             handlePartChange(idx, "name", value)
                                         }
-                                    /> */}
+                                    />
 
-                                    <InputComponent
+                                    {/* <InputComponent
                                         label="Part Name"
                                         value={part.name}
                                         onChange={(e) =>
@@ -227,12 +251,13 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
                                         containerClassName="w-1/2 flex flex-col"
                                         labelClassName="font-bold"
 
-                                    />
+                                    /> */}
 
                                     <InputComponent
                                         label="Part Cost"
                                         numericOnly
                                         value={part.cost}
+                                        disabled={part.autoFilled && part.name !== ""}
                                         onChange={(e) =>
                                             handlePartChange(idx, "cost", e.target.value)
                                         }
@@ -280,7 +305,7 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
                             onClick={handleSubmit}
                             className="bg-green-500 text-white hover:bg-green-600 px-3 py-1"
                         />
-                        
+
                     </div>
                 </div>
 
