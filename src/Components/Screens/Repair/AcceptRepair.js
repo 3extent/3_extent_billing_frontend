@@ -16,16 +16,22 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
         remark: repair?.repair_remark,
         qc_remark: repair?.qc_remark,
         imei: repair?.imei_number,
-        parts: [{ name: "", cost: "", shopName: "", autoFilled: false }]
+        parts: [{ name: "", cost: "", shopName: "", autoFilled: false, partOptions: [] }]
     });
 
     const [errors, setErrors] = useState({});
     const [partNameOptions, setPartNameOptions] = useState([]);
 
-    const getPartAllData = () => {
+    const getPartAllData = (shopName) => {
+        let url = API_URLS.PART;
+
+        if (shopName) {
+            url += `?shop=${shopName}&status=AVAILABLE`;
+        }
+
         apiCall({
             method: "GET",
-            url: API_URLS.PART,
+            url: url,
             data: {},
             callback: getPartsCallBack,
         });
@@ -37,10 +43,6 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
             setPartNameOptions(partData);
         }
     };
-
-    useEffect(() => {
-        getPartAllData();
-    }, []);
 
     useEffect(() => {
         if (repair) {
@@ -96,38 +98,41 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
     const handlePartChange = (index, field, value) => {
         const updated = [...repairData.parts];
 
-        if (field === "name") {
+        if (field === "shopName") {
+            updated[index].shopName = value;
 
+            getPartAllData(value);
+
+            updated[index].name = "";
+            updated[index].cost = "";
+            updated[index].autoFilled = false;
+        }
+
+        else if (field === "name") {
             const selected = partNameOptions.find(
                 p => p.part_name === value
             );
 
             updated[index].name = value;
 
-
             if (!value) {
                 updated[index].cost = "";
                 updated[index].autoFilled = false;
-            }
-
-            else {
+            } else {
                 updated[index].cost = selected?.part_cost || "";
                 updated[index].autoFilled = true;
             }
+        }
 
-        } else if (field === "cost") {
-
+        else if (field === "cost") {
             updated[index].cost = value;
             updated[index].autoFilled = false;
-
-        } else {
-            updated[index][field] = value;
         }
 
         setRepairData(prev => ({ ...prev, parts: updated }));
-    };
+    }
 
-    
+
     const addPart = () => {
         setRepairData(prev => ({
             ...prev,
@@ -234,7 +239,7 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
                                     <CustomDropdownInputComponent
                                         name="Part Name"
                                         value={part.name || ""}
-                                        dropdownClassName="w-[100%]"    
+                                        dropdownClassName="w-[100%]"
                                         options={partNameOptions.map(p => p.part_name)}
                                         onChange={(value) =>
                                             handlePartChange(idx, "name", value)

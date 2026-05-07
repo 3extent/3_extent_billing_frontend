@@ -1,4 +1,4 @@
-// const BASE_URL = "https://three-extent-billing-backend-f1ul.onrender.com/api";
+// const BASE_URL = "https://three-extent-billing-backend-f1ul.onrender.com/api";      
 const BASE_URL = "http://localhost:5000/api";
 export const API_URLS = {
   BRANDS: `${BASE_URL}/brands`,

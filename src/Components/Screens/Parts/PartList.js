@@ -2,11 +2,12 @@ import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
 import { useCallback, useEffect, useState } from "react";
-import { apiCall } from "../../../Util/AxiosUtils";
+import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { API_URLS } from "../../../Util/AppConst";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import DropdownComponent from "../../CustomComponents/DropdownComponent/DropdownComponent";
+import { PARTS_STATUS } from "./Constants";
 
 function PartList() {
     const navigate = useNavigate();
@@ -15,6 +16,7 @@ function PartList() {
     const [columns, setColumns] = useState([]);
     const [shopName, setShopName] = useState();
     const [shopOptions, setShopOptions] = useState([])
+    const [status, setStatus] = useState([]);
 
     let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
     const handleback = () => {
@@ -52,15 +54,18 @@ function PartList() {
         }
     };
 
-    const getPartshopsDetails = useCallback(({ shopName } = {}) => {
+    const getPartshopsDetails = useCallback(({ shopName, status } = {}) => {
+         setLoading(true); 
         let url = API_URLS.PART;
         if (shopName) url += `?shop=${shopName}`;
+        if (status) {
+            url += `&status=${status}`;
+        };
         apiCall({
             method: "GET",
             url: url,
             data: {},
             callback: getPartshopsDetailsCallback,
-            // setLoading:setloading,
         });
     }, [getPartshopsDetailsCallback]);
 
@@ -84,15 +89,17 @@ function PartList() {
         }
     }
 
-    const handleSearchFilter = () => getPartshopsDetails({ shopName });
+    const handleSearchFilter = () => getPartshopsDetails({ shopName, status });
 
     const handleResetFilter = () => {
         setShopName("");
+        setStatus("");
         getPartshopsDetails();
     };
 
     return (
         <div>
+            {loading && <Spinner />}
             <div>
                 <CustomHeaderComponent
                     name="Shop Part List"
@@ -107,6 +114,13 @@ function PartList() {
                         value={shopName}
                         onChange={(e) => setShopName(e.target.value)}
                         options={shopOptions}
+                        className="mt-3 w-[190px]"
+                    />
+                    <DropdownComponent
+                        placeholder="Select Status"
+                        value={status}
+                        onChange={(e) => setStatus(e.target.value)}
+                        options={PARTS_STATUS}
                         className="mt-3 w-[190px]"
                     />
 
