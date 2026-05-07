@@ -246,18 +246,6 @@ export default function AcceptRepair({ open, repair, onClose, onSubmit, shopOpti
                                         }
                                     />
 
-                                    {/* <InputComponent
-                                        label="Part Name"
-                                        value={part.name}
-                                        onChange={(e) =>
-                                            handlePartChange(idx, "name", e.target.value)
-                                        }
-                                        inputClassName="w-full"
-                                        containerClassName="w-1/2 flex flex-col"
-                                        labelClassName="font-bold"
-
-                                    /> */}
-
                                     <InputComponent
                                         label="Part Cost"
                                         numericOnly
