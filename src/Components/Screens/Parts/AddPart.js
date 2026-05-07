@@ -95,6 +95,7 @@ function AddPart() {
         });
     };
     const getModelsCallBack = (response) => {
+        setLoading(false)
         console.log('response: ', response);
         if (response.status === 200) {
             const models = response.data.map(model => model.name);
@@ -105,6 +106,7 @@ function AddPart() {
         }
     }
     const getModelsAllData = useCallback(() => {
+        setLoading(true)
         apiCall({
             method: 'GET',
             url: API_URLS.MODEL,
