@@ -55,12 +55,16 @@ function PartList() {
     };
 
     const getPartshopsDetails = useCallback(({ shopName, status } = {}) => {
-         setLoading(true); 
+        setLoading(true);
         let url = API_URLS.PART;
-        if (shopName) url += `?shop=${shopName}`;
-        if (status) {
-            url += `&status=${status}`;
-        };
+        
+        if (shopName && status) {
+            url += `?shop=${shopName}&status=${status}`;
+        } else if (shopName) {
+            url += `?shop=${shopName}`;
+        } else if (status) {
+            url += `?status=${status}`;
+        }
         apiCall({
             method: "GET",
             url: url,
