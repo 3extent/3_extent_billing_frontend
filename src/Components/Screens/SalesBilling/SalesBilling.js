@@ -281,6 +281,7 @@ export default function SalesBilling() {
                 response.data.billing.net_total,
                 response.data.billing.c_gst,
                 response.data.billing.s_gst,
+                response.billing.updated_at
             );
         } else {
             const errorMsg = response?.data?.error || "Something went wrong while saving bill.";

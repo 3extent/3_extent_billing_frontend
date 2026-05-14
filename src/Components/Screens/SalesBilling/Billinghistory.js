@@ -162,7 +162,8 @@ function Billinghistory({ isDraft = false }) {
                                     bill.customer?.firm_name,
                                     bill.net_total,
                                     bill.c_gst,
-                                    bill.s_gst
+                                    bill.s_gst,
+                                    bill.updated_at
                                 );
                             }}
                         />
