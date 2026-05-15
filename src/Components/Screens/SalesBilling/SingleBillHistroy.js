@@ -327,6 +327,7 @@ export default function SingleBillHistory() {
             customerInfo.netTotal,
             customerInfo.cGst,
             customerInfo.sGst,
+            customerInfo.date
         );
     }
 
