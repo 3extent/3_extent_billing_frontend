@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
-import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
 import { ACCESSORIES_OPTIONS, GRADE_OPTIONS, STATUS_OPTIONS, } from './Constants';
 import CustomDropdownInputComponent from '../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent';
@@ -9,8 +8,10 @@ import { handleBarcodePrint } from '../../../Util/Utility';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { API_URLS } from '../../../Util/AppConst';
+import DropdownComponent from '../../CustomComponents/DropdownComponent/DropdownComponent';
 function SingleProductStockIn() {
   const [modelOptions, setModelOptions] = useState([]);
+  const [allModels, setAllModels] = useState([]);
   const [brandOptions, setBrandOptions] = useState([]);
   const [loading, setLoading] = useState(false)
   const [supplierNameOptions, setSupplierNameOPtions] = useState([]);
@@ -29,7 +30,7 @@ function SingleProductStockIn() {
     supplier_name: '',
     qc_remark: '',
     status: STATUS_OPTIONS[0] || ''
-  });       
+  });
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setErrors((prev) => ({ ...prev, [name]: "" }));
@@ -39,9 +40,19 @@ function SingleProductStockIn() {
     setErrors(prev => ({ ...prev, model_name: "" }));
     setProductData(productData => ({ ...productData, model_name: value }));
   };
-  const handleBrandProductData = (value) => {
+  const handleBrandProductData = (brandName) => {
     setErrors(prev => ({ ...prev, brand_name: "" }));
-    setProductData(productData => ({ ...productData, brand_name: value }));
+    setProductData(productData => ({
+      ...productData,
+      brand_name: brandName,
+      model_name: ""
+    }));
+
+    const filteredModels = allModels
+      .filter(model => model.brand?.name === brandName)
+      .map(model => model.name);
+
+    setModelOptions(filteredModels);
   };
 
   const stockInCallback = (response) => {
@@ -78,9 +89,7 @@ function SingleProductStockIn() {
   const getModelsCallBack = (response) => {
     console.log('response: ', response);
     if (response.status === 200) {
-      const models = response.data.map(model => model.name);
-      setModelOptions(models);
-      console.log('models: ', models);
+      setAllModels(response.data);
     } else {
       console.log("Error");
     }
@@ -276,7 +285,7 @@ function SingleProductStockIn() {
         labelClassName="font-serif font-bold"
         error={errors.model_name}
       />
-      <DropdownCompoent
+      <DropdownComponent
         label="Grade"
         name="grade"
         options={GRADE_OPTIONS}
@@ -347,7 +356,7 @@ function SingleProductStockIn() {
         value={productData.qc_remark}
         onChange={handleInputChange}
       />
-      <DropdownCompoent
+      <DropdownComponent
         label="Supplier"
         name="supplier_name"
         options={supplierNameOptions}
@@ -358,7 +367,7 @@ function SingleProductStockIn() {
         labelClassName="font-serif font-bold"
         error={errors.supplier_name}
       />
-      <DropdownCompoent
+      <DropdownComponent
         label="Accessories"
         name="accessories"
         options={ACCESSORIES_OPTIONS}

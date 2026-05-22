@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { apiCall } from "../../../Util/AxiosUtils";
 import { API_URLS } from "../../../Util/AppConst";
-import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import { Spinner } from "../../../Util/AxiosUtils";
 import { REPAIRER_DETAILS_HEADERS, STATUS_OPTIONS } from "../Repair/Constants";
@@ -10,7 +9,8 @@ import { toast } from "react-toastify";
 import moment from "moment";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
-import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
+import DropdownComponent from "../../CustomComponents/DropdownComponent/DropdownComponent";
+import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
 
 export default function RepairersDetails() {
     const navigate = useNavigate();
@@ -27,10 +27,12 @@ export default function RepairersDetails() {
     const [to, setTo] = useState(toDate);
     const [selectAllDates, setSelectAllDates] = useState(false);
     const [showTotalRow, setShowTotalRow] = useState(false);
-
+    let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
+    const [columns, setColumns] = useState([]);
     const handleBack = () => {
         navigate(-1);
     };
+
 
     const handleDateChange = (value, setDate) => {
         const today = moment().format('YYYY-MM-DD');
@@ -45,13 +47,13 @@ export default function RepairersDetails() {
         if (response.status === 200) {
             const repairer = response.data.user;
             const repairedFormattedRows = repairer.products.map((item) => ({
-                "Repair Started": item.repair_started_at
+                "Repair Started Date": item.repair_started_at
                     ? moment(item.repair_started_at).format("ll")
                     : "-",
-                "Repair Completed": item.repair_completed_at
+                "Repair Completed Date": item.repair_completed_at
                     ? moment(item.repair_completed_at).format("ll")
                     : "-",
-                "IMEI NO": item.imei_number,
+                "IMEI Number": item.imei_number,
                 Model: item.model.name,
                 "Purchase Price": item.purchase_price,
                 "Part Cost": item.repair_parts?.reduce(
@@ -70,6 +72,15 @@ export default function RepairersDetails() {
             });
             console.log("Formatted Repairer Rows:", repairedFormattedRows);
             setRows(repairedFormattedRows);
+            const repairerSubMenuItem = loggedInUser?.role?.menu_items?.find(
+                item => item.name?.name === "Single Repairer Details"
+            );
+
+            if (repairerSubMenuItem) {
+                const headers = repairerSubMenuItem.show_table_columns.map(col => col.name);
+                setColumns(headers);
+            }
+
         } else {
             const errorMsg = response?.data?.error || "Failed to fetch repairer details";
             toast.error(errorMsg, {
@@ -96,7 +107,6 @@ export default function RepairersDetails() {
         }
         apiCall({
             method: "GET",
-            // url: `${API_URLS.USERS}/${repairer_id}`,
             url: url,
             data: {},
             callback: getRepairerDetailsCallback,
@@ -122,7 +132,7 @@ export default function RepairersDetails() {
         <div>
             {loading && <Spinner />}
             <CustomHeaderComponent
-                name="Repairer Details"
+                name="Single Repairer Details"
                 label="Back"
                 icon="fa fa-arrow-left"
                 onClick={handleBack}
@@ -136,7 +146,7 @@ export default function RepairersDetails() {
                     onChange={(e) => setIMEINumber(e.target.value)}
                     className="border p-2 rounded w-[180px]"
                 />
-                <DropdownCompoent
+                <DropdownComponent
                     placeholder="Select status"
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
@@ -178,12 +188,13 @@ export default function RepairersDetails() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <CustomTableCompoent
+            <CustomTableComponent
                 maxHeight="h-[60vh]"
-                headers={REPAIRER_DETAILS_HEADERS}
+                // headers={REPAIRER_DETAILS_HEADERS}
                 rows={rows}
                 totalRow={totalRow}
                 showTotalRow={showTotalRow}
+                headers={columns}
             />
             <div className="flex justify-end">
                 <button className="rounded-full" onClick={() => setShowTotalRow(!showTotalRow)}>

@@ -1,82 +1,47 @@
 import { useEffect, useState } from "react";
-import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
-import { SALESBILLING_COLOUMNS } from "./Constants";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
 import { useNavigate } from "react-router-dom";
 import { exportToExcel, generateAndSavePdf } from "../../../Util/Utility";
-import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
 import moment from "moment";
 import { toast } from "react-toastify";
 import { API_URLS } from "../../../Util/AppConst";
+import CustomPopUpComponent from "../../CustomComponents/CustomPopUpComponent/CustomPopUpComponent";
+import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
+import * as XLSX from "xlsx";
 export default function SalesBilling() {
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [hiddenColumns, setHiddenColumns] = useState([
-        "Purchase Price",
-        "QC Remark",
-        "Supplier Name",
-        "Purchase Cost Including Expenses",
-    ]);
-    const [dynamicHeaders, setDynamicHeaders] = useState(() => {
-        return SALESBILLING_COLOUMNS.filter(
-            (col) => !["Purchase Price", "QC Remark", "Supplier Name", "Purchase Cost Including Expenses"].includes(col)
-        );
-    });
+    let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
+    const [allColumns, setAllColumns] = useState([]);
+    const [columns, setColumns] = useState([]);
     const navigate = useNavigate();
-    const handlenavigatedraftBill = () => {
-        navigate("/draftbillhistroy")
-    }
-    const navigateBillingHistory = () => {
-        navigate("/billinghistory")
-    }
+
+
     const [showPaymentPopup, setShowPaymentPopup] = useState(false);
     const [cashAmount, setCashAmount] = useState("");
     const [onlineAmount, setOnlineAmount] = useState("");
     const [card, setCard] = useState("");
     const [totalAmount, setTotalAmount] = useState(0);
     const [pendingAmount, setPendingAmount] = useState(0);
-    const toggleableColumns = ["Purchase Price", "QC Remark", "Supplier Name", "Purchase Cost Including Expenses"];
+    const [hiddenDropdownColumns, setHiddenDropdownColumns] = useState([]);
+    const [hiddenColumns, setHiddenColumns] = useState([]);
+
     const handleDeleteRow = (imeiNumber) => {
         setRows((currentRows) => {
             const updatedRows = [...currentRows];
-            const index = updatedRows.findIndex(row => row["IMEI NO"] === imeiNumber);
+            const index = updatedRows.findIndex(row => row["IMEI Number"] === imeiNumber);
             if (index !== -1) {
                 updatedRows.splice(index, 1);
             }
             const newRows = updatedRows.map((row, index) => ({
                 ...row,
-                "Sr.No": index + 1,
+                "Serial Number": index + 1,
             }));
             return newRows;
         });
-    };
-
-    const toggleColumn = (columnName) => {
-        if (!toggleableColumns.includes(columnName)) return;
-        if (dynamicHeaders.includes(columnName)) {
-            setDynamicHeaders(dynamicHeaders.filter(col => col !== columnName));
-            setHiddenColumns([...hiddenColumns, columnName]);
-        } else {
-            let newHeaders = [...dynamicHeaders];
-            if (columnName === "Purchase Price") {
-                const rateIndex = newHeaders.indexOf("Rate");
-                if (rateIndex !== -1) newHeaders.splice(rateIndex + 1, 0, "Purchase Price");
-                else newHeaders.push("Purchase Price");
-            }
-            if (columnName === "Supplier Name" || columnName === "QC Remark" || columnName === "Purchase Cost Including Expenses") {
-                const actionIndex = newHeaders.indexOf("Action");
-                if (actionIndex !== +1) {
-                    newHeaders.splice(actionIndex, 0, columnName);
-                } else {
-                    newHeaders.push(columnName);
-                }
-            }
-            setDynamicHeaders(newHeaders);
-            setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
-        };
     };
 
     const [imeiOptions, setImeiOptions] = useState([]);
@@ -175,9 +140,9 @@ export default function SalesBilling() {
                 return;
             }
             const productFormattedRows = response.data.products.map((product, index) => ({
-                "Sr.No": rows.length + index + 1,
+                "Serial Number": rows.length + index + 1,
                 "Date": moment(Number(product.created_at)).format('ll'),
-                "IMEI NO": product.imei_number,
+                "IMEI Number": product.imei_number,
                 "Brand": product?.model.brand?.name || product?.brand,
                 "Model": product?.model?.name || product?.model,
                 "Rate": product.sales_price,
@@ -185,11 +150,11 @@ export default function SalesBilling() {
                 "Grade": product.grade,
                 "Accessories": product.accessories,
                 "QC Remark": product.qc_remark,
-                "Supplier Name": product?.supplier?.name,
-                "Purchase Cost Including Expenses": product.purchase_cost_including_expenses,
+                "Supplier": product?.supplier?.name,
+                "Purchase Price Including Expenses": product.purchase_cost_including_expenses,
                 "Status": product.status,
                 is_repaired: product.is_repaired,
-                "Action": (
+                "Actions": (
                     <div className="flex justify-end">
                         <div
                             title="delete"
@@ -203,10 +168,29 @@ export default function SalesBilling() {
 
             }));
             console.log('productFormattedRows: ', productFormattedRows);
-            const existingImeis = rows.map(row => row["IMEI NO"]);
-            const newUniqueRows = productFormattedRows.filter(
-                row => !existingImeis.includes(row["IMEI NO"])
+            const salesBillingsMenuItem = loggedInUser?.role?.menu_items?.find(
+                item => item.name?.name === "Sales Billing"
             );
+
+            if (salesBillingsMenuItem) {
+                const showCols =
+                    salesBillingsMenuItem.show_table_columns.map(col => col.name);
+
+                const hiddenCols =
+                    salesBillingsMenuItem.hidden_dropdown_table_columns?.map(col => col.name);
+
+                setAllColumns([...showCols, ...hiddenCols]); //  all
+                setColumns(showCols);                        //  only visible
+                setHiddenColumns(hiddenCols);                //  hidden
+                setHiddenDropdownColumns(hiddenCols);        // checkbox list
+            }
+
+
+            const existingImeis = rows.map(row => row["IMEI Number"]);
+            const newUniqueRows = productFormattedRows.filter(
+                row => !existingImeis.includes(row["IMEI Number"])
+            );
+
             if (newUniqueRows.length > 0) {
                 setRows(Rows => [...Rows, ...newUniqueRows]);
             }
@@ -215,6 +199,43 @@ export default function SalesBilling() {
             console.log("Error");
         }
     }
+
+    const toggleColumn = (columnName) => {
+
+        setColumns(columns => {
+
+            if (columns.includes(columnName)) {
+                return columns.filter(col => col !== columnName);
+            }
+
+            let newColumns = [...columns];
+
+            if (columnName === "Purchase Price") {
+                const rateIndex = newColumns.indexOf("Rate");
+                if (rateIndex !== -1) {
+                    newColumns.splice(rateIndex + 1, 0, columnName);
+                }
+            }
+
+            if (columnName === "Supplier" || columnName === "QC Remark" || columnName === "Purchase Price Including Expenses") {
+                const actionIndex = newColumns.indexOf("Actions");
+                if (actionIndex !== -1) {
+                    newColumns.splice(actionIndex, 0, columnName);
+                } else {
+                    newColumns.push(columnName);
+                }
+            }
+
+            return newColumns;
+        });
+
+        setHiddenColumns(columns =>
+            columns.includes(columnName)
+                ? columns.filter(col => col !== columnName)
+                : [...columns, columnName]
+        );
+    };
+
     const getsalesbillingAllData = () => {
         let url = `${API_URLS.PRODUCTS}?status=AVAILABLE,RETURN`;
         if (selectedImei) {
@@ -260,6 +281,7 @@ export default function SalesBilling() {
                 response.data.billing.net_total,
                 response.data.billing.c_gst,
                 response.data.billing.s_gst,
+                response.billing.updated_at
             );
         } else {
             const errorMsg = response?.data?.error || "Something went wrong while saving bill.";
@@ -291,7 +313,7 @@ export default function SalesBilling() {
             customer_name: customerName,
             contact_number: selectedContactNo,
             products: rows.map((row) => ({
-                imei_number: row["IMEI NO"],
+                imei_number: row["IMEI Number"],
                 rate: row["Rate"],
             })),
             paid_amount: [
@@ -338,7 +360,7 @@ export default function SalesBilling() {
             customer_name: customerName,
             contact_number: selectedContactNo,
             products: rows.map((row) => ({
-                imei_number: row["IMEI NO"],
+                imei_number: row["IMEI Number"],
                 rate: row["Rate"],
             })),
             paid_amount: [
@@ -354,21 +376,170 @@ export default function SalesBilling() {
             method: 'POST',
             url: API_URLS.BILLING,
             data: billsData,
-            callback: (response) => draftCallback(response, navigateAfterSave)
+            callback: (response) => draftCallback(response, navigateAfterSave),
+            setLoading: setLoading,
         })
     };
     const handleExportToExcel = () => {
-        exportToExcel(rows, "salesbillingData.xlsx", null, dynamicHeaders);
+        exportToExcel(rows, "salesbillingData.xlsx", null, columns);
     };
     const navigateAddCustomer = () => {
         if (rows.length > 0) handleDraftData(false);
         navigate("/addcustomer");
     };
+
+    const handleExcelUpload = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+
+        reader.onload = (evt) => {
+            const workbook = XLSX.read(evt.target.result, { type: "binary" });
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const jsonData = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+
+            if (!jsonData.length) {
+                toast.error("Excel is empty");
+                return;
+            }
+
+            processExcelData(jsonData);
+        };
+
+        reader.readAsBinaryString(file);
+        e.target.value = null;
+    };
+
+
+    const processExcelData = (data) => {
+        const imeiList = [];
+        const rateMap = {};
+        const errors = [];
+
+        data.forEach((row, index) => {
+            const imei = String(row["IMEI Number"] || "").trim();
+            const rate = Number(row["Rate"] || 0);
+
+            if (!/^\d{15}$/.test(imei)) {
+                errors.push(`Row ${index + 1}: Invalid IMEI`);
+                return;
+            }
+
+            if (!rate || rate <= 0) {
+                errors.push(`Row ${index + 1}: Invalid Rate`);
+                return;
+            }
+
+            imeiList.push(imei);
+            rateMap[imei] = rate;
+        });
+
+        if (errors.length) {
+            toast.error(errors[0]);
+            return;
+        }
+        fetchBulkProductsParallel(imeiList, rateMap);
+    };
+
+   const fetchBulkProductsParallel = async (imeiList, rateMap) => {
+    setLoading(true);
+
+    try {
+        const requests = imeiList.map((imei) => {
+            const url = `${API_URLS.PRODUCTS}?status=AVAILABLE,RETURN&imei_number=${imei}`;
+
+            return new Promise((resolve) => {
+                apiCall({
+                    method: "GET",
+                    url,
+                    callback: (res) => {
+                        if (res.status === 200 && res.data.products.length > 0) {
+                            resolve(res.data.products);
+                        } else {
+                            toast.error(`IMEI ${imei} not found`);
+                            resolve([]);
+                        }
+                    },
+                });
+            });
+        });
+
+        const results = await Promise.all(requests);
+
+        const allProducts = results.flat();
+
+        handleBulkResponse(allProducts, rateMap);
+
+    } catch (error) {
+        console.error("Bulk fetch error:", error);
+        toast.error("Bulk fetch failed");
+    }
+
+    setLoading(false);
+};
+
+    const handleBulkResponse = (products, rateMap) => {
+
+        const salesBillingsMenuItem = loggedInUser?.role?.menu_items?.find(
+            item => item.name?.name === "Sales Billing"
+        );
+
+        if (salesBillingsMenuItem) {
+            const showCols = salesBillingsMenuItem.show_table_columns.map(col => col.name);
+            const hiddenCols = salesBillingsMenuItem.hidden_dropdown_table_columns?.map(col => col.name);
+
+            setAllColumns([...showCols, ...hiddenCols]);
+            setColumns(showCols);
+            setHiddenColumns(hiddenCols);
+            setHiddenDropdownColumns(hiddenCols);
+        }
+
+        const existingImeis = new Set(rows.map(row => row["IMEI Number"]));
+
+        const newRows = products
+            .filter(product =>
+                (product.status === "AVAILABLE" || product.status === "RETURN") &&
+                !existingImeis.has(product.imei_number)
+            )
+            .map((product, index) => ({
+                "Serial Number": rows.length + index + 1,
+                "Date": moment(Number(product.created_at)).format('ll'),
+                "IMEI Number": product.imei_number,
+                "Brand": product?.model?.brand?.name || product?.brand,
+                "Model": product?.model?.name || product?.model,
+                "Rate": rateMap[product.imei_number] || product.sales_price,
+                "Purchase Price": product.purchase_price,
+                "Grade": product.grade,
+                "Accessories": product.accessories,
+                "QC Remark": product.qc_remark,
+                "Supplier": product?.supplier?.name,
+                "Purchase Price Including Expenses": product.purchase_cost_including_expenses,
+                "Status": product.status,
+                is_repaired: product.is_repaired,
+                "Actions": (
+                    <div className="flex justify-end">
+                        <div
+                            title="delete"
+                            onClick={() => handleDeleteRow(product.imei_number)}
+                            className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 cursor-pointer"
+                        >
+                            <i className="fa fa-trash text-gray-700 text-sm" />
+                        </div>
+                    </div>
+                ),
+            }));
+
+        setRows(prev => [...prev, ...newRows]);
+    };
     return (
         <div>
             {loading && <Spinner />}
+
             <div className="flex justify-between items-center">
+
                 <div className="text-xl font-serif">Sales Billing</div>
+
                 <div className="flex gap-4">
                     <PrimaryButtonComponent
                         label="Add Customer"
@@ -376,22 +547,34 @@ export default function SalesBilling() {
                         buttonClassName="py-1 px-3 text-[12px] font-semibold"
                         onClick={navigateAddCustomer}
                     />
-                    <PrimaryButtonComponent
-                        label="Billing History"
-                        icon="fa fa-history"
-                        buttonClassName="py-1 px-3 text-[12px] font-semibold"
-                        onClick={navigateBillingHistory}
+
+
+                </div>
+            </div>
+            <div className="flex justify-between items-center">
+                <div>
+                    <InputComponent
+                        type="file"
+                        accept=".xlsx, .xls"
+                        onChange={handleExcelUpload}
+                        inputClassName="w-[230px] "
                     />
+                </div>
+                <div>
                     <PrimaryButtonComponent
-                        label="Drafted Bill"
-                        icon="fa fa-pencil-square-o"
-                        buttonClassName="py-1 px-3 text-[12px] font-semibold"
-                        onClick={handlenavigatedraftBill}
+                        label="Export to Excel"
+                        icon="fa fa-file-excel-o"
+                        onClick={handleExportToExcel}
+                        buttonClassName="mt-7"
                     />
                 </div>
             </div>
+
             <div className="flex justify-between items-center ">
+
+
                 <div className="flex items-center gap-3">
+
                     <CustomDropdownInputComponent
                         label="IMEI No :"
                         dropdownClassName="w-[190px] z-[999]"
@@ -406,6 +589,7 @@ export default function SalesBilling() {
                                 : []
                         }
                     />
+
                     <CustomDropdownInputComponent
                         dropdownClassName="w-[190px]  z-[999]"
                         placeholder="Select Contact No"
@@ -415,6 +599,7 @@ export default function SalesBilling() {
                         onChange={handleContactNoChange}
                         options={contactNoOptions}
                     />
+
                     <InputComponent
                         type="text"
                         placeholder="Enter Customer Name"
@@ -422,46 +607,42 @@ export default function SalesBilling() {
                         onChange={(e) => setCustomerName(e.target.value)}
                         inputClassName="w-[190px] mb-6"
                     />
-                </div>
-                <div>
-                    <PrimaryButtonComponent
-                        label="Export to Excel"
-                        icon="fa fa-file-excel-o"
-                        onClick={handleExportToExcel}
-
-                    />
-                </div>
+                </div>  
             </div>
-            <CustomTableCompoent
-                maxHeight="h-[54vh]"
-                headers={dynamicHeaders}
+
+            <CustomTableComponent
+                maxHeight="h-[45vh]  !lg:h-[65vh]"
+                headers={columns}
                 rows={rows}
                 onRateChange={handleRateChange}
                 autoScrollBottom={true}
                 editable={true}
-                toggleableColumns={toggleableColumns}
+                hiddenDropdownColumns={hiddenDropdownColumns}
                 hiddenColumns={hiddenColumns}
                 onToggleColumn={toggleColumn}
-
-
             />
+
             <div className="fixed bottom-16 right-5 font-bold gap-4 text-[22px]  flex justify-end">
                 Total Amount : {Number(totalAmount).toLocaleString("en-IN")}
             </div>
+
             <div className="fixed bottom-5 right-5 flex gap-4 mt-3">
+
                 <PrimaryButtonComponent
                     label="Save"
                     icon="fa fa-cloud-download"
                     onClick={handleSaveData}
                 />
+
                 <PrimaryButtonComponent
                     label="Draft"
                     icon="fa fa-pencil-square-o"
                     onClick={handleDraftData}
                 />
             </div>
+
             {showPaymentPopup && (
-                <CustomPopUpComponet
+                <CustomPopUpComponent
                     isbillingHistory={true}
                     totalAmount={totalAmount}
                     cashAmount={cashAmount}

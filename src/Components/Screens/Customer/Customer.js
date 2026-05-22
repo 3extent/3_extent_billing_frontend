@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { CUSTOMER_COLOUMS } from "./Constants";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
@@ -7,62 +6,60 @@ import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { API_URLS } from "../../../Util/AppConst";
+import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
 export default function Customer() {
     const navigate = useNavigate();
     const [customerName, setCustomerName] = useState();
     const [contactNo, setContactNumber] = useState();
     const [loading, setLoading] = useState(false);
-
-    const toggleableColumns = ["Address"];
-
-    const [hiddenColumns, setHiddenColumns] = useState([
-        "Address",
-    ]);
-
-    const [dynamicHeaders, setDynamicHeaders] = useState(() => {
-        return CUSTOMER_COLOUMS.filter(
-            (col) => !["Address"].includes(col)
-        );
-    });
-
+    let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
+    const [allColumns, setAllColumns] = useState([]);
+    const [columns, setColumns] = useState([]);
+    const [hiddenDropdownColumns, setHiddenDropdownColumns] = useState([]);
+    const [hiddenColumns, setHiddenColumns] = useState([]);
     const toggleColumn = (columnName) => {
-        if (!toggleableColumns.includes(columnName)) return;
-        if (dynamicHeaders.includes(columnName)) {
-            setDynamicHeaders(dynamicHeaders.filter(col => col !== columnName));
-            setHiddenColumns([...hiddenColumns, columnName]);
-        } else {
-            let newHeaders = [...dynamicHeaders];
-            const actionIndex = newHeaders.indexOf("Action");
-            if (actionIndex !== +1) {
-                newHeaders.splice(actionIndex, 0, columnName);
-
-            } else {
-                newHeaders.push(columnName);
+        setColumns(columns => {
+            if (columns.includes(columnName)) {
+                return columns.filter(col => col !== columnName);
             }
-            setDynamicHeaders(newHeaders);
-            setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
-        };
+            let newColumns = [...columns];
+            const actionIndex = newColumns.indexOf("Actions");
+            if (actionIndex !== -1) {
+                newColumns.splice(actionIndex, 0, columnName);
+            } else {
+                newColumns.push(columnName);
+            }
+            return newColumns;
+        });
+
+        setHiddenColumns(columns =>
+            columns.includes(columnName)
+                ? columns.filter(col => col !== columnName)
+                : [...columns, columnName]
+        );
     };
 
     const navigateAddCustomer = () => {
         navigate("/addcustomer")
     }
     const [rows, setRows] = useState([]);
+
     useEffect(() => {
         getCustomerAllData({});
     }, []);
+
     const getCustomerCallBack = (response) => {
         console.log('response: ', response);
         if (response.status === 200) {
             const customerFormttedRows = response.data.users.map((customer) => ({
-                "Customer Name": customer.name,
-                "Contact No": customer.contact_number,
+                "Name": customer.name,
+                "Contact Number": customer.contact_number,
                 "Firm Name": customer.firm_name,
                 "Address": customer.address,
                 "State": customer.state,
-                "GST No": customer.gst_number,
-                "PAN No": customer.pan_number,
-                "Action": (
+                "GST Number": customer.gst_number,
+                "PAN Number": customer.pan_number,
+                "Actions": (
                     <div className="flex justify-end">
                         <div
                             title="Edit"
@@ -76,6 +73,23 @@ export default function Customer() {
                 id: customer._id
             }))
             setRows(customerFormttedRows);
+
+            const customersMenuItem = loggedInUser?.role?.menu_items?.find(
+                item => item.name?.name === "Customer"
+            );
+            if (customersMenuItem) {
+                const showCols =
+                    customersMenuItem.show_table_columns.map(col => col.name);
+
+                const hiddenCols =
+                    customersMenuItem.hidden_dropdown_table_columns?.map(col => col.name);
+
+                setAllColumns([...showCols, ...hiddenCols]);
+                setColumns(showCols);
+                setHiddenColumns(hiddenCols);
+                setHiddenDropdownColumns(hiddenCols);
+            }
+
         } else {
             console.log("Error");
         }
@@ -143,11 +157,11 @@ export default function Customer() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <CustomTableCompoent
+            <CustomTableComponent
                 maxHeight="h-[65vh]"
-                headers={dynamicHeaders}
+                headers={columns}
                 rows={rows}
-                toggleableColumns={toggleableColumns}
+                hiddenDropdownColumns={hiddenDropdownColumns}
                 hiddenColumns={hiddenColumns}
                 onToggleColumn={toggleColumn}
             />

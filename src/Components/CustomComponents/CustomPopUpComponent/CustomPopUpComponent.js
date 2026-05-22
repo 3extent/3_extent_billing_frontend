@@ -1,6 +1,6 @@
 import InputComponent from "../InputComponent/InputComponent";
 import PrimaryButtonComponent from "../PrimaryButtonComponent/PrimaryButtonComponent";
-export default function CustomPopUpComponet({ totalAmount, cashAmount, onlineAmount, card, pendingAmount, handleCancelButton, handlePrintButton, setCashAmount, setOnlineAmount, setCard, handleSaveButton, isbillingHistory = false }) {
+export default function CustomPopUpComponent({ totalAmount, cashAmount, onlineAmount, card, pendingAmount, handleCancelButton, handlePrintButton, setCashAmount, setOnlineAmount, setCard, handleSaveButton, isbillingHistory = false }) {
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
             <div className="bg-white shadow-lg w-[40%] rounded-[10px]">
