@@ -5,21 +5,29 @@ import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponen
 import moment from "moment";
 import { API_URLS } from "../../../Util/AppConst";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import DropdownComponent from "../../CustomComponents/DropdownComponent/DropdownComponent";
 import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
 
 function SingleExpenseDetails() {
+    const location = useLocation();
     const [rows, setRows] = useState([]);
     const [expenseTitle, setExpenseTitle] = useState("");
     const [paidByOptions, setPaidByOptions] = useState();
     const [paidBy, setPaidBy] = useState("");
     const fromDate = moment().subtract('days').format('YYYY-MM-DD');
     const toDate = moment().format('YYYY-MM-DD');
-    const [from, setFrom] = useState(fromDate);
-    const [to, setTo] = useState(toDate);
-    const [selectAllDates, setSelectAllDates] = useState(false);
+    // const [from, setFrom] = useState(fromDate);
+    // const [to, setTo] = useState(toDate);
+    // const [selectAllDates, setSelectAllDates] = useState(false);
+    const [from, setFrom] = useState(location.state?.from || fromDate);
+
+    const [to, setTo] = useState(location.state?.to || toDate);
+
+    const [selectAllDates, setSelectAllDates] = useState(
+        location.state?.selectAllDates || false
+    );
     const [totalRow, setTotalRow] = useState(null);
     const [showTotalRow, setShowTotalRow] = useState(false);
     const navigate = useNavigate();
@@ -120,10 +128,10 @@ function SingleExpenseDetails() {
     }
 
     useEffect(() => {
-        setFrom(fromDate);
-        setTo(toDate);
+        // setFrom(fromDate);
+        // setTo(toDate);
         getAdmins();
-        getSingleExpenseTitleData({ from, to });
+        getSingleExpenseTitleData({ from, to, selectAllDates });
     }, [expense_id, getAdmins]);
 
     const handleBack = () => {

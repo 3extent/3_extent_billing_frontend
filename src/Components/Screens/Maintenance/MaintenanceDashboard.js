@@ -106,7 +106,13 @@ function MaintenanceDashboard() {
     }
 
     const handleRowClick = (row) => {
-        navigate(`/singleExpenseDetails/${row.id}`);
+        navigate(`/singleExpenseDetails/${row.id}`, {
+            state: {
+                from,
+                to,
+                selectAllDates
+            }
+        });
     };
 
     return (
