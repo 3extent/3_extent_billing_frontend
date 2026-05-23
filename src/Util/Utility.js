@@ -159,7 +159,7 @@ export const generateAndSavePdf = (
     // gst in
     doc.setFont("Roboto", "normal");
     doc.setFontSize(11);
-    doc.text("GSTIN: 27AADFZ9861FIZN", 14, 24);
+    doc.text("GSTIN: 27AADFZ9861F1ZN", 14, 24);
     // contact no
     doc.setFont("Roboto", "normal");
     doc.setFontSize(11);
