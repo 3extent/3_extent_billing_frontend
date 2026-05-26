@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import InputComponent from '../../CustomComponents/InputComponent/InputComponent';
-import {  STATUS_OPTIONS } from './Constants';
+import { STATUS_OPTIONS } from './Constants';
 import { apiCall, Spinner } from '../../../Util/AxiosUtils';
 import PrimaryButtonComponent from '../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent';
 import { exportToExcel, handleBarcodePrint } from '../../../Util/Utility';
@@ -146,7 +146,7 @@ function ListOfProducts() {
             setRows(productFormattedRows);
             console.log('productFormattedRows: ', productFormattedRows);
             const ProductsMenuItem = loggedInUser?.role?.menu_items?.find(
-                item => item.name?.name === "Products"  && item.name?.level !== 1
+                item => item.name?.name === "Products" && item.name?.level !== 1
             );
             if (ProductsMenuItem) {
                 const showCols =
@@ -183,9 +183,22 @@ function ListOfProducts() {
         if (supplierName) {
             url += `&supplierName=${supplierName}`;
         }
-        if (status === "AVAILABLE & REPAIRED") {
+        // if (status === "AVAILABLE & REPAIRED") {
+        //     url += "&status=AVAILABLE&is_repaired=true";
+        // } else if (status) {
+        //     url += `&status=${status}`;
+        // }
+
+        if (status === "AVAILABLE") {
+            url += "&status=AVAILABLE&is_repaired=false";
+        }
+        else if (status === "ALL AVAILABLE") {
+            url += "&status=AVAILABLE";
+        }
+        else if (status === "AVAILABLE & REPAIRED") {
             url += "&status=AVAILABLE&is_repaired=true";
-        } else if (status) {
+        }
+        else if (status) {
             url += `&status=${status}`;
         }
 

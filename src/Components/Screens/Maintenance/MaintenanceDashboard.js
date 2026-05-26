@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useEffect, useState } from "react";
@@ -9,12 +9,13 @@ import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponen
 import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
 
 function MaintenanceDashboard() {
+    const location = useLocation();
     const [title, setTitle] = useState();
     const fromDate = moment().subtract('days').format('YYYY-MM-DD');
     const toDate = moment().format('YYYY-MM-DD');
-    const [from, setFrom] = useState(fromDate);
-    const [to, setTo] = useState(toDate);
-    const [selectAllDates, setSelectAllDates] = useState(false);
+    const [from, setFrom] = useState(location.state?.from || fromDate);
+    const [to, setTo] = useState(location.state?.to || toDate);
+    const [selectAllDates, setSelectAllDates] = useState(location.state?.selectAllDates || false);
     const [totalRow, setTotalRow] = useState(null);
     const [showTotalRow, setShowTotalRow] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -78,10 +79,9 @@ function MaintenanceDashboard() {
 
     };
 
+    
     useEffect(() => {
-        setFrom(fromDate);
-        setTo(toDate);
-        getMaintenanceData({ from, to });
+        getMaintenanceData({ from, to, selectAllDates });
     }, []);
 
     const handleDateChange = (value, setDate) => {

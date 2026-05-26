@@ -18,9 +18,6 @@ function SingleExpenseDetails() {
     const [paidBy, setPaidBy] = useState("");
     const fromDate = moment().subtract('days').format('YYYY-MM-DD');
     const toDate = moment().format('YYYY-MM-DD');
-    // const [from, setFrom] = useState(fromDate);
-    // const [to, setTo] = useState(toDate);
-    // const [selectAllDates, setSelectAllDates] = useState(false);
     const [from, setFrom] = useState(location.state?.from || fromDate);
 
     const [to, setTo] = useState(location.state?.to || toDate);
@@ -135,8 +132,11 @@ function SingleExpenseDetails() {
     }, [expense_id, getAdmins]);
 
     const handleBack = () => {
-        navigate(-1);
+        navigate("/maintenanceDashboard", {
+            state: { from, to, selectAllDates }
+        });
     };
+
     return (
         <div>
             {loading && <Spinner />}
