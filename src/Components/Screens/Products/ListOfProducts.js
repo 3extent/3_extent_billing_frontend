@@ -183,11 +183,6 @@ function ListOfProducts() {
         if (supplierName) {
             url += `&supplierName=${supplierName}`;
         }
-        // if (status === "AVAILABLE & REPAIRED") {
-        //     url += "&status=AVAILABLE&is_repaired=true";
-        // } else if (status) {
-        //     url += `&status=${status}`;
-        // }
 
         if (status === "AVAILABLE") {
             url += "&status=AVAILABLE&is_repaired=false";
