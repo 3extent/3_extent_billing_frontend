@@ -8,7 +8,7 @@ export const REPAIRERS_OPTIONS = ["Repairer Name", "Firm Name", "GST Number", "C
     "Total Paid",
     "Total Repairer Remaining", "State", "Address", "Actions"
 ];
-export const STATUS_OPTIONS = ["IN_REPAIRING", "AVAILABLE & REPAIRED"];
+export const STATUS_OPTIONS = ["IN_REPAIRING", "AVAILABLE & REPAIRED","SOLD_IN_REPAIRING","SOLD & REPAIRED"];
 export const REPAIRER_DETAILS_HEADERS = [
     "Repair Started",
     "Repair Completed",
