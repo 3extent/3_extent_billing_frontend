@@ -108,7 +108,7 @@ function SendForRepair() {
         });
     }, []);
     const getAllImeis = () => {
-        let url = `${API_URLS.PRODUCTS}?status=AVAILABLE,RETURN`;
+        let url = `${API_URLS.PRODUCTS}?status=AVAILABLE,RETURN,SOLD`;
         apiCall({
             method: "GET",
             url: url,
@@ -126,7 +126,7 @@ function SendForRepair() {
     };
     const getProductDataByIMEI = (imei) => {
         if (!imei) return;
-        const url = `${API_URLS.PRODUCTS}?imei_number=${imei}&status=AVAILABLE,RETURN`;
+        const url = `${API_URLS.PRODUCTS}?imei_number=${imei}&status=AVAILABLE,RETURN,SOLD`;
 
         apiCall({
             method: "GET",

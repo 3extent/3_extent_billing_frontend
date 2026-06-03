@@ -193,6 +193,9 @@ function ListOfProducts() {
         else if (status === "AVAILABLE & REPAIRED") {
             url += "&status=AVAILABLE&is_repaired=true";
         }
+        else if (status === "SOLD & REPAIRED") {
+            url += "&status=SOLD&is_repaired=true";
+        }
         else if (status) {
             url += `&status=${status}`;
         }

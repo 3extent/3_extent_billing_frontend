@@ -84,19 +84,21 @@ function RepairDashboard() {
                 "Repairer": repair.repair_by?.name,
                 Accessories: repair.accessories,
                 Status: repair.status,
-                Actions: repair.status === "IN_REPAIRING" && (
-                    <PrimaryButtonComponent
-                        label="Accept"
-                        buttonClassName="py-1 px-3 text-sm bg-green-600 text-white rounded"
-                        icon="fa fa-retweet"
-                        iconOnly={true}
-                        onClick={() => {
-                            console.log("Selected repair object:", repair);
-                            setSelectedRepair(repair);
-                            setModalOpen(true);
-                        }}
-                    />
-                ),
+                // Actions: repair.status === "IN_REPAIRING" && 
+                Actions: (repair.status === "IN_REPAIRING" ||
+                    repair.status === "SOLD_IN_REPAIRING") && (
+                        <PrimaryButtonComponent
+                            label="Accept"
+                            buttonClassName="py-1 px-3 text-sm bg-green-600 text-white rounded"
+                            icon="fa fa-retweet"
+                            iconOnly={true}
+                            onClick={() => {
+                                console.log("Selected repair object:", repair);
+                                setSelectedRepair(repair);
+                                setModalOpen(true);
+                            }}
+                        />
+                    ),
             }));
             setTotalRow({
                 _id: "total",
@@ -132,7 +134,13 @@ function RepairDashboard() {
             url += "&status=AVAILABLE&is_repaired=true";
         } else if (status === "IN_REPAIRING") {
             url += "&status=IN_REPAIRING";
+        } else if (status === "SOLD_IN_REPAIRING") {
+            url += "&status=SOLD_IN_REPAIRING";
+        }else if (status === "SOLD & REPAIRED") {
+             url += "&status=SOLD&is_repaired=true";
         }
+
+
         if (imeiNumber) {
             url += `&imei_number=${imeiNumber}`
         }
