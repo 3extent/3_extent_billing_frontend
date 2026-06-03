@@ -71,7 +71,7 @@ function AddPart() {
                 position: "top-center",
                 autoClose: 2000,
             });
-            navigate("/partshopDetails");
+            navigate("/partList");
         }
         else {
             const errorMsg = response?.data?.error || "Failed to add part";
