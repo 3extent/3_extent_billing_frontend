@@ -21,7 +21,7 @@ export const PARTS_DETAILS_HEADERS = [
 ];
 export const PARTS_STATUS = [
     "AVAILABLE",
-    "SOLD"
+    "USED"
 
 ];
 

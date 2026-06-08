@@ -143,7 +143,7 @@ export const generateAndSavePdf = (
   const pad = (n) => n.toString().padStart(2, "0");
 
   const timestamp = `${invoiceDate.getFullYear()}.${pad(invoiceDate.getMonth() + 1)}.${pad(invoiceDate.getDate())}_${pad(invoiceDate.getHours())}.${pad(invoiceDate.getMinutes())}.${pad(invoiceDate.getSeconds())}`;
- 
+
   // Create a new PDF document
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
@@ -159,7 +159,7 @@ export const generateAndSavePdf = (
     // gst in
     doc.setFont("Roboto", "normal");
     doc.setFontSize(11);
-    doc.text("GSTIN: 27AADFZ9861FIZN", 14, 24);
+    doc.text("GSTIN: 27AADFZ9861F1ZN", 14, 24);
     // contact no
     doc.setFont("Roboto", "normal");
     doc.setFontSize(11);
@@ -245,249 +245,272 @@ export const generateAndSavePdf = (
       { align: "right" }
     );
   }
-    const drawPageBorder = () => {
-      doc.setDrawColor(0);
-      doc.setLineWidth(0.5);
-      doc.rect(margin, margin, pageWidth - 2 * margin, pageHeight - 2 * margin);
-    };
+  const drawPageBorder = () => {
+    doc.setDrawColor(0);
+    doc.setLineWidth(0.5);
+    doc.rect(margin, margin, pageWidth - 2 * margin, pageHeight - 2 * margin);
+  };
 
-    renderHeader();
-    drawPageBorder();
-    // Define table columns
-    const tableColumn = ["SR.NO", "PRODUCT DESCRIPTION", "IMEI NO", "GRADE", "AMOUNT"];
-    const tableRows = rows.map((row, index) => {
-      console.log('row: ', row);
-      return [
-        index + 1,
-        `${row.Brand || row.model.brand.name || ""} ${row.Model || row.model.name || ""}`,
-        row.imei_number || "",
-        row.grade || "",
-        Number(row.sold_at_price || 0).toFixed(2)
-      ]
-    });
-    const MIN_VISIBLE_ROWS = 8;
-    if (tableRows.length < MIN_VISIBLE_ROWS) {
-      const emptyRowsNeeded = MIN_VISIBLE_ROWS - tableRows.length;
-      for (let i = 0; i < emptyRowsNeeded; i++) {
-        tableRows.push(["", "", "", "", ""]);
-      }
+  renderHeader();
+  drawPageBorder();
+  // Define table columns
+  const tableColumn = ["SR.NO", "PRODUCT DESCRIPTION", "IMEI NO", "GRADE", "AMOUNT"];
+  const tableRows = rows.map((row, index) => {
+    console.log('row: ', row);
+    return [
+      index + 1,
+      `${row.Brand || row.model.brand.name || ""} ${row.Model || row.model.name || ""}`,
+      row.imei_number || "",
+      row.grade || "",
+      Number(row.sold_at_price || 0).toFixed(2)
+    ]
+  });
+  const MIN_VISIBLE_ROWS = 8;
+  if (tableRows.length < MIN_VISIBLE_ROWS) {
+    const emptyRowsNeeded = MIN_VISIBLE_ROWS - tableRows.length;
+    for (let i = 0; i < emptyRowsNeeded; i++) {
+      tableRows.push(["", "", "", "", ""]);
     }
-    const toWords = new ToWords({
-      localeCode: "en-IN",       // Indian format
-      converterOptions: {
-        currency: false,
-        ignoreDecimal: true,
-        ignoreZeroCurrency: false,
+  }
+  const toWords = new ToWords({
+    localeCode: "en-IN",       // Indian format
+    converterOptions: {
+      currency: false,
+      ignoreDecimal: true,
+      ignoreZeroCurrency: false,
+    }
+  });
+  const totalRowIndex = tableRows.length;
+  const capitalize = (str) => str.replace(/\b\w/g, char => char.toUpperCase());
+  const amountInWordsRaw = toWords.convert(payable_amount);
+  const amountInWordsClean = amountInWordsRaw.replace(/,/g, ""); // remove commas
+  const amountInWords = `${capitalize(amountInWordsClean)} Only`;
+  const formattedAmount = `Rs ${Number(payable_amount).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
+  const formattedNetTotal = `Rs ${Number(net_total).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
+  const formattedSGST = Number(s_gst).toLocaleString("en-IN", { minimumFractionDigits: 2 });
+  const formattedCGST = Number(c_gst).toLocaleString("en-IN", { minimumFractionDigits: 2 });
+  tableRows.push([
+    {
+      content: `Amount(In Words): ${amountInWords}`,
+      colSpan: 3,
+      styles: {
+        halign: "left", fontStyle: "normal", fontSize: 11, cellWidth: 'wrap'
+      },
+    },
+    {
+      content: "TOTAL",
+      styles: {
+        halign: "right", fontStyle: "bold", fontSize: 11, lineWidth: { bottom: 0.2 }, lineColor: { bottom: 0 },
+      },
+    },
+    {
+      content: formattedAmount,
+      styles: {
+        halign: "right", fontStyle: "bold", fontSize: 11, lineWidth: { bottom: 0.2 },
+        lineColor: { bottom: 0 }
+      },
+    },
+  ]);
+  tableRows.push([
+    { content: "", colSpan: 3, styles: { halign: "left" } },
+    { content: "SGST(9%)", styles: { halign: "right", fontStyle: "normal", fontSize: 9 } },
+    { content: formattedSGST, styles: { halign: "right", fontStyle: "normal", fontSize: 9 } },
+  ]);
+
+  // ROW 3 → CGST
+  tableRows.push([
+    { content: "", colSpan: 3, styles: { halign: "left" } },
+    { content: "CGST(9%)", styles: { halign: "right", fontStyle: "normal", fontSize: 9 } },
+    { content: formattedCGST, styles: { halign: "right", fontStyle: "normal", fontSize: 9 } },
+  ]);
+
+  // ROW 4 → Net Total
+  tableRows.push([
+    { content: "", colSpan: 3, styles: { halign: "left" } },
+    {
+      content: "Net Total", styles: {
+        halign: "right", fontStyle: "bold", fontSize: 11, lineWidth: { top: 0.2 },
+        lineColor: { top: 0 }
       }
-    });
-    const totalRowIndex = tableRows.length;
-    const capitalize = (str) => str.replace(/\b\w/g, char => char.toUpperCase());
-    const amountInWordsRaw = toWords.convert(payable_amount);
-    const amountInWordsClean = amountInWordsRaw.replace(/,/g, ""); // remove commas
-    const amountInWords = `${capitalize(amountInWordsClean)} Only`;
-    const formattedAmount = `Rs ${Number(payable_amount).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
-    const formattedNetTotal = `Rs ${Number(net_total).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
-    const formattedSGST = Number(s_gst).toLocaleString("en-IN", { minimumFractionDigits: 2 });
-    const formattedCGST = Number(c_gst).toLocaleString("en-IN", { minimumFractionDigits: 2 });
-    tableRows.push([
-      {
-        content: `Amount(In Words): ${amountInWords}`,
-        colSpan: 3,
-        styles: {
-          halign: "left", fontStyle: "normal", fontSize: 11, cellWidth: 'wrap'
-        },
-      },
-      {
-        content: "TOTAL",
-        styles: {
-          halign: "right", fontStyle: "bold", fontSize: 11, lineWidth: { bottom: 0.2 }, lineColor: { bottom: 0 },
-        },
-      },
-      {
-        content: formattedAmount,
-        styles: {
-          halign: "right", fontStyle: "bold", fontSize: 11, lineWidth: { bottom: 0.2 },
-          lineColor: { bottom: 0 }
-        },
-      },
-    ]);
-    tableRows.push([
-      { content: "", colSpan: 3, styles: { halign: "left" } },
-      { content: "SGST(9%)", styles: { halign: "right", fontStyle: "normal", fontSize: 9 } },
-      { content: formattedSGST, styles: { halign: "right", fontStyle: "normal", fontSize: 9 } },
-    ]);
-
-    // ROW 3 → CGST
-    tableRows.push([
-      { content: "", colSpan: 3, styles: { halign: "left" } },
-      { content: "CGST(9%)", styles: { halign: "right", fontStyle: "normal", fontSize: 9 } },
-      { content: formattedCGST, styles: { halign: "right", fontStyle: "normal", fontSize: 9 } },
-    ]);
-
-    // ROW 4 → Net Total
-    tableRows.push([
-      { content: "", colSpan: 3, styles: { halign: "left" } },
-      {
-        content: "Net Total", styles: {
-          halign: "right", fontStyle: "bold", fontSize: 11, lineWidth: { top: 0.2 },
-          lineColor: { top: 0 }
-        }
-      },
-      {
-        content: formattedNetTotal, styles: {
-          halign: "right", fontStyle: "bold", fontSize: 11, lineWidth: { top: 0.2 },
-          lineColor: { top: 0 }
-        }
-      },
-    ]);
-
-    //  Add Terms and Signature rows to the table
-    tableRows.push([
-      {
-        content: "TERMS AND CONDITIONS:",
-        colSpan: 5,
-        styles: {
-          halign: "left", fontStyle: "bold", fontSize: 11, cellPadding: 2
-        },
-      },
-    ]);
-
-    tableRows.push([
-      {
-        content: "1. Products once sold will neither be returned nor exchanged.",
-        colSpan: 5,
-        styles: {
-          halign: "left", fontStyle: "normal", fontSize: 10, cellPadding: 2
-        },
-      },
-    ]);
-
-    const signatureRowIndex = tableRows.length;
-    tableRows.push([
-      {
-        content: "Receiver Signature",
-        colSpan: 2,
-        styles: {
-          halign: "left", fontStyle: "bold", fontSize: 11, cellPadding: { top: 15, left: 15, bottom: 2 }
-        },
-      },
-
-      {
-        content: "Authorized Signature",
-        colSpan: 3,
-        styles: {
-          halign: "right", fontStyle: "bold", fontSize: 11, cellPadding: { top: 15, right: 15, bottom: 2 }
-        },
+    },
+    {
+      content: formattedNetTotal, styles: {
+        halign: "right", fontStyle: "bold", fontSize: 11, lineWidth: { top: 0.2 },
+        lineColor: { top: 0 }
       }
-    ]);
-    // Generate the table in the PDF
-    let pageFinalYs = {};
-    autoTable(doc, {
-      startY: 105,
-      head: [tableColumn],
-      body: tableRows,
-      theme: "plain",
-      styles: { fontSize: 9, cellPadding: 3 },
-      headStyles: { fillColor: [220, 220, 220], textColor: [0, 0, 0], halign: "left", fontStyle: "bold", },
-      didDrawPage: (data) => {
-        if (data.pageNumber === 1) renderHeader();
-        drawPageBorder();
+    },
+  ]);
+
+  //  Add Terms and Signature rows to the table
+  tableRows.push([
+    {
+      content: "TERMS AND CONDITIONS:",
+      colSpan: 5,
+      styles: {
+        halign: "left", fontStyle: "bold", fontSize: 11, cellPadding: 2
       },
-      didDrawCell: (data) => {
-        const { cell, row, section, } = data;
+    },
+  ]);
 
-        const pageNum = doc.internal.getCurrentPageInfo().pageNumber;
-        pageFinalYs[pageNum] = Math.max(pageFinalYs[pageNum] || 0, cell.y + cell.height);
-
-        doc.setDrawColor(0);
-        doc.setLineWidth(0.3);
-
-        const isTotalRow = section === "body" && row.index === totalRowIndex;
-        const isNetTotalRow = section === "body" && row.index === totalRowIndex + 3;
-        const isSignatureRow = section === "body" && row.index === signatureRowIndex;
-
-        //  Draw only left & right lines (NO top/bottom)
-        doc.line(cell.x, cell.y, cell.x, cell.y + cell.height); // Left
-        doc.line(cell.x + cell.width, cell.y, cell.x + cell.width, cell.y + cell.height); // Right
-
-        //  TOTAL row: top & bottom border
-        if (isTotalRow) {
-          doc.line(cell.x, cell.y, cell.x + cell.width, cell.y); // top
-        }
-        // NET Total: bottom border
-        if (isNetTotalRow) {
-          doc.line(cell.x, cell.y + cell.height, cell.x + cell.width, cell.y + cell.height);
-        }
-        if (isSignatureRow) {
-          doc.line(cell.x, cell.y, cell.x + cell.width, cell.y); // Top
-        }
-        //  Header: top & bottom border (for visibility)
-        if (section === "head") {
-          doc.line(cell.x, cell.y, cell.x + cell.width, cell.y); // top
-          doc.line(cell.x, cell.y + cell.height, cell.x + cell.width, cell.y + cell.height); // bottom
-        }
+  tableRows.push([
+    {
+      content: "1. Products once sold will neither be returned nor exchanged.",
+      colSpan: 5,
+      styles: {
+        halign: "left", fontStyle: "normal", fontSize: 10, cellPadding: 2
       },
-      showHead: "everyPage"
-    });
+    },
+  ]);
 
-    //  Bottom border of table on every page
-    Object.entries(pageFinalYs).forEach(([pageNum, finalY]) => {
-      doc.setPage(Number(pageNum));
+  const signatureRowIndex = tableRows.length;
+  tableRows.push([
+    {
+      content: "Receiver Signature",
+      colSpan: 2,
+      styles: {
+        halign: "left", fontStyle: "bold", fontSize: 11, cellPadding: { top: 15, left: 15, bottom: 2 }
+      },
+    },
+
+    {
+      content: "Authorized Signature",
+      colSpan: 3,
+      styles: {
+        halign: "right", fontStyle: "bold", fontSize: 11, cellPadding: { top: 15, right: 15, bottom: 2 }
+      },
+    }
+  ]);
+
+  tableRows.push([
+    {
+      content:
+        "Note: This invoice is issued under the Margin Scheme for Second-Hand Goods as per Rule 32(5) of the CGST Rules, 2017. GST is charged only on the profit margin and NOT on the total transaction value. No Input Tax Credit (ITC) is admissible to the recipient on this invoice.",
+      colSpan: 5,
+      styles: {
+        halign: "left",
+        fontStyle: "italic",
+        fontSize: 9,
+        cellPadding: { top: 3, left: 2, right: 2, bottom: 2 },
+        overflow: "linebreak",
+      },
+    },
+  ]);
+  // Generate the table in the PDF
+  let pageFinalYs = {};
+  autoTable(doc, {
+    startY: 105,
+    head: [tableColumn],
+    body: tableRows,
+    theme: "plain",
+    styles: { fontSize: 9, cellPadding: 3 },
+    headStyles: { fillColor: [220, 220, 220], textColor: [0, 0, 0], halign: "left", fontStyle: "bold", },
+    didDrawPage: (data) => {
+      if (data.pageNumber === 1) renderHeader();
+      drawPageBorder();
+    },
+    didDrawCell: (data) => {
+      const { cell, row, section, } = data;
+
+      const pageNum = doc.internal.getCurrentPageInfo().pageNumber;
+      pageFinalYs[pageNum] = Math.max(pageFinalYs[pageNum] || 0, cell.y + cell.height);
+
       doc.setDrawColor(0);
       doc.setLineWidth(0.3);
-      doc.line(14, finalY, pageWidth - 14, finalY);
 
-    });
-    // save file
-    doc.save(`${name}_Invoice_${timestamp}.pdf`);
-  };
+      const isTotalRow = section === "body" && row.index === totalRowIndex;
+      const isNetTotalRow = section === "body" && row.index === totalRowIndex + 3;
+      const isSignatureRow = section === "body" && row.index === signatureRowIndex;
 
-  export const excelDownload = () => {
-    // Define headers
-    const headers = [
-      ["Brand Name", "Model Name", "IMEI", "Purchase Price", "Sales Price", "Engineer Name", "QC Remark", "Supplier", "Accessories", "Grade"]
-    ];
+      //  Draw only left & right lines (NO top/bottom)
+      doc.line(cell.x, cell.y, cell.x, cell.y + cell.height); // Left
+      doc.line(cell.x + cell.width, cell.y, cell.x + cell.width, cell.y + cell.height); // Right
 
-    // Create worksheet from headers
-    const worksheet = XLSX.utils.aoa_to_sheet(headers);
+      //  TOTAL row: top & bottom border
+      if (isTotalRow) {
+        doc.line(cell.x, cell.y, cell.x + cell.width, cell.y); // top
+      }
+      // NET Total: bottom border
+      if (isNetTotalRow) {
+        doc.line(cell.x, cell.y + cell.height, cell.x + cell.width, cell.y + cell.height);
+      }
+      
+      if (isSignatureRow) {
+        doc.line(cell.x, cell.y, cell.x + cell.width, cell.y); // top
+        doc.line(
+          cell.x,
+          cell.y + cell.height,
+          cell.x + cell.width,
+          cell.y + cell.height
+        ); // bottom
+      }
+      //  Header: top & bottom border (for visibility)
+      if (section === "head") {
+        doc.line(cell.x, cell.y, cell.x + cell.width, cell.y); // top
+        doc.line(cell.x, cell.y + cell.height, cell.x + cell.width, cell.y + cell.height); // bottom
+      }
+    },
+    showHead: "everyPage"
+  });
 
-    const headerRow = headers[0];
+  //  Bottom border of table on every page
+  Object.entries(pageFinalYs).forEach(([pageNum, finalY]) => {
+    doc.setPage(Number(pageNum));
+    doc.setDrawColor(0);
+    doc.setLineWidth(0.3);
+    doc.line(14, finalY, pageWidth - 14, finalY);
 
-    // Set column widths based on header length
-    worksheet['!cols'] = headerRow.map(header => ({
-      wch: header.length + 2 // add a bixn t of padding
-    }));
+  });
 
-    // Create workbook and add worksheet
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+  // save file
+  doc.save(`${name}_Invoice_${timestamp}.pdf`);
+};
 
-    // Write workbook with styles
-    const excelBuffer = XLSX.write(workbook, {
-      bookType: "xlsx",
-      type: "array",
-    });
+export const excelDownload = () => {
+  // Define headers
+  const headers = [
+    ["Brand Name", "Model Name", "IMEI", "Purchase Price", "Sales Price", "Engineer Name", "QC Remark", "Supplier", "Accessories", "Grade"]
+  ];
 
-    // Trigger file download
-    const data = new Blob([excelBuffer], { type: "application/octet-stream" });
-    saveAs(data, "Download.xlsx");
-  };
+  // Create worksheet from headers
+  const worksheet = XLSX.utils.aoa_to_sheet(headers);
 
-  export const handleBarcodePrint = (products) => {
-    console.log("products", products);
+  const headerRow = headers[0];
 
-    // Ensure products is an array
-    const productsArray = Array.isArray(products) ? products : [products];
+  // Set column widths based on header length
+  worksheet['!cols'] = headerRow.map(header => ({
+    wch: header.length + 2 // add a bixn t of padding
+  }));
 
-    if (productsArray.length === 0) {
-      alert("No barcodes to print!");
-      return;
-    }
+  // Create workbook and add worksheet
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
 
-    const win = window.open('', '', 'height=900,width=1200');
-    const safeData = JSON.stringify(productsArray);
+  // Write workbook with styles
+  const excelBuffer = XLSX.write(workbook, {
+    bookType: "xlsx",
+    type: "array",
+  });
 
-    win.document.write(`
+  // Trigger file download
+  const data = new Blob([excelBuffer], { type: "application/octet-stream" });
+  saveAs(data, "Download.xlsx");
+};
+
+export const handleBarcodePrint = (products) => {
+  console.log("products", products);
+
+  // Ensure products is an array
+  const productsArray = Array.isArray(products) ? products : [products];
+
+  if (productsArray.length === 0) {
+    alert("No barcodes to print!");
+    return;
+  }
+
+  const win = window.open('', '', 'height=900,width=1200');
+  const safeData = JSON.stringify(productsArray);
+
+  win.document.write(`
     <html>
       <head>
         <title>Print Barcodes</title>
@@ -574,18 +597,18 @@ export const generateAndSavePdf = (
       </body>
     </html>
   `);
-    win.document.close();
-    win.focus();
-  };
+  win.document.close();
+  win.focus();
+};
 
-  export const handleMultipleBarcodesPrint = (products = []) => {
-    if (!Array.isArray(products) || products.length === 0) {
-      alert("No barcodes to print!");
-      return;
-    }
-    const win = window.open('', '', 'height=900,width=1200');
-    const safeData = JSON.stringify(products);
-    win.document.write(`
+export const handleMultipleBarcodesPrint = (products = []) => {
+  if (!Array.isArray(products) || products.length === 0) {
+    alert("No barcodes to print!");
+    return;
+  }
+  const win = window.open('', '', 'height=900,width=1200');
+  const safeData = JSON.stringify(products);
+  win.document.write(`
     <html>
       <head>
         <title>Print Barcodes</title>
@@ -642,6 +665,6 @@ export const generateAndSavePdf = (
       </body>
     </html>
   `);
-    win.document.close();
-    win.focus();
-  };
+  win.document.close();
+  win.focus();
+};
