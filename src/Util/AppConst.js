@@ -1,5 +1,5 @@
-const BASE_URL = "https://three-extent-billing-backend-f1ul.onrender.com/api";      
-// const BASE_URL = "http://localhost:5000/api";
+// const BASE_URL = "https://3-extent-billing-backend-dev.vercel.app/api";
+const BASE_URL = "https://three-extent-billing-backend-4z16.onrender.com/api";
 export const API_URLS = {
   BRANDS: `${BASE_URL}/brands`,
   MODEL: `${BASE_URL}/models`,
@@ -8,7 +8,7 @@ export const API_URLS = {
   PRODUCTS: `${BASE_URL}/products`,
   BILLING: `${BASE_URL}/billings`,
   REPAIRS: `${BASE_URL}/repair`,
-  MAINTENANCE_ACTIVITY:`${BASE_URL}/maintenance_activity`,
+   MAINTENANCE_ACTIVITY:`${BASE_URL}/maintenance_activity`,
   MAINTENANCE_CRITERIA:`${BASE_URL}/maintenance_criteria`,
   PART: `${BASE_URL}/users/parts`,
 };
