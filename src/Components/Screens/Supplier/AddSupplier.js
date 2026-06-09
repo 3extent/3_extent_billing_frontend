@@ -115,7 +115,15 @@ function AddSupplier() {
         apiCall({
             method: "POST",
             url: API_URLS.USERS,
-            data: supplierData,
+            // data: supplierData,
+            data: {
+                ...supplierData,
+                name: supplierData.name.trim().replace(/\s+/g, " "),
+                firm_name: supplierData.firm_name.trim().replace(/\s+/g, " "),
+                state: supplierData.state.trim().replace(/\s+/g, " "),
+                address: supplierData.address.trim().replace(/\s+/g, " "),
+                gst_number: supplierData.gst_number.trim().replace(/\s+/g, " "),
+            },
             callback: addSupplierCallback,
             setLoading: setLoading,
         });
@@ -124,7 +132,15 @@ function AddSupplier() {
         apiCall({
             method: "PUT",
             url: `${API_URLS.USERS}/${supplier_id}`,
-            data: supplierData,
+            // data: supplierData,
+             data: {
+            ...supplierData,
+            name: supplierData.name.trim().replace(/\s+/g, " "),
+            firm_name: supplierData.firm_name.trim().replace(/\s+/g, " "),
+            state: supplierData.state.trim().replace(/\s+/g, " "),
+            address: supplierData.address.trim().replace(/\s+/g, " "),
+            gst_number: supplierData.gst_number.trim().replace(/\s+/g, " "),
+        },
             callback: saveCallback,
             setLoading: setLoading,
         });
