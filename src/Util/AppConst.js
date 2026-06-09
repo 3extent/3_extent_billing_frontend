@@ -1,4 +1,5 @@
-const BASE_URL = "https://3-extent-billing-backend-dev.vercel.app/api";
+// const BASE_URL = "https://3-extent-billing-backend-dev.vercel.app/api";
+const BASE_URL = "https://three-extent-billing-backend-4z16.onrender.com/api";
 export const API_URLS = {
   BRANDS: `${BASE_URL}/brands`,
   MODEL: `${BASE_URL}/models`,
