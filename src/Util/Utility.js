@@ -265,7 +265,7 @@ export const generateAndSavePdf = (
       Number(row.sold_at_price || 0).toFixed(2)
     ]
   });
-  const MIN_VISIBLE_ROWS = 8;
+  const MIN_VISIBLE_ROWS = 7;
   if (tableRows.length < MIN_VISIBLE_ROWS) {
     const emptyRowsNeeded = MIN_VISIBLE_ROWS - tableRows.length;
     for (let i = 0; i < emptyRowsNeeded; i++) {
