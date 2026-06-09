@@ -391,7 +391,6 @@ export const generateAndSavePdf = (
         fontStyle: "italic",
         fontSize: 9,
         cellPadding: { top: 3, left: 2, right: 2, bottom: 2 },
-
       },
     },
   ]);
