@@ -34,7 +34,7 @@ function AddRepairers() {
                 address: response.data.user.address,
                 contact_number: response.data.user.contact_number,
                 gst_number: response.data.user.gst_number,
-                role: "REPAIRER",
+                // role: "REPAIRER",
             });
         }
     };

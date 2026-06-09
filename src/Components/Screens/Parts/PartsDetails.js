@@ -1,6 +1,5 @@
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
-import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import { PARTS_DETAILS_HEADERS } from "./Constants";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
@@ -8,6 +7,7 @@ import { useCallback, useEffect, useState } from "react";
 import moment from "moment";
 import { API_URLS } from "../../../Util/AppConst";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
+import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
 
 function PartsDetails() {
     const navigate = useNavigate();
@@ -23,6 +23,8 @@ function PartsDetails() {
     const [to, setTo] = useState(toDate);
     const [selectAllDates, setSelectAllDates] = useState(false);
     const [showTotalRow, setShowTotalRow] = useState(false);
+    let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
+    const [columns, setColumns] = useState([]);
     const handleBack = () => {
         navigate(-1);
     };
@@ -37,17 +39,17 @@ function PartsDetails() {
             console.log('response: ', response);
             const shop = response.data.user;
             const partsRows = shop.repair_activities.map((activity) => ({
-                "Repair Started": activity.product.repair_started_at
+                "Repair Started Date": activity.product.repair_started_at
                     ? moment(activity.product.repair_started_at).format("ll")
                     : "-",
-                "Repair Completed": activity.product.repair_completed_at
+                "Repair Completed Date": activity.product.repair_completed_at
                     ? moment(activity.product.repair_completed_at).format("ll")
                     : "-",
-                "IMEI NO": activity.product.imei_number,
+                "IMEI Number": activity.product.imei_number,
                 Model: activity.product.model.name,
                 "Part Name": activity.part_name,
                 "Part Cost": activity.cost,
-                "Repairer Name": activity.repairer?.name || "",
+                "Repairer": activity.repairer?.name || "",
                 id: activity._id,
             }));
             setTotalRow({
@@ -56,6 +58,15 @@ function PartsDetails() {
 
             });
             setRows(partsRows);
+            const partsSubMenuItem = loggedInUser?.role?.menu_items?.find(
+                item => item.name?.name === "Single Shop Details"
+            );
+
+            if (partsSubMenuItem) {
+                const headers = partsSubMenuItem.show_table_columns.map(col => col.name);
+                setColumns(headers);
+            }
+
         }
     }
     const getPartsDetails = ({ imeiNumber, repairerName, from, to, selectAllDates } = {}) => {
@@ -153,12 +164,12 @@ function PartsDetails() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <CustomTableCompoent
-                headers={PARTS_DETAILS_HEADERS}
+            <CustomTableComponent
                 rows={rows}
                 maxHeight="h-[60vh]"
                 totalRow={totalRow}
                 showTotalRow={showTotalRow}
+                headers={columns}
             />
             <div className="flex justify-end">
                 <button className="rounded-full" onClick={() => setShowTotalRow(!showTotalRow)}>

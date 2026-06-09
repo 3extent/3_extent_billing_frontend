@@ -1,14 +1,15 @@
 import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import { REPAIRERS_OPTIONS } from "../Repair/Constants";
-import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useCallback, useEffect, useState } from "react";
 import { API_URLS } from "../../../Util/AppConst";
 import { toast } from "react-toastify";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
-import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
+import CustomPopUpComponent from "../../CustomComponents/CustomPopUpComponent/CustomPopUpComponent";
+import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
+
 
 function Repairers() {
     const navigate = useNavigate();
@@ -28,55 +29,45 @@ function Repairers() {
     const [card, setCard] = useState("");
     const [pendingAmount, setPendingAmount] = useState(0);
     const [showTotalRow, setShowTotalRow] = useState(false);
-    const toggleableColumns = ["State", "Address", "GST Number"];
-
-    const [hiddenColumns, setHiddenColumns] = useState([
-        "State",
-        "Address",
-        "GST Number"
-    ]);
-
-    const [dynamicHeaders, setDynamicHeaders] = useState(() => {
-        return REPAIRERS_OPTIONS.filter(
-            (col) => !["State", "Address", "GST Number"].includes(col)
-        );
-    });
+    let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
+    const [allColumns, setAllColumns] = useState([]);
+    const [columns, setColumns] = useState([]);
+    const [hiddenDropdownColumns, setHiddenDropdownColumns] = useState([]);
+    const [hiddenColumns, setHiddenColumns] = useState([]);
     const toggleColumn = (columnName) => {
-        if (!toggleableColumns.includes(columnName)) return;
-
-        if (dynamicHeaders.includes(columnName)) {
-            setDynamicHeaders(dynamicHeaders.filter(col => col !== columnName));
-            setHiddenColumns([...hiddenColumns, columnName]);
-        } else {
-            let newHeaders = [...dynamicHeaders];
-
-            const actionIndex = newHeaders.indexOf("Actions");
-            if (actionIndex !== -1) {
-                newHeaders.splice(actionIndex, 0, columnName);
-            } else {
-                newHeaders.push(columnName);
+        setColumns(columns => {
+            if (columns.includes(columnName)) {
+                return columns.filter(col => col !== columnName);
             }
-
-            setDynamicHeaders(newHeaders);
-            setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
-        }
+            let newColumns = [...columns];
+            const actionIndex = newColumns.indexOf("Actions");
+            if (actionIndex !== -1) {
+                newColumns.splice(actionIndex, 0, columnName);
+            } else {
+                newColumns.push(columnName);
+            }
+            return newColumns;
+        });
+        setHiddenColumns(columns =>
+            columns.includes(columnName)
+                ? columns.filter(col => col !== columnName)
+                : [...columns, columnName]
+        );
     };
-
-
     const getRepairersCallback = useCallback((response) => {
         console.log("API Response:", response);
         if (response.status === 200) {
             const RepairedFormattedRows = response.data.users.map((repairer) => ({
-                "Repairer Name": repairer.name,
+                "Name": repairer.name,
                 "Firm Name": repairer.firm_name,
                 "GST Number": repairer.gst_number,
-                "Contact": repairer.contact_number,
+                "Contact Number": repairer.contact_number,
                 "State": repairer.state,
                 "Address": repairer.address,
                 "Total Part Cost": repairer.total_part_cost,
-                "Total Repairer Cost": repairer.payable_amount,
+                "Total Amount": repairer.payable_amount,
                 "Total Paid": repairer.paid_amount?.reduce((sum, payment) => sum + Number(payment.amount || 0), 0),
-                "Total Repairer Remaining": repairer.pending_amount,
+                "Remaining Amount": repairer.pending_amount,
                 "Actions": (
                     <div className="flex gap-2 justify-end">
                         <div
@@ -97,6 +88,8 @@ function Repairers() {
                                     e.stopPropagation();
                                     handlePayClick(repairer);
                                 }}
+                                iconOnly={true}
+                                icon="fa fa-inr"
                                 disabled={Number(repairer.pending_amount) === 0}
                             />
                         )}
@@ -109,13 +102,26 @@ function Repairers() {
                 _id: "total",
                 "Repairer Name": "Total",
                 "Total Part Cost": Number(response.data.part_cost_of_all_users || 0).toLocaleString("en-IN"),
-                "Total Repairer Cost": (response.data.payable_amount_of_all_users || 0).toLocaleString("en-IN"),
+                "Total Amount": (response.data.payable_amount_of_all_users || 0).toLocaleString("en-IN"),
                 "Total Paid": Number(response.data.paid_amount_of_all_users || 0).toLocaleString("en-IN"),
-                "Total Repairer Remaining": Number(response.data.pending_amount_of_all_users || 0).toLocaleString("en-IN"),
+                "Remaining Amount": Number(response.data.pending_amount_of_all_users || 0).toLocaleString("en-IN"),
             });
 
             setRows(RepairedFormattedRows);
             console.log("Formatted Rows:", RepairedFormattedRows);
+            const repairersMenuItem = loggedInUser?.role?.menu_items?.find(
+                item => item.name?.name === "Repairers"
+            );
+            if (repairersMenuItem) {
+                const showCols =
+                    repairersMenuItem.show_table_columns.map(col => col.name);
+                const hiddenCols =
+                    repairersMenuItem.hidden_dropdown_table_columns?.map(col => col.name);
+                setAllColumns([...showCols, ...hiddenCols]);
+                setColumns(showCols);
+                setHiddenColumns(hiddenCols);
+                setHiddenDropdownColumns(hiddenCols);
+            }
         } else {
             const errorMsg = response?.data?.error || "Failed to fetch repairers";
             toast.error(errorMsg, {
@@ -275,14 +281,14 @@ function Repairers() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <CustomTableCompoent
+            <CustomTableComponent
                 maxHeight="h-[65vh]"
-                headers={dynamicHeaders}
                 rows={rows}
                 onRowClick={handleRowClick}
                 totalRow={totalRow}
                 showTotalRow={showTotalRow}
-                toggleableColumns={toggleableColumns}
+                headers={columns}
+                hiddenDropdownColumns={hiddenDropdownColumns}
                 hiddenColumns={hiddenColumns}
                 onToggleColumn={toggleColumn}
             />
@@ -292,7 +298,7 @@ function Repairers() {
                 </button>
             </div>
             {showPaymentPopup && selectedRepairer && (
-                <CustomPopUpComponet
+                <CustomPopUpComponent
                     totalAmount={Number(selectedRepairer.pending_amount)}
                     pendingAmount={pendingAmount}
                     cashAmount={cashAmount}

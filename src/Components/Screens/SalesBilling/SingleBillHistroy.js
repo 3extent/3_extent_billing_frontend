@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import { SINGLEBILLHISTORY_COLOUMNS } from "./Constants";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate, useParams } from "react-router-dom";
@@ -7,15 +6,22 @@ import moment from "moment";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { exportToExcel, generateAndSavePdf } from "../../../Util/Utility";
 import { API_URLS } from "../../../Util/AppConst";
-import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
+import CustomPopUpComponent from "../../CustomComponents/CustomPopUpComponent/CustomPopUpComponent";
 import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
 import { toast } from "react-toastify";
+import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
 export default function SingleBillHistory() {
     const { billId } = useParams();
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
     const [singleBill, setSingleBill] = useState([])
     const [customerInfo, setCustomerInfo] = useState();
+    let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
+    const [allColumns, setAllColumns] = useState([]);
+    const [columns, setColumns] = useState([]);
+    const [hiddenDropdownColumns, setHiddenDropdownColumns] = useState([]);
+    const [hiddenColumns, setHiddenColumns] = useState([]);
+
     // const [imeiOptions, setImeiOptions] = useState([]);
     // const [selectedImei, setSelectedImei] = useState("");
     // const [selectedContactNo, setSelectedContactNo] = useState("");
@@ -38,42 +44,7 @@ export default function SingleBillHistory() {
 
     const [loading, setLoading] = useState(false);
     const [showTotalRow, setShowTotalRow] = useState(false);
-    const toggleableColumns = ["Purchase Price", "QC-Remark", "GST Purchase Price", "Supplier Name", "Sale Price", "Profit"];
-
-    const [hiddenColumns, setHiddenColumns] = useState([
-        "Purchase Price",
-        "QC-Remark",
-        "GST Purchase Price",
-        "Supplier Name",
-        "Sale Price",
-        "Profit"
-    ]);
-
-    const [dynamicHeaders, setDynamicHeaders] = useState(() => {
-        return SINGLEBILLHISTORY_COLOUMNS.filter(
-            (col) => !["Purchase Price", "QC-Remark", "GST Purchase Price", "Supplier Name", "Sale Price", "Profit"].includes(col)
-        );
-    });
-
-    const toggleColumn = (columnName) => {
-        if (!toggleableColumns.includes(columnName)) return;
-        if (dynamicHeaders.includes(columnName)) {
-            setDynamicHeaders(dynamicHeaders.filter(col => col !== columnName));
-            setHiddenColumns([...hiddenColumns, columnName]);
-        } else {
-            let newHeaders = [...dynamicHeaders];
-            if (columnName === "Purchase Price" || columnName === "GST Purchase Price") {
-                const rateIndex = newHeaders.indexOf("Rate");
-                if (rateIndex !== -1) newHeaders.splice(rateIndex + 1, 0, columnName);
-                else newHeaders.push(columnName);
-            } else {
-                newHeaders.push(columnName);
-            }
-            setDynamicHeaders(newHeaders);
-            setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
-        };
-    };
-
+  
     useEffect(() => {
         if (billId) {
             // getAllImeis();
@@ -155,7 +126,7 @@ export default function SingleBillHistory() {
                 date: moment((bill.created_at)).format('ll')
             });
             // setCustomerName(bill.customer?.name || "");
-            // setSelectedContactNo(bill.customer?.contact_number || "");
+            // setSelectedContactNo(bill.customer?.contact_number || "");*--
             // setTotalAmount(Number(bill.payable_amount || 0));
             // setPayableAmount(Number(bill.payable_amount || 0));
             // setPendingAmount(Number(bill.pending_amount || 0));
@@ -171,19 +142,20 @@ export default function SingleBillHistory() {
             // setPaidAmount(cashPaid + onlinePaid + cardPaid);
 
             const singleBillHistrotFormattedRows = bill.products.map((product, index) => ({
-                "Sr.No": index + 1,
-                "IMEI NO": product.imei_number,
+                "Serial Number": index + 1,
+                "IMEI Number": product.imei_number,
                 "Brand": product.model.brand?.name,
                 "Model": product.model?.name,
                 "Rate": product.sold_at_price,
-                "Sale Price": product.sales_price,
+                "Sales Price": product.sales_price,
                 "Purchase Price": product.purchase_price,
                 "GST Purchase Price": product.gst_purchase_price,
-                "QC-Remark": product.qc_remark,
+                "QC Remark": product.qc_remark,
                 "Grade": product.grade,
                 "Accessories": product.accessories,
-                "Supplier Name": product.supplier?.name,
+                "Supplier": product.supplier?.name,
                 "Profit": bill.actualProfit,
+                "Purchase Price Including Expenses": product.purchase_cost_including_expenses,
                 status: product.status,
                 "Action": (
                     <div className="flex justify-end">
@@ -199,16 +171,26 @@ export default function SingleBillHistory() {
             }));
             setTotalRow({
                 "Sr.No": "Total",
-                "IMEI NO": "",
-                Brand: "",
-                Model: "",
                 "Rate": response.data.totalRate?.toLocaleString("en-IN") || 0,
-                "Sale Price": response.data.totalSalesPrice?.toLocaleString("en-IN") || 0,
+                "Sales Price": response.data.totalSalesPrice?.toLocaleString("en-IN") || 0,
                 "Purchase Price": response.data.totalPurchasePrice?.toLocaleString("en-IN") || 0,
-                "QC-Remark": "",
-                Grade: "",
-                Accessories: ""
             });
+            const singleBillingsMenuItem = loggedInUser?.role?.menu_items?.find(
+                item => item.name?.name === "Single Bill Details"
+            );
+
+            if (singleBillingsMenuItem) {
+                const showCols =
+                    singleBillingsMenuItem.show_table_columns.map(col => col.name);
+
+                const hiddenCols =
+                    singleBillingsMenuItem.hidden_dropdown_table_columns?.map(col => col.name);
+
+                setAllColumns([...showCols, ...hiddenCols]); //  all
+                setColumns(showCols);                        //  only visible
+                setHiddenColumns(hiddenCols);                //  hidden
+                setHiddenDropdownColumns(hiddenCols);        // checkbox list
+            }
             setSingleBill(bill);
             setRows(singleBillHistrotFormattedRows);
         } else {
@@ -304,6 +286,33 @@ export default function SingleBillHistory() {
     //     setCardPaidPopup(0);
     //     setShowPaymentPopup(false);
     // };
+    const toggleColumn = (columnName) => {
+
+        setColumns(columns => {
+
+            if (columns.includes(columnName)) {
+                return columns.filter(col => col !== columnName);
+            }
+
+            let newColumns = [...columns];
+
+            if (columnName === "Purchase Price") {
+                const rateIndex = newColumns.indexOf("Rate");
+                if (rateIndex !== -1) {
+                    newColumns.splice(rateIndex + 1, 0, columnName);
+                }
+            } else {
+                newColumns.push(columnName);
+            }
+            return newColumns;
+        });
+
+        setHiddenColumns(columns =>
+            columns.includes(columnName)
+                ? columns.filter(col => col !== columnName)
+                : [...columns, columnName]
+        );
+    };
 
     const handleGenaratePdf = () => {
         generateAndSavePdf(
@@ -318,6 +327,7 @@ export default function SingleBillHistory() {
             customerInfo.netTotal,
             customerInfo.cGst,
             customerInfo.sGst,
+            customerInfo.date
         );
     }
 
@@ -420,7 +430,7 @@ export default function SingleBillHistory() {
     }
 
     const handleExportToExcel = () => {
-        exportToExcel(rows, "billData.xlsx", customerInfo, dynamicHeaders);
+        exportToExcel(rows, "billData.xlsx", customerInfo, columns);
     };
 
     return (
@@ -483,14 +493,14 @@ export default function SingleBillHistory() {
                     }
                 />
             </div> */}
-            <CustomTableCompoent
+            <CustomTableComponent
                 maxHeight="h-[34vh]"
-                headers={dynamicHeaders}
+                headers={columns}
                 rows={rows}
                 totalRow={totalRow}
                 // onRateChange={handleRateChange}
                 editable={true}
-                toggleableColumns={toggleableColumns}
+                hiddenDropdownColumns={hiddenDropdownColumns}
                 hiddenColumns={hiddenColumns}
                 onToggleColumn={toggleColumn}
                 showTotalRow={showTotalRow}
@@ -515,7 +525,7 @@ export default function SingleBillHistory() {
                 />
             </div>
             {showPaymentPopup && (
-                <CustomPopUpComponet
+                <CustomPopUpComponent
                     isbillingHistory={true}
                     totalAmount={payableAmount}
                     cashAmount={cashPaidPopup}

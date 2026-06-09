@@ -1,14 +1,13 @@
 import { useEffect, useState, useCallback } from "react";
-import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
-import { SUPPLIER_COLUMNS } from "./Constants";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { API_URLS } from "../../../Util/AppConst";
-import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
 import { toast } from "react-toastify";
+import CustomPopUpComponent from "../../CustomComponents/CustomPopUpComponent/CustomPopUpComponent";
+import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
 function Supplier() {
     const [rows, setRows] = useState([]);
     const navigate = useNavigate();
@@ -16,36 +15,11 @@ function Supplier() {
     const [contactNo, setContactNo] = useState('');
     const [loading, setLoading] = useState(false);
     const [totalRow, setTotalRow] = useState(null);
-    const toggleableColumns = ["Address", "Contact No 2", "Firm Name"];
-
-    const [hiddenColumns, setHiddenColumns] = useState([
-        "Address", "Contact No 2", "Firm Name",
-    ]);
-
-    const [dynamicHeaders, setDynamicHeaders] = useState(() => {
-        return SUPPLIER_COLUMNS.filter(
-            (col) => !["Address", "Contact No 2", "Firm Name"].includes(col)
-        );
-    });
-
-    const toggleColumn = (columnName) => {
-        if (!toggleableColumns.includes(columnName)) return;
-        if (dynamicHeaders.includes(columnName)) {
-            setDynamicHeaders(dynamicHeaders.filter(col => col !== columnName));
-            setHiddenColumns([...hiddenColumns, columnName]);
-        } else {
-            let newHeaders = [...dynamicHeaders];
-            const actionIndex = newHeaders.indexOf("Action");
-            if (actionIndex !== +1) {
-                newHeaders.splice(actionIndex, 0, columnName);
-
-            } else {
-                newHeaders.push(columnName);
-            }
-            setDynamicHeaders(newHeaders);
-            setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
-        };
-    };
+    let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
+    const [allColumns, setAllColumns] = useState([]);
+    const [columns, setColumns] = useState([]);
+    const [hiddenColumns, setHiddenColumns] = useState([]);
+    const [hiddenDropdownColumns, setHiddenDropdownColumns] = useState([]);
     const [showPaymentPopup, setShowPaymentPopup] = useState(false);
     const [selectedSupplier, setSelectedSupplier] = useState(null);
     const [cashAmount, setCashAmount] = useState("");
@@ -54,6 +28,35 @@ function Supplier() {
     const [pendingAmount, setPendingAmount] = useState(0);
 
     const [showTotalRow, setShowTotalRow] = useState(false);
+
+    const toggleColumn = (columnName) => {
+
+        setColumns(columns => {
+
+            if (columns.includes(columnName)) {
+                return columns.filter(col => col !== columnName);
+            }
+
+            let newColumns = [...columns];
+
+            const actionIndex = newColumns.indexOf("Actions");
+            if (actionIndex !== -1) {
+                newColumns.splice(actionIndex, 0, columnName);
+            } else {
+                newColumns.push(columnName);
+            }
+
+
+            return newColumns;
+        });
+
+        setHiddenColumns(columns =>
+            columns.includes(columnName)
+                ? columns.filter(col => col !== columnName)
+                : [...columns, columnName]
+        );
+    };
+
 
     useEffect(() => {
         if (!selectedSupplier) return;
@@ -77,18 +80,18 @@ function Supplier() {
 
         if (response.status === 200) {
             const supplierFormattedRows = response.data.users.map((supplier) => ({
-                "Supplier Name": supplier.name,
-                "Contact No": supplier.contact_number,
-                "GST No": supplier.gst_number,
+                "Name": supplier.name,
+                "Contact Number": supplier.contact_number,
+                "GST Number": supplier.gst_number,
                 "State": supplier.state,
                 "Address": supplier.address,
-                "Contact No 2": supplier.contact_number2,
+                "Contact Number 2": supplier.contact_number2,
                 "Firm Name": supplier.firm_name,
                 "Supplier Type": supplier.type,
-                "Total Supplier Cost": supplier.payable_amount,
-                "Total Supplier Paid": supplier.paid_amount?.reduce((sum, payment) => sum + Number(payment.amount || 0), 0),
-                "Total Supplier Remaining": supplier.pending_amount,
-                "Action": (
+                "Total Amount": supplier.payable_amount,
+                "Paid Amount": supplier.paid_amount?.reduce((sum, payment) => sum + Number(payment.amount || 0), 0),
+                "Remaining Amount": supplier.pending_amount,
+                "Actions": (
                     <div className="flex gap-2 justify-end">
                         <div
                             title="Edit"
@@ -103,6 +106,8 @@ function Supplier() {
                         {Number(supplier.pending_amount) > 0 && (
                             <PrimaryButtonComponent
                                 label="Pay"
+                                icon="fa fa-inr"
+                                iconOnly={true}
                                 buttonClassName="py-1 px-3 text-[12px] font-semibold"
                                 onClick={(event) => {
                                     event.stopPropagation();
@@ -116,20 +121,30 @@ function Supplier() {
                 ),
                 id: supplier._id
             }));
+
             setTotalRow({
                 _id: "total",
-                "Bill id": "Total",
-                "Supplier Name": "",
-                "Contact No": "",
-                "GST No": "",
-                "State": "",
-                "Supplier Type": "",
-                "Total Supplier Cost": Number(response.data.payable_amount_of_all_users || 0).toLocaleString("en-IN"),
-                "Total Supplier Paid": Number(response.data.paid_amount_of_all_users || 0).toLocaleString("en-IN"),
-                "Total Supplier Remaining": Number(response.data.pending_amount_of_all_users || 0).toLocaleString("en-IN"),
-                "Action": ""
+                "Total Amount": Number(response.data.payable_amount_of_all_users || 0).toLocaleString("en-IN"),
+                "Paid Amount": Number(response.data.paid_amount_of_all_users || 0).toLocaleString("en-IN"),
+                "Remaining Amount": Number(response.data.pending_amount_of_all_users || 0).toLocaleString("en-IN"),
             });
+
             setRows(supplierFormattedRows);
+            const supplierMenuItem = loggedInUser?.role?.menu_items?.find(
+                item => item.name?.name === "Supplier"
+            );
+            if (supplierMenuItem) {
+                const showCols =
+                    supplierMenuItem.show_table_columns.map(col => col.name);
+
+                const hiddenCols =
+                    supplierMenuItem.hidden_dropdown_table_columns?.map(col => col.name);
+
+                setAllColumns([...showCols, ...hiddenCols]); //  all
+                setColumns(showCols);                        //  only visible
+                setHiddenColumns(hiddenCols);                //  hidden
+                setHiddenDropdownColumns(hiddenCols);        // checkbox list
+            }
         } else {
             console.log("Error");
         }
@@ -269,12 +284,12 @@ function Supplier() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <CustomTableCompoent
+            <CustomTableComponent
                 maxHeight="h-[65vh]"
-                headers={dynamicHeaders}
+                headers={columns}
                 rows={rows}
                 totalRow={totalRow}
-                toggleableColumns={toggleableColumns}
+                hiddenDropdownColumns={hiddenDropdownColumns}
                 hiddenColumns={hiddenColumns}
                 onToggleColumn={toggleColumn}
                 onRowClick={handleRowClick}
@@ -287,7 +302,7 @@ function Supplier() {
                 </button>
             </div>
             {showPaymentPopup && selectedSupplier && (
-                <CustomPopUpComponet
+                <CustomPopUpComponent
                     totalAmount={selectedSupplier.pending_amount}
                     pendingAmount={pendingAmount}
                     cashAmount={cashAmount}

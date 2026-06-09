@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
 import CustomDropdownInputComponent from "../../CustomComponents/CustomDropdownInputComponent/CustomDropdownInputComponent";
-import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import { API_URLS } from "../../../Util/AppConst";
@@ -8,6 +7,7 @@ import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { ACCESSORIES_OPTIONS, GRADE_OPTIONS } from "./Constants";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import DropdownComponent from "../../CustomComponents/DropdownComponent/DropdownComponent";
 
 function SendForRepair() {
     const [productData, setProductData] = useState({
@@ -307,7 +307,7 @@ function SendForRepair() {
                     disabled={productData.id}
 
                 />
-                <DropdownCompoent
+                <DropdownComponent
                     label="Grade"
                     name="grade"
                     placeholder="Select Grade"
@@ -351,7 +351,7 @@ function SendForRepair() {
                     value={productData.issue}
                     onChange={handleInputChange}
                 />
-                <DropdownCompoent
+                <DropdownComponent
                     label="Accessories"
                     name="accessories"
                     placeholder="Select Box"
