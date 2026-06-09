@@ -1,31 +1,37 @@
 import { useCallback, useEffect, useState } from "react";
-import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import { SINGLE_EXPENSE_DETAILS_COLUMNS } from "./Constant";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import moment from "moment";
 import { API_URLS } from "../../../Util/AppConst";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
-import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
+import DropdownComponent from "../../CustomComponents/DropdownComponent/DropdownComponent";
+import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
 
 function SingleExpenseDetails() {
+    const location = useLocation();
     const [rows, setRows] = useState([]);
     const [expenseTitle, setExpenseTitle] = useState("");
     const [paidByOptions, setPaidByOptions] = useState();
     const [paidBy, setPaidBy] = useState("");
     const fromDate = moment().subtract('days').format('YYYY-MM-DD');
     const toDate = moment().format('YYYY-MM-DD');
-    const [from, setFrom] = useState(fromDate);
-    const [to, setTo] = useState(toDate);
-    const [selectAllDates, setSelectAllDates] = useState(false);
+    const [from, setFrom] = useState(location.state?.from || fromDate);
+
+    const [to, setTo] = useState(location.state?.to || toDate);
+
+    const [selectAllDates, setSelectAllDates] = useState(
+        location.state?.selectAllDates || false
+    );
     const [totalRow, setTotalRow] = useState(null);
     const [showTotalRow, setShowTotalRow] = useState(false);
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false)
     const { expense_id } = useParams();
-
+    let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
+    const [columns, setColumns] = useState([]);
     const handleDateChange = (value, setDate) => {
         const today = moment().format('YYYY-MM-DD');
         if (value > today) {
@@ -39,7 +45,7 @@ function SingleExpenseDetails() {
         if (response.status === 200) {
             setExpenseTitle(response.data.maintenanceCriteria?.title);
             const singleExpenseTitleFormattedRows = response.data?.maintenanceCriteria?.activities.map((expense, index) => ({
-                "Sr.No": index + 1,
+                "Serial Number": index + 1,
                 "Date": moment(expense.created_at).format('ll'),
                 "Description": expense.description,
                 "Amount": expense.amount,
@@ -51,6 +57,15 @@ function SingleExpenseDetails() {
                 "Amount": Number(response.data.total_expenses_of_maintenance_criteria || 0).toLocaleString("en-IN"),
             });
             setRows(singleExpenseTitleFormattedRows);
+            const singleExpenseSubMenuItem = loggedInUser?.role?.menu_items?.find(
+                item => item.name?.name === "Single Maintenance Criteria"
+            );
+
+            if (singleExpenseSubMenuItem) {
+                const headers = singleExpenseSubMenuItem.show_table_columns.map(col => col.name);
+                setColumns(headers);
+            }
+
         } else {
             console.log("Failed to fetch maintenance data");
         }
@@ -110,15 +125,18 @@ function SingleExpenseDetails() {
     }
 
     useEffect(() => {
-        setFrom(fromDate);
-        setTo(toDate);
+        // setFrom(fromDate);
+        // setTo(toDate);
         getAdmins();
-        getSingleExpenseTitleData({ from, to });
+        getSingleExpenseTitleData({ from, to, selectAllDates });
     }, [expense_id, getAdmins]);
 
     const handleBack = () => {
-        navigate(-1);
+        navigate("/maintenanceDashboard", {
+            state: { from, to, selectAllDates }
+        });
     };
+
     return (
         <div>
             {loading && <Spinner />}
@@ -134,7 +152,7 @@ function SingleExpenseDetails() {
 
             <div className='flex items-center gap-4'>
 
-                <DropdownCompoent
+                <DropdownComponent
                     placeholder="Paid By"
                     value={paidBy}
                     onChange={(e) => setPaidBy(e.target.value)}
@@ -181,12 +199,13 @@ function SingleExpenseDetails() {
 
             </div>
 
-            <CustomTableCompoent
+            <CustomTableComponent
                 maxHeight="h-[55vh]"
-                headers={SINGLE_EXPENSE_DETAILS_COLUMNS}
+                // headers={SINGLE_EXPENSE_DETAILS_COLUMNS}
                 rows={rows}
                 totalRow={totalRow}
                 showTotalRow={showTotalRow}
+                headers={columns}
             />
             {rows.length > 0 && (
                 <div className="flex justify-end">

@@ -1,14 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
 import { PART_SHOP_OPTIONS } from "./Constants";
-import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import { useCallback, useEffect, useState } from "react";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import { toast } from "react-toastify";
 import { API_URLS } from "../../../Util/AppConst";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
-import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
+import CustomPopUpComponent from "../../CustomComponents/CustomPopUpComponent/CustomPopUpComponent";
+import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
 
 function PartShop() {
     const navigate = useNavigate();
@@ -25,10 +25,18 @@ function PartShop() {
     const [onlineAmount, setOnlineAmount] = useState("");
     const [card, setCard] = useState("");
     const [pendingAmount, setPendingAmount] = useState(0);
+    let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
+    const [columns, setColumns] = useState([]);
 
     const navigateAddShop = () => {
         navigate("/addshop");
     };
+    const navigateAddPartScreen = () => {
+        navigate("/addPart")
+    }
+    // const navigatePartList = () => {
+    //     navigate("/partList")
+    // }
     useEffect(() => {
         if (!selectedShop) return;
         const cash = Number(cashAmount || 0);
@@ -42,17 +50,17 @@ function PartShop() {
         if (response.status === 200) {
             const formattedRows = response.data.users.map((shop) => ({
                 id: shop._id,
-                "Shop Name": shop.name,
-                "Contact": shop.contact_number,
+                "Name": shop.name,
+                "Contact Number": shop.contact_number,
                 "State": shop.state,
                 "Address": shop.address,
                 "GST Number": shop.gst_number,
-                "Total Shop Cost": shop.payable_amount,
-                "Total Shop Paid": shop.paid_amount?.reduce(
+                "Total Amount": shop.payable_amount,
+                "Paid Amount": shop.paid_amount?.reduce(
                     (sum, payment) => sum + Number(payment.amount || 0),
                     0
                 ),
-                "Total Shop Remaining": shop.pending_amount,
+                "Remaining Amount": shop.pending_amount,
                 "Actions": (
                     <div className="flex justify-end gap-2">
                         {Number(shop.pending_amount) > 0 && (
@@ -63,6 +71,8 @@ function PartShop() {
                                     e.stopPropagation();
                                     handlePayClick(shop);
                                 }}
+                                iconOnly={true}
+                                icon="fa fa-inr"
                                 disabled={Number(shop.pending_amount) === 0}
                             />
                         )}
@@ -76,12 +86,22 @@ function PartShop() {
                 "State": "",
                 "Address": "",
                 "GST Number": "",
-                "Total Shop Cost": Number(response.data.payable_amount_of_all_users || 0).toLocaleString("en-IN"),
-                "Total Shop Paid": Number(response.data.paid_amount_of_all_users || 0).toLocaleString("en-IN"),
-                "Total Shop Remaining": Number(response.data.pending_amount_of_all_users || 0).toLocaleString("en-IN"),
+                "Total Amount": Number(response.data.payable_amount_of_all_users || 0).toLocaleString("en-IN"),
+                "Paid Amount": Number(response.data.paid_amount_of_all_users || 0).toLocaleString("en-IN"),
+                "Remaining Amount": Number(response.data.pending_amount_of_all_users || 0).toLocaleString("en-IN"),
                 "Actions": "",
             });
             setRows(formattedRows);
+            const partShopMenuItem = loggedInUser?.role?.menu_items?.find(
+                item => item.name?.name === "Parts Shops"
+            );
+
+            if (partShopMenuItem) {
+                const headers = partShopMenuItem.show_table_columns.map(col => col.name);
+                setColumns(headers);
+            } else {
+                setColumns([]);
+            }
         } else {
             const errorMsg = response?.data?.error || "Failed to add shop";
             toast.error(errorMsg, {
@@ -184,12 +204,30 @@ function PartShop() {
     return (
         <div className="w-full">
             {loading && <Spinner />}
-            <CustomHeaderComponent
-                name="Part Shop List"
-                label="Add Shop"
-                icon="fa fa-plus-circle"
-                onClick={navigateAddShop}
-            />
+            <div className="flex justify-between items-center">
+                <div className="text-xl font-serif">Part Shop List</div>
+                <div className="flex gap-3">
+                    {/* <PrimaryButtonComponent
+                        label="Part List"
+                        icon="fa fa-plus-circle"
+                        onClick={navigatePartList}
+                        buttonClassName="py-1 px-3 text-sm font-bold"
+                    /> */}
+                    <PrimaryButtonComponent
+                        label="Add Part"
+                        icon="fa fa-plus-circle"
+                        buttonClassName="py-1 px-3 text-sm font-bold"
+                        onClick={navigateAddPartScreen}
+                    />
+                    <PrimaryButtonComponent
+                        label="Add Shop"
+                        icon="fa fa-plus-circle"
+                        onClick={navigateAddShop}
+                        buttonClassName="py-1 px-3 text-sm font-bold"
+                    />
+                </div>
+            </div>
+
             <div className="flex items-center gap-4 mb-5">
                 <InputComponent
                     type="text"
@@ -221,9 +259,9 @@ function PartShop() {
                     onClick={handleResetFilter}
                 />
             </div>
-            <CustomTableCompoent
-                headers={PART_SHOP_OPTIONS}
+            <CustomTableComponent
                 rows={rows}
+                headers={columns}
                 maxHeight="h-[65vh]"
                 totalRow={totalRow}
                 showTotalRow={showTotalRow}
@@ -235,7 +273,7 @@ function PartShop() {
                 </button>
             </div>
             {showPaymentPopup && selectedShop && (
-                <CustomPopUpComponet
+                <CustomPopUpComponent
                     totalAmount={Number(selectedShop.pending_amount)}
                     pendingAmount={pendingAmount}
                     cashAmount={cashAmount}

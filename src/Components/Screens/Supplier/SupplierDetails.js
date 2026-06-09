@@ -2,15 +2,16 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
-import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import { API_URLS } from "../../../Util/AppConst";
 import { toast } from "react-toastify";
 import { SINGLE_SUPPLIER_DETAILS, STATUS_OPTIONS } from "./Constants";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import moment from "moment";
-import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import { exportToExcel } from "../../../Util/Utility";
+import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
+import DropdownComponent from "../../CustomComponents/DropdownComponent/DropdownComponent";
+
 
 export default function SupplierDetails() {
     const [imeiNumber, setIMEINumber] = useState();
@@ -35,11 +36,11 @@ export default function SupplierDetails() {
 
     const [showTotalRow, setShowTotalRow] = useState(false);
     const [totalRow, setTotalRow] = useState(null);
-
+    let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
+    const [columns, setColumns] = useState([]);
     const handleBack = () => {
         navigate(-1);
     };
-
     useEffect(() => {
         setFrom(fromDate);
         setTo(toDate);
@@ -74,28 +75,30 @@ export default function SupplierDetails() {
             const formattedRows = supplier.products.map((product) => ({
                 "Date": moment(product.created_at).format('ll'),
                 "IMEI Number": product.imei_number,
-                "Model Name": product.model?.name,
-                "Brand Name": product.model?.brand?.name,
+                "Model": product.model?.name,
+                "Brand": product.model?.brand?.name,
                 "Purchase Price": product.purchase_price,
                 "Grade": product.grade,
-                "Qc-Remark": product.qc_remark,
+                "QC Remark": product.qc_remark,
                 "Status": product.status,
                 id: product._id
             }));
             setTotalRow({
                 _id: "total",
                 "Bill id": "Total",
-                "Date": "",
-                "IMEI Number": "",
-                "Model Name": "",
-                "Brand Name": "",
                 "Purchase Price": Number(response.data.purchase_total_of_all_products || 0).toLocaleString("en-IN"),
-                "Grade": "",
-                "Qc-Remark": "",
-                "Status": ""
+
             });
 
             setRows(formattedRows);
+            const supplierSubMenuItem = loggedInUser?.role?.menu_items?.find(
+                item => item.name?.name === "Single Supplier Details"
+            );
+
+            if (supplierSubMenuItem) {
+                const headers = supplierSubMenuItem.show_table_columns.map(col => col.name);
+                setColumns(headers);
+            }
         } else {
             toast.error("Failed to fetch supplier details");
         }
@@ -145,6 +148,8 @@ export default function SupplierDetails() {
         getSupplierDetails({ imeiNumber, modelName, brandName, grade, status, from, to, selectAllDates });
     }
     const handleResetFilter = () => {
+        setBrandName('')
+        setGrade('');
         setModelName('');
         setIMEINumber('');
         setFrom(fromDate);
@@ -177,7 +182,7 @@ export default function SupplierDetails() {
                     maxLength={15}
                     onChange={(e) => setIMEINumber(e.target.value)}
                 />
-                <DropdownCompoent
+                <DropdownComponent
                     placeholder="Select Brands"
                     value={brandName}
                     onChange={(e) => setBrandName(e.target.value)}
@@ -191,7 +196,7 @@ export default function SupplierDetails() {
                     value={modelName}
                     onChange={(e) => setModelName(e.target.value)}
                 />
-                <DropdownCompoent
+                <DropdownComponent
                     placeholder="Select status"
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
@@ -250,12 +255,13 @@ export default function SupplierDetails() {
                     />
                 </div>
             </div>
-            <CustomTableCompoent
+            <CustomTableComponent
                 maxHeight="h-[60vh]"
-                headers={SINGLE_SUPPLIER_DETAILS}
+                // headers={SINGLE_SUPPLIER_DETAILS}
                 rows={rows}
                 showTotalRow={showTotalRow}
                 totalRow={totalRow}
+                headers={columns}
             />
             <div className="flex justify-end">
                 <button className="rounded-full" onClick={() => setShowTotalRow(!showTotalRow)}>

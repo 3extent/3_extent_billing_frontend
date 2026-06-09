@@ -32,6 +32,8 @@ import AddMaintenanceCriteria from './Components/Screens/Maintenance/AddMaintena
 import AddShop from './Components/Screens/Parts/AddShop';
 import PartShop from './Components/Screens/Parts/PartShop';
 import PartsDetails from './Components/Screens/Parts/PartsDetails';
+import AddPart from './Components/Screens/Parts/AddPart';
+import PartList from './Components/Screens/Parts/PartList';
 
 
 // Protected Route Component
@@ -46,9 +48,9 @@ const ProtectedRoute = ({ children, isAuthenticated }) => {
 const PublicRoute = ({ children, isAuthenticated }) => {
   let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
   if (isAuthenticated) {
-    if (loggedInUser.role.name === "ADMIN") {
+    if (loggedInUser.role?.name === "ADMIN") {
       return <Navigate to="/salesbilling" replace />;
-    } else if (loggedInUser.role.name === "REPAIRER") {
+    } else if (loggedInUser.role?.name === "REPAIRER") {
       return <Navigate to="/repair" replace />;
     }
   }
@@ -264,6 +266,20 @@ function App() {
                 <PartsDetails />
               </ProtectedRoute>
             } />
+
+             <Route path="/addPart" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <AddPart />
+              </ProtectedRoute>
+            } />
+
+             <Route path="/partList" element={
+              <ProtectedRoute isAuthenticated={loginStatus}>
+                <PartList />
+              </ProtectedRoute>
+            } />
+
+            
           </Routes >
         </div >
       </div >

@@ -6,17 +6,17 @@ import jsPDF from "jspdf";
 import autoTable from 'jspdf-autotable';
 import { LOGO_BASE64 } from "./AppConst";
 import { ToWords } from "to-words";
-export const exportToExcel = async (data, fileName = "StyledData.xlsx", customerInfo = null , visibleColumns = null) => {
+export const exportToExcel = async (data, fileName = "StyledData.xlsx", customerInfo = null, visibleColumns = null) => {
   if (!data || data.length === 0) {
     alert("No data to export!");
     return;
   }
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet("Sheet1");
-  
-   let headers = visibleColumns 
-    ? visibleColumns.filter(header => !["Action", "Actions"].includes(header)) 
-    : Object.keys(data[0]).filter(header => !["id","Actions","Action"].includes(header));
+
+  let headers = visibleColumns
+    ? visibleColumns.filter(header => !["Action", "Actions"].includes(header))
+    : Object.keys(data[0]).filter(header => !["id", "Actions", "Action"].includes(header));
 
   let rowIndex = 1;
   worksheet.mergeCells(rowIndex, 1, rowIndex + 1, headers.length);
@@ -134,12 +134,16 @@ export const generateAndSavePdf = (
   firm_name,
   net_total,
   c_gst,
-  s_gst
+  s_gst,
+  updated_at
 ) => {
   console.log("Firm Name:", firm_name);
-  const now = new Date();
+  const invoiceDate = new Date(updated_at);
+
   const pad = (n) => n.toString().padStart(2, "0");
-  const timestamp = `${now.getFullYear()}.${pad(now.getMonth() + 1)}.${pad(now.getDate())}_${pad(now.getHours())}.${pad(now.getMinutes())}.${pad(now.getSeconds())}`;
+
+  const timestamp = `${invoiceDate.getFullYear()}.${pad(invoiceDate.getMonth() + 1)}.${pad(invoiceDate.getDate())}_${pad(invoiceDate.getHours())}.${pad(invoiceDate.getMinutes())}.${pad(invoiceDate.getSeconds())}`;
+
   // Create a new PDF document
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
@@ -155,7 +159,7 @@ export const generateAndSavePdf = (
     // gst in
     doc.setFont("Roboto", "normal");
     doc.setFontSize(11);
-    doc.text("GSTIN: 27AADFZ9861FIZN", 14, 24);
+    doc.text("GSTIN: 27AADFZ9861F1ZN", 14, 24);
     // contact no
     doc.setFont("Roboto", "normal");
     doc.setFontSize(11);
@@ -235,7 +239,7 @@ export const generateAndSavePdf = (
     });
     // date
     doc.text(
-      now.toLocaleDateString("en-GB"),
+      invoiceDate.toLocaleDateString("en-GB"),
       pageWidth - 14,
       18,
       { align: "right" }
@@ -261,7 +265,7 @@ export const generateAndSavePdf = (
       Number(row.sold_at_price || 0).toFixed(2)
     ]
   });
-  const MIN_VISIBLE_ROWS = 8;
+  const MIN_VISIBLE_ROWS = 7;
   if (tableRows.length < MIN_VISIBLE_ROWS) {
     const emptyRowsNeeded = MIN_VISIBLE_ROWS - tableRows.length;
     for (let i = 0; i < emptyRowsNeeded; i++) {
@@ -376,6 +380,20 @@ export const generateAndSavePdf = (
       },
     }
   ]);
+
+  tableRows.push([
+    {
+      content:
+        "Note: This invoice is issued under the Margin Scheme for Second-Hand Goods as per Rule 32(5) of the CGST Rules, 2017. GST is charged only on the profit margin and NOT on the total transaction value. No Input Tax Credit (ITC) is admissible to the recipient on this invoice.",
+      colSpan: 5,
+      styles: {
+        halign: "left",
+        fontStyle: "italic",
+        fontSize: 9,
+        cellPadding: { top: 3, left: 2, right: 2, bottom: 2 },
+      },
+    },
+  ]);
   // Generate the table in the PDF
   let pageFinalYs = {};
   autoTable(doc, {
@@ -414,8 +432,15 @@ export const generateAndSavePdf = (
       if (isNetTotalRow) {
         doc.line(cell.x, cell.y + cell.height, cell.x + cell.width, cell.y + cell.height);
       }
+      
       if (isSignatureRow) {
-        doc.line(cell.x, cell.y, cell.x + cell.width, cell.y); // Top
+        doc.line(cell.x, cell.y, cell.x + cell.width, cell.y); // top
+        doc.line(
+          cell.x,
+          cell.y + cell.height,
+          cell.x + cell.width,
+          cell.y + cell.height
+        ); // bottom
       }
       //  Header: top & bottom border (for visibility)
       if (section === "head") {
@@ -434,6 +459,7 @@ export const generateAndSavePdf = (
     doc.line(14, finalY, pageWidth - 14, finalY);
 
   });
+
   // save file
   doc.save(`${name}_Invoice_${timestamp}.pdf`);
 };
@@ -451,7 +477,7 @@ export const excelDownload = () => {
 
   // Set column widths based on header length
   worksheet['!cols'] = headerRow.map(header => ({
-    wch: header.length + 2 // add a bit of padding
+    wch: header.length + 2 // add a bixn t of padding
   }));
 
   // Create workbook and add worksheet

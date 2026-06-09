@@ -1,17 +1,17 @@
 import { useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
-import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import { REPAIR_OPTIONS, STATUS_OPTIONS } from "./Constants";
 import { useCallback, useEffect, useState } from "react";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { API_URLS } from "../../../Util/AppConst";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
-import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import AcceptRepair from "./AcceptRepair";
 import { toast } from "react-toastify";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
 import moment from "moment";
 import { handleBarcodePrint } from "../../../Util/Utility";
+import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
+import DropdownComponent from "../../CustomComponents/DropdownComponent/DropdownComponent";
 function RepairDashboard() {
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
@@ -24,49 +24,35 @@ function RepairDashboard() {
 
     const fromDate = moment().format("YYYY-MM-DD");
     const toDate = moment().format("YYYY-MM-DD");
-
+    let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
     const [from, setFrom] = useState(fromDate);
     const [to, setTo] = useState(toDate);
     const [selectAllDates, setSelectAllDates] = useState(false);
     const [totalRow, setTotalRow] = useState(null);
     const [showTotalRow, setShowTotalRow] = useState(false);
-    const toggleableColumns = [
-        "Purchase Price",
-        "Repairer Remark",
-        "Engineer Name"
-    ];
-
-    const [hiddenColumns, setHiddenColumns] = useState([
-        "Purchase Price",
-        "Repairer Remark",
-        "Engineer Name"
-    ]);
-
-    const [dynamicHeaders, setDynamicHeaders] = useState(() => {
-        return REPAIR_OPTIONS.filter(
-            (col) =>
-                !["Purchase Price", "Repairer Remark", "Engineer Name"].includes(col)
-        );
-    });
+    const [allColumns, setAllColumns] = useState([]);
+    const [columns, setColumns] = useState([]);
+    const [hiddenDropdownColumns, setHiddenDropdownColumns] = useState([]);
+    const [hiddenColumns, setHiddenColumns] = useState([]);
     const toggleColumn = (columnName) => {
-        if (!toggleableColumns.includes(columnName)) return;
-
-        if (dynamicHeaders.includes(columnName)) {
-            setDynamicHeaders(dynamicHeaders.filter(col => col !== columnName));
-            setHiddenColumns([...hiddenColumns, columnName]);
-        } else {
-            let newHeaders = [...dynamicHeaders];
-
-            const actionIndex = newHeaders.indexOf("Action");
-            if (actionIndex !== -1) {
-                newHeaders.splice(actionIndex, 0, columnName);
-            } else {
-                newHeaders.push(columnName);
+        setColumns(columns => {
+            if (columns.includes(columnName)) {
+                return columns.filter(col => col !== columnName);
             }
-
-            setDynamicHeaders(newHeaders);
-            setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
-        }
+            let newColumns = [...columns];
+            const actionIndex = newColumns.indexOf("Actions");
+            if (actionIndex !== -1) {
+                newColumns.splice(actionIndex, 0, columnName);
+            } else {
+                newColumns.push(columnName);
+            }
+            return newColumns;
+        });
+        setHiddenColumns(columns =>
+            columns.includes(columnName)
+                ? columns.filter(col => col !== columnName)
+                : [...columns, columnName]
+        );
     };
     const navigateAddRepair = () => {
         navigate("/sendforrepair")
@@ -76,14 +62,14 @@ function RepairDashboard() {
         if (response.status === 200) {
             const repairFormattedRows = response.data.products.map((repair) => ({
                 _id: repair._id,
-                "Repair Started": repair.repair_started_at
+                "Repair Started Date": repair.repair_started_at
                     ? moment(repair.repair_started_at).format("ll")
                     : "-",
-                "Repair Completed": repair.repair_completed_at
+                "Repair Completed Date": repair.repair_completed_at
                     ? moment(repair.repair_completed_at).format("ll")
                     : "-",
 
-                IMEI: repair.imei_number,
+                "IMEI Number": repair.imei_number,
                 Brand: repair.model?.brand?.name,
                 Model: repair.model?.name,
                 Grade: repair.grade,
@@ -93,15 +79,17 @@ function RepairDashboard() {
                     0
                 ),
                 "Repairer Cost": repair.repairer_cost,
-                "Engineer Name": repair.engineer_name,
-                "Repairer Remark": repair.repair_remark,
+                "Engineer": repair.engineer_name,
+                "Repair Remark": repair.repair_remark,
                 "Repairer": repair.repair_by?.name,
                 Accessories: repair.accessories,
                 Status: repair.status,
-                Action: repair.status === "IN_REPAIRING" && (
+                Actions: repair.status === "IN_REPAIRING" && (
                     <PrimaryButtonComponent
                         label="Accept"
                         buttonClassName="py-1 px-3 text-sm bg-green-600 text-white rounded"
+                        icon="fa fa-retweet"
+                        iconOnly={true}
                         onClick={() => {
                             console.log("Selected repair object:", repair);
                             setSelectedRepair(repair);
@@ -120,6 +108,19 @@ function RepairDashboard() {
 
             console.log("Formatted Rows:", repairFormattedRows);
             setRows(repairFormattedRows);
+            const repairMenuItem = loggedInUser?.role?.menu_items?.find(
+                item => item.name?.name === "Repair Dashboard"
+            );
+            if (repairMenuItem) {
+                const showCols =
+                    repairMenuItem.show_table_columns.map(col => col.name);
+                const hiddenCols =
+                    repairMenuItem.hidden_dropdown_table_columns?.map(col => col.name);
+                setAllColumns([...showCols, ...hiddenCols]);
+                setColumns(showCols);
+                setHiddenColumns(hiddenCols);
+                setHiddenDropdownColumns(hiddenCols);
+            }
         } else {
             console.log("Error fetching repairs");
         }
@@ -161,7 +162,6 @@ function RepairDashboard() {
     const handleResetFilter = () => {
         setIMEINumber('');
         setStatus("IN_REPAIRING");
-        // getAllRepairs();
         setFrom(fromDate);
         setTo(toDate);
         setSelectAllDates(false);
@@ -272,7 +272,7 @@ function RepairDashboard() {
                     onChange={(e) => setIMEINumber(e.target.value)}
 
                 />
-                <DropdownCompoent
+                <DropdownComponent
                     placeholder="Select status"
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
@@ -317,13 +317,13 @@ function RepairDashboard() {
                     buttonClassName="mt-1 py-1 px-5"
                 />
             </div>
-            <CustomTableCompoent
+            <CustomTableComponent
                 maxHeight="h-[60vh]"
-                headers={dynamicHeaders}
+                headers={columns}
                 rows={rows}
                 totalRow={totalRow}
                 showTotalRow={showTotalRow}
-                toggleableColumns={toggleableColumns}
+                hiddenDropdownColumns={hiddenDropdownColumns}
                 hiddenColumns={hiddenColumns}
                 onToggleColumn={toggleColumn}
             />

@@ -1,24 +1,26 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import CustomHeaderComponent from "../../CustomComponents/CustomHeaderComponent/CustomHeaderComponent";
-import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { API_URLS } from "../../../Util/AppConst";
-import { MAINTENANCE_COLOUMNS } from "./Constant";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import moment from "moment";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
+import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
 
 function MaintenanceDashboard() {
+    const location = useLocation();
     const [title, setTitle] = useState();
     const fromDate = moment().subtract('days').format('YYYY-MM-DD');
     const toDate = moment().format('YYYY-MM-DD');
-    const [from, setFrom] = useState(fromDate);
-    const [to, setTo] = useState(toDate);
-    const [selectAllDates, setSelectAllDates] = useState(false);
+    const [from, setFrom] = useState(location.state?.from || fromDate);
+    const [to, setTo] = useState(location.state?.to || toDate);
+    const [selectAllDates, setSelectAllDates] = useState(location.state?.selectAllDates || false);
     const [totalRow, setTotalRow] = useState(null);
     const [showTotalRow, setShowTotalRow] = useState(false);
     const [loading, setLoading] = useState(false);
+    let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
+    const [columns, setColumns] = useState([]);
     const navigate = useNavigate();
     const navigateAddMaintanance = () => {
         navigate("/addExpense")
@@ -27,7 +29,7 @@ function MaintenanceDashboard() {
     const getMaintenanceCallBack = (response) => {
         if (response.status === 200) {
             const maintenanceFormattedRows = response.data?.maintenanceCriteriaList.map((expense, index) => ({
-                "Sr.No": index + 1,
+                "Serial Number": index + 1,
                 "Expense Title": expense.title,
                 "Total Amount": expense.total_expenses_of_maintenance_criteria,
                 id: expense._id
@@ -39,6 +41,17 @@ function MaintenanceDashboard() {
             });
 
             setRows(maintenanceFormattedRows);
+            const maintenanceDashboardMenuItem = loggedInUser?.role?.menu_items?.find(
+                item => item.name?.name === "Maintenance" && item.name?.level !== 1
+            );
+
+            if (maintenanceDashboardMenuItem) {
+                const headers = maintenanceDashboardMenuItem.show_table_columns.map(col => col.name);
+                setColumns(headers);
+            } else {
+                setColumns([]);
+            }
+
         } else {
             console.log("Failed to fetch maintenance data");
         }
@@ -66,10 +79,9 @@ function MaintenanceDashboard() {
 
     };
 
+    
     useEffect(() => {
-        setFrom(fromDate);
-        setTo(toDate);
-        getMaintenanceData({ from, to });
+        getMaintenanceData({ from, to, selectAllDates });
     }, []);
 
     const handleDateChange = (value, setDate) => {
@@ -86,6 +98,7 @@ function MaintenanceDashboard() {
     }
 
     const handleResetFilter = () => {
+        setTitle('');
         setFrom(fromDate);
         setTo(toDate);
         setSelectAllDates(false);
@@ -93,7 +106,13 @@ function MaintenanceDashboard() {
     }
 
     const handleRowClick = (row) => {
-        navigate(`/singleExpenseDetails/${row.id}`);
+        navigate(`/singleExpenseDetails/${row.id}`, {
+            state: {
+                from,
+                to,
+                selectAllDates
+            }
+        });
     };
 
     return (
@@ -126,7 +145,7 @@ function MaintenanceDashboard() {
                         <input
                             type="checkbox"
                             checked={selectAllDates}
-                         onChange={(e) => setSelectAllDates(e.target.checked)}
+                            onChange={(e) => setSelectAllDates(e.target.checked)}
                         />
                         All Data
                     </label>
@@ -162,9 +181,9 @@ function MaintenanceDashboard() {
                 </div>
             </div>
 
-            <CustomTableCompoent
+            <CustomTableComponent
                 maxHeight="h-[55vh]"
-                headers={MAINTENANCE_COLOUMNS}
+                headers={columns}
                 rows={rows}
                 totalRow={totalRow}
                 onRowClick={handleRowClick}

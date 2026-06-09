@@ -23,6 +23,8 @@ export default function Login({ onLoginSuccess }) {
             localStorage.setItem('isAuthenticated', 'true');
             console.log("Success");
             localStorage.setItem('loggedInUser', JSON.stringify(response.data.user));
+            localStorage.setItem('token', response.data.token);
+
 
             // Call the callback to update parent state
             if (onLoginSuccess) {

@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
-import CustomTableCompoent from "../../CustomComponents/CustomTableCompoent/CustomTableCompoent";
 import { BILLINGHISTORY_COLOUMNS, PAYMENTSTATUS_OPTIONS } from "./Constants";
 import InputComponent from "../../CustomComponents/InputComponent/InputComponent";
 import PrimaryButtonComponent from "../../CustomComponents/PrimaryButtonComponent/PrimaryButtonComponent";
-import DropdownCompoent from "../../CustomComponents/DropdownCompoent/DropdownCompoent";
 import { apiCall, Spinner } from "../../../Util/AxiosUtils";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { exportToExcel, generateAndSavePdf } from "../../../Util/Utility";
-import CustomPopUpComponet from "../../CustomComponents/CustomPopUpCompoent/CustomPopUpComponet";
 import { API_URLS } from "../../../Util/AppConst";
 import { toast } from "react-toastify";
-import CustomConfirmationPopup from "../../CustomComponents/CustomPopUpCompoent/CustomConfirmationPopup";
+import CustomConfirmationPopup from "../../CustomComponents/CustomPopUpComponent/CustomConfirmationPopup";
+import CustomPopUpComponent from "../../CustomComponents/CustomPopUpComponent/CustomPopUpComponent";
+import CustomTableComponent from "../../CustomComponents/CustomTableComponent/CustomTableComponent";
+import DropdownComponent from "../../CustomComponents/DropdownComponent/DropdownComponent";
 function Billinghistory({ isDraft = false }) {
     const navigate = useNavigate();
     const [rows, setRows] = useState([]);
@@ -41,44 +41,23 @@ function Billinghistory({ isDraft = false }) {
     const [selectAllDates, setSelectAllDates] = useState(false);
     const [showTotalRow, setShowTotalRow] = useState(false);
     const [totalRow, setTotalRow] = useState(null);
-    const toggleableColumns = ["Profit"];
 
-    const [hiddenColumns, setHiddenColumns] = useState([
-        "Profit",
-    ]);
-
-    const [dynamicHeaders, setDynamicHeaders] = useState(() => {
-        return BILLINGHISTORY_COLOUMNS.filter(
-            (col) => !["Profit",].includes(col)
-        );
-    });
-
-    const toggleColumn = (columnName) => {
-        if (!toggleableColumns.includes(columnName)) return;
-        if (dynamicHeaders.includes(columnName)) {
-            setDynamicHeaders(dynamicHeaders.filter(col => col !== columnName));
-            setHiddenColumns([...hiddenColumns, columnName]);
-        } else {
-            let newHeaders = [...dynamicHeaders];
-            const gradeIndex = newHeaders.indexOf("Grade");
-            if (gradeIndex !== +1) {
-                newHeaders.splice(gradeIndex, 0, columnName);
-
-            } else {
-                newHeaders.push(columnName);
-            }
-            setDynamicHeaders(newHeaders);
-            setHiddenColumns(hiddenColumns.filter(col => col !== columnName));
-        };
-    };
+    let loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
+    const [allColumns, setAllColumns] = useState([]);
+    const [columns, setColumns] = useState([]);
+    const [hiddenDropdownColumns, setHiddenDropdownColumns] = useState([]);
+    const [hiddenColumns, setHiddenColumns] = useState([]);
+    
     useEffect(() => {
         getBillData();
     }, [isDraft]);
+
     useEffect(() => {
         setFrom(from);
         setTo(to);
         getBillData({ from, to });
     }, []);
+
     useEffect(() => {
         if (!selectedBill) return;
         const cash = Number(cashAmount || 0);
@@ -88,6 +67,7 @@ function Billinghistory({ isDraft = false }) {
         const pending = selectedBill.pending_amount - paidTotal;
         setPendingAmount(pending);
     }, [cashAmount, card, onlineAmount, selectedBill]);
+
     const handleDeleteBillCallback = (response) => {
         if (response.status === 200) {
             toast.success("Bill deleted successfully!", {
@@ -105,6 +85,7 @@ function Billinghistory({ isDraft = false }) {
         setShowConfirmationPopup(false);
         setBillDelete(null);
     };
+    
     const handleDeleteBill = () => {
         if (!billDelete) return;
 
@@ -112,8 +93,8 @@ function Billinghistory({ isDraft = false }) {
             method: "DELETE",
             url: `${API_URLS.BILLING}/${billDelete}`,
             data: {},
-            setLoading: setLoading,
             callback: handleDeleteBillCallback,
+            setLoading: setLoading,
         });
     };
 
@@ -127,9 +108,9 @@ function Billinghistory({ isDraft = false }) {
         if (response.status === 200) {
             setBillingProductData(response.data.billings)
             const billingformattedRows = response.data.billings.map((bill, index) => ({
-                "Bill id": index + 1,
+                "Invoice Number": index + 1,
                 "Date": moment(bill.created_at).format('ll'),
-                "Customer Name": bill.customer?.name,
+                "Customer": bill.customer?.name,
                 "Firm Name": bill.customer?.firm_name || "-",
                 "Contact Number": bill.customer?.contact_number,
                 "Total Amount": bill.payable_amount,
@@ -153,17 +134,20 @@ function Billinghistory({ isDraft = false }) {
                         {Number(bill.pending_amount) > 0 && (
                             <PrimaryButtonComponent
                                 label="Pay"
+                                icon="fa fa-inr"
                                 buttonClassName="py-1 px-3 text-[12px] font-semibold"
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     handlepaymentMethod(bill);
                                 }}
+                                iconOnly={true}
                                 disabled={Number(bill.pending_amount) === 0}
                             />
                         )}
                         <PrimaryButtonComponent
                             label="Print"
                             icon="fa fa-print"
+                            iconOnly={true}
                             buttonClassName="py-1 px-3 text-[12px] font-semibold"
                             onClick={(e) => {
                                 e.stopPropagation();
@@ -178,7 +162,8 @@ function Billinghistory({ isDraft = false }) {
                                     bill.customer?.firm_name,
                                     bill.net_total,
                                     bill.c_gst,
-                                    bill.s_gst
+                                    bill.s_gst,
+                                    bill.updated_at
                                 );
                             }}
                         />
@@ -191,21 +176,63 @@ function Billinghistory({ isDraft = false }) {
                 setTotalRow({
                     _id: "total",
                     "Bill id": "Total",
-                    "Date": "",
-                    "Customer Name": "",
-                    "Contact Number": "",
                     "Total Amount": response.data.totalAmount?.toLocaleString("en-IN") || 0,
                     "Remaining Amount": response.data.totalRemaining?.toLocaleString("en-IN") || 0,
                     "Profit": response.data.totalProfit,
                     "Total Products": response.data.totalProducts || 0,
-                    "Actions": ""
                 });
+            }
+            const BillingsMenuItem = loggedInUser?.role?.menu_items?.find(
+                item => item.name?.name === "Billing History"
+            );
+
+            if (BillingsMenuItem) {
+                const showCols =
+                    BillingsMenuItem.show_table_columns.map(col => col.name);
+
+                const hiddenCols =
+                    BillingsMenuItem.hidden_dropdown_table_columns?.map(col => col.name);
+
+                setAllColumns([...showCols, ...hiddenCols]); //  all
+                setColumns(showCols);                        //  only visible
+                setHiddenColumns(hiddenCols);                //  hidden
+                setHiddenDropdownColumns(hiddenCols);        // checkbox list
             }
             setRows(billingformattedRows);
         } else {
             console.log("Error");
         }
     }
+
+    const toggleColumn = (columnName) => {
+
+        setColumns(columns => {
+
+            if (columns.includes(columnName)) {
+                return columns.filter(col => col !== columnName);
+            }
+
+            let newColumns = [...columns];
+
+            const actionIndex = newColumns.indexOf("Actions");
+            if (actionIndex !== -1) {
+                newColumns.splice(actionIndex, 0, columnName);
+            } else {
+                newColumns.push(columnName);
+            }
+
+
+            return newColumns;
+        });
+
+        setHiddenColumns(columns =>
+            columns.includes(columnName)
+                ? columns.filter(col => col !== columnName)
+                : [...columns, columnName]
+        );
+    };
+
+
     const getBillData = () => {
         let url = `${API_URLS.BILLING}?`;
         if (isDraft) {
@@ -237,6 +264,8 @@ function Billinghistory({ isDraft = false }) {
             setLoading: setLoading
         })
     }
+
+
     const handleDateChange = (value, setDate) => {
         const today = moment().format('YYYY-MM-DD');
         if (value > today) {
@@ -404,7 +433,7 @@ function Billinghistory({ isDraft = false }) {
                     onChange={(e) => setContactNo(e.target.value)}
                 />
                 {!isDraft && (
-                    <DropdownCompoent
+                    <DropdownComponent
                         placeholder="Select status"
                         value={paymentStatus}
                         onChange={(e) => setPaymentStatus(e.target.value)}
@@ -458,13 +487,13 @@ function Billinghistory({ isDraft = false }) {
                     onClick={handleResetFilter}
                 />
             </div>
-            <CustomTableCompoent
+            <CustomTableComponent
                 maxHeight="h-[60vh]"
-                headers={dynamicHeaders}
+                headers={columns}
                 rows={rows}
                 totalRow={totalRow}
                 onRowClick={handleRowClick}
-                toggleableColumns={toggleableColumns}
+                hiddenDropdownColumns={hiddenDropdownColumns}
                 hiddenColumns={hiddenColumns}
                 onToggleColumn={toggleColumn}
                 showTotalRow={!isDraft && showTotalRow}
@@ -477,7 +506,7 @@ function Billinghistory({ isDraft = false }) {
                 </div>
             )}
             {showPaymentPopup && selectedBill && (
-                <CustomPopUpComponet
+                <CustomPopUpComponent
                     totalAmount={selectedBill.pending_amount}
                     cashAmount={cashAmount}
                     onlineAmount={onlineAmount}

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-export default function CustomTableCompoent({
+export default function CustomTableComponent({
     headers,
     rows,
     onRateChange,
@@ -9,7 +9,7 @@ export default function CustomTableCompoent({
     editable = false,
     showTotalRow = false,
     autoScrollBottom = false,
-    toggleableColumns = [],
+    hiddenDropdownColumns = [],
     hiddenColumns = [],
     onToggleColumn,
     totalRow
@@ -17,11 +17,12 @@ export default function CustomTableCompoent({
     const [tableHeaders, setTableHeaders] = useState(headers);
     const [tableRows, setTableRows] = useState(rows);
     const [showDropdown, setShowDropdown] = useState(false);
+    // const menuRef = useRef();
 
     const tableRef = useRef(null);
     const lastRowRef = useRef(null);
     const [isAtBottom, setIsAtBottom] = useState(true);
-
+    const menuRef = useRef();
     useEffect(() => setTableHeaders(headers), [headers]);
     useEffect(() => setTableRows(rows), [rows]);
 
@@ -49,17 +50,18 @@ export default function CustomTableCompoent({
         }
     }, [tableRows, isAtBottom]);
 
-    // const normalRows = tableRows.filter((row) => row._id !== "total");
-    // const totalRowData = tableRows.find((row) => row._id === "total");
+    useEffect(() => {
+        function handleClickOutside(e) {
+            if (menuRef.current && !menuRef.current.contains(e.target)) {
+                setShowDropdown(false);
+            }
+        }
 
-    // const getTotalRowBg = () => {
-    //     if (!totalRowData) return "bg-white";
-    //     if (totalRowData.Profit != null) {
-    //         if (totalRowData.Profit > 0) return "bg-green-200";
-    //         if (totalRowData.Profit < 0) return "bg-red-200";
-    //     }
-    //     return "bg-green-200";
-    // };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    
     const getTotalRowBg = () => {
         if (!totalRow) return "bg-white";
         if (totalRow.Profit != null) {
@@ -72,19 +74,21 @@ export default function CustomTableCompoent({
     return (
         <div>
             {/* Toggleable Columns Dropdown */}
-            {toggleableColumns.length > 0 && tableRows.length > 0 && (
+            {hiddenDropdownColumns.length > 0 && tableRows.length > 0 && (
                 <div className="w-full flex justify-start bg-white py-2 pl-2 top-0 z-30">
                     <div className="relative">
                         <button
-                            onClick={() => setShowDropdown(!showDropdown)}
+                            onClick={() => setShowDropdown((prev) => !prev)}
                             className="px-2 py-1 border rounded hover:bg-gray-200"
                         >
                             <i className="fa fa-ellipsis-h"></i>
                         </button>
 
                         {showDropdown && (
-                            <div className="absolute left-0 bg-white border rounded shadow-md mt-1 w-48 z-40">
-                                {toggleableColumns.map((col) => (
+                            <div
+                                ref={menuRef}
+                                className="absolute left-0 bg-white border rounded shadow-md mt-1 w-48 z-40">
+                                {hiddenDropdownColumns.map((col) => (
                                     <label
                                         key={col}
                                         className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
@@ -93,6 +97,7 @@ export default function CustomTableCompoent({
                                             type="checkbox"
                                             checked={!hiddenColumns.includes(col)}
                                             onChange={() => onToggleColumn(col)}
+
                                             className="mr-2"
                                         />
                                         {col}
@@ -112,10 +117,10 @@ export default function CustomTableCompoent({
                         <table className="table-fixed w-full">
                             <thead className="sticky top-0 bg-slate-800 text-white text-sm font-semibold">
                                 <tr>
-                                    {tableHeaders.map((header, i) => (
+                                    {tableHeaders?.map((header, i) => (
                                         <th
                                             key={i}
-                                            className={`px-4 py-2 ${header === "Action"
+                                            className={`px-4 py-2 ${header === "Actions"
                                                 ? "text-right"
                                                 : "text-left"
                                                 }`}
@@ -141,7 +146,7 @@ export default function CustomTableCompoent({
                                             }`}
                                         onClick={() => onRowClick && onRowClick(row)}
                                     >
-                                        {tableHeaders.map((header, colIndex) => (
+                                        {tableHeaders?.map((header, colIndex) => (
                                             <td
                                                 key={colIndex}
                                                 className="px-4 py-2 text-left"
@@ -198,10 +203,11 @@ export default function CustomTableCompoent({
                                                 : [
                                                     "Total Amount",
                                                     "Remaining Amount",
+                                                    "Paid Amount",
                                                     "Profit",
                                                     "Total Products",
                                                     "Purchase Price",
-                                                    "Sale Price",
+                                                    "Sales Price",
                                                     "Total Supplier Cost",
                                                     "Total Supplier Paid",
                                                     "Total Supplier Remaining",
@@ -212,9 +218,6 @@ export default function CustomTableCompoent({
                                                     "Total Repairer Cost",
                                                     "Total Paid",
                                                     "Total Repairer Remaining",
-                                                    "Total Shop Cost",
-                                                    "Total Shop Paid",
-                                                    "Total Shop Remaining",
                                                     "Total Amount",
                                                     "Amount"
                                                 ].includes(header)

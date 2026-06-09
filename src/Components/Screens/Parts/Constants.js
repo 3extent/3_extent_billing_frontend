@@ -19,3 +19,10 @@ export const PARTS_DETAILS_HEADERS = [
     "Repairer Name",
 
 ];
+export const PARTS_STATUS = [
+    "AVAILABLE",
+    "USED"
+
+];
+
+
