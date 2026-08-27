@@ -18,13 +18,13 @@ function AddExpense() {
     const [MaintenanceCriteriaOptions, setmaintenanceCriteriaOptions] = useState([]);
     const today = moment().format("YYYY-MM-DD");
     const [errors, setErrors] = useState("");
-    const [loading,setLoading]=useState(false);
+    const [loading, setLoading] = useState(false);
 
     const [maintenanceData, setMaintenanceData] = useState({
         title: "",
         description: "",
         paid_by: "",
-        date: today,
+        created_at: today,
         amount: ""
     });
 
@@ -37,7 +37,7 @@ function AddExpense() {
     const handleDateChange = (event) => {
         setMaintenanceData({
             ...maintenanceData,
-            date: event.target.value
+            created_at: event.target.value
         });
     };
 
@@ -137,7 +137,7 @@ function AddExpense() {
         if (!handleValidation()) return;
         const requestData = {
             ...maintenanceData,
-            date: moment.utc(maintenanceData.date, "YYYY-MM-DD").valueOf(),
+            created_at: moment.utc(maintenanceData.created_at, "YYYY-MM-DD").valueOf(),
             image: imageBase64,
         };
 
@@ -146,7 +146,7 @@ function AddExpense() {
             url: API_URLS.MAINTENANCE_ACTIVITY,
             data: requestData,
             callback: addMaintenanceCallback,
-            setLoading:setLoading
+            setLoading: setLoading
         });
     };
 
@@ -154,13 +154,13 @@ function AddExpense() {
         navigate(-1);
     };
 
-    const navigateAddMaintenanceCriteria=()=>{
+    const navigateAddMaintenanceCriteria = () => {
         navigate("/addMaintenanceCriteria")
     }
 
     return (
         <div className="w-full">
-             {loading && <Spinner />}
+            {loading && <Spinner />}
 
             <div>
                 <CustomHeaderComponent
@@ -211,9 +211,9 @@ function AddExpense() {
 
                 <InputComponent
                     label="Date"
-                    name="date"
+                    name="created_at"
                     type="date"
-                    value={maintenanceData.date}
+                    value={maintenanceData.created_at}
                     onChange={handleDateChange}
                     inputClassName="w-[80%]"
                     labelClassName="font-serif font-bold"
